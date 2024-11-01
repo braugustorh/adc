@@ -1,0 +1,475 @@
+<?php
+
+namespace App\Filament\Resources\UserResource\Pages;
+
+use App\Filament\Resources\UserResource;
+use App\Models\Department;
+use App\Models\Position;
+use App\Models\Sede;
+use Faker\Provider\Text;
+use Filament\Actions;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Collection;
+use Livewire\Component;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TextArea;
+use Filament\Forms\Get;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components;
+use Illuminate\Support\Facades\Http;
+use mysql_xdevapi\TableSelect;
+use function Laravel\Prompts\search;
+use Filament\Pages\Page;
+use Illuminate\Support\Facades\Hash;
+
+class CreateUser extends CreateRecord
+{
+    use CreateRecord\Concerns\HasWizard;
+    protected static string $resource = UserResource::class;
+    //public static string $title = 'Crear Usuario';
+    public $countries;
+    public $bStates;
+    public $token;
+    public $estadosMexico=[];
+    protected static ?string $title='Crear Usuarios';
+    protected function getSteps():array
+    {
+        return [
+            Step::make('Información Personal')
+                //->description('This is the first step of the wizard.')
+                ->schema([
+                    TextInput::make('name')
+                        ->required()
+                        ->maxLength(100)
+                        ->label('Nombre(s)'),
+                    TextInput::make('first_name')
+                        ->maxLength(100)
+                        ->default(null)
+                        ->label('Primer Apellido'),
+                    TextInput::make('last_name')
+                        ->maxLength(100)
+                        ->default(null)
+                        ->label('Segundo Apellido'),
+                    TextInput::make('curp')
+                        ->label('CURP')
+                        ->required()
+                        ->maxLength(18)
+                        ->afterStateHydrated(function (Get $get,Set $set):string{
+                            return $set ('curp', strtoupper($get('curp')));
+                        }),
+                    Select::make('sex')
+                        ->label('Sexo')
+                        ->options([
+                            'Masculino' => 'Masculino',
+                            'Femenino' => 'Femenino',
+                            'Otro' => 'Otro',
+                        ]),
+                    Select::make('nationality')
+                        ->label('Nacionalidad')
+                        ->live()
+                        ->options([
+                            'Mexicana' => 'Mexicana',
+                            'Extranjera' => 'Extranjera',
+                        ])
+                        ->searchable()
+                        ->default(null),
+                    DatePicker::make('birthdate')
+                        ->label('Fecha de Nacimiento')
+                        ->required(),
+                    Select::make('birth_country')
+                        ->live()
+                        ->label('País de Nacimiento')
+                        ->options(function(Get $get,Set $set): array{
+                            if($get('nationality')==="Mexicana"){
+                                $this->countries = ['México' => 'México'];
+                                $set('birth_country', 'México');
+                            }
+                            return $this->countries;
+                        })
+                        ->loadingMessage('Cargando Paises...')
+                        ->searchable()
+                        ->default(null),
+                    Select::make('birth_state')
+                        ->live()
+                        ->searchable()
+                        ->label('Estado de Nacimiento')
+                        ->options(function(Get $get): array{
+                            $country= $get('birth_country');
+                            $states = [];
+                            if($country){
+                                $statesResponse = Http::withHeaders([
+                                    "Authorization" => "Bearer " . $this->token,
+                                    "Accept" => "application/json",
+                                ])->get("https://www.universal-tutorial.com/api/states/".$country );
+                                $statesArray = json_decode($statesResponse->body(), true);
+                                if (is_array($statesArray)) {
+                                    $states = array_column($statesArray, 'state_name', 'state_name');
+                                } else {
+                                    Notification::make()
+                                        ->title('Error')
+                                        ->danger()
+                                        ->icon('heroicon-o-x-circle')
+                                        ->iconColor('danger')
+                                        ->body('No se pudo obtener la lista de paises')
+                                        ->send();
+                                }
+                            }
+                            return $states;
+                        })
+                        ->loadingMessage('Cargando Estados...')
+                        ->default(null),
+                    Select::make('birth_city')
+                        ->label('Ciudad de Nacimiento')
+                        ->searchable()
+                        ->options(
+                            function(Get $get): array{
+                                $state= $get('birth_state');
+                                if($state){
+                                    $citiesResponse = Http::withHeaders([
+                                        "Authorization" => "Bearer " . $this->token,
+                                        "Accept" => "application/json",
+                                    ])->get("https://www.universal-tutorial.com/api/cities/".$state );
+                                    $citiesArray = json_decode($citiesResponse->body(), true);
+                                    if (is_array($citiesArray)) {
+                                        $cities = array_column($citiesArray, 'city_name', 'city_name');
+                                    } else {
+                                        Notification::make()
+                                            ->title('Error')
+                                            ->danger()
+                                            ->icon('heroicon-o-x-circle')
+                                            ->iconColor('danger')
+                                            ->body('No se pudo obtener la lista de ciudades')
+                                            ->send();
+                                        $cities = [];
+                                    }
+                                }else{
+                                    $cities = [];
+                                }
+                                return $cities;
+                            }
+                        )
+                        ->loadingMessage('Cargando Municipios...')
+                        ->searchingMessage('Buscando Municipios...')
+                        ->default(null),
+                    Select::make('disability')
+                        ->label('Discapacidad')
+                        ->options([
+                            'Ninguna' => 'Ninguna',
+                            'Auditiva' => 'Auditiva',
+                            'Visual' => 'Visual',
+                            'Motriz' => 'Motriz',
+                            'Intelectual' => 'Intelectual',
+                            'Múltiple' => 'Múltiple',
+                            'Otra' => 'Otra',
+                        ]),
+                ])->columns(2),
+            Step::make('Información de Contacto')
+                // ->description('This is the second step of the wizard.')
+                ->schema([
+                    Select::make('state')
+                        ->label('Estado')
+                        ->live()
+                        ->options($this->estadosMexico)
+                        ->searchable()
+                        ->loadingMessage('Cargando Estados...')
+                        ->searchingMessage('Buscando Estados...')
+                        //->mess
+                        ->default(null),
+                    Select::make('city')
+                        ->label('Ciudad')
+                        ->live()
+                        ->options(
+                            function(Get $get): array{
+                                $state= $get('state');
+                                if($state){
+                                    $citiesResponse = Http::withHeaders([
+                                        "Accept"=> "application/json",
+                                        "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
+                                    ])->get('https://api.tau.com.mx/dipomex/v1/municipios?id_estado='.$state);
+                                    $citiesArray = json_decode($citiesResponse->body(), true);
+
+                                    if (is_array($citiesArray)) {
+
+                                        $cities = array_column($citiesArray['municipios'], 'MUNICIPIO', 'MUNICIPIO_ID');
+                                    } else {
+                                        Notification::make()
+                                            ->title('Error')
+                                            ->danger()
+                                            ->icon('heroicon-o-x-circle')
+                                            ->iconColor('danger')
+                                            ->body('No se pudo obtener la lista de ciudades')
+                                            ->send();
+                                        $cities = [];
+                                    }
+                                }else{
+                                    $cities = [];
+                                }
+                                return $cities;
+                            }
+                        )
+                        ->searchable()
+                        ->loadingMessage('Cargando Municipios...')
+                        ->searchingMessage('Buscando Municipios...')
+                        ->default(null),
+                    Select::make('colony')
+                        ->label('Colonia')
+                        ->live()
+                        ->options(function(Get $get): array {
+                            $estado = $get('state');
+                            $ciudad = $get('city');
+                            $colonies = [];
+                            if ($ciudad && $estado) {
+                                $coloniesResponse = Http::withHeaders([
+                                    "Accept" => "application/json",
+                                    "APIKEY" => "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
+                                ])->get('https://api.tau.com.mx/dipomex/v1/colonias?id_estado='.$estado.'&id_mun='.$ciudad);
+                                $coloniesArray = json_decode($coloniesResponse->body(), true);
+                                if (is_array($coloniesArray)) {
+                                    $colonies = array_column($coloniesArray['colonias'], 'COLONIA', 'ASENTA_ID');
+                                } else {
+                                    Notification::make()
+                                        ->title('Error')
+                                        ->danger()
+                                        ->icon('heroicon-o-x-circle')
+                                        ->iconColor('danger')
+                                        ->body('No se logró obtener la lista de colonias')
+                                        ->send();
+                                }
+                            }
+                            return $colonies;
+                        }
+                        )
+                        ->searchable()
+                        ->loadingMessage('Cargando Colonias...')
+                        ->searchingMessage('Buscando Colonias...')
+                        /*->afterStateUpdated(function (Get $get, Set $set):string {
+                            $colonia = $get('colony');
+
+                            $postalCode = $colonia;
+                            if($colonia!==null){
+                                dd($colonia);
+                                return $set('cp', $postalCode);
+                            }else{
+                                return $set('cp', '');
+                            }
+
+                        })*/
+                        ->default(null),
+                    TextInput::make('cp')
+                        ->label('Código Postal')
+                        ->maxLength(5)
+                        ->reactive(),
+                    TextInput::make('address')
+                        ->label('Dirección')
+                        ->helperText('Calle y Número')
+                        ->maxLength(255)
+                        ->default(null)
+                        ->columnSpan(2),
+                    TextInput::make('phone')
+                        ->label('Teléfono')
+                        ->helperText('Número de 10 dígitos')
+                        ->tel()
+                        ->maxLength(10)
+                        ->minLength(10)
+                        ->default(null),
+                    TextInput::make('emergency_name')
+                        ->label('Nombre del Contacto de Emergencias')
+                        ->maxLength(90)
+                        ->default(null),
+                    TextInput::make('relationship_contact')
+                        ->label('Parentesco')
+                        ->maxLength(45)
+                        ->default(null),
+                    TextInput::make('emergency_phone')
+                        ->label('Teléfono de Emergencias')
+                        ->helperText('Número de 10 dígitos')
+                        ->tel()
+                        ->maxLength(10)
+                        ->minLength(10)
+                        ->default(null),
+                ])->columns(2),
+            Step::make('Escolaridad')
+                //->description('This is the third step of the wizard.')
+                ->schema([
+                    Select::make('scholarship')
+                        ->label('Escolaridad')
+                        ->live()
+                        ->options([
+                            'Primaria' => 'Primaria',
+                            'Secundaria' => 'Secundaria',
+                            'Técnico'=> 'Técnico',
+                            'Preparatoria' => 'Preparatoria',
+                            'TSU' => 'TSU',
+                            'Licenciatura' => 'Licenciatura',
+                            'Maestría' => 'Maestría',
+                            'Doctorado' => 'Doctorado',
+                            'otro' => 'otro',
+                        ])
+                        ->default(null),
+                    Select::make('career')
+                        ->label('Área de Estudio')
+                        ->disabled(fn (Get $get): bool =>
+                            $get('scholarship') === 'Primaria' ||
+                            $get('scholarship') === 'Secundaria' ||
+                            $get('scholarship') === 'Técnico' ||
+                            $get('scholarship') === 'Preparatoria' ||
+                            $get('scholarship') === 'otro',
+                        )
+                        ->options([
+                            'Humanidades' => 'Humanidades',
+                            'Ciencias Sociales' => 'Ciencias Sociales',
+                            'Ciencias Exactas' => 'Ciencias Exactas',
+                            'Ingeniería' => 'Ingeniería',
+                            'Ciencias de la Salud' => 'Ciencias de la Salud',
+                            'Artes' => 'Artes',
+                            'Administración' => 'Administración',
+                            'Teconología' => 'Teconología',
+                            'Otra' => 'Otra',
+                        ])
+                        ->default(null),
+                ])->columns(2),
+            Step::make('Información Laboral')
+                // ->description('This is the fourth step of the wizard.')
+                ->schema([
+                    TextInput::make('employee_code')
+                    ->label('Número de empleado')
+                    ->required(),
+                    Select::make('sede_id')
+                        ->label('Sede')
+                        ->preload()
+                        ->live()
+                        ->searchable()
+                        ->relationship('sede', 'name')
+                        ->default(null),
+                    Select::make('department_id')
+                        ->label('Departamento')
+                        ->live()
+                        ->searchable()
+                        ->options(fn (Get $get): Collection => Department::query()
+                            ->where('sede_id', $get('sede_id'))
+                            ->pluck('name', 'id'))
+                        ->default(null),
+                    Select::make('position_id')
+                        ->label('Puesto')
+                        ->options(fn (Get $get): Collection => Position::query()
+                            ->where('department_id', $get('department_id'))
+                            ->pluck('name', 'id'))
+                        ->default(null),
+
+                    Select::make('contract_type')
+                        ->label('Tipo de Contrato')
+                        ->options([
+                            'Confianza' => 'De Confianza',
+                            'Sindicalizado' => 'Sindicalizado',
+                            'Eventual' => 'Eventual',
+                            'Honorarios' => 'Honorarios',
+                            'Prácticas' => 'Prácticas',
+                            'Otro' => 'Otro',
+                        ])
+                        ->default(null),
+                    TextInput::make('rfc')
+                        ->label('RFC')
+                        ->maxLength(13)
+                        ->default(null),
+                    TextInput::make('imss')
+                        ->label('Número de Seguridad Social')
+                        ->maxLength(11)
+                        ->default(null),
+
+                    DatePicker::make('entry_date'),
+                ])->columns(2),
+            Step::make('Configurar Usuario')
+                ->schema([
+                    FileUpload::make('profile_photo')
+                        ->label('Foto de Perfil')
+                        ->preserveFilenames()
+                        ->image()
+                        ->avatar()
+                        ->imageEditor()
+                        ->circleCropper()
+                        ->maxSize('2048')
+                        ->maxFiles(1)
+                        ->rules('image')
+                        ->columnSpan('full'),
+                    TextInput::make('email')
+                        ->email()
+                        ->required()
+                        ->unique()
+                        ->maxLength(80),
+                    DateTimePicker::make('email_verified_at'),
+                    TextInput::make('password')
+                        ->label('Contraseña')
+                        ->password()
+                        ->revealable()
+                        ->confirmed()
+                        ->maxLength(255),
+                    TextInput::make('password_confirmation')
+                        ->label('Confirmar Contraseña')
+                        ->password()
+                        ->revealable()
+                        ->maxLength(255),
+                    Select::make('roles')
+                        ->multiple()
+                        ->preload()
+                        ->searchable()
+                        ->relationship('roles', 'name'),
+                ])->columns(2),
+        ];
+    }
+    public function mount(): void
+    {
+
+        $response = Http::withHeaders([
+            "Accept"=> "application/json",
+            "api-token"=> "qJgEjApgNVP3YZKIwiOoZdiZJh4SXjMy2AD0MPr4erJziEaPKK98avKzs850wQdYYBs",
+            "user-email"=> "braugustorh@gmail.com"
+        ])->get("https://www.universal-tutorial.com/api/getaccesstoken");
+
+        $this->token = $response->json(['auth_token']);
+        $countriesResponse = Http::withHeaders([
+            "Authorization"=>"Bearer ". $this->token,
+            "Accept"=> "application/json",
+        ])->get("https://www.universal-tutorial.com/api/countries/");
+        $res=Http::withHeaders([
+            "Accept"=> "application/json",
+            "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
+        ])->get('https://api.tau.com.mx/dipomex/v1/estados');
+
+        $colonyArray=json_decode($res->body(),true);
+        if (is_array($colonyArray)) {
+
+            $this->estadosMexico = array_column($colonyArray['estados'], 'ESTADO', 'ESTADO_ID');
+        }else{
+            Notification::make()
+                ->title('Error')
+                ->danger()
+                ->icon('heroicon-o-x-circle')
+                ->iconColor('danger')
+                ->body('No se pudo obtener la lista de estados')
+                ->send();
+
+        }
+
+        $countriesArray = json_decode($countriesResponse->body(), true);
+        if (is_array($countriesArray)) {
+            $this->countries = array_column($countriesArray, 'country_name', 'country_name');
+        } else {
+            Notification::make()
+                ->title('Error')
+                ->message('No se pudo obtener la lista de paises')
+                ->type('error')
+                ->show();
+        }
+
+        //$this->countries = array_column($countriesArray, 'country_name', 'country_name');
+
+        parent::mount(); // TODO: Change the autogenerated stub
+    }
+
+}

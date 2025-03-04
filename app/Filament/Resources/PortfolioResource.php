@@ -17,6 +17,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\Page;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 
@@ -27,16 +28,23 @@ class PortfolioResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
     protected static ?string $navigationGroup = 'Colaboradores';
     protected static ?string $navigationLabel = 'Portafolio';
+    protected static ?string $name = 'Portfolio';
+    protected static ?string $label = 'Portafolio';
     protected static ?int $navigationSort = 2;
 
     public static function canViewAny(): bool
     {
-        return \auth()->user()->hasRole('Administrador');
+
+        return (\auth()->user()->hasAnyRole('Administrador','Jefe RH','Jefe de Área','Colaborador'));
 
     }
     public static function canCreate(): bool
     {
-        return \auth()->user()->hasRole('Administrador');
+        return (\auth()->user()->hasAnyRole('Administrador','Jefe RH'));
+    }
+    public static function canEdit(Model $record): bool
+    {
+        return (\auth()->user()->hasAnyRole('Administrador','Jefe RH'));
     }
 
     public static function form(Form $form): Form
@@ -56,63 +64,230 @@ class PortfolioResource extends Resource
                                 ->get()
                                 ->mapWithKeys(fn (User $user): array => [$user->id => $user->name.' '.$user->first_name .' '.$user->last_name]);
                         }else{
-                            $user= User::query()
-                                ->doesntHave('portfolio')
-                                ->with('portfolio') // Incluye la relación 'portfolio' en la consulta
-                                ->get()
-                                ->mapWithKeys(fn (User $user): array => [
-                                    $user->id => $user->name.' '.$user->first_name.' '.$user->last_name
-                                ]);
+                            if (auth()->user()->hasRole('Administrador')){
+                                $user=User::query()
+                                    ->doesntHave('portfolio')
+                                    ->where('status',1)
+                                    ->with('portfolio') // Incluye la relación 'portfolio' en la consulta
+                                    ->get()
+                                    ->mapWithKeys(fn (User $user): array => [
+                                        $user->id => $user->name.' '.$user->first_name.' '.$user->last_name
+                                    ]);
+                            }elseif (auth()->user()->hasRole('Jefe RH')){
+                                $user= User::query()
+                                    ->doesntHave('portfolio')
+                                    ->where('status',1)
+                                    ->where('sede_id',\auth()->user()->sede_id)
+                                    ->with('portfolio') // Incluye la relación 'portfolio' en la consulta
+                                    ->get()
+                                    ->mapWithKeys(fn (User $user): array => [
+                                        $user->id => $user->name.' '.$user->first_name.' '.$user->last_name
+                                    ]);
+                            }elseif(auth()->user()->hasRole('Jefe de Área')) {
+                                $supervisorId = auth()->user()->id;
+                                $user= User::query()
+                                    ->doesntHave('portfolio')
+                                    ->where('status',1)
+                                    ->where('sede_id',\auth()->user()->sede_id)
+                                    ->where('department_id',\auth()->user()->department_id)
+                                    ->with('portfolio') // Incluye la relación 'portfolio' en la consulta
+                                    ->whereHas('position', function ($query) use ($supervisorId) {
+                                        $query->where('supervisor_id', $supervisorId);
+                                    })
+                                    ->get()
+                                    ->mapWithKeys(fn (User $user): array => [
+                                        $user->id => $user->name.' '.$user->first_name.' '.$user->last_name
+                                    ]);
+
+                            }else{
+                                $user= User::query()
+                                    ->where('id',\auth()->user()->id)
+                                    ->get()
+                                    ->mapWithKeys(fn (User $user): array => [$user->id => $user->name.' '.$user->first_name .' '.$user->last_name]);
+                            }
+
                         }
                             return $user;
                         })
+                    ->disabled(fn (string $operation): bool => $operation === 'edit')
                     ->required(),
-                Forms\Components\FileUpload::make('acta_url')
-                    ->label('Acta de nacimiento')
-                    ->downloadable('true')
-                    ->previewable('true')
-                    ->acceptedFileTypes(['image/*', 'application/pdf'])
-                    ->maxSize('2048')
-                    ->default(null),
-                Forms\Components\FileUpload::make('curp_url')
-                    ->label('CURP')
-                    ->downloadable('true')
-                    ->acceptedFileTypes(['image/*', 'application/pdf'])
-                    ->maxSize('2048')
-                    ->default(null),
-                Forms\Components\FileUpload::make('rfc_url')
-                    ->label('Comprobante de RFC')
-                    ->downloadable('true')
-                    ->acceptedFileTypes(['application/pdf'])
-                    ->maxSize('2048')
-                    ->helperText('Los documentos válidos son: Cédula de Identificación fiscal o Constancia de Situación Fiscal. En formato PDF.')
-                    ->default(null),
-                Forms\Components\FileUpload::make('ine_url')
-                    ->label('Identificación Oficial Vigente')
-                    ->downloadable('true')
-                    ->helperText('Los documentos válidos son: Credencial para votar (INE), Pasaporte o Cédula Profesional.')
-                    ->acceptedFileTypes(['image/*', 'application/pdf'])
-                    ->maxSize('2048')
-                    ->default(null),
-                Forms\Components\FileUpload::make('comprobante_domicilio_url')
-                    ->label('Comprobante de domicilio')
-                    ->downloadable('true')
-                    ->acceptedFileTypes(['image/*', 'application/pdf'])
-                    ->maxSize('2048')
-                    ->default(null),
-                Forms\Components\FileUpload::make('comprobante_estudios_url')
-                    ->label('Comprobante del último grado de estudios')
-                    ->downloadable('true')
-                    ->acceptedFileTypes(['image/*', 'application/pdf'])
-                    ->maxSize('2048')
-                    ->default(null),
-                Forms\Components\FileUpload::make('carta_no_antecedentes_url')
-                    ->downloadable('true')
-                    ->label('Carta de no antecedentes penales')
-                    ->acceptedFileTypes(['image/*', 'application/pdf'])
-                    ->maxSize('2048')
-                    ->default(null),
-            ]);
+                    Forms\Components\Fieldset::make('Identificación Oficial')
+                        ->schema([
+                            Forms\Components\FileUpload::make('acta_url')
+                                ->label('Acta de nacimiento')
+                                ->downloadable('true')
+                                ->openable()
+                                ->previewable('true')
+                                ->acceptedFileTypes(['image/*', 'application/pdf'])
+                                ->maxSize('2048')
+                                ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                                ->default(null),
+                            Forms\Components\FileUpload::make('ine_url')
+                                ->label('Identificación Oficial Vigente')
+                                ->downloadable('true')
+                                ->openable()
+                                ->previewable('true')
+                                ->helperText('Los documentos válidos son: Credencial para votar (INE), Pasaporte o Cédula Profesional.')
+                                ->acceptedFileTypes(['image/*', 'application/pdf'])
+                                ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                                ->maxSize('2048')
+                                ->default(null),
+                            Forms\Components\FileUpload::make('curp_url')
+                                ->label('CURP')
+                                ->downloadable('true')
+                                ->openable()
+                                ->previewable('true')
+                                ->acceptedFileTypes(['image/*', 'application/pdf'])
+                                ->maxSize('2048')
+                                ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                                ->default(null),
+                    ]),
+                Forms\Components\Fieldset::make('Comprobantes de Domicilio y Situación Fiscal')
+                    ->schema([
+                        Forms\Components\FileUpload::make('comprobante_domicilio_url')
+                            ->label('Comprobante de domicilio')
+                            ->helperText('Los documentos válidos son: Recibo de luz, agua, teléfono o predial. No mayor a 3 meses de antigüedad.')
+                            ->downloadable('true')
+                            ->openable()
+                            ->previewable('true')
+                            ->acceptedFileTypes(['image/*', 'application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        Forms\Components\FileUpload::make('rfc_url')
+                            ->label('Constancia Situación Fiscal')
+                            ->downloadable('true')
+                            ->previewable('true')
+                            ->openable()
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->maxSize('2048')
+                            ->helperText('Constancia de Situación Fiscal actualizada')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        ]),
+                Forms\Components\Fieldset::make('Información Laboral')
+                    ->schema([
+                        Forms\Components\FileUpload::make('sol_empleo_url')
+                            ->label('Solicitud de Empleo')
+                            ->downloadable('true')
+                            ->previewable('true')
+                            ->openable()
+                            ->acceptedFileTypes(['image/*','application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        Forms\Components\FileUpload::make('recomendacion_url')
+                            ->label('Carta de recomendación 1')
+                            ->downloadable('true')
+                            ->openable()
+                            ->previewable('true')
+                            ->acceptedFileTypes(['image/*', 'application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        Forms\Components\FileUpload::make('comprobante_estudios_url')
+                            ->label('Comprobante del último grado de estudios')
+                            ->downloadable('true')
+                            ->openable()
+                            ->previewable('true')
+                            ->acceptedFileTypes(['image/*', 'application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        ]),
+                Forms\Components\Fieldset::make('Documentos médicos y de seguridad social')
+                    ->schema([
+                        Forms\Components\FileUpload::make('cert_medico_url')
+                            ->label('Certificado médico')
+                            ->downloadable('true')
+                            ->openable()
+                            ->previewable('true')
+                            ->acceptedFileTypes(['image/*','application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        Forms\Components\FileUpload::make('nss_url')
+                            ->label('Número de Seguro Social')
+                            ->downloadable('true')
+                            ->previewable('true')
+                            ->openable()
+                            ->acceptedFileTypes(['image/*','application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        Forms\Components\FileUpload::make('alta_imss_url')
+                            ->downloadable('true')
+                            ->previewable('true')
+                            ->openable()
+                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'Jefe RH', 'Jefe de Área']))
+                            ->label('Alta en el IMSS')
+                            ->acceptedFileTypes(['image/*', 'application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        Forms\Components\FileUpload::make('modificacion_imss_url')
+                            ->downloadable('true')
+                            ->previewable('true')
+                            ->openable()
+                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'Jefe RH']))
+                            ->label('Modificación en el IMSS')
+                            ->acceptedFileTypes(['image/*', 'application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        Forms\Components\FileUpload::make('baja_imss_url')
+                            ->downloadable('true')
+                            ->previewable('true')
+                            ->openable()
+                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'Jefe RH']))
+                            ->label('Baja en el IMSS')
+                            ->acceptedFileTypes(['image/*', 'application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        ]),
+                Forms\Components\Fieldset::make(' Documentos legales y financieros')
+                    ->schema([
+                        Forms\Components\FileUpload::make('carta_no_antecedentes_url')
+                            ->downloadable('true')
+                            ->previewable('true')
+                            ->openable()
+                            ->label('Carta de no antecedentes penales')
+                            ->acceptedFileTypes(['image/*', 'application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        Forms\Components\FileUpload::make('retencion_url')
+                            ->label('Retención de Crédito Infonavit')
+                            ->downloadable('true')
+                            ->previewable('true')
+                            ->openable()
+                            ->acceptedFileTypes(['image/*','application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        Forms\Components\FileUpload::make('renuncia_url')
+                            ->downloadable('true')
+                            ->previewable('true')
+                            ->openable()
+                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'Jefe RH']))
+                            ->label('Renuncia')
+                            ->acceptedFileTypes(['image/*', 'application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                        Forms\Components\FileUpload::make('finiquito_url')
+                            ->downloadable('true')
+                            ->previewable('true')
+                            ->openable()
+                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'Jefe RH']))
+                            ->label('Finiquito')
+                            ->acceptedFileTypes(['image/*', 'application/pdf'])
+                            ->maxSize('2048')
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->default(null),
+                    ]),
+            ])->columns(3);
         return $form->schema([
             $forms,
         ]);
@@ -210,12 +385,36 @@ class PortfolioResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])->modifyQueryUsing(function (Builder $query) {
+                // Si el usuario tiene el rol "Jefe RH", filtrar por su sede_id
+                if (auth()->user()->hasRole('Jefe RH')) {
+                    $users=User::where('sede_id',\auth()->user()->sede_id)->pluck('id');
+                    $query->whereIn('user_id', $users);
+                }
+//                elseif(auth()->user()->hasRole('Jefe de Área')){
+//                    $supervisorId = \auth()->user()->position_id;
+//                    $users = User::where('status', true)
+//                        ->whereNotNull('department_id')
+//                        ->whereNotNull('position_id')
+//                        ->whereNotNull('sede_id')
+//                        ->whereHas('position', function ($query) use ($supervisorId) {
+//                            $query->where('supervisor_id', $supervisorId);
+//                        })
+//                        ->pluck('users.id');
+//
+//                    $query->whereIn('user_id', $users);
+//
+//                }
+                elseif(auth()->user()->hasAnyRole('Colaborador','Jefe de Área')){
+                    $query->where('user_id',\auth()->user()->id);
+                }
+            });
     }
 
     public static function getRelations(): array

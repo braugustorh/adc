@@ -24,14 +24,21 @@ class PsychometryResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-puzzle-piece';
     protected static ?string $navigationGroup = 'Colaboradores';
     protected static ?string $navigationLabel = 'Psicometría';
+    protected static ?string $name = 'Psicometría';
+    protected static ?string $label = 'Psicometría';
 
     protected static ?int $navigationSort = 3;
 
     public static function canViewAny(): bool
     {
-        return \auth()->user()->hasRole('Administrador');
+        if (\auth()->user()->hasRole('Jefe de Área') || \auth()->user()->hasRole('Administrador') || \auth()->user()->hasRole('Jefe RH')) {
+            return true;
+        }else{
+            return false;
+        }
 
     }
+
 
     public static function form(Form $form): Form
     {
@@ -388,7 +395,30 @@ class PsychometryResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])->modifyQueryUsing(function (Builder $query) {
+                // Si el usuario tiene el rol "Jefe RH", filtrar por su sede_id
+                if (auth()->user()->hasRole('Jefe RH')) {
+                    $users = User::where('status', true)
+                        ->whereNotNull('department_id')
+                        ->whereNotNull('position_id')
+                        ->whereNotNull('sede_id')
+                        ->where('sede_id', auth()->user()->sede_id)
+                        ->get();
+
+                    $query->whereIn('user_id', $users->pluck('id'));
+                }elseif(auth()->user()->hasRole('Jefe de Área')){
+                    $supervisorId = auth()->user()->position_id;
+                    $users = User::where('status', true)
+                        ->whereNotNull('department_id')
+                        ->whereNotNull('position_id')
+                        ->whereNotNull('sede_id')
+                        ->whereHas('position', function ($query) use ($supervisorId) {
+                            $query->where('supervisor_id', $supervisorId);
+                        })
+                        ->get();
+                    $query->whereIn('user_id', $users->pluck('id'));
+                }
+            });
     }
 
     public static function getRelations(): array

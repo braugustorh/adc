@@ -63,14 +63,12 @@
 
                     </x-filament::modal>
                     <x-filament::button icon="heroicon-m-sparkles"
-                                        href="{{route('clima-organizacional.index',[
-                                                        'user' => \Crypt::encryptString($user),
-                                                        'campaign' => \Crypt::encryptString($campaigns->id)
-                                        ])}}"
-                                        tag="a"
-                                        target="_blank"
-                                        wire:click="$set('disabledButton', true)"
-                                        disabled="{{$disabledButton===true?'true':null}}">
+                           href="{{route('clima-organizacional.index',[
+                          'user' => \Crypt::encryptString($user),
+                           'campaign' => \Crypt::encryptString($campaigns->id)
+                           ])}}"
+                           tag="a"
+                           disabled="{{$responses===true?'true':null}}">
                         Comenzar!
                     </x-filament::button>
 

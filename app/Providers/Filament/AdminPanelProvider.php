@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\UserResource\Widgets\UsersStatsOverview;
 use App\Filament\Widgets\CampaignEvaluationsWidget;
+use App\Http\Middleware\CheckUserStatusAndEvaluation;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -49,13 +50,14 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+               \App\Filament\Pages\ExitSurveyPage::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                UsersStatsOverview::class,
-                CampaignEvaluationsWidget::class,
-                //Widgets\FilamentInfoWidget::class,
+                UsersStatsOverview::class,    // Segunda posición
+                Widgets\AccountWidget::class, // Primera posición
+                CampaignEvaluationsWidget::class, // Tercera posición
+                //Widgets\FilamentInfoWidget::class, // Comentado
             ])
             ->profile()
             ->middleware([
@@ -68,6 +70,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                CheckUserStatusAndEvaluation::class,
             ])
             ->plugins([
                 FilamentBackgroundsPlugin::make()
@@ -75,7 +78,7 @@ class AdminPanelProvider extends PanelProvider
                         MyImages::make()
                             ->directory('images/backgrounds')
                     ),
-            ]);
+            ])->databaseNotifications();
 
 
     }

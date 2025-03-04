@@ -5,6 +5,7 @@ namespace App\Livewire;
 
 use App\Models\Competence;
 use App\Models\Question;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use App\Models\User;
 
@@ -25,26 +26,47 @@ class Evaluation360Controller extends Component
 
     public function mount()
     {
-        $this->evaluated = \Crypt::decryptString(request()->query('evaluated'));
-        $this->evaluator = \Crypt::decryptString(request()->query('evaluator'));
-        $this->campaign = \Crypt::decryptString(request()->query('campaign'));
-        $user = User::find($this->evaluated);
-        $this->fullName = $user->name . ' ' . $user->first_name . ' ' . $user->second_name;
-        $this->competencias = Competence::where('evaluations_type_id', 2)
-            ->where('status',1)
-            ->with('questions')
-            ->get();
-        $this->competenciasCount = $this->competencias->whereNotNull('questions')->count()-1;
+        if (auth()->check()){
+            if (request()->query('evaluated')){
+                $this->evaluated = \Crypt::decryptString(request()->query('evaluated'));
+                $this->evaluator = \Crypt::decryptString(request()->query('evaluator'));
+                $this->campaign = \Crypt::decryptString(request()->query('campaign'));
+                $user = User::find($this->evaluated);
+                $this->fullName = $user->name . ' ' . $user->first_name . ' ' . $user->second_name;
+                $this->competencias = Competence::where('evaluations_type_id', 2)
+                    ->where('status',1)
+                    ->with('questions')
+                    ->get();
+                $this->competenciasCount = $this->competencias->whereNotNull('questions')->count()-1;
 
-        $this->currentCompetenciaId = $this->competencias->first()->id ?? null;
-        $this->first=true;
+                $this->currentCompetenciaId = $this->competencias->first()->id ?? null;
+                $this->first=true;
+            }else{
+                return redirect()->to('/dashboard');
+            }
+
+        }else{
+            return redirect()->to('/dashboard');
+        }
+
     }
 
     public function selectCompetencia($competenciaId)
     {
         // Save current responses to localStorage
-        $this->dispatch('saveResponses', ['responses' => $this->respuestas]);
+        $competenciaActual = $this->competencias->where('id', $this->currentCompetenciaId)->first();
+        $preguntasSinRespuesta = collect($competenciaActual->questions)->filter(function ($question) {
+            return empty($this->respuestas[$question->id]);
+        });
+        if ($preguntasSinRespuesta->isNotEmpty()) {
+            $errores = $preguntasSinRespuesta->mapWithKeys(function ($question) {
+                return ["respuestas.{$question->id}" => 'Debe responder todas las preguntas antes de avanzar.'];
+            })->toArray();
 
+            throw ValidationException::withMessages($errores);
+        }
+
+        $this->dispatch('saveResponses', ['responses' => $this->respuestas]);
         // Update currentCompetenciaId
         $this->currentCompetenciaId = $competenciaId;
 
@@ -89,7 +111,9 @@ class Evaluation360Controller extends Component
 
     public function render()
     {
+
         $competenciaActual = $this->competencias->find($this->currentCompetenciaId);
+
        // dd($competenciaActual->questions);
         return view('livewire.evaluation360-controller', [
             'competenciaActual' => $competenciaActual,

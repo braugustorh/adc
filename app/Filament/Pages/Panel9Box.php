@@ -3,6 +3,8 @@
 namespace App\Filament\Pages;
 
 use App\Models\Campaign;
+use App\Livewire\CompetencesChart;
+use App\Models\Competence;
 use App\Models\Psychometry;
 use Filament\Actions\Contracts\HasLivewire;
 use Filament\Resources\Concerns\HasTabs;
@@ -19,10 +21,12 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Livewire\Attributes\On;
+
 class Panel9Box extends Page implements HasTable
 {
     use InteractsWithTable;
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-c-squares-plus';
     protected static ?string $navigationLabel = ' Panel 9Box';
     protected static ?string $navigationGroup = 'Evaluaciones';
     protected ?string $heading = 'Panel 9 Box';
@@ -34,6 +38,10 @@ class Panel9Box extends Page implements HasTable
     public $campaigns;
     public $campaignId;
     public $totales;
+    public $users,$userToEvaluated;
+    public $user;
+    public $show=false;
+    public $showChartOnView=false;
     public $activeTab='tab1';
     public $quadrants = [];
     public $orderedIndexes = [4, 7, 9, 2, 5, 8, 1, 3, 6];
@@ -41,12 +49,12 @@ class Panel9Box extends Page implements HasTable
         9 => 'Futuro Líder',
         8 => 'Estrella Emergente',
         7 => 'Líder Emergente',
-        6 => 'Profesional Experimentado',
-        5 => 'Futuro Prometedor',
-        4 => 'Enigma',
+        6 => 'Experto Destacado',
+        5 => 'Jugador Clave',
+        4 => 'Diamante en Bruto',
         3 => 'Desempeño Solido',
-        2 => 'Dilema',
-        1 => 'Bajo Perfil',
+        2 => 'Jugador Inconsistente',
+        1 => 'Riesgo de Talento',
         ];
  public $colorBadgets=[
         9 => 'success',
@@ -59,26 +67,81 @@ class Panel9Box extends Page implements HasTable
         2 => 'info',
         1 => 'danger',
         ];
+
+    public static function canView(): bool
+    {
+        //Este Panel solo lo debe de ver los Jefes de Área y el Administrador
+        //Se debe de agregar la comprobación de que estpo se cumpla para que solo sea visible para los Jefes de Área
+        if (\auth()->user()->hasRole('Jefe de Área') || \auth()->user()->hasRole('Administrador') || \auth()->user()->hasRole('Administrador')) {
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Esto controla la visibilidad en la navegación.
+        return static::canView();
+    }
     //protected static ?string $model = Evaluation360Response::class;
     public function mount(){
         $this->campaignId = Campaign::whereStatus('Activa')->first()->id;
+        $supervisorId = auth()->user()->position_id;
+        $this->users = User::where('status', true)
+            ->whereNotNull('department_id')
+            ->whereNotNull('position_id')
+            ->whereNotNull('sede_id')
+            ->whereHas('position', function ($query) use ($supervisorId) {
+                $query->where('supervisor_id', $supervisorId);
+            })
+            ->get();
         //$this->quadrants=collect();
        //$this->loadQuadrantData();
     }
     protected function getTableQuery()
     {
+        $this->data = Evaluation360Response::select('competences.name as competence_name')
+            ->selectRaw('AVG(response) as total_360')
+            ->join('competences', 'evaluation360_responses.competence_id', '=', 'competences.id') // Unión con la tabla de competencias
+            ->where('campaign_id', $this->campaignId)
+            ->whereIn('evaluated_user_id', $this->users->pluck('id')->toArray())
+            ->groupBy('competences.name') // Agrupar por nombre de competencia
+            ->get();
+        /*
         return Evaluation360Response::select('evaluated_user_id', 'competence_id', DB::raw('AVG(response) as score'))
             ->where('campaign_id', $this->campaignId)
+            ->whereIn('evaluated_user_id', $this->users->pluck('id')->toArray())
             ->groupBy('evaluated_user_id', 'competence_id');
+        */
+
+        return Evaluation360Response::select('competence_id', DB::raw('AVG(response) as score'))
+            ->where('campaign_id', $this->campaignId)
+            ->whereIn('evaluated_user_id', $this->users->pluck('id')->toArray())
+            ->groupBy('competence_id');
     }
     protected function getTableColumns(): array
     {
         return [
-            Tables\Columns\ImageColumn::make('evaluatedUsers.profile_photo')->rounded()->label(''),
-            Tables\Columns\TextColumn::make('evaluatedUsers.name')->label('User'),
-            Tables\Columns\TextColumn::make('competences.name')->label('Competencia'),
+            //Tables\Columns\ImageColumn::make('evaluatedUsers.profile_photo')->rounded()->label(''),
+            //Tables\Columns\TextColumn::make('evaluatedUsers.name')->label('User'),
+            Tables\Columns\TextColumn::make('competences.name')->label('Competencia')
+                ->description(
+                    fn (Evaluation360Response $record): string => $record->competences->description
+                )->wrap(),
+        //Tables\Columns\TextColumn::make('competences.description')->label('Descripción')->wrap(),
             // Tables\Columns\TextColumn::make('questions.question')->label('Pregunta'),
-            Tables\Columns\TextColumn::make('score')->label('Score'),
+            Tables\Columns\TextColumn::make('score')->label('Score')
+            ->badge()
+                ->color(function (string $state): string {
+                    $score = (float) $state;
+                    return match (true) {
+                        $score >= 4.0 && $score <= 5.0 => 'success',
+                        $score >= 2.0 && $score <= 3.99 => 'warning',
+                        $score >= 0.0 && $score <= 1.99 => 'danger',
+                        default => 'gray',
+                    };
+                }),
         ];
     }
     public function getTableRecordKey($record): string
@@ -86,6 +149,20 @@ class Panel9Box extends Page implements HasTable
         return $record->evaluated_user_id . '-' . $record->competence_id;
     }
 
+    public function updatedUser($value):void
+    {
+        $this->show=true;
+        $this->userToEvaluated = User::find($value);
+        $this->dispatch('update-chart', $value, $this->campaignId);
+        $this->dispatch('data-updated', $value, $this->campaignId,$this->titles,$this->colorBadgets);
+      //  $this->getChartUser($this->user);
+    }
+    #[On('show-chart')]
+    public function showChart():void
+    {
+
+        $this->showChartOnView=true;
+    }
 
     public function prepareQuadrantData():void
     {
@@ -100,6 +177,7 @@ class Panel9Box extends Page implements HasTable
         $collaborators = Evaluation360Response::select('evaluated_user_id')
             ->selectRaw('AVG(response) as total_360')
             ->where('campaign_id', $this->campaignId)
+            ->whereIN('evaluated_user_id', $this->users->pluck('id')->toArray())
             ->groupBy('evaluated_user_id')
             ->get();
 
@@ -201,6 +279,7 @@ class Panel9Box extends Page implements HasTable
     {
         $this->prepareQuadrantData();
     }
+
 
 
 

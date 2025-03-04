@@ -6,7 +6,7 @@ use Filament\Pages\Page;
 
 class OrganizationalClimateStatics extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-m-chart-pie';
     protected static ?string $navigationLabel = 'Análisis de Clima Organizacional';
     protected static ?string $navigationGroup = 'Clima Organizacional';
     protected ?string $heading = 'Análisis de Clima Organizacional';

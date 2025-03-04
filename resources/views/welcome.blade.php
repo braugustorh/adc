@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 
     <!-- Basic -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>ADC Plataforma | Evaluación al Desempeño</title>
+    <title>ADC Plataforma | SEDYCO</title>
 
-    <meta name="keywords" content="WebSite Template" />
-    <meta name="description" content="Porto - Multipurpose Website Template">
-    <meta name="author" content="okler.net">
+    <meta name="keywords" content="ADC - SEDYCO" />
+    <meta name="description" content="Plataforma para la Evaluación al Desempeño y el Clima Organizacional">
+    <meta name="author" content="NetInnfode">
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
@@ -103,7 +103,7 @@
                     <div class="header-column">
                         <div class="header-row">
                             <div class="header-logo">
-                                <a href="demo-business-consulting-3.html">
+                                <a href="{{route('welcome')}}">
                                     <img alt="Porto" width="192" height="82" src="img/logo_header_home.png">
                                 </a>
                             </div>
@@ -116,12 +116,12 @@
                                     <nav class="collapse">
                                         <ul class="nav nav-pills" id="mainNav">
                                             <li>
-                                                <a class="nav-link active" href="index.html">
+                                                <a class="nav-link active" href="{{route('welcome')}}">
                                                     Inicio
                                                 </a>
                                             </li>
                                             <li>
-                                                <a class="nav-link" href="demo-business-consulting-3-about.html">
+                                                <a class="nav-link" href="{{ route('about') }}">
                                                     Acerca de Nosotros
                                                 </a>
                                             </li>
@@ -151,30 +151,16 @@
                                                 </ul>
                                             </li>
                                             <li>
-                                                <a class="nav-link" href="demo-business-consulting-3-about.html">
+                                                <a class="nav-link" href="{{route('questions')}}">
                                                     Preguntas Frecuentes
                                                 </a>
                                             </li>
-                                            <!--<li>
-                                                <a class="nav-link" href="demo-business-consulting-3-cases.html">
-                                                    Cases
-                                                </a>
-                                            </li>
                                             <li>
-                                                <a class="nav-link" href="demo-business-consulting-3-team.html">
-                                                    Team
+                                                <a class="nav-link" href="{{ route('contact') }}">
+                                                    Directorio
                                                 </a>
                                             </li>
-                                            <li>
-                                                <a class="nav-link" href="demo-business-consulting-3-blog.html">
-                                                    Blog
-                                                </a>
-                                            </li>
-                                            <li class="d-lg-none">
-                                                <a class="nav-link" href="demo-business-consulting-3-contact.html">
-                                                    Contact Us
-                                                </a>
-                                            </li>-->
+
                                         </ul>
                                     </nav>
                                 </div>
@@ -217,7 +203,8 @@
                 <div class="row">
                     <div class="col-md-7 col-lg-12">
                         <div class="appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="0">
-                            <h1 class="custom-text-background custom-big-font-size-1 text-14 font-weight-bold float-xl-center clearfix line-height-1 custom-ws-mobile-wrap ws-nowrap pb-2 mb-3 mb-xl-5" style="background-image: url(img/demos/adc/text-background.jpg);">SEDyCO
+                            <h1 class="custom-text-background custom-big-font-size-1 text-14 font-weight-bold float-xl-center clearfix line-height-1 custom-ws-mobile-wrap ws-nowrap pb-2 mb-3 mb-xl-5"
+                                style="background-image: url(img/demos/adc/text-background.jpg);">SEDyCO
                                 <br></h1>
                         </div>
                     </div>

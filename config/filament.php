@@ -53,6 +53,9 @@ return [
     | After changing the path, you should run `php artisan filament:assets`.
     |
     */
+    'sidebar' => [
+
+    ],
 
     'assets_path' => null,
 

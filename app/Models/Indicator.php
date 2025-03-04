@@ -11,6 +11,7 @@ class Indicator extends Model
 
     protected $fillable = [
         'user_id',
+        'evaluated_by',
         'name',
         'objective_description',
         'evaluation_formula',
@@ -18,6 +19,10 @@ class Indicator extends Model
         'target_value',
         'type_of_target',
         'target_period',
+        'indicator_type',
+        'indicator_unit_id',
+        'target_period_start',
+        'target_period_end',
     ];
 
     public function user()
@@ -25,7 +30,7 @@ class Indicator extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function ranges()
+    public function indicatorRanges()
     {
         return $this->hasOne(IndicatorRange::class);
     }

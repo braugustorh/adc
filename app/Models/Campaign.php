@@ -32,7 +32,7 @@ class Campaign extends Model
 
     public function sedes()
     {
-        return $this->belongsToMany(Sede::class, 'campaign_sede');
+        return $this->belongsToMany(Sede::class, 'campaign_sede','campaign_id', 'sede_id');
     }
     public function responses()
     {

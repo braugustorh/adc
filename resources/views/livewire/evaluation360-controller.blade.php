@@ -90,6 +90,9 @@
                     </div>
                     <div class="my-3 p-3 bg-body rounded shadow-sm" wire:loading.delay.shortest wire:loading.class="d-none" >
                         <h6 class="border-bottom pb-2 mb-0">Respuesta</h6>
+                        @error("respuestas.{$pregunta->id}")
+                        <span class="text-danger text-md-2-3">{{ $message }}</span>
+                        @enderror
                         <div class="d-flex text-body-secondary pt-3">
                             <div class="likert">
                                 @foreach(range(1, 5) as $valor)

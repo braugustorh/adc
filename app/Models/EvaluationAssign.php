@@ -43,4 +43,9 @@ class EvaluationAssign extends Model
     {
         return $this->belongsTo(EvaluationsTypes::class, 'evaluation_id');
     }
+    public function modelUser($id){
+
+    return User::find($id);
+    }
+
 }

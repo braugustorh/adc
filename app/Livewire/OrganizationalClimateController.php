@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 
+use App\Models\ClimateOrganizationalResponses;
 use App\Models\Competence;
 use App\Models\Question;
 use Livewire\Component;
@@ -22,25 +23,38 @@ class OrganizationalClimateController extends Component
     public $evaluator;
     public $campaign;
     public $fullName;
+    public $responses;
     public $user;
     public ?string $tipodeEvaluacion='Clima Organizacional';
     public $countPage;
 
     public function mount()
     {
-        $this->user = \Crypt::decryptString(request()->query('user'));
-        $this->campaign = \Crypt::decryptString(request()->query('campaign'));
-        $user = User::find($this->user);
-        $this->fullName = $user->name . ' ' . $user->first_name . ' ' . $user->second_name;
-        $this->competencias = Competence::where('evaluations_type_id', 4)
-            ->where('status',1)
-            ->with('questions')
-            ->get();
-        $this->competenciasCount = $this->competencias->whereNotNull('questions')->where('evaluations_type_id',4)->count();
+        if (auth()->check()){
+            if (request()->query('evaluated')){
+                $this->user = \Crypt::decryptString(request()->query('user'));
+                $this->campaign = \Crypt::decryptString(request()->query('campaign'));
+                $user = User::find($this->user);
+                $this->fullName = $user->name . ' ' . $user->first_name . ' ' . $user->second_name;
+                $this->competencias = Competence::where('evaluations_type_id', 4)
+                    ->where('status',1)
+                    ->with('questions')
+                    ->get();
+                $this->competenciasCount = $this->competencias->whereNotNull('questions')->where('evaluations_type_id',4)->count();
+                $this->responses=ClimateOrganizationalResponses::where('campaign_id',$this->campaign)
+                    ->where('user_id',$this->user)
+                    ->count()>0;
 
-        $this->currentCompetenciaId = $this->competencias->first()->id ?? null;
-        $this->countPage=1;
-        $this->first=true;
+                $this->currentCompetenciaId = $this->competencias->first()->id ?? null;
+                $this->countPage=1;
+                $this->first=true;
+            }else {
+                return redirect()->to('/dashboard');
+            }
+        }else{
+                return redirect()->to('/dashboard');
+        }
+
     }
 
     public function selectCompetencia($competenciaId)

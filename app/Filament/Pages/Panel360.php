@@ -14,7 +14,7 @@ use mysql_xdevapi\Collection;
 
 class Panel360 extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-m-arrow-path';
     protected static ?string $navigationLabel = ' Panel 360';
     protected static ?string $navigationGroup = 'Evaluaciones';
     protected ?string $heading = 'Panel 360';
@@ -36,8 +36,14 @@ class Panel360 extends Page
 
     public function mount()
     {
-        if(Campaign::whereStatus('Activa')->exists() && !auth()->user()->hasRole('Administrador')){
-            $campaigns= Campaign::whereStatus('Activa')->first();
+        $exists=Campaign::whereStatus('Activa')->whereHas('sedes', function ($query) {
+            $query->where('sede_id', auth()->user()->sede_id);
+        })->exists();
+
+        if($exists  && !auth()->user()->hasRole('Administrador')){
+            $campaigns= Campaign::whereStatus('Activa')->whereHas('sedes', function ($query) {
+                $query->where('sede_id', auth()->user()->sede_id);
+            })->first();
 
             $this->campaigns= Campaign::whereStatus('Activa')->first();
             $this->today= Carbon::now();

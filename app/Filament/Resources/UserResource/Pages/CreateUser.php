@@ -3,9 +3,12 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Models\City;
+use App\Models\Country;
 use App\Models\Department;
 use App\Models\Position;
 use App\Models\Sede;
+use App\Models\State;
 use Faker\Provider\Text;
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
@@ -33,7 +36,7 @@ class CreateUser extends CreateRecord
     use CreateRecord\Concerns\HasWizard;
     protected static string $resource = UserResource::class;
     //public static string $title = 'Crear Usuario';
-    public $countries;
+    public $countries=[];
     public $bStates;
     public $token;
     public $estadosMexico=[];
@@ -59,6 +62,7 @@ class CreateUser extends CreateRecord
                     TextInput::make('curp')
                         ->label('CURP')
                         ->required()
+                        ->unique('users', 'curp', fn ($record) => $record ? $record->id : null)
                         ->maxLength(18)
                         ->afterStateHydrated(function (Get $get,Set $set):string{
                             return $set ('curp', strtoupper($get('curp')));
@@ -70,6 +74,9 @@ class CreateUser extends CreateRecord
                             'Femenino' => 'Femenino',
                             'Otro' => 'Otro',
                         ]),
+                    DatePicker::make('birthdate')
+                        ->label('Fecha de Nacimiento')
+                        ->required(),
                     Select::make('nationality')
                         ->label('Nacionalidad')
                         ->live()
@@ -77,18 +84,19 @@ class CreateUser extends CreateRecord
                             'Mexicana' => 'Mexicana',
                             'Extranjera' => 'Extranjera',
                         ])
+                        ->reactive()
                         ->searchable()
                         ->default(null),
-                    DatePicker::make('birthdate')
-                        ->label('Fecha de Nacimiento')
-                        ->required(),
+
                     Select::make('birth_country')
                         ->live()
+                        ->reactive()
                         ->label('País de Nacimiento')
                         ->options(function(Get $get,Set $set): array{
+
                             if($get('nationality')==="Mexicana"){
-                                $this->countries = ['México' => 'México'];
-                                $set('birth_country', 'México');
+                                $this->countries = [142 => 'Mexico'];
+                                $set('birth_country', 142);
                             }
                             return $this->countries;
                         })
@@ -103,22 +111,10 @@ class CreateUser extends CreateRecord
                             $country= $get('birth_country');
                             $states = [];
                             if($country){
-                                $statesResponse = Http::withHeaders([
-                                    "Authorization" => "Bearer " . $this->token,
-                                    "Accept" => "application/json",
-                                ])->get("https://www.universal-tutorial.com/api/states/".$country );
-                                $statesArray = json_decode($statesResponse->body(), true);
-                                if (is_array($statesArray)) {
-                                    $states = array_column($statesArray, 'state_name', 'state_name');
-                                } else {
-                                    Notification::make()
-                                        ->title('Error')
-                                        ->danger()
-                                        ->icon('heroicon-o-x-circle')
-                                        ->iconColor('danger')
-                                        ->body('No se pudo obtener la lista de paises')
-                                        ->send();
-                                }
+                                $states= State::where('country_id',$country)
+                                    ->pluck('name','id')
+                                    ->mapWithKeys(fn($name, $id) => [$id => ucfirst($name)])
+                                    ->toArray();
                             }
                             return $states;
                         })
@@ -126,30 +122,17 @@ class CreateUser extends CreateRecord
                         ->default(null),
                     Select::make('birth_city')
                         ->label('Ciudad de Nacimiento')
+                        ->live()
                         ->searchable()
                         ->options(
                             function(Get $get): array{
                                 $state= $get('birth_state');
+                                $cities=[];
                                 if($state){
-                                    $citiesResponse = Http::withHeaders([
-                                        "Authorization" => "Bearer " . $this->token,
-                                        "Accept" => "application/json",
-                                    ])->get("https://www.universal-tutorial.com/api/cities/".$state );
-                                    $citiesArray = json_decode($citiesResponse->body(), true);
-                                    if (is_array($citiesArray)) {
-                                        $cities = array_column($citiesArray, 'city_name', 'city_name');
-                                    } else {
-                                        Notification::make()
-                                            ->title('Error')
-                                            ->danger()
-                                            ->icon('heroicon-o-x-circle')
-                                            ->iconColor('danger')
-                                            ->body('No se pudo obtener la lista de ciudades')
-                                            ->send();
-                                        $cities = [];
-                                    }
-                                }else{
-                                    $cities = [];
+                                    $cities=City::where('state_id',$state)
+                                        ->pluck('name','id')
+                                        ->mapWithKeys(fn($name, $id) => [$id => ucfirst($name)])
+                                        ->toArray();
                                 }
                                 return $cities;
                             }
@@ -376,13 +359,17 @@ class CreateUser extends CreateRecord
                     TextInput::make('rfc')
                         ->label('RFC')
                         ->maxLength(13)
+                        ->required()
+                        ->unique('users', 'rfc', fn ($record) => $record ? $record->id : null)
                         ->default(null),
                     TextInput::make('imss')
                         ->label('Número de Seguridad Social')
                         ->maxLength(11)
+                        ->required()
+                        ->unique('users', 'imss', fn ($record) => $record ? $record->id : null)
                         ->default(null),
-
-                    DatePicker::make('entry_date'),
+                    DatePicker::make('entry_date')
+                    ->label('Fecha de ingreso'),
                 ])->columns(2),
             Step::make('Configurar Usuario')
                 ->schema([
@@ -400,7 +387,7 @@ class CreateUser extends CreateRecord
                     TextInput::make('email')
                         ->email()
                         ->required()
-                        ->unique()
+                        ->unique('users', 'email', fn ($record) => $record ? $record->id : null)
                         ->maxLength(80),
                     DateTimePicker::make('email_verified_at'),
                     TextInput::make('password')
@@ -456,18 +443,10 @@ class CreateUser extends CreateRecord
 
         }
 
-        $countriesArray = json_decode($countriesResponse->body(), true);
-        if (is_array($countriesArray)) {
-            $this->countries = array_column($countriesArray, 'country_name', 'country_name');
-        } else {
-            Notification::make()
-                ->title('Error')
-                ->message('No se pudo obtener la lista de paises')
-                ->type('error')
-                ->show();
-        }
-
-        //$this->countries = array_column($countriesArray, 'country_name', 'country_name');
+        $this->countries= Country::all()
+            ->pluck('name','id')
+            ->mapWithKeys(fn($name, $id) => [$id => ucfirst($name)])
+            ->toArray();
 
         parent::mount(); // TODO: Change the autogenerated stub
     }

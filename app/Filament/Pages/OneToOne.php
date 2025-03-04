@@ -2,14 +2,17 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Indicator;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\OneToOneEvaluation;
 use Filament\Forms;
+use App\Models\CultureTopic;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
-
 use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -22,14 +25,16 @@ use App\Models\Evaluation360Response;
 use App\Models\Psychometry;
 use App\Models\User;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use mysql_xdevapi\Collection;
 
 
 class OneToOne extends Page implements HasForms
 {
     use InteractsWithForms;
     public ?array $data = [];
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-m-chat-bubble-left-right';
     protected static ?string $navigationLabel = 'One to One';
     protected static ?string $navigationGroup = 'Evaluaciones';
     protected ?string $heading = 'Ficha de evaluación One to One';
@@ -47,8 +52,12 @@ class OneToOne extends Page implements HasForms
     public $showEvaluation=false;
     public $themes;
     public $theme;
+    public $evaluation, $evaluations;
     public $date_ended;
     public $comments;
+    public $existEvaluations;
+    public $showResults=false;
+    public $indicatorProgresses;
     public $quadrant;
     public $titles = [
         9 => 'Futuro Líder',
@@ -62,23 +71,38 @@ class OneToOne extends Page implements HasForms
         1 => 'Bajo Perfil',
     ];
 
+
     protected function getForms(): array
     {
         return [
             'formCultura',
+            'formRetroalimentacion',
             'formDesempeno',
             'formDesarrollo',
             'formAsuntos',
         ];
     }
-
-
-    public function mount()
+    public static function canView(): bool
     {
+        //Este Panel solo lo debe de ver los Jefes de Área y el Administrador
+        //Se debe de agregar la comprobación de que estpo se cumpla para que solo sea visible para los Jefes de Área
+        if (\auth()->user()->hasRole('Jefe de Área') || \auth()->user()->hasRole('Administrador') || \auth()->user()->hasRole('Administrador')) {
+            return true;
+        }else{
+            return false;
+        }
 
+    }
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Esto controla la visibilidad en la navegación.
+        return static::canView();
+    }
+    public function mount($evaluationId = null)
+    {
         $this->campaignId = Campaign::whereStatus('Activa')->first()->id;
         $supervisorId = auth()->user()->position_id;
-
+        $this->themes = collect();
         $this->users = User::where('status', true)
             ->whereNotNull('department_id')
             ->whereNotNull('position_id')
@@ -87,178 +111,150 @@ class OneToOne extends Page implements HasForms
                 $query->where('supervisor_id', $supervisorId);
             })
             ->get();
+        $this->evaluation=new OneToOneEvaluation();
 
     }
     public function formCultura(Form $form): Form
     {
-
         return $form
+            ->model($this->evaluation)
             ->schema([
-                Repeater::make('Tema')
+                Repeater::make('cultureTopics')
+                    ->relationship() // Relación con el modelo CultureTopic
                     ->schema([
                         TextInput::make('theme')
                             ->label('Tema')
+                            ->required(),
+                        DatePicker::make('scheduled_date')
+                            ->label('Fecha programada')
+                            ->minDate(now())
                             ->required(),
                         Textarea::make('comments')
                             ->label('Comentarios')
                             ->rows(3)
                             ->placeholder('Escribe los comentarios aquí...'),
-                        DatePicker::make('date_ended')
-                            ->label('Fecha programada')
-                            ->required(),
+                        Textarea::make('commitments')
+                            ->label('Compromisos')
+                            ->rows(3)
+                            ->placeholder('Escribe los compromisos aquí...'),
+
                         TextInput::make('progress')
-                            ->label('Avance')
-                            ->type('number')
+                            ->label('Avance (%)')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100)
                             ->required(),
                     ])
-                    ->label('Temas a tratar')
-                    ->itemLabel(fn($state):?string => ($state['theme'])??null)
+                    ->label('Temas de Cultura')
+                    ->itemLabel(fn (array $state): ?string => $state['theme'] ?? null)
                     ->collapsed()
                     ->columns(2),
-            ])->statePath('data');
+            ])
+
+            ->statePath('data');
     }
     public function formDesempeno(Form $form): Form
     {
 
         return $form
+            ->model($this->evaluation)
             ->schema([
-                Repeater::make('evaluaciones')
+                Repeater::make('performanceEvaluations')
+                    ->relationship('performanceEvaluations') // Relación con el modelo PerformanceEvaluation
                     ->schema([
-                        Select::make('evaluation_type_id')
-                            ->label('Evaluación')
-                            ->options([
-                                '1' => '360',
-                                '2' => '9 box',
-                                '3' => 'Psicometría',
-                            ])
-                            ->required(),
-                        TextInput::make('qualify')
-                            ->label('Ponderación')
-                            ->type('number')
-                            ->required(),
-                        TextInput::make('qualify_translate')
-                            ->label('Calificación')
-                            ->required(),
                         Textarea::make('comments')
                             ->label('Comentarios')
-                            ->placeholder('Ingresa los Commentarios - Acuerdos y Compromisos')
+                            ->placeholder('Ingresa los comentarios, acuerdos y compromisos...')
                             ->required(),
-                        DatePicker::make('date_ended')
-                            ->label('Fecha programada')
-                            ->required(),
-                        TextInput::make('progress')
-                            ->label('Avance')
-                            ->type('number')
+                        Textarea::make('commitments')
+                            ->label('Compromisos')
+                            ->placeholder('Ingresa los comentarios, acuerdos y compromisos...')
                             ->required(),
                     ])
-                    ->label('Evaluaciones')
-                    ->itemLabel(fn($state): ?string => match($state['evaluation_type_id']) {
-                        '1' => 'Evaluación 360',
-                        '2' => '9 box',
-                        '3' => 'Psicometría',
-                        default => '',
-                    })
-                    ->columns(2)
-                    ->collapsed(),
-                Repeater::make('indicadores')
-                    ->schema([
-                       Select::make('indicator')
-                            ->label('Indicador')
-                            ->options([
-                                '1' => 'Indicador 1',
-                                '2' => 'Indicador 2',
-                                '3' => 'Indicador 3',
-                                '4' => 'Indicador 4',
-                                '5' => 'Indicador 5',
-                            ])
-                            ->required(),
-                        TextInput::make('qualify')
-                            ->label('Ponderación')
-                            ->type('number')
-                            ->required(),
-                        TextInput::make('qualify_translate')
-                            ->label('Calificación')
-                            ->required(),
-                        Textarea::make('comments')
-                            ->label('Comentarios')
-                            ->placeholder('Describa los Commentarios - Acuerdos y Compromisos')
-                            ->required(),
-                        DatePicker::make('date_ended')
-                            ->label('Fecha programada')
-                            ->required(),
-                        TextInput::make('progress')
-                            ->label('Avance')
-                            ->type('number')
-                            ->required(),
-                    ])
-                    ->itemLabel(fn($state): ?string => match($state['indicator']) {
-                        '1' => 'Indicador 1',
-                        '2' => 'Indicador 2',
-                        '3' => 'Indicador 3',
-                        '4' => 'Indicador 4',
-                        '5' => 'Indicador 5',
-                        default => '',
-                    })
-                    ->columns(2)
+                    ->label('Evaluaciones de Desempeño')
+                    ->itemLabel('Comentarios y Compromisos')
                     ->collapsed()
+                    ->maxItems(1)
+                    ->columns(2)
             ])->statePath('data');
               // Guarda los datos en dataDos
 
     }
+    public function formRetroalimentacion(Form $form):Form
+    {
+        return $form
+            ->model($this->evaluation)
+            ->schema([
+                Repeater::make('performanceFeedback')
+                    ->relationship('performanceFeedback') // Relación con el modelo PerformanceFeedback
+                    ->schema([
+                        Textarea::make('strengths')
+                        ->label('Fortalezas Detectadas')
+                        ->rows(3)
+                        ->placeholder('Describe las fortalezas detectadas...'),
+                        Textarea::make('opportunities')
+                            ->label('Áreas de Oportunidad')
+                            ->rows(3)
+                            ->placeholder('Describe las áreas de oportunidad...'),
+                    ])
+                    ->label('Evaluaciones de Desempeño')
+                    ->itemLabel('Comentarios y Compromisos')
+                    ->columns(2)
+                    ->maxItems(1)
+            ])
+            ->statePath('data');
+
+    }
     public function formDesarrollo(Form $form): Form
     {
-
         return $form
+            ->model($this->evaluation)
             ->schema([
-                Repeater::make('fortalezas_detectadas')
+                Repeater::make('developmentPlans')
+                    ->relationship('developmentPlans') // Relación con el modelo DevelopmentPlan
                     ->schema([
-                        Textarea::make('fortaleza')
-                            ->label('Fortalezas Autodetectadas')
+                        TextInput::make('development_area')
+                            ->label('Área de Desarrollo')
                             ->required(),
-                    ])->maxItems(1)
-                ->itemLabel('Fortalezas Autodetectadas')
-                ->collapsed(),
-                Repeater::make('áreas_de_oportunidad')
-                ->schema([
-                    Textarea::make('oportunidad')
-                        ->label('Áreas de Oportunidad Autodetctadas')
-                        ->required(),
-                ])->maxItems(1)
-                    ->itemLabel('Áreas de Oportunidad Autodetectadas')
-                    ->collapsed(),
-                Repeater::make('plan')
-                ->schema([
-                    TextInput::make('area')
-                    ->required()
-                        ->label('Área de Desarrollo')
-                        ->placeholder('Escribe el área de desarrollo'),
-                    TextInput::make('avance')
-                    ->required()
-                        ->label('Avance')
-                        ->type('number'),
-                    DatePicker::make('date_ended')
-                    ->required()
-                        ->label('Fecha programada'),
-                ])->itemLabel('Área de Desarrollo')
-                    ->columns(2)
+                        TextInput::make('progress')
+                            ->label('Avance (%)')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100)
+                            ->required(),
+                        DatePicker::make('scheduled_date')
+                            ->label('Fecha programada')
+                            ->required(),
+                        Select::make('learning_type')
+                            ->label('Tipo de Aprendizaje')
+                            ->options([
+                                'experiential' => 'Experiencial',
+                                'social' => 'Social',
+                                'structured' => 'Estructurado',
+                            ])
+                            ->required(),
+                    ])
+                    ->itemLabel('Planes de Desarrollo')
+                    ->itemLabel(fn (array $state): ?string => $state['development_area'] ?? null)
                     ->collapsed()
-            ])->statePath('data');
-
-
-     }
+                    ->columns(2),
+            ])
+            ->statePath('data');
+    }
     public function formAsuntos(Form $form): Form
     {
-
         return $form
+            ->model($this->evaluation)
             ->schema([
-                Repeater::make('other_topics')
+                Repeater::make('miscellaneousTopics')
+                    ->relationship('miscellaneousTopics') // Relación con el modelo MiscellaneousTopic
                     ->schema([
                         Select::make('who_says')
-                            ->label('Por parte de:')
+                            ->label('Generado por')
                             ->options([
-                                '1' => 'Colaborador',
-                                '2' => 'Supervisor',
-                                '3' => 'Ambos',
+                                'collaborator' => 'Colaborador',
+                                'supervisor' => 'Supervisor',
+                                'both' => 'Ambos',
                             ])
                             ->required(),
                         TextInput::make('topic')
@@ -266,39 +262,74 @@ class OneToOne extends Page implements HasForms
                             ->required(),
                         Textarea::make('comments')
                             ->label('Comentarios')
-                            ->placeholder('Describa los Commentarios - Acuerdo y Compromiso')
+                            ->placeholder('Describe los comentarios, acuerdos y compromisos...')
                             ->required(),
-                        DatePicker::make('date_ended')
+                        DatePicker::make('scheduled_date')
                             ->label('Fecha programada')
                             ->required(),
                         TextInput::make('progress')
-                            ->label('Avance')
-                            ->type('number')
+                            ->label('Avance (%)')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100)
                             ->required(),
-                    ])->label('Asuntos Varios')
-                    ->columns(2)
+                    ])
+                    ->label('Asuntos Varios')
+                    ->itemLabel(fn (array $state): ?string => $state['topic'] ?? null)
                     ->collapsed()
-            ])->statePath('data');
-
-     }
-
-
+                    ->columns(2),
+            ])
+            ->statePath('data');
+    }
 
     public function updatedUser($value): void
     {
-        // dd($this->user);
+        // Reinicializar todas las variables de estado
+        $this->reset([
+            'showResults',
+            'show',
+            'showEvaluation',
+            'evaluation360',
+            'evaluationPotential',
+            'quadrant',
+        ]);
+
+        if (!$value) {
+            $this->reset(['evaluations', 'existEvaluations']);
+            return;
+        }
+        // Cargar datos del usuario
         $this->userToEvaluated = User::find($value);
-        $this->evaluation360 = round($this->getAverage360($this->userToEvaluated->id, $this->campaignId),2);
-        $this->evaluationPotential = round($this->getAveragePotential($this->userToEvaluated->id),2);
-        // Mapear los puntajes a niveles (1: Bajo, 2: Medio, 3: Alto)
+        $userId=$this->userToEvaluated->id;
+
+        // Cargar TODAS las evaluaciones del año actual
+        $this->evaluations = OneToOneEvaluation::where('user_id', $userId)
+            ->whereYear('evaluation_date', now()->year)
+            ->orderBy('evaluation_date', 'desc')
+            ->get();
+
+        // Establecer existEvaluations basado en la colección de evaluaciones
+        $this->existEvaluations = $this->evaluations->isNotEmpty();
+
+        // Solo asignar la última evaluación si existe
+        if ($this->existEvaluations) {
+            $this->evaluation = $this->evaluations->first();
+        } else {
+            $this->evaluation = new OneToOneEvaluation();
+        }
+        // Calcular promedios
+        $this->evaluation360 = round($this->getAverage360($userId, $this->campaignId), 2);
+        $this->evaluationPotential = round($this->getAveragePotential($userId), 2);
+
+        // Calcular niveles y cuadrante
         $performanceLevel = $this->mapScoreToLevel($this->evaluation360);
         $potentialLevel = $this->mapScoreToLevel($this->evaluationPotential);
-
-        // Calcular el cuadrante (1 a 9)
         $this->quadrant = ($performanceLevel - 1) * 3 + $potentialLevel;
-        $this->themes=collect();
-        $this->show = true;
 
+        $this->getIndicatorProgressesForUser($userId);
+        // Activar las banderas de visualización
+        $this->showResults = true;
+        $this->show = true;
     }
     public function getAverage360($user_id, $campaign_id)
     {
@@ -341,6 +372,15 @@ class OneToOne extends Page implements HasForms
             ->first();
     }
 
+    public function getIndicatorProgressesForUser($userId)
+    {
+
+        $this->indicatorProgresses = Indicator::where('user_id', $userId)
+            ->with('progresses')// Cargar progresos relacionados
+            ->get(); // Devuelve los indicadores con progresos
+
+        return $this->indicatorProgresses;
+    }
     public function addTheme()
     {
         $this->dispatch('open-modal', id: 'add-theme-modal');
@@ -356,12 +396,76 @@ class OneToOne extends Page implements HasForms
     {
         //Rutina para crear la evaluación si es primera evalaución
         //Rutina para actualizar la evaluación si ya existe
+
+        $existingEvaluation = OneToOneEvaluation::where('user_id', $this->userToEvaluated->id)
+            ->whereYear('evaluation_date', now()->year)
+            ->first();
+
+        if ($existingEvaluation) {
+            Notification::make()
+                ->warning()
+                ->title('Ya existe una evaluación para este colaborador en el año actual.')
+                ->send();
+            return;
+        }
+
+        // Crea la evaluación
+        $this->evaluation = OneToOneEvaluation::create([
+            'user_id' => $this->userToEvaluated->id,
+            'supervisor_id' => auth()->id(),
+            'evaluation_date' => now(),
+            'status' => 'in_progress',
+            'initial'=>false,
+            'follow_up'=>false,
+            'consolidated'=>false,
+            'final'=>false,
+        ]);
+
+        // Notifica al colaborador
+       // $this->userToEvaluated->notify(new OneToOneEvaluationCreated($this->evaluation));
+
         Notification::make()
             ->success()
             ->title('Se ha creado la Evaluación One to One')
             ->send();
-        $this->show=false;
-        $this->showEvaluation=true;
+
+        // Actualiza el estado para mostrar los formularios
+        $this->show = false;
+        $this->showEvaluation = true;
+
+        // Llama a mount() para llenar los formularios con la evaluación recién creada
+        $this->mount($this->evaluation->id);
+
+    }
+
+    public function editEvaluation($evaluationId)
+    {
+        $this->showResults = false;
+        $this->showEvaluation = true;
+
+        // Carga la evaluación existente con sus relaciones
+        $this->evaluation = OneToOneEvaluation::with([
+            'cultureTopics',
+            'performanceEvaluations',
+            'performanceFeedback',
+            'developmentPlans',
+            'miscellaneousTopics',
+        ])->findOrFail($evaluationId);
+
+        // Asigna los datos a la propiedad $data
+        $this->data = [
+            'cultureTopics' => $this->evaluation->cultureTopics->toArray(),
+            'performanceEvaluations' => $this->evaluation->performanceEvaluations->toArray(),
+            'performanceFeedback' => $this->evaluation->performanceFeedback->toArray(),
+            'developmentPlans' => $this->evaluation->developmentPlans->toArray(),
+            'miscellaneousTopics' => $this->evaluation->miscellaneousTopics->toArray()
+        ];
+        // Reinicializa los formularios
+        $this->formCultura->fill($this->data);
+        $this->formDesempeno->fill($this->data);
+        $this->formRetroalimentacion->fill($this->data);
+        $this->formDesarrollo->fill($this->data);
+        $this->formAsuntos->fill($this->data);
 
     }
     private function mapScoreToLevel($score)
@@ -373,6 +477,144 @@ class OneToOne extends Page implements HasForms
         } else {
             return 1; // Bajo
         }
+    }
+
+    public function saveEvaluation(): void
+    {
+        DB::beginTransaction();
+
+        try {
+            // Guardar el modelo asociado al formulario
+            $this->evaluation->save();
+
+            // Guardar los datos de cada formulario
+            $this->formCultura->saveRelationships();
+            $this->formDesempeno->saveRelationships();
+            $this->formRetroalimentacion->saveRelationships();
+            $this->formDesarrollo->saveRelationships();
+            $this->formAsuntos->saveRelationships();
+
+            DB::commit();
+
+            // Mostrar una notificación de éxito
+            Notification::make()
+                ->success()
+                ->title('Evaluación guardada correctamente')
+                ->send();
+        } catch (QueryException $e) {
+            DB::rollBack();
+            // Mostrar una notificación de error
+            Notification::make()
+                ->danger()
+                ->title('Error al guardar la evaluación')
+                ->body('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.')
+                ->send();
+
+            // Registrar el error en los logs
+            \Log::error('Error al guardar la evaluación One to One: ' . $e->getMessage());
+        }
+    }
+    public function clearResults():void
+    {
+        $this->reset([
+            'showResults',
+            'show',
+            'showEvaluation',
+            'evaluation360',
+            'evaluationPotential',
+            'quadrant',
+            'user',
+            'userToEvaluated',
+            'evaluation',
+            'evaluations',
+            'existEvaluations',
+        ]);
+        $this->mount();
+    }
+    public function finishEvaluation()
+    {
+        if ($this->evaluation->initial && $this->evaluation->follow_up && $this->evaluation->consolidated) {
+            $this->evaluation->final = true;
+            $this->evaluation->status = 'completed';
+            Notification::make()
+                ->success()
+                ->title('Evaluación finalizada')
+                ->send();
+            $this->clearResults();
+        }elseif($this->evaluation->initial && $this->evaluation->follow_up){
+            $this->evaluation->consolidated=true;
+        }elseif($this->evaluation->initial){
+            $this->evaluation->follow_up=true;
+        }elseif(!$this->evaluation->initial){
+            $this->evaluation->initial=true;
+        }else {
+            Notification::make()
+                ->warning()
+                ->title('No se puede finalizar la evaluación')
+                ->body('La evaluación debe estar en estado "Inicial", "Seguimiento" y "Consolidada" para poder finalizarla.')
+                ->send();
+        }
+
+
+        DB::beginTransaction();
+
+        try {
+            // Guardar el modelo asociado al formulario
+            $this->evaluation->save();
+
+            // Guardar los datos de cada formulario
+            $this->formCultura->saveRelationships();
+            $this->formRetroalimentacion->saveRelationships();
+            $this->formDesempeno->saveRelationships();
+            $this->formDesarrollo->saveRelationships();
+            $this->formAsuntos->saveRelationships();
+
+            DB::commit();
+
+            // Mostrar una notificación de éxito
+            Notification::make()
+                ->success()
+                ->title('Evaluación finalizada correctamente para el usuario ' . $this->userToEvaluated->name)
+                ->send();
+        } catch (QueryException $e) {
+            DB::rollBack();
+            // Mostrar una notificación de error
+            Notification::make()
+                ->danger()
+                ->title('Error al guardar la evaluación')
+                ->body('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.')
+                ->send();
+
+            // Registrar el error en los logs
+            \Log::error('Error al guardar la evaluación One to One: ' . $e->getMessage());
+        }
+    }
+    public function generatePdf()
+    {
+        // Cargar la evaluación con todas sus relaciones
+        $evaluation = OneToOneEvaluation::with([
+            'user',
+            'cultureTopics',
+            'performanceEvaluations',
+            'performanceFeedback',
+            'developmentPlans',
+            'miscellaneousTopics'
+        ])->findOrFail($this->evaluation->id);
+
+        // Generar el PDF
+        $pdf = Pdf::loadView('pdf.report-face-to-face', [
+            'evaluation' => $evaluation,
+            'eva360' => $this->evaluation360,
+            'evaPotential' => $this->evaluationPotential,
+            'quadrant' => $this->quadrant,
+            'interpretation'=>$this->titles[$this->quadrant],
+            'indicadores' => $this->indicatorProgresses,
+        ]);
+
+        // Descargar el PDF
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, "F2F-{$evaluation->user->name}.pdf");
     }
 
 }

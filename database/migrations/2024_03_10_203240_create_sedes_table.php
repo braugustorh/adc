@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sedes', function (Blueprint $table) {
             $table->id();
             $table->string('name',150)->index();
+            $table->integer('open_positions')->default(0);
             $table->string('address',255)->nullable();
             $table->Integer('cp')->nullable();
             $table->string('phone',10)->nullable();

@@ -3,48 +3,41 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
-use App\Models\City;
-use App\Models\Country;
 use App\Models\Department;
 use App\Models\Position;
-use App\Models\State;
-use App\Models\User;
+use App\Models\Sede;
+use Faker\Provider\Text;
 use Filament\Actions;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Collection;
+use Livewire\Component;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TextArea;
+use Filament\Forms\Get;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components;
 use Illuminate\Support\Facades\Http;
 use mysql_xdevapi\TableSelect;
-use PhpParser\Node\Scalar\String_;
+use function Laravel\Prompts\search;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Hash;
 
-class EditUser extends EditRecord
+class CreateUserOLD extends CreateRecord
 {
-    use EditRecord\Concerns\HasWizard;
-
+    use CreateRecord\Concerns\HasWizard;
     protected static string $resource = UserResource::class;
-    protected static ?string $title='Editar Usuarios';
-
-    public $token;
-    public String $cp;
+    //public static string $title = 'Crear Usuario';
     public $countries=[];
+    public $bStates;
+    public $token;
     public $estadosMexico=[];
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
+    protected static ?string $title='Crear Usuarios';
     protected function getSteps():array
     {
         return [
@@ -66,7 +59,7 @@ class EditUser extends EditRecord
                     TextInput::make('curp')
                         ->label('CURP')
                         ->required()
-                        ->unique('users', 'curp', fn ($record) => $record )
+                        ->unique('users', 'curp', fn ($record) => $record ? $record->id : null)
                         ->maxLength(18)
                         ->afterStateHydrated(function (Get $get,Set $set):string{
                             return $set ('curp', strtoupper($get('curp')));
@@ -92,12 +85,12 @@ class EditUser extends EditRecord
                         ->required(),
                     Select::make('birth_country')
                         ->live()
-                        ->reactive()
                         ->label('País de Nacimiento')
                         ->options(function(Get $get,Set $set): array{
+
                             if($get('nationality')==="Mexicana"){
-                                $this->countries = [142 => 'Mexico'];
-                                $set('birth_country', 142);
+                                $this->countries = ['México' => 'México'];
+                                $set('birth_country', 'México');
                             }
                             return $this->countries;
                         })
@@ -106,22 +99,32 @@ class EditUser extends EditRecord
                         ->default(null),
                     Select::make('birth_state')
                         ->live()
-                        ->reactive()
                         ->searchable()
                         ->label('Estado de Nacimiento')
                         ->options(function(Get $get): array{
-                                $country= $get('birth_country');
-                                $states = [];
-                                if($country){
-                                    $states=State::where('country_id',$country)
-                                       ->pluck('name','id')
-                                       ->mapWithKeys(fn($name, $id) => [$id => ucfirst($name)])
-                                      ->toArray();
+                            $country= $get('birth_country');
+                            $states = [];
+                            if($country){
+                                $statesResponse = Http::withHeaders([
+                                    "Authorization" => "Bearer " . $this->token,
+                                    "Accept" => "application/json",
+                                ])->get("https://www.universal-tutorial.com/api/states/".$country );
+                                $statesArray = json_decode($statesResponse->body(), true);
+                                if (is_array($statesArray)) {
+                                    $states = array_column($statesArray, 'state_name', 'state_name');
+                                } else {
+                                    Notification::make()
+                                        ->title('Error')
+                                        ->danger()
+                                        ->icon('heroicon-o-x-circle')
+                                        ->iconColor('danger')
+                                        ->body('No se pudo obtener la lista de paises')
+                                        ->send();
                                 }
+                            }
                             return $states;
                         })
-                        ->loadingMessage('Cargando Estado...')
-                        ->searchingMessage('Buscando Estados...')
+                        ->loadingMessage('Cargando Estados...')
                         ->default(null),
                     Select::make('birth_city')
                         ->label('Ciudad de Nacimiento')
@@ -129,12 +132,26 @@ class EditUser extends EditRecord
                         ->options(
                             function(Get $get): array{
                                 $state= $get('birth_state');
-                                $cities = [];
                                 if($state){
-                                    $cities=City::where('state_id',$state)
-                                        ->pluck('name','id')
-                                        ->mapWithKeys(fn($name, $id) => [$id => ucfirst($name)])
-                                        ->toArray();
+                                    $citiesResponse = Http::withHeaders([
+                                        "Authorization" => "Bearer " . $this->token,
+                                        "Accept" => "application/json",
+                                    ])->get("https://www.universal-tutorial.com/api/cities/".$state );
+                                    $citiesArray = json_decode($citiesResponse->body(), true);
+                                    if (is_array($citiesArray)) {
+                                        $cities = array_column($citiesArray, 'city_name', 'city_name');
+                                    } else {
+                                        Notification::make()
+                                            ->title('Error')
+                                            ->danger()
+                                            ->icon('heroicon-o-x-circle')
+                                            ->iconColor('danger')
+                                            ->body('No se pudo obtener la lista de ciudades')
+                                            ->send();
+                                        $cities = [];
+                                    }
+                                }else{
+                                    $cities = [];
                                 }
                                 return $cities;
                             }
@@ -206,29 +223,29 @@ class EditUser extends EditRecord
                         ->label('Colonia')
                         ->live()
                         ->options(function(Get $get): array {
-                                $estado = $get('state');
-                                $ciudad = $get('city');
-                                $colonies = [];
-                                if ($ciudad && $estado) {
-                                    $coloniesResponse = Http::withHeaders([
-                                        "Accept" => "application/json",
-                                        "APIKEY" => "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
-                                    ])->get('https://api.tau.com.mx/dipomex/v1/colonias?id_estado='.$estado.'&id_mun='.$ciudad);
-                                    $coloniesArray = json_decode($coloniesResponse->body(), true);
-                                    if (is_array($coloniesArray)) {
-                                        $colonies = array_column($coloniesArray['colonias'], 'COLONIA', 'ASENTA_ID');
-                                    } else {
-                                        Notification::make()
-                                            ->title('Error')
-                                            ->danger()
-                                            ->icon('heroicon-o-x-circle')
-                                            ->iconColor('danger')
-                                            ->body('No se logró obtener la lista de colonias')
-                                            ->send();
-                                    }
+                            $estado = $get('state');
+                            $ciudad = $get('city');
+                            $colonies = [];
+                            if ($ciudad && $estado) {
+                                $coloniesResponse = Http::withHeaders([
+                                    "Accept" => "application/json",
+                                    "APIKEY" => "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
+                                ])->get('https://api.tau.com.mx/dipomex/v1/colonias?id_estado='.$estado.'&id_mun='.$ciudad);
+                                $coloniesArray = json_decode($coloniesResponse->body(), true);
+                                if (is_array($coloniesArray)) {
+                                    $colonies = array_column($coloniesArray['colonias'], 'COLONIA', 'ASENTA_ID');
+                                } else {
+                                    Notification::make()
+                                        ->title('Error')
+                                        ->danger()
+                                        ->icon('heroicon-o-x-circle')
+                                        ->iconColor('danger')
+                                        ->body('No se logró obtener la lista de colonias')
+                                        ->send();
                                 }
-                                return $colonies;
                             }
+                            return $colonies;
+                        }
                         )
                         ->searchable()
                         ->loadingMessage('Cargando Colonias...')
@@ -238,7 +255,7 @@ class EditUser extends EditRecord
 
                             $postalCode = $colonia;
                             if($colonia!==null){
-                                //dd($colonia);
+                                dd($colonia);
                                 return $set('cp', $postalCode);
                             }else{
                                 return $set('cp', '');
@@ -314,7 +331,7 @@ class EditUser extends EditRecord
                             'Ciencias de la Salud' => 'Ciencias de la Salud',
                             'Artes' => 'Artes',
                             'Administración' => 'Administración',
-                            'Tecnología' => 'Tecnología',
+                            'Teconología' => 'Teconología',
                             'Otra' => 'Otra',
                         ])
                         ->default(null),
@@ -322,9 +339,12 @@ class EditUser extends EditRecord
             Step::make('Información Laboral')
                 // ->description('This is the fourth step of the wizard.')
                 ->schema([
-
+                    TextInput::make('employee_code')
+                    ->label('Número de empleado')
+                    ->required(),
                     Select::make('sede_id')
                         ->label('Sede')
+                        ->preload()
                         ->live()
                         ->searchable()
                         ->relationship('sede', 'name')
@@ -343,36 +363,31 @@ class EditUser extends EditRecord
                             ->where('department_id', $get('department_id'))
                             ->pluck('name', 'id'))
                         ->default(null),
+
                     Select::make('contract_type')
                         ->label('Tipo de Contrato')
                         ->options([
-                            'Temporal' => 'Temporal',
-                            'De Confianza' => 'De Confianza',
+                            'Confianza' => 'De Confianza',
                             'Sindicalizado' => 'Sindicalizado',
+                            'Eventual' => 'Eventual',
+                            'Honorarios' => 'Honorarios',
+                            'Prácticas' => 'Prácticas',
+                            'Otro' => 'Otro',
                         ])
-                        ->default(null),
-                    TextInput::make('employee_code')
-                        ->label('Número de Empleado')
-                        ->maxLength(10)
                         ->default(null),
                     TextInput::make('rfc')
                         ->label('RFC')
-                        ->autocapitalize('characters')
-                        ->helperText('Debe de contener 13 caractéres')
-                        ->length(13)
+                        ->maxLength(13)
                         ->required()
-                        ->unique('users', 'rfc', fn ($record) => $record)
-                        ->disableAutocomplete()
-                        //->mask('/^[A-Z]{4}[0-9]{6}[A-Z0-9]{3}*$/')
+                        ->unique('users', 'rfc', fn ($record) => $record ? $record->id : null)
                         ->default(null),
                     TextInput::make('imss')
                         ->label('Número de Seguridad Social')
                         ->maxLength(11)
                         ->required()
-                        ->unique('users', 'imss', fn ($record) => $record )
+                        ->unique('users', 'imss', fn ($record) => $record ? $record->id : null)
                         ->default(null),
-                    DatePicker::make('entry_date')
-                    ->label('Fecha de Ingreso'),
+                    DatePicker::make('entry_date'),
                 ])->columns(2),
             Step::make('Configurar Usuario')
                 ->schema([
@@ -390,15 +405,19 @@ class EditUser extends EditRecord
                     TextInput::make('email')
                         ->email()
                         ->required()
-                        ->unique('users', 'email', fn ($record) => $record)
+                        ->unique('users', 'email', fn ($record) => $record ? $record->id : null)
                         ->maxLength(80),
+                    DateTimePicker::make('email_verified_at'),
                     TextInput::make('password')
                         ->label('Contraseña')
                         ->password()
                         ->revealable()
-                        ->disableAutocomplete()
-                        ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                        ->dehydrated(fn ($state) => filled($state))
+                        ->confirmed()
+                        ->maxLength(255),
+                    TextInput::make('password_confirmation')
+                        ->label('Confirmar Contraseña')
+                        ->password()
+                        ->revealable()
                         ->maxLength(255),
                     Select::make('roles')
                         ->multiple()
@@ -406,15 +425,11 @@ class EditUser extends EditRecord
                         ->searchable()
                         ->relationship('roles', 'name'),
                 ])->columns(2),
-
         ];
     }
-    public function hasSkippableSteps(): bool
+    public function mount(): void
     {
-        return true;
-    }
-    public function mount($record):void
-    {
+
         $response = Http::withHeaders([
             "Accept"=> "application/json",
             "api-token"=> "qJgEjApgNVP3YZKIwiOoZdiZJh4SXjMy2AD0MPr4erJziEaPKK98avKzs850wQdYYBs",
@@ -426,7 +441,6 @@ class EditUser extends EditRecord
             "Authorization"=>"Bearer ". $this->token,
             "Accept"=> "application/json",
         ])->get("https://www.universal-tutorial.com/api/countries/");
-
         $res=Http::withHeaders([
             "Accept"=> "application/json",
             "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
@@ -435,7 +449,7 @@ class EditUser extends EditRecord
         $colonyArray=json_decode($res->body(),true);
         if (is_array($colonyArray)) {
 
-          $this->estadosMexico = array_column($colonyArray['estados'], 'ESTADO', 'ESTADO_ID');
+            $this->estadosMexico = array_column($colonyArray['estados'], 'ESTADO', 'ESTADO_ID');
         }else{
             Notification::make()
                 ->title('Error')
@@ -446,12 +460,23 @@ class EditUser extends EditRecord
                 ->send();
 
         }
-        $user = User::find($record);
-        $this->countries=Country::all()->pluck('name','id')->toArray();
 
+        $countriesArray = json_decode($countriesResponse->body(), true);
+        if (is_array($countriesArray)) {
+            $this->countries = array_column($countriesArray, 'country_name', 'country_name');
+        } else {
+            Notification::make()
+                ->title('Error')
+                ->danger()
+                ->icon('heroicon-o-x-circle')
+                ->iconColor('danger')
+                ->body('No se pudo obtener la lista de paises')
+                ->send();
+        }
 
+        //$this->countries = array_column($countriesArray, 'country_name', 'country_name');
 
-        parent::mount($record); // TODO: Change the autogenerated stub
-
+        parent::mount(); // TODO: Change the autogenerated stub
     }
+
 }

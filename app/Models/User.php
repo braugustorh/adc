@@ -4,19 +4,26 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Filament\Panel;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
-
+    public function canAccessPanel(Panel $panel): bool
+    {
+        //return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
+        return true;
+    }
     /**
      * The attributes that are mass assignable.
      *
@@ -56,9 +63,9 @@ class User extends Authenticatable
         'emergency_name',
         'emergency_phone',
         'relationship_contact',
+        'employee_code',
         'employee_number',
         'imss',
-
     ];
 
     /**
@@ -105,4 +112,13 @@ class User extends Authenticatable
     public function evaluationResponses360Evaluated(): hasMany{
         return $this->hasMany(Evaluation360Response::class, 'evaluated_user_id');
     }
+    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->morphToMany(Role::class, 'model', 'model_has_roles', 'model_id', 'role_id');
+    }
+    public function indicators(): hasMany
+    {
+        return $this->hasMany(Indicator::class);
+    }
+
 }

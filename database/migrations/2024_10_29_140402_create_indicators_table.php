@@ -18,10 +18,14 @@ return new class extends Migration
             $table->string('name');
             $table->text('objective_description');
             $table->string('evaluation_formula');
-            $table->string('periodicity');
+            $table->string('indicator_type');
             $table->integer('target_value');
             $table->string('type_of_target');
+            $table->string('indicator_unit_id', 15);
+            $table->string('periodicity');
             $table->string('target_period');
+            $table->date('target_period_start');
+            $table->date('target_period_end');
             $table->timestamps();
         });
     }

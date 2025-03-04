@@ -66,7 +66,7 @@
                         <br>
 
                     </p>
-                    <button class="btn btn-danger px-5 mb-5" type="button"  onClick="window.close();">
+                    <button class="btn btn-danger px-5 mb-5" type="button"  onClick="window.location.href='dashboard/organizational-climate'">
                         Salir
                     </button>
                 </div>
@@ -132,7 +132,6 @@
                         </h1>
                     </div>
                     <div class="mt-auto p-2">
-                        dd();
                         @if($countPage!==$competenciasCount)
                             <button wire:click="selectCompetencia({{ $competenciaActual->id + 1 }})"
                                     class="btn btn-warning hover:text-blue-700 font-semibold"
@@ -145,6 +144,7 @@
                                 <i wire:loading.class.remove="d-none" wire:target="save" class="fas fa-spinner fa-pulse d-none"></i>
                                 Finalizar
                             </button>
+
                         @endif
 
                     </div>

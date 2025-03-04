@@ -2,6 +2,8 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\ClimateOrganizationalResponses;
+use App\Models\Evaluation360Response;
 use Filament\Widgets\Widget;
 use App\Models\Campaign;
 use Illuminate\Support\Facades\Auth;
@@ -9,12 +11,15 @@ use Illuminate\Support\Facades\Auth;
 
 class CampaignEvaluationsWidget extends Widget
 {
-
+public $responseCO;
+public $response360;
+public $qtty;
     protected function getViewData(): array
     {
         $user = \auth()->user();
         $currentDate = now()->startOfDay();
-
+        $this->responseCO = ClimateOrganizationalResponses::where('user_id', $user->id)
+            ->get();
         // Obtener campañas activas para la sede del usuario
         $campaigns = Campaign::where('status', 'Activa')
             ->where('start_date', '<=', $currentDate)
@@ -23,6 +28,8 @@ class CampaignEvaluationsWidget extends Widget
                 $query->where('sede_id', $user->sede_id);
             })
             ->with('evaluations')
+            ->get();
+        $this->response360= Evaluation360Response::where('user_id', $user->id)
             ->get();
 
         return [

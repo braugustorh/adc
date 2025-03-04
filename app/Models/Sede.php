@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,7 +18,8 @@ class Sede extends Model
         'state',
         'address', // 'address' is misspelled
         'cp',
-        'status'
+        'status',
+        'open_positions',
     ];
 
     public function user()
@@ -35,6 +37,16 @@ class Sede extends Model
     public function campaigns()
     {
         return $this->belongsToMany(Campaign::class, 'campaign_sede');
+    }
+
+    public function count_positions($sede)
+    {
+        return User::where('sede_id', $sede)
+            ->where('status', 1)
+            ->whereHas('roles', function (Builder $query) {
+                $query->whereNotIn('role_id', [1, 2]); // Filtra roles que no sean 1 o 2
+            })
+            ->count();
     }
 
 

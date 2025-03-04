@@ -99,6 +99,11 @@ class SedeResource extends Resource
                     ->tel()
                     ->maxLength(10)
                     ->default(null),
+                Forms\Components\TextInput::make('open_positions')
+                    ->label('Número de posiciones')
+                    ->numeric()
+                    ->required()
+                    ->default(0),
                 Forms\Components\Toggle::make('status')
                     ->label('Estatus')
                     ->required(),
@@ -116,6 +121,14 @@ class SedeResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('positions_count')
+                    ->label('Count')
+                    ->sortable()
+                    ->getStateUsing(function ($record) {
+                        $occupiedPositions = $record->count_positions($record->id); // Obtener el número de puestos ocupados
+                        $openPositions = $record->open_positions; // Obtener el número total de posiciones abiertas
+                        return "{$occupiedPositions} ocupadas de ".$openPositions??0;
+                    }),
                 Tables\Columns\TextColumn::make('state')
                     ->label('Estado')
                     ->searchable(),

@@ -35,12 +35,12 @@ class OneToOne extends Page implements HasForms
     use InteractsWithForms;
     public ?array $data = [];
     protected static ?string $navigationIcon = 'heroicon-m-chat-bubble-left-right';
-    protected static ?string $navigationLabel = 'One to One';
+    protected static ?string $navigationLabel = 'Face to Face';
     protected static ?string $navigationGroup = 'Evaluaciones';
-    protected ?string $heading = 'Ficha de evaluación One to One';
+    protected ?string $heading = 'Ficha de evaluación Face to Face';
     protected ?string $subheading = '';
     protected static ?int $navigationSort = 4;
-    protected static string $view = 'filament.pages.one-to-one';
+    protected static string $view = 'filament.pages.face-to-face';
 
     public $user;
     public $users;

@@ -57,13 +57,6 @@
       0 => 'Codeat3\\BladeTeenyIcons\\BladeTeenyIconsServiceProvider',
     ),
   ),
-  'davidhsianturi/blade-bootstrap-icons' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Davidhsianturi\\BladeBootstrapIcons\\BladeBootstrapIconsServiceProvider',
-    ),
-  ),
   'filament/actions' => 
   array (
     'providers' => 

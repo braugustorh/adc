@@ -15,7 +15,7 @@ use Filament\Notifications\Notification;
 
 class ComunicadosManager extends Page
 {
-    protected static ?string $navigationIcon = 'bi-send-fill';
+    protected static ?string $navigationIcon = 'heroicon-s-chat-bubble-oval-left-ellipsis';
 
     protected static string $view = 'filament.pages.comunicados-manager';
     protected static ?string $navigationLabel = ' Comunicados Manager';

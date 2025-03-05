@@ -55,8 +55,11 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\IconColumn::make('status')
+                    ->label('Estatus')
+                    ->boolean(),
                 Tables\Columns\ImageColumn::make('profile_photo')
-                    ->rounded()
+                    ->circular()
                     ->label('Avatar'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
@@ -170,6 +173,7 @@ class UserResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([
                 //

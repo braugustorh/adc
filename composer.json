@@ -15,10 +15,9 @@
         "blade-ui-kit/blade-heroicons": "^2.5",
         "codeat3/blade-solar-icons": "^1.1",
         "codeat3/blade-teeny-icons": "^1.10",
-        "davidhsianturi/blade-bootstrap-icons": "^1.5",
-        "filament/filament": "^3.2",
+        "filament/filament": "^3.3",
         "guzzlehttp/guzzle": "^7.2",
-        "laravel/framework": "^v11.0",
+        "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
         "pxlrbt/filament-excel": "^2.3",
@@ -32,7 +31,7 @@
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.1",
-        "phpunit/phpunit": "^10.1",
+        "phpunit/phpunit": "^11.0",
         "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {

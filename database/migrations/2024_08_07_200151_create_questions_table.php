@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('evaluations_type_id')->constrained('evaluations_types');
+            $table->foreignId('evaluations_type_id')->constrained('evaluations_types')->onDelete('cascade');
             $table->foreignId('competence_id')->constrained('competences');
             $table->integer('order')->nullable()->default(null);
             $table->string('question',255)->index();
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('campaigns');
+        Schema::dropIfExists('questions');
     }
 };

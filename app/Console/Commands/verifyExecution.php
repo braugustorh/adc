@@ -25,7 +25,7 @@ class verifyExecution extends Command
      */
     public function handle()
     {
-        Info::
+        // Aquí puedes agregar la lógica para verificar la ejecución de los comandos
         $this->info('Se inicio el proceso de Schedule para verificar la ejecución de los comandos');
     }
 }

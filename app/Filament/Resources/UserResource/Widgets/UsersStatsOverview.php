@@ -10,7 +10,7 @@ class UsersStatsOverview extends BaseWidget
 {
     public static function canView(): bool
     {
-        return \auth()->user()->hasRole('Administrador');
+        return \auth()->user()->hasRole(['Administrador','RH Corp']);
 
     }
     protected function getStats(): array

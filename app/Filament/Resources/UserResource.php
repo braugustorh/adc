@@ -34,7 +34,7 @@ class UserResource extends Resource
 
     public static function canViewAny(): bool
     {
-        if (\auth()->user()->hasAnyRole('Jefe de Área','Jefe RH','Administrador')) {
+        if (\auth()->user()->hasAnyRole('RH','RH Corp','Administrador')) {
             return true;
         }else{
             return false;
@@ -180,7 +180,7 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn () => \Auth::user()->hasRole('Administrador')),
+                    ->visible(fn () => \Auth::user()->hasAnyRole('RH','RH Corp','Administrador')),
                 Tables\Actions\ViewAction::make()
                     ->form([
                         Forms\Components\Fieldset::make('Información Personal')
@@ -256,7 +256,7 @@ class UserResource extends Resource
                             ])
                         ]),
                 Tables\Actions\Action::make('bajaUsuario')
-                    ->visible(fn () => \Auth::user()->hasRole('Administrador'))
+                    ->visible(fn () => \Auth::user()->hasAnyRole('RH','RH Corp','Administrador'))
                     ->label('Baja')
                     ->color('danger')
                     ->icon('heroicon-s-user-minus')
@@ -401,9 +401,9 @@ class UserResource extends Resource
                 ExportBulkAction::make(),
             ])->modifyQueryUsing(function (Builder $query) {
                 // Si el usuario tiene el rol "Jefe RH", filtrar por su sede_id
-                if (auth()->user()->hasRole('Jefe RH')) {
+                if (auth()->user()->hasRole('RH')) {
                     $query->where('sede_id', \auth()->user()->sede_id);
-                }elseif ( auth()->user()->hasRole('Jefe de Área') ) {
+                }elseif ( auth()->user()->hasRole('Supervisor') ) {
                     $supervisorId = auth()->user()->position_id;
                     $users = User::where('status', true)
                         ->whereNotNull('department_id')

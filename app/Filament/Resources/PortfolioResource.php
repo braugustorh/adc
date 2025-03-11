@@ -35,16 +35,16 @@ class PortfolioResource extends Resource
     public static function canViewAny(): bool
     {
 
-        return (\auth()->user()->hasAnyRole('Administrador','Jefe RH','Jefe de Área','Colaborador'));
+        return (\auth()->user()->hasAnyRole('RH','RH Corp','Administrador','Supervisor','Colaborador'));
 
     }
     public static function canCreate(): bool
     {
-        return (\auth()->user()->hasAnyRole('Administrador','Jefe RH'));
+        return (\auth()->user()->hasAnyRole('RH','RH Corp','Administrador'));
     }
     public static function canEdit(Model $record): bool
     {
-        return (\auth()->user()->hasAnyRole('Administrador','Jefe RH'));
+        return (\auth()->user()->hasAnyRole('RH','RH Corp','Administrador'));
     }
 
     public static function form(Form $form): Form
@@ -64,7 +64,7 @@ class PortfolioResource extends Resource
                                 ->get()
                                 ->mapWithKeys(fn (User $user): array => [$user->id => $user->name.' '.$user->first_name .' '.$user->last_name]);
                         }else{
-                            if (auth()->user()->hasRole('Administrador')){
+                            if (auth()->user()->hasAnyRole('Administrador','RH Corp')){
                                 $user=User::query()
                                     ->doesntHave('portfolio')
                                     ->where('status',1)
@@ -73,7 +73,7 @@ class PortfolioResource extends Resource
                                     ->mapWithKeys(fn (User $user): array => [
                                         $user->id => $user->name.' '.$user->first_name.' '.$user->last_name
                                     ]);
-                            }elseif (auth()->user()->hasRole('Jefe RH')){
+                            }elseif (auth()->user()->hasRole('RH')){
                                 $user= User::query()
                                     ->doesntHave('portfolio')
                                     ->where('status',1)
@@ -83,7 +83,7 @@ class PortfolioResource extends Resource
                                     ->mapWithKeys(fn (User $user): array => [
                                         $user->id => $user->name.' '.$user->first_name.' '.$user->last_name
                                     ]);
-                            }elseif(auth()->user()->hasRole('Jefe de Área')) {
+                            }elseif(auth()->user()->hasRole('Supervisor')) {
                                 $supervisorId = auth()->user()->id;
                                 $user= User::query()
                                     ->doesntHave('portfolio')
@@ -219,7 +219,7 @@ class PortfolioResource extends Resource
                             ->downloadable('true')
                             ->previewable('true')
                             ->openable()
-                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'Jefe RH', 'Jefe de Área']))
+                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'RH Corp', 'RH','Supervior']))
                             ->label('Alta en el IMSS')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
@@ -229,7 +229,7 @@ class PortfolioResource extends Resource
                             ->downloadable('true')
                             ->previewable('true')
                             ->openable()
-                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'Jefe RH']))
+                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'RH','RH Corp']))
                             ->label('Modificación en el IMSS')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
@@ -239,7 +239,7 @@ class PortfolioResource extends Resource
                             ->downloadable('true')
                             ->previewable('true')
                             ->openable()
-                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'Jefe RH']))
+                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'RH','RH Corp']))
                             ->label('Baja en el IMSS')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
@@ -270,7 +270,7 @@ class PortfolioResource extends Resource
                             ->downloadable('true')
                             ->previewable('true')
                             ->openable()
-                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'Jefe RH']))
+                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'RH','RH Corp']))
                             ->label('Renuncia')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
@@ -280,7 +280,7 @@ class PortfolioResource extends Resource
                             ->downloadable('true')
                             ->previewable('true')
                             ->openable()
-                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'Jefe RH']))
+                            ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'RH','RH Corp']))
                             ->label('Finiquito')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
@@ -393,7 +393,7 @@ class PortfolioResource extends Resource
                 ]),
             ])->modifyQueryUsing(function (Builder $query) {
                 // Si el usuario tiene el rol "Jefe RH", filtrar por su sede_id
-                if (auth()->user()->hasRole('Jefe RH')) {
+                if (auth()->user()->hasRole('RH')) {
                     $users=User::where('sede_id',\auth()->user()->sede_id)->pluck('id');
                     $query->whereIn('user_id', $users);
                 }
@@ -411,7 +411,7 @@ class PortfolioResource extends Resource
 //                    $query->whereIn('user_id', $users);
 //
 //                }
-                elseif(auth()->user()->hasAnyRole('Colaborador','Jefe de Área')){
+                elseif(auth()->user()->hasAnyRole('Colaborador','Supervisor')){
                     $query->where('user_id',\auth()->user()->id);
                 }
             });

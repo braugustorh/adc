@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\UserResource\Widgets\UsersStatsOverview;
 use App\Filament\Widgets\CampaignEvaluationsWidget;
+use App\Filament\Widgets\VacancyStats;
 use App\Http\Middleware\CheckUserStatusAndEvaluation;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -52,11 +53,12 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
                \App\Filament\Pages\ExitSurveyPage::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            //->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 UsersStatsOverview::class,    // Segunda posición
                 Widgets\AccountWidget::class, // Primera posición
                 CampaignEvaluationsWidget::class, // Tercera posición
+                VacancyStats::class, // Cuarta posición
                 //Widgets\FilamentInfoWidget::class, // Comentado
             ])
             ->profile()

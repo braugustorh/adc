@@ -14,7 +14,10 @@ class VacancyStats extends BaseWidget
 {
     protected function getStats(): array
     {
-        if (auth()->user()->hasRole('Jefe RH') || auth()->user()->hasRole('Jefe de Área')) {
+        if (auth()->user()->hasRole('RH') ||
+            auth()->user()->hasRole('RH Corp') ||
+            auth()->user()->hasRole('Administrador') ||
+            auth()->user()->hasRole('Supervisor')) {
             $sede = Sede::find(auth()->user()->sede_id);
 
             // Cuenta los usuarios con la misma sede_id

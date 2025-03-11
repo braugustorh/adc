@@ -14,6 +14,7 @@ class CampaignEvaluationsWidget extends Widget
 public $responseCO;
 public $response360;
 public $qtty;
+    protected static ?int $sort = -2;
     protected function getViewData(): array
     {
         $user = \auth()->user();

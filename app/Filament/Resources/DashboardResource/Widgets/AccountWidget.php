@@ -14,6 +14,7 @@ class AccountWidget extends Widget
     protected static bool $isLazy = false;
     public $cumple;
 
+
     /**
      * @var view-string
      */

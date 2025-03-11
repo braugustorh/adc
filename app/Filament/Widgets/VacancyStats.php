@@ -18,20 +18,33 @@ class VacancyStats extends BaseWidget
             auth()->user()->hasRole('RH Corp') ||
             auth()->user()->hasRole('Administrador') ||
             auth()->user()->hasRole('Supervisor')) {
+
             $sede = Sede::find(auth()->user()->sede_id);
 
-            // Cuenta los usuarios con la misma sede_id
-            $occupiedPositions = $sede->count_positions($sede->id);
 
-            // Obtén las posiciones abiertas de la columna open_positions
-            $openPositions = $sede->open_positions;
+            if($sede) {
+                // Cuenta los usuarios con la misma sede_id
+                $occupiedPositions = $sede->count_positions($sede->id);
+                // Obtén las posiciones abiertas de la columna open_positions
+                $openPositions = $sede->open_positions;
+                // Calcula las posiciones disponibles restando las posiciones ocupadas de las posiciones abiertas
+                $vacantPositions = $openPositions - $occupiedPositions;
+                // Calcula los porcentajes
+                $percentageOccupied = $openPositions > 0 ? (int)(($occupiedPositions / $openPositions) * 100) : 0;
+                $percentageVacant = $openPositions > 0 ? (int)(($vacantPositions / $openPositions) * 100) : 0;
+            } else{
+                $occupiedPositions = 0;
+                $openPositions= 0;
+                $vacantPositions=0;
+                $percentageOccupied=0;
+                $percentageVacant=0;
+            }
 
-            // Calcula las posiciones disponibles restando las posiciones ocupadas de las posiciones abiertas
-            $vacantPositions = $openPositions - $occupiedPositions;
 
-            // Calcula los porcentajes
-            $percentageOccupied = $openPositions > 0 ? (int)(($occupiedPositions / $openPositions) * 100) : 0;
-            $percentageVacant = $openPositions > 0 ? (int)(($vacantPositions / $openPositions) * 100) : 0;
+
+
+
+
 
             // Define el color para las posiciones vacantes
             if ($vacantPositions === 0) {

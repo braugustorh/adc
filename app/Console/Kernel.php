@@ -15,10 +15,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:verify-execution')
             ->everyMinute()
             ->appendOutputTo(storage_path('logs/laravel.log'));
-       /* $schedule->command('campaign:update-status')
+        $schedule->command('campaign:update-status')
             ->everyMinute()
             ->appendOutputTo(storage_path('logs/campaign_update.log'));
-       */
+
+
     }
 
     /**

@@ -99,6 +99,25 @@
 {{--        </div>--}}
 {{--    </div>--}}
 
+        <x-filament::section
+            icon="heroicon-s-chat-bubble-oval-left-ellipsis"
+            icon-size="lg"
+            icon-color="dark">
+            <x-slot name="heading">
+
+                <h2 class="text-lg font-medium text-gray-900 dark:text-white">
+                    {{ __('Enviar Notificaciones') }}
+                </h2>
+            </x-slot>
+            <x-slot name="description">
+                <p class="mt-1 text-sm text-gray-600 dark:text-neutral-400">
+                    {{ __('Envía una notificación o comunicados a todos los usuarios, a sedes o los usuarios seleccionados.') }}
+                </p>
+            </x-slot>
+
         {{ $this->form }}
+        </x-filament::section>
+
+
 
 </x-filament-panels::page>

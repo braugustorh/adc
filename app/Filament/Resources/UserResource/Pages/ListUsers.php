@@ -14,7 +14,8 @@ class ListUsers extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        if (auth()->user()->hasRole('Administrador') || auth()->user()->hasRole('RH')) {
+        if (auth()->user()->hasRole('Administrador') ||
+            auth()->user()->hasRole('RH Corp')) {
             //EL USURIO ADMINISTRADOR AGREGA USUARIOS SIN LIMITE
             return [
                 Actions\CreateAction::make()

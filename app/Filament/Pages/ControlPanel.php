@@ -50,8 +50,8 @@ class ControlPanel extends Page implements HasForms
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
     protected static ?string $navigationLabel = 'Registro de Indicadores';
-    protected static ?string $navigationGroup = 'Panel de Control';
-    protected ?string $heading = 'Panel de Control';
+    protected static ?string $navigationGroup = 'Tablero de Control';
+    protected ?string $heading = 'Tablero de Control';
     protected ?string $subheading = 'Registro de Indicadores';
     protected static ?int $navigationSort = 1;
     protected static string $view = 'filament.pages.control-panel';

@@ -17,17 +17,30 @@ class ComunicadosManager extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-s-chat-bubble-oval-left-ellipsis';
 
-    protected static string $view = 'filament.pages.comunicados-manager';
-    protected static ?string $navigationLabel = ' Comunicados Manager';
-    protected static ?string $navigationGroup = 'Comunicación';
-    protected ?string $heading = 'Comunicados Manager';
-    protected ?string $subheading = 'Envía los comunicados de la plataforma';
 
+    protected static ?string $navigationLabel = ' Comunicados';
+    protected static ?string $navigationGroup = 'Comunicación';
+    protected ?string $heading = 'Comunicados';
+    protected ?string $subheading = 'Envía los comunicados de la plataforma';
+    protected static ?int $navigationSort = 1;
+    protected static string $view = 'filament.pages.comunicados-manager';
     public $titleMessage;
     public $recip;
     public $sedes;
     public $body;
 
+    public static function canView(): bool
+    {
+        //Este Panel solo lo debe de ver los Jefes de Área y el Administrador
+        //Se debe de agregar la comprobación de que estpo se cumpla para que solo sea visible para los Jefes de Área
+        return \auth()->user()->hasAnyRole('RH','Administrador','Super Administrador');
+
+    }
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Esto controla la visibilidad en la navegación.
+        return static::canView();
+    }
     public function form(Form $form): Form
     {
 
@@ -71,14 +84,6 @@ class ComunicadosManager extends Page
 
     }
 
-    protected function canView(): bool
-    {
-        if (auth()->user()->hasRole('Administrador')) {
-            return true;
-        }else{
-            return false;
-        }
-    }
     public function mount()
     {
         $this->recip = [];

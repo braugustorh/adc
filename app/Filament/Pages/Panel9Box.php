@@ -31,7 +31,7 @@ class Panel9Box extends Page implements HasTable
     protected static ?string $navigationGroup = 'Evaluaciones';
     protected ?string $heading = 'Panel 9 Box';
     protected ?string $subheading = 'Visualiza el análisis de los colaboradores';
-        protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 3;
 
     protected static string $view = 'filament.pages.panel9-box';
     public $members;
@@ -72,7 +72,7 @@ class Panel9Box extends Page implements HasTable
     {
         //Este Panel solo lo debe de ver los Jefes de Área y el Administrador
         //Se debe de agregar la comprobación de que estpo se cumpla para que solo sea visible para los Jefes de Área
-        if (\auth()->user()->hasRole('Jefe de Área') || \auth()->user()->hasRole('Administrador') || \auth()->user()->hasRole('Administrador')) {
+        if (\auth()->user()->hasRole('RH Corp')||\auth()->user()->hasRole('RH') || \auth()->user()->hasRole('Supervisor') || \auth()->user()->hasRole('Administrador')) {
             return true;
         }else{
             return false;
@@ -86,7 +86,7 @@ class Panel9Box extends Page implements HasTable
     }
     //protected static ?string $model = Evaluation360Response::class;
     public function mount(){
-        $this->campaignId = Campaign::whereStatus('Activa')->first()->id;
+        $this->campaignId = Campaign::whereStatus('Activa')->first()->id??null;
         $supervisorId = auth()->user()->position_id;
         $this->users = User::where('status', true)
             ->whereNotNull('department_id')

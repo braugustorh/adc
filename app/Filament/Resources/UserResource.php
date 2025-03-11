@@ -32,14 +32,12 @@ class UserResource extends Resource
     protected static ?string $navigationLabel = 'Usuarios';
     protected static ?int $navigationSort = 1;
 
-    public static function canViewAny(): bool
+    public static function canViewAny():bool
     {
-        if (\auth()->user()->hasAnyRole('RH','RH Corp','Administrador')) {
-            return true;
-        }else{
-            return false;
-        }
+        return \auth()->user()->hasAnyRole('RH','RH Corp','Administrador','Supervisor');
     }
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -47,9 +45,7 @@ class UserResource extends Resource
 
             ]);
 
-
     }
-
 
     public static function table(Table $table): Table
     {
@@ -432,6 +428,7 @@ class UserResource extends Resource
           UsersStatsOverview::class,
         ];
     }
+
 
     public static function getPages(): array
     {

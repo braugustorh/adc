@@ -21,7 +21,6 @@ class VacancyStats extends BaseWidget
 
             $sede = Sede::find(auth()->user()->sede_id);
 
-
             if($sede) {
                 // Cuenta los usuarios con la misma sede_id
                 $occupiedPositions = $sede->count_positions($sede->id);
@@ -39,13 +38,6 @@ class VacancyStats extends BaseWidget
                 $percentageOccupied=0;
                 $percentageVacant=0;
             }
-
-
-
-
-
-
-
             // Define el color para las posiciones vacantes
             if ($vacantPositions === 0) {
                 $colorVacant = 'danger';

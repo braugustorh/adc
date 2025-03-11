@@ -15,12 +15,12 @@ use Filament\Support\Exceptions\Halt;
 
 class IndicatorManager extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-m-document-check';
     protected static string $view = 'filament.pages.indicator-manager';
     protected static ?string $navigationLabel = 'Registro de Avance';
     protected static ?int $navigationSort = 2;
-    protected static ?string $navigationGroup = 'Panel de Control';
-    protected ?string $heading = 'Panel de Control';
+    protected static ?string $navigationGroup = 'Tablero de Control';
+    protected ?string $heading = 'Tablero de Control';
     protected ?string $subheading = 'Captura de avance de indicadores';
     public $user;
     public $users;
@@ -35,6 +35,23 @@ class IndicatorManager extends Page
         'month' => null,
         'progresse_value' => null,
     ];
+
+    public static function canView(): bool
+    {
+        //Este Panel solo lo debe de ver los Jefes de Área y el Administrador
+        //Se debe de agregar la comprobación de que estpo se cumpla para que solo sea visible para los Jefes de Área
+        if (\auth()->user()->hasRole('RH Corp')||\auth()->user()->hasRole('RH') || \auth()->user()->hasRole('Supervisor') || \auth()->user()->hasRole('Administrador')) {
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Esto controla la visibilidad en la navegación.
+        return static::canView();
+    }
 
     protected function getForms(): array
     {

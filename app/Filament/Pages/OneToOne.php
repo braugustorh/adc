@@ -100,18 +100,24 @@ class OneToOne extends Page implements HasForms
     }
     public function mount($evaluationId = null)
     {
-        $this->campaignId = Campaign::whereStatus('Activa')->first()->id;
-        $supervisorId = auth()->user()->position_id;
-        $this->themes = collect();
-        $this->users = User::where('status', true)
-            ->whereNotNull('department_id')
-            ->whereNotNull('position_id')
-            ->whereNotNull('sede_id')
-            ->whereHas('position', function ($query) use ($supervisorId) {
-                $query->where('supervisor_id', $supervisorId);
-            })
-            ->get();
-        $this->evaluation=new OneToOneEvaluation();
+        $this->campaignId = Campaign::whereStatus('Activa')->first();
+        if ($this->campaignId) {
+            $this->campaignId = $this->campaignId->id;
+            $supervisorId = auth()->user()->position_id;
+            $this->themes = collect();
+            $this->users = User::where('status', true)
+                ->whereNotNull('department_id')
+                ->whereNotNull('position_id')
+                ->whereNotNull('sede_id')
+                ->whereHas('position', function ($query) use ($supervisorId) {
+                    $query->where('supervisor_id', $supervisorId);
+                })
+                ->get();
+            $this->evaluation = new OneToOneEvaluation();
+        }else{
+            $this->users = collect();
+            $this->evaluation = new OneToOneEvaluation();
+        }
 
     }
     public function formCultura(Form $form): Form

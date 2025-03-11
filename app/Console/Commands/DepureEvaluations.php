@@ -33,7 +33,6 @@ class DepureEvaluations extends Command
         $this->info('Eliminando Registros de Asignaciones');
         $deleteAssignations = EvaluationAssign::query()->delete();
         $this->info('Eliminando Registros de Historial de Evaluaciones');
-
         $this->info('Evaluations depured successfully.');
     }
 }

@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\MultiSelect;
 use Filament\Forms\Components\TextInput;
+use PHPUnit\Util\Filter;
+use function Laravel\Prompts\search;
 
 class QuestionResource extends Resource
 {
@@ -111,7 +113,15 @@ class QuestionResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('evaluationType')
+                    ->relationship('evaluationType', 'name')
+                    ->label('Filtro por tipo de evaluación')
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('competence')
+                    ->relationship('competence', 'name')
+                    ->label('Filtro por competencia')
+                    ->preload()
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

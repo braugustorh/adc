@@ -93,7 +93,7 @@ class ControlPanel extends Page implements HasForms
     public function mount()
     {
 
-        $this->campaignId = Campaign::whereStatus('Activa')->first()->id;
+        $this->campaignId = Campaign::whereStatus('Activa')->first()->id ?? null;
         $supervisorId = auth()->user()->position_id;
 
         $this->users = User::where('status', true)

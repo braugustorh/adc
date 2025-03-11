@@ -47,7 +47,7 @@ class OrganizationalClimate extends Page
 
 
         }else{
-
+            $this->campaigns=collect();
         }
 
     }

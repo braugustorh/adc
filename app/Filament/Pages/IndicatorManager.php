@@ -45,17 +45,22 @@ class IndicatorManager extends Page
     public function mount()
     {
 
-        $this->campaignId = Campaign::whereStatus('Activa')->first()->id;
-        $supervisorId = auth()->user()->position_id;
+        $this->campaignId = Campaign::whereStatus('Activa')->first()->id??null;
+        if ($this->campaignId){
+            $supervisorId = auth()->user()->position_id;
 
-        $this->users = User::where('status', true)
-            ->whereNotNull('department_id')
-            ->whereNotNull('position_id')
-            ->whereNotNull('sede_id')
-            ->whereHas('position', function ($query) use ($supervisorId) {
-                $query->where('supervisor_id', $supervisorId);
-            })
-            ->get();
+            $this->users = User::where('status', true)
+                ->whereNotNull('department_id')
+                ->whereNotNull('position_id')
+                ->whereNotNull('sede_id')
+                ->whereHas('position', function ($query) use ($supervisorId) {
+                    $query->where('supervisor_id', $supervisorId);
+                })
+                ->get();
+        }else{
+            $this->users = collect();
+        }
+
 
     }
     public function updatedUser($value): void

@@ -39,7 +39,6 @@ class UserTermination extends Model
         'additional_comments',
         're_hire',
     ];
-
     protected $casts = [
         'documents_delivered' => 'array',
     ];

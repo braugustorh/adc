@@ -40,13 +40,17 @@ class OrganizationalClimate extends Page
             //AQUI CÓDIGO PARA REVISAR SI YA ESTA CONTESTADA LA EVALUACION DE ESA CAMPAÑA
             $this->user=auth()->user()->id;
             //Vamos a verificar que el usuario no haya contestado la evaluación de clima organizacional
+
             if (ClimateOrganizationalResponses::where('campaign_id',$this->campaigns->id)->where('user_id',$this->user)->exists()) {
+                $this->disabledArea = false;
+            }else{
                 $this->disabledArea = true;
             }
 
 
 
         }else{
+            $this->disabledArea =false;
             $this->campaigns=collect();
         }
 

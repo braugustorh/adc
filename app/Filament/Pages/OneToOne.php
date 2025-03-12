@@ -86,7 +86,7 @@ class OneToOne extends Page implements HasForms
     {
         //Este Panel solo lo debe de ver los Jefes de Área y el Administrador
         //Se debe de agregar la comprobación de que estpo se cumpla para que solo sea visible para los Jefes de Área
-        if (\auth()->user()->hasRole('Jefe de Área') || \auth()->user()->hasRole('Administrador') || \auth()->user()->hasRole('Administrador')) {
+        if (\auth()->user()->hasRole('Supervisor') || \auth()->user()->hasRole('RH') || \auth()->user()->hasRole('RH Corp')) {
             return true;
         }else{
             return false;

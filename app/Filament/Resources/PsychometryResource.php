@@ -264,12 +264,12 @@ class PsychometryResource extends Resource
                                 ->minValue(0)
                                 ->inputMode('decimal')
                                 ->required(),
-                        ])->columns(3),
+                        ])->columns(4),
                 ])->columnSpan(['lg' => 2]),
 
             //
 
-        ])->columns(3);
+        ])->columns(2);
     }
 
     public static function table(Table $table): Table

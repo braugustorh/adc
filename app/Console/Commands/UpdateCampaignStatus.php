@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\EvaluationAssign;
 use App\Models\EvaluationHistory;
 use App\Models\User;
+use Filament\Notifications\Notification;
 use Illuminate\Console\Command;
 
 class UpdateCampaignStatus extends Command
@@ -49,11 +50,55 @@ class UpdateCampaignStatus extends Command
                     $this->assignEvaluations($team, $campaign);
                 }
             }
+            // Actualiza el estado de la campaña
             $campaign->save();
+
+            // Enviar notificaciones a los usuarios asignados si la campaña cambió a Activa
+            if ($campaign->status === 'Activa') {
+                $this->sendNotificationsToAssignedUsers($campaign);
+            }
+
+
         }
+
 
         $this->info('Campaign statuses and evaluations updated successfully.');
     }
+
+    protected function hasEvaluatedBefore($userId, $evaluatedId, $campaignId)
+    {
+        // Verifica si ya se evaluaron en campañas pasadas (EvaluationHistory)
+        return EvaluationHistory::where('user_id', $userId)
+            ->where('user_evaluated_id', $evaluatedId)
+            ->exists();
+    }
+
+    protected function sendNotificationsToAssignedUsers($campaign)
+    {
+        // Obtener todos los usuarios asignados a esta campaña
+        $assignedEvaluations = EvaluationAssign::where('campaign_id', $campaign->id)
+            ->with(['user', 'userToEvaluate'])
+            ->get();
+
+        foreach ($assignedEvaluations as $assignment) {
+            // Notificar al evaluador
+            $user = $assignment->user;
+            $userToEvaluate = $assignment->userToEvaluate;
+
+            if ($user) {
+                // Enviar notificación al evaluador
+                Notification::make()
+                    ->title('Campaña de Evaluación Activa')
+                    ->info()
+                    ->icon('heroicon-m-information-circle')
+                    ->body("Hola ha iniciado la campaña de evaluación {$campaign->name}.")
+                    ->sendToDatabase($user);
+
+
+            }
+        }
+    }
+
 
     protected function assignEvaluations($team, $campaign)
     {
@@ -165,11 +210,5 @@ class UpdateCampaignStatus extends Command
             ->exists();
     }
 
-    protected function hasEvaluatedBefore($userId, $evaluateeId, $campaignId)
-    {
-        // Verifica si ya se evaluaron en campañas pasadas (EvaluationHistory)
-        return EvaluationHistory::where('user_id', $userId)
-            ->where('user_evaluated_id', $evaluateeId)
-            ->exists();
-    }
+
 }

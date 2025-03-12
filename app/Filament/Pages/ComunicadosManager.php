@@ -121,6 +121,7 @@ class ComunicadosManager extends Page
         Notification::make()
             ->title($this->titleMessage)
             ->info()
+            ->icon('heroicon-m-information-circle')
             ->body($this->body)
             ->sendToDatabase($recipient);
     }

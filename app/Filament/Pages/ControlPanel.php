@@ -9,6 +9,7 @@ use App\Models\IndicatorRange;
 use App\Models\IndicatorProgress;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -68,11 +69,8 @@ class ControlPanel extends Page implements HasForms
     {
         //Este Panel solo lo debe de ver los Jefes de Área y el Administrador
         //Se debe de agregar la comprobación de que estpo se cumpla para que solo sea visible para los Jefes de Área
-        if (\auth()->user()->hasRole('Jefe de Área') || \auth()->user()->hasRole('Administrador') || \auth()->user()->hasRole('Administrador')) {
-            return true;
-        }else{
-            return false;
-        }
+
+        return \auth()->user()?->hasAnyRole('RH','Administrador','Super Administrador','RH Corp','Supervisor');
 
     }
     public static function shouldRegisterNavigation(): bool
@@ -143,30 +141,91 @@ class ControlPanel extends Page implements HasForms
                 DatePicker::make('target_period_end')->label('Fecha de Cumplimiento')->required(),
                 Section::make('Rangos de Evaluación')
             ->Schema([
-                Select::make('type_excellent')->label('Rango para excelente')->options([
-                    '1' => 'Mayor que',
-                    '2' => 'Menor que',
-                    '3' => 'Igual a',
-                    '4' => 'Mayor o igual que',
-                    '5' => 'Menor o igual que',
-                ])->required(),
-                TextInput::make('excellent_value')->type('number')->label('Valor')->required(),
-                Select::make('type_satisfactory')->label('Rango para Satisfactorio')->options([
-                    '1' => 'Mayor que',
-                    '2' => 'Menor que',
-                    '3' => 'Igual a',
-                    '4' => 'Mayor o igual que',
-                    '5' => 'Menor o igual que',
-                ])->required(),
-                TextInput::make('satisfactory_value')->type('number')->label('Valor')->required(),
-                Select::make('type_unsatisfactory')->label('Rango para Insatisfactorio')->options([
-                    '1' => 'Mayor que',
-                    '2' => 'Menor que',
-                    '3' => 'Igual a',
-                    '4' => 'Mayor o igual que',
-                    '5' => 'Menor o igual que',
-                ])->required(),
-                TextInput::make('unsatisfactory_value')->type('number')->label('Valor')->required(),
+                Grid::make(12)
+                    ->schema([
+                        Select::make('type_excellent')
+                            ->label('Rango para excelente')
+                            ->options([
+                                '1' => 'Mayor que',
+                                '2' => 'Menor que',
+                                '3' => 'Igual a',
+                                '4' => 'Mayor o igual que',
+                                '5' => 'Menor o igual que',
+                                '6' => 'Entre',
+                            ])
+                            ->reactive()
+                            ->required()
+                            ->columnSpan(fn ($get) => $get('type_excellent') === '6' ? 4 : 6),
+
+                        TextInput::make('excellent_value')
+                            ->type('number')
+                            ->label(fn ($get) => $get('type_excellent') === '6' ? 'Valor Menor' : 'Valor')
+                            ->required()
+                            ->columnSpan(fn ($get) => $get('type_excellent') === '6' ? 4 : 6),
+
+                        TextInput::make('maximum_value')
+                            ->type('number')
+                            ->reactive()
+                            ->label('Valor Mayor')
+                            ->visible(fn ($get): bool => $get('type_excellent') === '6')
+                            ->required(fn ($get): bool => $get('type_excellent') === '6')
+                            ->columnSpan(4),
+
+                        Select::make('type_satisfactory')
+                            ->label('Rango para Satisfactorio')
+                            ->options([
+                                '1' => 'Mayor que',
+                                '2' => 'Menor que',
+                                '3' => 'Igual a',
+                                '4' => 'Mayor o igual que',
+                                '5' => 'Menor o igual que',
+                                '6' => 'Entre',
+                            ])
+                            ->required()
+                            ->reactive()
+                            ->columnSpan(fn ($get) => $get('type_satisfactory') === '6' ? 4 : 6),
+
+                        TextInput::make('satisfactory_value')
+                            ->type('number')
+                            ->label(fn ($get) => $get('type_satisfactory') === '6' ? 'Valor Menor' : 'Valor')
+                            ->required()
+                            ->columnSpan(fn ($get) => $get('type_satisfactory') === '6' ? 4 : 6),
+                        TextInput::make('satisfactory_maximum_value')
+                            ->type('number')
+                            ->reactive()
+                            ->label('Valor Mayor')
+                            ->visible(fn ($get): bool => $get('type_satisfactory') === '6')
+                            ->required(fn ($get): bool => $get('type_satisfactory') === '6')
+                            ->columnSpan(4),
+
+                        Select::make('type_unsatisfactory')
+                            ->label('Rango para Insatisfactorio')
+                            ->options([
+                                '1' => 'Mayor que',
+                                '2' => 'Menor que',
+                                '3' => 'Igual a',
+                                '4' => 'Mayor o igual que',
+                                '5' => 'Menor o igual que',
+                                '6' => 'Entre',
+                            ])
+                            ->required()
+                            ->reactive()
+                            ->columnSpan(fn ($get) => $get('type_unsatisfactory') === '6' ? 4 : 6),
+
+                        TextInput::make('unsatisfactory_value')
+                            ->type('number')
+                            ->label(fn ($get) => $get('type_excellent') === '6' ? 'Valor Menor' : 'Valor')
+                            ->required()
+                            ->columnSpan(fn ($get) => $get('type_unsatisfactory') === '6' ? 4 : 6),
+                        TextInput::make('unsatisfactory_maximum_value')
+                            ->type('number')
+                            ->reactive()
+                            ->label('Valor Mayor')
+                            ->visible(fn ($get): bool => $get('type_unsatisfactory') === '6')
+                            ->required(fn ($get): bool => $get('type_unsatisfactory') === '6')
+                            ->columnSpan(4),
+
+                    ]),
                 ])->columns(2)
             ])->columns(2)
                 ->collapsed()

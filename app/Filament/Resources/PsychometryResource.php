@@ -31,14 +31,14 @@ class PsychometryResource extends Resource
 
     public static function canViewAny(): bool
     {
-        if (\auth()->user()->hasRole('Jefe de Área') || \auth()->user()->hasRole('Administrador') || \auth()->user()->hasRole('Jefe RH')) {
-            return true;
-        }else{
-            return false;
-        }
+        return auth()->check() && auth()->user()?->hasAnyRole([
+            'Supervisor',
+            'Administrador',
+            'RH',
+            'RH Corp'
+        ]);
 
     }
-
 
     public static function form(Form $form): Form
     {
@@ -152,10 +152,10 @@ class PsychometryResource extends Resource
                                 ->required()
                                 ->maxLength(255)
                                 ->columnSpan('full'),
-                            Forms\Components\Datepicker::make('application_date')
+                            Forms\Components\DatePicker::make('application_date')
                                 ->label('Fecha de Aplicación')
                                 ->required(),
-                            Forms\Components\Datepicker::make('expiration_date')
+                            Forms\Components\DatePicker::make('expiration_date')
                                 ->label('Fecha de Expiración')
                                 ->gte('application_date')
                                 ->required(),
@@ -301,19 +301,11 @@ class PsychometryResource extends Resource
                     ->label('Interpretación de la prueba')
                     ->icon(function ($record): ?string {
                         $url = $record->interpretation_url;
-                        if ($url !== null) {
-                            return 'heroicon-m-check-circle';
-                        } else {
-                            return 'heroicon-m-x-circle';
-                        }
+                        return $url ? 'heroicon-m-check-circle' : 'heroicon-m-x-circle';
                     })
                     ->color(function ($record): string {
                         $url = $record->interpretation_url;
-                        if ($url !== null) {
-                            return 'success';
-                        } else {
-                            return 'danger';
-                        }
+                        return $url ? 'success' : 'danger';
                     })
                     ->alignCenter(),
 
@@ -397,17 +389,17 @@ class PsychometryResource extends Resource
                 ]),
             ])->modifyQueryUsing(function (Builder $query) {
                 // Si el usuario tiene el rol "Jefe RH", filtrar por su sede_id
-                if (auth()->user()->hasRole('Jefe RH')) {
+                if (auth()->check() && auth()->user()?->hasRole('RH')) {
                     $users = User::where('status', true)
                         ->whereNotNull('department_id')
                         ->whereNotNull('position_id')
                         ->whereNotNull('sede_id')
-                        ->where('sede_id', auth()->user()->sede_id)
+                        ->where('sede_id', auth()->user()?->sede_id)
                         ->get();
 
                     $query->whereIn('user_id', $users->pluck('id'));
-                }elseif(auth()->user()->hasRole('Jefe de Área')){
-                    $supervisorId = auth()->user()->position_id;
+                }elseif(auth()->check() && auth()->user()?->hasRole('Supervisor')){
+                    $supervisorId = auth()->user()?->position_id;
                     $users = User::where('status', true)
                         ->whereNotNull('department_id')
                         ->whereNotNull('position_id')

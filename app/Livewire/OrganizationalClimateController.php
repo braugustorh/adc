@@ -41,7 +41,7 @@ class OrganizationalClimateController extends Component
                     ->where('status',1)
                     ->with('questions')
                     ->get();
-                $this->competenciasCount = $this->competencias->whereNotNull('questions')->where('evaluations_type_id',4)->count();
+                $this->competenciasCount = $this->competencias->whereNotNull('questions')->where('evaluations_type_id',3)->count();
                 $this->responses=ClimateOrganizationalResponses::where('campaign_id',$this->campaign)
                     ->where('user_id',$this->user)
                     ->count()>0;

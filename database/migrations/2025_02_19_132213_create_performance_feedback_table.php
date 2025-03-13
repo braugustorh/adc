@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('performance_feedback', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+           // $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('one_to_one_evaluation_id')->constrained()->onDelete('cascade');
             $table->text('strengths')->nullable();
             $table->text('opportunities')->nullable();

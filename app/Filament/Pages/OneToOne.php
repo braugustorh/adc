@@ -58,6 +58,7 @@ class OneToOne extends Page implements HasForms
     public $existEvaluations;
     public $showResults=false;
     public $indicatorProgresses;
+    public $hideCreate=false;
     public $quadrant;
     public $titles = [
         9 => 'Futuro Líder',
@@ -177,7 +178,7 @@ class OneToOne extends Page implements HasForms
                             ->placeholder('Ingresa los comentarios, acuerdos y compromisos...')
                             ->required(),
                     ])
-                    ->label('Evaluaciones de Desempeño')
+                    ->label('Comentarios y Compromisos')
                     ->itemLabel('Comentarios y Compromisos')
                     ->collapsed()
                     ->maxItems(1)
@@ -222,6 +223,14 @@ class OneToOne extends Page implements HasForms
                         TextInput::make('development_area')
                             ->label('Área de Desarrollo')
                             ->required(),
+                        Select::make('learning_type')
+                            ->label('Tipo de Aprendizaje')
+                            ->options([
+                                'experiential' => '70% Aprendizaje a través de la experiencia ',
+                                'social' => '20% Aprendizaje a través de la interacción social - mentoría',
+                                'structured' => '10% Aprendizaje a través de la formación formal',
+                            ])
+                            ->required(),
                         TextInput::make('progress')
                             ->label('Avance (%)')
                             ->numeric()
@@ -231,16 +240,9 @@ class OneToOne extends Page implements HasForms
                         DatePicker::make('scheduled_date')
                             ->label('Fecha programada')
                             ->required(),
-                        Select::make('learning_type')
-                            ->label('Tipo de Aprendizaje')
-                            ->options([
-                                'experiential' => 'Experiencial',
-                                'social' => 'Social',
-                                'structured' => 'Estructurado',
-                            ])
-                            ->required(),
                     ])
-                    ->itemLabel('Planes de Desarrollo')
+                    ->label('Plan de Desarrollo')
+                   // ->itemLabel('Planes de Desarrollo')
                     ->itemLabel(fn (array $state): ?string => $state['development_area'] ?? null)
                     ->collapsed()
                     ->columns(2),
@@ -270,15 +272,14 @@ class OneToOne extends Page implements HasForms
                             ->label('Comentarios')
                             ->placeholder('Describe los comentarios, acuerdos y compromisos...')
                             ->required(),
-                        DatePicker::make('scheduled_date')
-                            ->label('Fecha programada')
+                        Textarea::make('follow_up')
+                            ->label('Seguimiento')
+                            ->placeholder('Describe la situación...')
+                            ->visible(function (){
+                                return $this->evaluation->initial;
+                            })
                             ->required(),
-                        TextInput::make('progress')
-                            ->label('Avance (%)')
-                            ->numeric()
-                            ->minValue(0)
-                            ->maxValue(100)
-                            ->required(),
+
                     ])
                     ->label('Asuntos Varios')
                     ->itemLabel(fn (array $state): ?string => $state['topic'] ?? null)
@@ -298,6 +299,7 @@ class OneToOne extends Page implements HasForms
             'evaluation360',
             'evaluationPotential',
             'quadrant',
+            'hideCreate',
         ]);
 
         if (!$value) {
@@ -438,6 +440,9 @@ class OneToOne extends Page implements HasForms
         // Actualiza el estado para mostrar los formularios
         $this->show = false;
         $this->showEvaluation = true;
+        $this->existEvaluations=false;
+        $this->hideCreate=true;
+
 
         // Llama a mount() para llenar los formularios con la evaluación recién creada
         $this->mount($this->evaluation->id);
@@ -487,6 +492,7 @@ class OneToOne extends Page implements HasForms
 
     public function saveEvaluation(): void
     {
+
         DB::beginTransaction();
 
         try {
@@ -539,16 +545,14 @@ class OneToOne extends Page implements HasForms
     }
     public function finishEvaluation()
     {
-        if ($this->evaluation->initial && $this->evaluation->follow_up && $this->evaluation->consolidated) {
+        if ($this->evaluation->initial && $this->evaluation->follow_up) {
             $this->evaluation->final = true;
             $this->evaluation->status = 'completed';
             Notification::make()
                 ->success()
                 ->title('Evaluación finalizada')
                 ->send();
-            $this->clearResults();
-        }elseif($this->evaluation->initial && $this->evaluation->follow_up){
-            $this->evaluation->consolidated=true;
+
         }elseif($this->evaluation->initial){
             $this->evaluation->follow_up=true;
         }elseif(!$this->evaluation->initial){
@@ -583,6 +587,7 @@ class OneToOne extends Page implements HasForms
                 ->title('Evaluación finalizada correctamente para el usuario ' . $this->userToEvaluated->name)
                 ->send();
         } catch (QueryException $e) {
+            dd($e);
             DB::rollBack();
             // Mostrar una notificación de error
             Notification::make()
@@ -606,7 +611,17 @@ class OneToOne extends Page implements HasForms
             'developmentPlans',
             'miscellaneousTopics'
         ])->findOrFail($this->evaluation->id);
+        // Verificar si la evaluación tiene datos
 
+
+        if (($evaluation->cultureTopics->isEmpty() && $evaluation->performanceEvaluations->isEmpty() && $evaluation->performanceFeedback->isEmpty() && $evaluation->developmentPlans->isEmpty() && $evaluation->miscellaneousTopics->isEmpty())) {
+
+            Notification::make()
+                ->danger()
+                ->title('No se encontraron datos para generar el PDF')
+                ->send();
+            return;
+        }
         // Generar el PDF
         $pdf = Pdf::loadView('pdf.report-face-to-face', [
             'evaluation' => $evaluation,
@@ -622,5 +637,6 @@ class OneToOne extends Page implements HasForms
             echo $pdf->output();
         }, "F2F-{$evaluation->user->name}.pdf");
     }
+
 
 }

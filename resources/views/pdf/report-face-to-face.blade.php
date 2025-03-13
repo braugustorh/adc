@@ -72,20 +72,21 @@ body {
                 <th>Fecha Programada</th>
                 <th>% Avance</th>
             </tr>
-            @foreach($evaluation->cultureTopics as $culture) @endforeach
+            @foreach($evaluation->cultureTopics as $culture)
             <tr>
-                <td>{{$culture->theme}}</td>
+                <td>{{$culture->theme??null}}</td>
                 <td>
                     <strong>Comentarios:</strong>
-                    {{$culture->comments}}<br>
+                    {{$culture->comments??null}}<br>
                     <strong>Compromisos:</strong>
-                    {{$culture->commitments}}
+                    {{$culture->commitments??null}}
                 </td>
-                <td>{{$culture->scheduled_date}}</td>
-                <td>{{$culture->progress}}</td>
+                <td>{{$culture->scheduled_date??null}}</td>
+                <td>{{$culture->progress??null}}</td>
             </tr>
 
         </table>
+        @endforeach
         <h2>Desempeño</h2>
         <table>
             <tr>
@@ -224,7 +225,7 @@ body {
                 @foreach($evaluation->developmentPlans as $plan)
                     <tr>
                         <td>{{$plan->development_area}}</td>
-                        <td>{{$plan->learning_type}}</td>
+                        <td>{{$plan->learning_type===''}}</td>
                         <td>{{$plan->scheduled_date}}</td>
                         <td>{{$plan->progress}}</td>
                     </tr>
@@ -239,10 +240,8 @@ body {
                     <tr>
                         <th>Tema</th>
                         <th>De</th>
-                        <th>Compromiso</th>
                         <th>Comentario</th>
-                        <th>Fecha Programada</th>
-                        <th>% Avance</th>
+                        <th>Seguimiento</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -250,10 +249,9 @@ body {
                     <tr>
                         <td>{{$topic->topic}}</td>
                         <td>{{$topic->who_says}}</td>
-                        <td>{{$topic->commitments}}</td>
                         <td>{{$topic->comments}}</td>
-                        <td>{{$topic->scheduled_date}}</td>
-                        <td>{{$topic->progress}}</td>
+                        <td>{{$topic->follow_up}}</td>
+
                     </tr>
                 @endforeach
 

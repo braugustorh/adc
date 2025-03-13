@@ -9,7 +9,7 @@
                             <x-filament::input.select
                                 id="_user"
                                 wire:model.change="user">
-                                <option value="" hidden="true">Selecciona un colaborador</option>
+                                <option value="" hidden="">Selecciona un colaborador</option>
                                 @foreach($users as $us)
                                     <option value="{{$us->id}}">{{$us->name.' '.$us->first_name.' '.$us->last_name}}</option>
                                 @endforeach
@@ -55,20 +55,20 @@
     @if($showResults)
         <div class="grid grid-cols-6 gap-4" wire:loading.remove> <!-- Contenedor grid con 6 columnas -->
             <div class="col-span-5">
-                <x-filament::section collapsible
-                                     id="inicio"
-                                     collapsed> <!-- Sección abarcando 5/6 -->
-                    <x-slot name="heading">
-                        <strong>Tipo de Evaluación</strong>
-                    </x-slot>
-                    <x-slot name="description">
-                        Selecciona si es una evaluación inicial, una evaluación de seguimiento o una evaluación de cierre.
-                        {{-- Content --}}
-                    </x-slot>
-                    <x-slot name="headerEnd">
-
-                    </x-slot>
                     @if($existEvaluations)
+                    <x-filament::section collapsible
+                                         id="inicio"
+                                         collapsed> <!-- Sección abarcando 5/6 -->
+                        <x-slot name="heading">
+                            <strong>Tipo de Evaluación</strong>
+                        </x-slot>
+                        <x-slot name="description">
+                            Selecciona si es una evaluación inicial, una evaluación de seguimiento o una evaluación de cierre.
+                            {{-- Content --}}
+                        </x-slot>
+                        <x-slot name="headerEnd">
+
+                        </x-slot>
                         <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                             <tr>
@@ -87,9 +87,7 @@
                                 <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Seguimiento
                                 </th>
-                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Consolidación
-                                </th>
+
                                 <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Cierre
                                 </th>
@@ -141,17 +139,7 @@
                                             @endif
                                         </div>
                                     </td>
-                                    <td class="p-2 my-16 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <div class="flex flex-col justify-center px-3">
 
-                                            @if(!$eval->consolidated)
-                                                <x-heroicon-m-document-minus class="w-8 h-8 justify-center opacity-70" color="gray" />
-                                            @else
-                                                <x-heroicon-m-document-check class="w-8 h-8 align-items-center
-                                            " style="color:green" color="success" />
-                                            @endif
-                                        </div>
-                                    </td>
                                     <td class="p-2 my-16 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <div class="flex flex-col justify-center px-3">
 
@@ -195,7 +183,21 @@
                                 {{ __('Años Anteriores') }}
                             </x-filament::button>
                         </div>
-                    @else
+                    </x-filament::section>
+                    @elseif(!$hideCreate)
+                    <x-filament::section collapsible
+                                         id="inicio"
+                                         collapsed> <!-- Sección abarcando 5/6 -->
+                        <x-slot name="heading">
+                            <strong>Tipo de Evaluación</strong>
+                        </x-slot>
+                        <x-slot name="description">
+                            Selecciona si es una evaluación inicial, una evaluación de seguimiento o una evaluación de cierre.
+                            {{-- Content --}}
+                        </x-slot>
+                        <x-slot name="headerEnd">
+
+                        </x-slot>
                         <div class="p-4 sm:p-10 text-center overflow-y-auto">
                             <!-- Icon -->
                             <span class="mb-4 inline-flex justify-center items-center size-[46px] rounded-full border-4 border-green-50 bg-green-100 text-green-500 dark:bg-green-700 dark:border-green-600 dark:text-green-100">
@@ -222,9 +224,10 @@
                                 </x-filament::button>
                             </div>
                         </div>
+                    </x-filament::section>
                     @endif
 
-                </x-filament::section>
+
             </div>
         </div>
     @endif
@@ -404,7 +407,7 @@
                 <x-filament::button
                     wire:click="clearResults"
                     color="gray">
-                    {{ __('Cancelar') }}
+                    {{ __('Regresar') }}
                 </x-filament::button>
 
                     <x-filament::button

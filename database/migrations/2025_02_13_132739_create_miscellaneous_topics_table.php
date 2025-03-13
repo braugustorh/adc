@@ -17,9 +17,9 @@ return new class extends Migration
             $table->enum('who_says', ['colaborador', 'supervisor', 'ambos']); // Quién genera el asunto
             $table->string('topic'); // Asunto
             $table->text('comments')->nullable(); // Comentarios
-            $table->text('commitments')->nullable(); // Compromisos
-            $table->date('scheduled_date'); // Fecha programada
-            $table->integer('progress')->default(0); // Avance (porcentaje)
+            $table->text('follow_up')->nullable(); // Compromisos
+            $table->date('scheduled_date')->nullable()->default(null); // Fecha programada
+            $table->integer('progress')->nullable()->default(0); // Avance (porcentaje)
             $table->timestamps();
         });
     }

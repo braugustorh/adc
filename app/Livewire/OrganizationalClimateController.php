@@ -30,8 +30,9 @@ class OrganizationalClimateController extends Component
 
     public function mount()
     {
+
         if (auth()->check()){
-            if (request()->query('evaluated')){
+            if (request()->query('user') && request()->query('campaign')) {
                 $this->user = \Crypt::decryptString(request()->query('user'));
                 $this->campaign = \Crypt::decryptString(request()->query('campaign'));
                 $user = User::find($this->user);

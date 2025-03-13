@@ -7,20 +7,14 @@
         --tw-text-opacity: 1;
         color: rgb(234 179 8 / var(--tw-text-opacity));
     }
-    .border-yellow-200 {
-        --tw-border-opacity: 1;
-        border-color: rgb(254 240 138 / var(--tw-border-opacity));
-    }
+
 
     .border-yellow-50 {
         --tw-border-opacity: 1;
         border-color: rgb(254 252 232 / var(--tw-border-opacity));
     }
 
-    .border-yellow-500 {
-        --tw-border-opacity: 1;
-        border-color: rgb(234 179 8 / var(--tw-border-opacity));
-    }
+
 
     .border-yellow-600 {
         --tw-border-opacity: 1;
@@ -64,9 +58,9 @@
                     </x-filament::modal>
                         <x-filament::button icon="heroicon-m-sparkles"
                                             href="{{route('clima-organizacional.index',[
-                          'user' => \Crypt::encryptString($user),
-                           'campaign' => \Crypt::encryptString($campaigns->id)
-                           ])}}"
+                                          'user' => \Crypt::encryptString($user),
+                                           'campaign' => \Crypt::encryptString($campaigns->id)
+                                           ])}}"
                                             tag="a"
                                             disabled="{{$responses===true?'true':null}}">
                             Comenzar!

@@ -21,6 +21,8 @@ public $qtty;
         $currentDate = now()->startOfDay();
         $this->responseCO = ClimateOrganizationalResponses::where('user_id', $user->id)
             ->get();
+
+
         // Obtener campañas activas para la sede del usuario
         $campaigns = Campaign::where('status', 'Activa')
             ->where('start_date', '<=', $currentDate)
@@ -30,11 +32,13 @@ public $qtty;
             })
             ->with('evaluations')
             ->get();
+
         $this->response360= Evaluation360Response::where('user_id', $user->id)
             ->get();
 
         return [
             'campaigns' => $campaigns,
+            'user' => $user,
         ];
     }
     protected static string $view = 'filament.widgets.campaign-evaluations-widget';

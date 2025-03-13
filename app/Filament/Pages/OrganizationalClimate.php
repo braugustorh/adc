@@ -38,7 +38,7 @@ class OrganizationalClimate extends Page
             //$campaigns= Campaign::whereStatus('Activa')->first();
             $this->campaigns= Campaign::whereStatus('Activa')->first();
             //AQUI CÓDIGO PARA REVISAR SI YA ESTA CONTESTADA LA EVALUACION DE ESA CAMPAÑA
-            $this->user=auth()->user()->id;
+            $this->user=auth()->user()?->id;
             //Vamos a verificar que el usuario no haya contestado la evaluación de clima organizacional
 
             if (ClimateOrganizationalResponses::where('campaign_id',$this->campaigns->id)->where('user_id',$this->user)->exists()) {

@@ -37,7 +37,7 @@ class OrganizationalClimateController extends Component
                 $this->campaign = \Crypt::decryptString(request()->query('campaign'));
                 $user = User::find($this->user);
                 $this->fullName = $user->name . ' ' . $user->first_name . ' ' . $user->second_name;
-                $this->competencias = Competence::where('evaluations_type_id', 4)
+                $this->competencias = Competence::where('evaluations_type_id', 3)
                     ->where('status',1)
                     ->with('questions')
                     ->get();

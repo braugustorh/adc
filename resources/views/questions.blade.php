@@ -122,28 +122,35 @@
                                                         </a>
                                                     </li>
                                                     <li class="dropdown">
-                                                        <a class="nav-link dropdown-toggle" href="demo-business-consulting-3-services.html">
-                                                            Conoce Más
+                                                        <a class="nav-link dropdown-toggle" href="#">
+                                                            Módulos
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Evaluaciones 360</a>
+                                                                <a href="#" class="dropdown-item">Evaluación 360</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">One to One</a>
+                                                                <a href="#" class="dropdown-item">Face to Face</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Nine Box</a>
+                                                                <a href="#" class="dropdown-item">9 Box</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Clima Organizacional</a>
+                                                                <a href="#" class="dropdown-item">Clima Organizacional</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">OKR's</a>
+                                                                <a href="#" class="dropdown-item">Tablero de control</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Feedback</a>
+                                                                <a href="#" class="dropdown-item">Portafolio </a>
                                                             </li>
+                                                            <li>
+                                                                <a href="#" class="dropdown-item">NOM 035 </a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="#" class="dropdown-item">Psicometrías </a>
+                                                            </li>
+
                                                         </ul>
                                                     </li>
                                                     <li>

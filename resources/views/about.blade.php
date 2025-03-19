@@ -6,11 +6,11 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<title>Demo Business Consulting 3 | Porto - Multipurpose Website Template</title>
+		<title>ADC Plataforma | SEDyCO</title>
 
 		<meta name="keywords" content="WebSite Template" />
-		<meta name="description" content="Porto - Multipurpose Website Template">
-		<meta name="author" content="okler.net">
+		<meta name="description" content="Adc PORTO">
+		<meta name="author" content="EL Brau">
 
         <title>ADC Plataforma | SEDYCO</title>
 
@@ -131,28 +131,35 @@
                                                         </a>
                                                     </li>
                                                     <li class="dropdown">
-                                                        <a class="nav-link dropdown-toggle" href="demo-business-consulting-3-services.html">
-                                                            Conoce Más
+                                                        <a class="nav-link dropdown-toggle" href="#">
+                                                            Módulos
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Evaluaciones 360</a>
+                                                                <a href="#" class="dropdown-item">Evaluación 360</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">One to One</a>
+                                                                <a href="#" class="dropdown-item">Face to Face</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Nine Box</a>
+                                                                <a href="#" class="dropdown-item">9 Box</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Clima Organizacional</a>
+                                                                <a href="#" class="dropdown-item">Clima Organizacional</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">OKR's</a>
+                                                                <a href="#" class="dropdown-item">Tablero de control</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Feedback</a>
+                                                                <a href="#" class="dropdown-item">Portafolio </a>
                                                             </li>
+                                                            <li>
+                                                                <a href="#" class="dropdown-item">NOM 035 </a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="#" class="dropdown-item">Psicometrías </a>
+                                                            </li>
+
                                                         </ul>
                                                     </li>
                                                     <li>
@@ -202,7 +209,7 @@
 			<div role="main" class="main">
 
 				<section class="section page-header page-header-modern page-header-lg border-0 my-0 lazyload" data-bg-src="img/demos/business-consulting-3/backgrounds/background-5.jpg" style="background-size: cover; background-position: center;">
-					<div class="container my-3">
+					<div class="container my-2">
 						<div class="row">
 							<div class="col-md-12 align-self-center p-static order-2 text-center">
 								<h1 class="font-weight-bold text-color-dark text-10">Acerca de Nosotros</h1>
@@ -210,11 +217,84 @@
 							<div class="col-md-12 align-self-center order-1">
 								<ul class="breadcrumb d-block text-center">
 									<li><a href="{{route('welcome')}}">Inicio</a></li>
-									<li class="active">About Us</li>
+									<li class="active">Acerca de Nosotros</li>
 								</ul>
 							</div>
 						</div>
-					</div>
+                    </div>
+                    <div class="container-fluid pt-2 mt-2 mb-2">
+                        <div class="row">
+                            <div class="col appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="250">
+                                <div class="owl-carousel owl-theme carousel-center-active-item custom-carousel-vertical-center-items custom-dots-style-1"
+                                     data-plugin-options="{'responsive': {'0': {'items': 1}, '476': {'items': 3}, '768': {'items': 4}, '992': {'items': 5}, '1200': {'items': 6}, '1600': {'items': 7}},'loop': true, 'nav': true, 'autoplay': true, 'autoplayTimeout': 3000, 'dots': true}">
+
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-1.png" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-2.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-3.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-4.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-5.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-6.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-7.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-8.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-9.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-10.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-11.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-12.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-13.jpg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-14.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-15.jpeg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-16.jpg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-17.jpg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-18.jpg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-19.jpg" alt="" style="max-width: 360px;" />
+                                    </div>
+                                    <div class="text-center mx-2">
+                                        <img class="d-inline-block img-fluid" src="img/centrales/central-20.jpg" alt="" style="max-width: 360px;" />
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 				</section>
 
 				<section class="section section-with-shape-divider bg-color-grey border-0 pb-5 m-0">
@@ -227,9 +307,9 @@
 									Nuestra Historia
 								</h2>
 								<p class="text-3-5 font-weight-medium mb-5 appear-animation text-center" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="350">
-									Conoce el trayecto que ADC ha recorrido, un largo camino desde sus inicios hasta consolidarse como un referente en terminales terrestres.
+                                    Conoce el trayecto que grupo <strong>Flecha Amarilla</strong> ha recorrido desde sus inicios hasta consolidarse como un referente en terminales terrestres.
 								</p>
-								<img src="img/demos/business-consulting-3/historia.jpg" class="img-fluid" alt="" />
+								<img src="img/demos/business-consulting-3/historia.webp" class="img-fluid" alt="" />
 							</div>
 						</div>
 					</div>
@@ -303,50 +383,18 @@
 					</div>
 					<div class="row row-gutter-sm">
 						<div class="col-sm-6 mb-4 mb-sm-0">
-							<img src="img/demos/business-consulting-3/generic/generic-5.jpg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="800" alt="" />
+							<img src="img/centrales/central-14.jpeg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="800" alt="" />
 						</div>
 						<div class="col-6 col-sm-3">
-							<img src="img/demos/business-consulting-3/generic/generic-1.jpg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="600" alt="" />
+							<img src="img/centrales/vertical-central.jpg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="600" alt="" />
 						</div>
 						<div class="col-6 col-sm-3">
-							<img src="img/demos/business-consulting-3/generic/generic-2.jpg" class="img-fluid box-shadow-5 mb-4 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="200" alt="" />
-							<img src="img/demos/business-consulting-3/generic/generic-3.jpg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="400" alt="" />
+							<img src="img/centrales/central-19.jpg" class="img-fluid box-shadow-5 mb-4 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="200" alt="" />
+							<img src="img/centrales/central-11.jpeg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="400" alt="" />
 						</div>
 					</div>
 				</div>
 
-				<div class="container-fluid pt-5 mt-5 mb-4">
-					<div class="row">
-						<div class="col appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="250">
-							<div class="owl-carousel owl-theme carousel-center-active-item custom-carousel-vertical-center-items custom-dots-style-1" data-plugin-options="{'responsive': {'0': {'items': 1}, '476': {'items': 3}, '768': {'items': 3}, '992': {'items': 5}, '1200': {'items': 5}, '1600': {'items': 7}}, 'autoplay': false, 'autoplayTimeout': 3000, 'dots': true}">
-								<div class="text-center">
-									<img class="d-inline-block img-fluid" src="img/logos/logo-8.png" alt="" style="max-width: 90px;" />
-								</div>
-								<div class="text-center">
-									<img class="d-inline-block img-fluid" src="img/logos/logo-9.png" alt="" style="max-width: 140px;" />
-								</div>
-								<div class="text-center">
-									<img class="d-inline-block img-fluid" src="img/logos/logo-10.png" alt="" style="max-width: 140px;" />
-								</div>
-								<div class="text-center">
-									<img class="d-inline-block img-fluid" src="img/logos/logo-11.png" alt="" style="max-width: 140px;" />
-								</div>
-								<div class="text-center">
-									<img class="d-inline-block img-fluid" src="img/logos/logo-12.png" alt="" style="max-width: 100px;" />
-								</div>
-								<div class="text-center">
-									<img class="d-inline-block img-fluid" src="img/logos/logo-13.png" alt="" style="max-width: 100px;" />
-								</div>
-								<div class="text-center">
-									<img class="logos/logo-14.png" alt="" style="max-width: 140px;" />
-								</div>
-								<div class="text-center">
-									<img class="img/logos/logo-15.png" alt="" style="max-width: 110px;" />
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
 			</div>
 			<footer id="footer" class="border-top-0 m-0 lazyload" data-bg-src="img/demos/adc/backgrounds/background-4.jpg" style="background-size: cover; background-position: center; background-repeat: no-repeat;">
 				<div class="container pt-3">

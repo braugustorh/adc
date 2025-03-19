@@ -70,7 +70,7 @@
 														<span>
 															<img width="25" src="img/demos/adc/icons/email.svg" alt="Email Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
 														</span>
-														<a class="text-color-light text-decoration-none font-weight-semibold text-3-5 ms-2" href="mailto:contacto@adc.com" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light">contacto@adc.com</a>
+														<a class="text-color-light text-decoration-none font-weight-semibold text-3-5 ms-2" href="mailto:contactorh@adcentrales.com" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light">contactorh@adcentrales.com</a>
 													</span>
                                         </li>
                                     </ul>
@@ -126,28 +126,35 @@
                                                 </a>
                                             </li>
                                             <li class="dropdown">
-                                                <a class="nav-link dropdown-toggle" href="demo-business-consulting-3-services.html">
-                                                    Conoce Más
+                                                <a class="nav-link dropdown-toggle" href="#">
+                                                    Módulos
                                                 </a>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Evaluaciones 360</a>
+                                                        <a href="#" class="dropdown-item">Evaluación 360</a>
                                                     </li>
                                                     <li>
-                                                        <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">One to One</a>
+                                                        <a href="#" class="dropdown-item">Face to Face</a>
                                                     </li>
                                                     <li>
-                                                        <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Nine Box</a>
+                                                        <a href="#" class="dropdown-item">9 Box</a>
                                                     </li>
                                                     <li>
-                                                        <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Clima Organizacional</a>
+                                                        <a href="#" class="dropdown-item">Clima Organizacional</a>
                                                     </li>
                                                     <li>
-                                                        <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">OKR's</a>
+                                                        <a href="#" class="dropdown-item">Tablero de control</a>
                                                     </li>
                                                     <li>
-                                                        <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Feedback</a>
+                                                        <a href="#" class="dropdown-item">Portafolio </a>
                                                     </li>
+                                                    <li>
+                                                        <a href="#" class="dropdown-item">NOM 035 </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="dropdown-item">Psicometrías </a>
+                                                    </li>
+
                                                 </ul>
                                             </li>
                                             <li>
@@ -235,7 +242,7 @@
                 <div class="col-xl-7 ms-xl-auto">
                     <div class="owl-carousel owl-theme custom-carousel-box-shadow-1 custom-dots-style-1 mb-0" data-plugin-options="{'responsive': {'576': {'items': 1}, '768': {'items': 2}, '992': {'items': 2}, '1200': {'items': 2}}, 'margin': 20, 'loop': false, 'nav': false, 'autoplay': true, 'autoplayTimeout': 5000, 'dots': true}" style="height: 398px;">
                         <div>
-                            <a href="demo-business-consulting-3-services.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                            <a href="#" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                                 <div class="card border-0">
                                     <div class="card-body text-center py-5">
                                         <div class="animated-icon animated fadeIn svg-fill-color-primary">
@@ -264,7 +271,7 @@
                                         <h2 class="text-5 font-weight-semibold mb-1">Ganar-Ganar</h2>
                                         <p class="pb-1 mb-2">Desarrolla tus talentos en un entorno que te motive y explota al máximo tus habilidades.</p>
                                         <span class="custom-view-more d-inline-flex font-weight-medium text-color-primary">
-													Conoce Más
+													Mostrar Más
 													<div class="animated-icon animated fadeIn svg-fill-color-primary ms-2">
 													<svg version="1.1" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="icon_211722912978996" data-filename="arrow-right.svg" width="27" height="27">
 														<polygon points="1,26 44.586,26 38.293,32.293 39.707,33.707 48.414,25 39.707,16.293 38.293,17.707 44.586,24 1,24  "></polygon>
@@ -279,7 +286,8 @@
                                 <div class="card border-0">
                                     <div class="card-body text-center py-5">
                                         <div class="animated-icon animated fadeIn svg-fill-color-primary">
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="75" viewBox="0 -960 960 960" width="75"><path d="M627.226-528.761q24.404 0 41.774-17.226 17.37-17.227 17.37-41.631t-17.276-41.773q-17.276-17.37-41.75-17.37t-41.605 17.191q-17.13 17.192-17.13 41.75 0 24.559 17.096 41.809 17.097 17.25 41.521 17.25Zm-294.57 0q24.474 0 41.605-17.142 17.13-17.142 17.13-41.63 0-24.489-17.096-41.858-17.097-17.37-41.521-17.37-24.404 0-41.774 17.276-17.37 17.275-17.37 41.75 0 24.474 17.276 41.724 17.276 17.25 41.75 17.25ZM480.013-62.804q-85.856 0-162.313-32.713-76.457-32.712-133.174-89.133-56.718-56.42-89.22-132.95-32.502-76.531-32.502-162.387T95.517-642.3q32.712-76.457 89.095-133.187 56.383-56.73 132.931-89.339t162.424-32.609q85.876 0 162.361 32.801 76.485 32.801 133.197 89.202 56.713 56.402 89.311 132.974 32.599 76.573 32.599 162.478 0 85.889-32.82 162.342-32.819 76.453-89.252 133.141-56.433 56.689-132.963 89.19-76.531 32.503-162.387 32.503ZM480-480Zm.181 339.891q141.998 0 240.854-99.036 98.856-99.037 98.856-241.036 0-141.998-99.036-240.854-99.037-98.856-241.036-98.856-141.998 0-240.854 99.036-98.856 99.037-98.856 241.036 0 141.998 99.036 240.854 99.037 98.856 241.036 98.856Zm-.677-113.761q60.051 0 111.262-27.995 51.21-27.996 81.56-77.165 6-12.361-1.32-23.861t-21.953-11.5H311.131q-15.355 0-22.406 11.213-7.051 11.214.188 23.908 29.283 49.419 80.544 77.41 51.26 27.99 110.047 27.99Z"></path></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="75" viewBox="0 -960 960 960" width="75">
+                                                <path d="M627.226-528.761q24.404 0 41.774-17.226 17.37-17.227 17.37-41.631t-17.276-41.773q-17.276-17.37-41.75-17.37t-41.605 17.191q-17.13 17.192-17.13 41.75 0 24.559 17.096 41.809 17.097 17.25 41.521 17.25Zm-294.57 0q24.474 0 41.605-17.142 17.13-17.142 17.13-41.63 0-24.489-17.096-41.858-17.097-17.37-41.521-17.37-24.404 0-41.774 17.276-17.37 17.275-17.37 41.75 0 24.474 17.276 41.724 17.276 17.25 41.75 17.25ZM480.013-62.804q-85.856 0-162.313-32.713-76.457-32.712-133.174-89.133-56.718-56.42-89.22-132.95-32.502-76.531-32.502-162.387T95.517-642.3q32.712-76.457 89.095-133.187 56.383-56.73 132.931-89.339t162.424-32.609q85.876 0 162.361 32.801 76.485 32.801 133.197 89.202 56.713 56.402 89.311 132.974 32.599 76.573 32.599 162.478 0 85.889-32.82 162.342-32.819 76.453-89.252 133.141-56.433 56.689-132.963 89.19-76.531 32.503-162.387 32.503ZM480-480Zm.181 339.891q141.998 0 240.854-99.036 98.856-99.037 98.856-241.036 0-141.998-99.036-240.854-99.037-98.856-241.036-98.856-141.998 0-240.854 99.036-98.856 99.037-98.856 241.036 0 141.998 99.036 240.854 99.037 98.856 241.036 98.856Zm-.677-113.761q60.051 0 111.262-27.995 51.21-27.996 81.56-77.165 6-12.361-1.32-23.861t-21.953-11.5H311.131q-15.355 0-22.406 11.213-7.051 11.214.188 23.908 29.283 49.419 80.544 77.41 51.26 27.99 110.047 27.99Z"></path></svg>
                                         </div>
                                         <div class="custom-crooked-line">
                                             <div class="animated-icon animated fadeIn svg-fill-color-primary">
@@ -302,7 +310,7 @@
                                         <h2 class="text-5 font-weight-semibold mb-1">Futuro más sólido</h2>
                                         <p class="pb-1 mb-2">Sientete motivado, preparado y comprometido con tu trabajo, haciendo lo que más te gusta. </p>
                                         <span class="custom-view-more d-inline-flex font-weight-medium text-color-primary">
-													Mostrar Más
+													Mostrar más
 													<div class="animated-icon animated fadeIn svg-fill-color-primary ms-2"><!--?xml version="1.0" ?-->
 <svg version="1.1" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="icon_211722912978996" data-filename="arrow-right.svg" width="27" height="27">
 	<polygon points="1,26 44.586,26 38.293,32.293 39.707,33.707 48.414,25 39.707,16.293 38.293,17.707 44.586,24 1,24  "></polygon>
@@ -340,7 +348,7 @@
                                         <h2 class="text-5 font-weight-semibold mb-1">Ahorra tiempo</h2>
                                         <p class="pb-1 mb-2">Optimiza procesos, elimina el papeleo innecesario y simplifica la gestión de recursos humanos. </p>
                                         <span class="custom-view-more d-inline-flex font-weight-medium text-color-primary">
-													View More
+													Mostrar más
 													<div class="animated-icon animated fadeIn svg-fill-color-primary ms-2"><!--?xml version="1.0" ?-->
 <svg version="1.1" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="icon_211722912978996" data-filename="arrow-right.svg" width="27" height="27">
 	<polygon points="1,26 44.586,26 38.293,32.293 39.707,33.707 48.414,25 39.707,16.293 38.293,17.707 44.586,24 1,24  "></polygon>
@@ -359,7 +367,7 @@
                 <div class="col-md-12 col-lg-7 mb-5 mb-lg-0">
                     <div class="row row-gutter-sm">
                         <div class="col-12">
-                            <img src="img/demos/adc/cabecera_2.webp" class="img-fluid" alt="" />
+                            <img src="img/demos/adc/cabecera_2adc.webp" class="img-fluid" alt="" />
                         </div>
 
                     </div>
@@ -367,7 +375,7 @@
                 <div class="col-lg-5 ps-lg-4 ps-xl-5">
                     <h2 class="custom-highlight-text-1 d-inline-block line-height-5 text-4 positive-ls-3 font-weight-medium text-color-primary mb-2 appear-animation" data-appear-animation="fadeInUpShorter">¿Cuál es el Objetivo?</h2>
                     <h3 class="text-9 text-lg-5 text-xl-9 line-height-3 text-transform-none font-weight-semibold mb-4 mb-lg-3 mb-xl-4 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="250">Lograr equipos más productivos.  </h3>
-                    <p class="text-3-5 pb-1 mb-4 mb-lg-2 mb-xl-4 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="500">Transformar los equipos de trabajo por equipos altamente competitivos, a través de una <strong>Metodología Focalizada</strong>  y con el <strong>Sistema de Evaluación al Aesempeño y Clima Orgabizacional</strong>.</p>
+                    <p class="text-3-5 pb-1 mb-4 mb-lg-2 mb-xl-4 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="500">Transformar los equipos de trabajo por equipos altamente competitivos, a través de una <strong>Metodología Focalizada</strong>  y con el <strong>Sistema de Evaluación al Desempeño y Clima Organizacional</strong>.</p>
                     <div class="row align-items-center pb-2 mb-4 mb-lg-1 mb-xl-4 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="750">
                         <div class="col-5">
                             <div class="d-flex">
@@ -437,8 +445,10 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-11 col-xl-10 text-center">
                         <h2 class="custom-highlight-text-1 d-inline-block line-height-5 text-4 positive-ls-3 font-weight-medium text-color-primary mb-2 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="250">PRINCIPALES</h2>
-                        <h3 class="text-9 line-height-3 text-transform-none font-weight-semibold mb-3 pb-1 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="500">Caraterísticas</h3>
-                        <p class="text-3-5 pb-3 mb-4 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="750">Cras a elit sit amet leo accumsan volutpat. Suspendisse hendreriast ehicula leo, vel efficitur felis ultrices non. Cras a elit sit amet leo acun volutpat. Suspendisse hendrerit vehicula leo, vel efficitur fel. </p>
+                        <h3 class="text-9 line-height-3 text-transform-none font-weight-semibold mb-3 pb-1 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="500">Módulos</h3>
+                        <p class="text-3-5 pb-3 mb-4 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="750">
+                            SEDyCO es una plataforma innovadora que combina diversos módulos estratégicos para ayudarte a medir, analizar y potenciar el desempeño de tu equipo de trabajo en todos los niveles. Con herramientas como:
+                        </p>
                     </div>
                 </div>
                 <div class="row row-gutter-sm justify-content-center mb-5 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="1000">
@@ -447,7 +457,7 @@
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
-                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">Reunión One to One</h4>
+                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">Face to Face</h4>
                                         <div class="custom-crooked-line">
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
@@ -455,7 +465,7 @@
                                     <img src="img/demos/business-consulting-3/services/services-1.jpg" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
-                                    <p class="card-text w-100 mb-0">Cras a elit sit amet leo accumsan. Suspendisse hendrerit. </p>
+                                    <p class="card-text w-100 mb-0">Revisa desempeño y planificar mejoras en reuniones <br> jefe-colaborador.</p>
                                     <img width="50" height="50" class="w-auto" src="img/demos/business-consulting-3/icons/arrow-right.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 50px;" />
                                 </div>
                             </div>
@@ -474,7 +484,7 @@
                                     <img src="img/demos/business-consulting-3/services/services-2.jpg" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
-                                    <p class="card-text w-100 mb-0">Cras a elit sit amet leo accumsan. Suspendisse hendrerit. </p>
+                                    <p class="card-text w-100 mb-0">Realiza evaluaciones para medir desempeño desde múltiples ángulos en diversos roles.. </p>
                                     <img width="50" height="50" class="w-auto" src="img/demos/business-consulting-3/icons/arrow-right.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 50px;" />
                                 </div>
                             </div>
@@ -485,7 +495,9 @@
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
-                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">9 Box</h4>
+                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">
+                                            9 Box
+                                        </h4>
                                         <div class="custom-crooked-line">
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
@@ -493,18 +505,20 @@
                                     <img src="img/demos/business-consulting-3/services/services-3.jpg" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
-                                    <p class="card-text w-100 mb-0">Cras a elit sit amet leo accumsan. Suspendisse hendrerit. </p>
+                                    <p class="card-text w-100 mb-0">Sitúa a los colaboradores en 9 cuadrantes para evaluar potencial y desempeño.</p>
                                     <img width="50" height="50" class="w-auto" src="img/demos/business-consulting-3/icons/arrow-right.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 50px;" />
                                 </div>
                             </div>
                         </a>
                     </div>
-                    <div class="col-sm-9 col-md-6 col-lg-4 mb-4 mb-lg-0">
+                    <div class="col-sm-9 col-md-6 col-lg-4 mb-4">
                         <a href="demo-business-consulting-3-services-detail.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
-                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">Clima Organizacional</h4>
+                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">
+                                            Clima Organizacional
+                                        </h4>
                                         <div class="custom-crooked-line">
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
@@ -512,18 +526,58 @@
                                     <img src="img/demos/business-consulting-3/services/services-4.jpg" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
-                                    <p class="card-text w-100 mb-0">Cras a elit sit amet leo accumsan. Suspendisse hendrerit. </p>
+                                    <p class="card-text w-100 mb-0">Presenta el estado actual de la organización para apoyar diagnósticos y decisiones. </p>
                                     <img width="50" height="50" class="w-auto" src="img/demos/business-consulting-3/icons/arrow-right.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 50px;" />
                                 </div>
                             </div>
                         </a>
                     </div>
-                    <div class="col-sm-9 col-md-6 col-lg-4 mb-4 mb-lg-0">
+                    <div class="col-sm-9 col-md-6 col-lg-4 mb-4">
                         <a href="demo-business-consulting-3-services-detail.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
-                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">Feedback</h4>
+                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">Portafolio Electrónico</h4>
+                                        <div class="custom-crooked-line">
+                                            <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
+                                        </div>
+                                    </div>
+                                    <img src="img/demos/business-consulting-3/services/services-4.jpg" class="img-fluid" alt="Card Image" />
+                                </div>
+                                <div class="card-body d-flex align-items-center custom-view-more px-4">
+                                    <p class="card-text w-100 mb-0">Presenta el estado actual de la organización para apoyar diagnósticos y decisiones. </p>
+                                    <img width="50" height="50" class="w-auto" src="img/demos/business-consulting-3/icons/arrow-right.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 50px;" />
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-9 col-md-6 col-lg-4 mb-4">
+                        <a href="demo-business-consulting-3-services-detail.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                            <div class="card box-shadow-4">
+                                <div class="card-img-top position-relative overlay overlay-show">
+                                    <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
+                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">Tablero de Control</h4>
+                                        <div class="custom-crooked-line">
+                                            <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
+                                        </div>
+                                    </div>
+                                    <img src="img/demos/business-consulting-3/services/services-4.jpg" class="img-fluid" alt="Card Image" />
+                                </div>
+                                <div class="card-body d-flex align-items-center custom-view-more px-4">
+                                    <p class="card-text w-100 mb-0">Presenta el estado actual de la organización para apoyar diagnósticos y decisiones. </p>
+                                    <img width="50" height="50" class="w-auto" src="img/demos/business-consulting-3/icons/arrow-right.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 50px;" />
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-9 col-md-6 col-lg-4 mb-4">
+                        <a href="demo-business-consulting-3-services-detail.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                            <div class="card box-shadow-4">
+                                <div class="card-img-top position-relative overlay overlay-show">
+                                    <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
+                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">
+                                            NOM 035
+                                        </h4>
                                         <div class="custom-crooked-line">
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
@@ -531,7 +585,7 @@
                                     <img src="img/demos/business-consulting-3/services/services-5.jpg" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
-                                    <p class="card-text w-100 mb-0">Cras a elit sit amet leo accumsan. Suspendisse hendrerit. </p>
+                                    <p class="card-text w-100 mb-0">Identifica y previene riesgos psicosociales para cuidar la salud emocional de los empleados.</p>
                                     <img width="50" height="50" class="w-auto" src="img/demos/business-consulting-3/icons/arrow-right.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 50px;" />
                                 </div>
                             </div>
@@ -542,7 +596,9 @@
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
-                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">OKR's</h4>
+                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">
+                                            Psicometrías
+                                        </h4>
                                         <div class="custom-crooked-line">
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
@@ -550,7 +606,7 @@
                                     <img src="img/demos/business-consulting-3/services/services-6.jpg" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
-                                    <p class="card-text w-100 mb-0">Establece y asigna OKRs para medir el progreso. </p>
+                                    <p class="card-text w-100 mb-0">Realiza diversas pruebas que ayuden a detectar personalidad, inteligencia y comportamiento. </p>
                                     <img width="50" height="50" class="w-auto" src="img/demos/business-consulting-3/icons/arrow-right.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 50px;" />
                                 </div>
                             </div>
@@ -616,7 +672,7 @@
             <div class="row align-items-center py-4 my-5 mb-lg-0 my-xl-5">
                 <div class="col-lg-7 mb-5 mb-lg-0">
                     <h2 class="text-9 line-height-3 text-transform-none font-weight-semibold mb-4">La medición de habilidades, un diferenciador estratégico para tu empresa.</h2>
-                    <p class="text-3-5 pb-3 mb-4">la medición de habilidades es reconocer el valor de cada colaborador. Al identificar fortalezas y áreas de mejora, motivamos a nuestros equipos, aumentamos su compromiso y creamos un ambiente de trabajo más positivo y productivo.</p>
+                    <p class="text-3-5 pb-3 mb-4">La medición de habilidades es reconocer el valor de cada colaborador. Al identificar fortalezas y áreas de mejora, motivamos a nuestros equipos, aumentamos su compromiso y creamos un ambiente de trabajo más positivo y productivo.</p>
                     <div class="progress-bars pb-4">
                         <div class="progress-label d-flex justify-content-between">
                             <span class="text-color-dark font-weight-semibold text-2">RETENCIÓN DE TALENTO:</span>
@@ -791,7 +847,7 @@
                         </li>
                         <li class="d-flex px-0 my-3">
                             <img width="25" src="img/demos/business-consulting-3/icons/email.svg" alt="Email Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
-                            <a href="mailto:contacto@adc.com" class="text-color-light font-weight-semibold text-3-4 ms-2">contacto@adc.com</a>
+                            <a href="mailto:contactorh@adcentrales.com" class="text-color-light font-weight-semibold text-3-4 ms-2">contactorh@adcentrales.com</a>
                         </li>
                         <li class="d-flex font-weight-semibold text-color-light px-0 mb-1">
                             <img width="25" src="img/demos/business-consulting-3/icons/map-pin.svg" alt="Location" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light me-2'}" />

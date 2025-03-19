@@ -123,28 +123,35 @@
                                                         </a>
                                                     </li>
                                                     <li class="dropdown">
-                                                        <a class="nav-link dropdown-toggle" href="demo-business-consulting-3-services.html">
-                                                            Conoce Más
+                                                        <a class="nav-link dropdown-toggle" href="#">
+                                                            Módulos
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Evaluaciones 360</a>
+                                                                <a href="#" class="dropdown-item">Evaluación 360</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">One to One</a>
+                                                                <a href="#" class="dropdown-item">Face to Face</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Nine Box</a>
+                                                                <a href="#" class="dropdown-item">9 Box</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Clima Organizacional</a>
+                                                                <a href="#" class="dropdown-item">Clima Organizacional</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">OKR's</a>
+                                                                <a href="#" class="dropdown-item">Tablero de control</a>
                                                             </li>
                                                             <li>
-                                                                <a href="demo-business-consulting-3-services-detail.html" class="dropdown-item">Feedback</a>
+                                                                <a href="#" class="dropdown-item">Portafolio </a>
                                                             </li>
+                                                            <li>
+                                                                <a href="#" class="dropdown-item">NOM 035 </a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="#" class="dropdown-item">Psicometrías </a>
+                                                            </li>
+
                                                         </ul>
                                                     </li>
                                                     <li>
@@ -226,49 +233,168 @@
                             <table class="table table-hover">
                                 <thead>
                                 <tr>
-                                    <th>
-                                        Central
-                                    </th>
-                                    <th>
-                                        Puesto
-                                    </th>
-                                    <th>
-                                        Nombre
-                                    </th>
-                                    <th>
-                                        Correo Institucional
-                                    </th>
+                                    <th>OFICINA</th>
+                                    <th>CENTRALES Y TERMINALES</th>
+                                    <th>UBICACIÓN</th>
+                                    <th>CORREO INSTITUCIONAL</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>
-                                        IRAPUATO
-                                    </td>
-                                    <td>
-                                        JEFE DE RH
-                                    </td>
-                                    <td>
-                                        Lic. Ana Ivette Pérez Meza
-
-                                    </td>
-                                    <td>
-                                        a.perez@irapuato.adcentrales.com
-                                    </td>
+                                    <td></td>
+                                    <td>COORDINACIÓN DE DESARROLLO ORGANIZACIONAL - ADC</td>
+                                    <td>LEÓN</td>
+                                    <td>contactorh@adcentrales.com</td>
                                 </tr>
-                                <tr><td>CELAYA</td><td>JEFE DE RH</td><td>Lic. Arturo Palma Pérez</td><td>a.palma@celaya.adcentrales.com</td></tr>
-                                <tr><td>ALTEÑA</td><td>JEFE DE RH</td><td>Lic. Bárbara Alicia Fonseca Enriquez</td><td>rh@gdl.adcentrales.com</td></tr>
-                                <tr><td>QUERETARO</td><td>JEFE DE RH</td><td>Lic. Leticia López López</td><td>l.lopez@taqro.com.mx</td></tr>
-                                <tr><td></td><td>AUX. DE DO</td><td>Lic. Karen Jazmin Santana Linares</td><td>auxiliardo@taqro.com.mx</td></tr>
-                                <tr><td>SAN LUIS POTOSI</td><td>JEFE DE RH</td><td>Lic. Irene Guadalupe Guel López</td><td>rh@ttp.adcentrales.com </td></tr>
-                                <tr><td></td><td>AUXILIAR DE RH </td><td>Lic. Erick Mauricio Gómez Rocha</td><td>reclutamiento@ttp.adcentrales.com</td></tr>
-                                <tr><td>LEON</td><td>JEFE DE RH</td><td>Lic. Elizabeth Reyes Cano</td><td>e.reyes@eca.adcentrales.com</td></tr>
-                                <tr><td>MILENIO</td><td>AUX. DE INGRESOS Y RR.HH</td><td>Lic. Gabriela Aguayo Sánchez</td><td>ingresos@milenio.adcentrales.com</td></tr>
-                                <tr><td>GUANAJUATO </td><td>RH / CAJA GENERAL</td><td>Christian Alexis Duran Medina</td><td>alexis.duran@guanajuato.adcentrales.com</td></tr>
-                                <tr><td>MANZANILLO</td><td>JEFE DE RH</td><td>Lic. Areli Barrera Alejandro</td><td>rh@manzanillo.adcentrales.com</td></tr>
-                                <tr><td>SAN JUAN DEL RIO </td><td>ADMINISTRACION </td><td>Lic. Reyna Alegría Resendiz</td><td>r.alegria@sjr.adcentrales.com</td></tr>
-                                <tr><td>CENTRALES TIPO "C"</td><td>COORDINADOR DE DO</td><td></td><td>PENDIENTE</td></tr>
+                                <tr>
+                                    <td rowspan="6"><h1 class="font-weight-bold text-color-dark text-10 text-center">A</h1></td>
+                                    <td>ESTACIÓN CENTRAL DE AUTOBUSES LEÓN DE LOS ALDAMAS, SA DE CV</td>
+                                    <td>LEÓN</td>
+                                    <td>e.reyes@eca.adcentrales.com</td>
+                                </tr>
+                                <tr>
 
+                                    <td>TERMINAL DE AUTOBUSES DE QUERETARO, SA DE CV.</td>
+                                    <td>QUERÉTARO</td>
+                                    <td>m.fernandez@taqro.com.mx</td>
+                                </tr>
+                                <tr>
+                                    <td>TERMINAL TERRESTRE POTOSINA</td>
+                                    <td>SAN LUIS POTOSI</td>
+                                    <td>rh@ttp.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES IRAPUATO SA DE CV.</td>
+                                    <td>IRAPUATO</td>
+                                    <td>a.perez@irapuato.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES TRESGUERRAS, SA DE CV.</td>
+                                    <td>CELAYA</td>
+                                    <td>a.palma@celaya.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>ARRENDAMIENTO ALTEÑA, SA DE CV.</td>
+                                    <td>GUADALAJARA</td>
+                                    <td>rh@gdl.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="4"><h1 class="font-weight-bold text-color-dark text-10 text-center">B</h1></td>
+                                    <td>CENTRAL CAMIONERA NUEVO MILENIO DE GUADALAJARA SA DE CV.</td>
+                                    <td>MILENIO</td>
+                                    <td>gerencia@milenio.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES DE SAN JUAN DEL RIO, SA DE CV.</td>
+                                    <td>SAN JUAN DEL RIO</td>
+                                    <td>i.garcia@sjr.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>TERMINAL DE AUTOBUSES MANZANILLO, SA DE CV</td>
+                                    <td>MANZANILLO</td>
+                                    <td>rh@manzanillo.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES GUANAJUATO, SA DE CV</td>
+                                    <td>GUANAJUATO</td>
+                                    <td>gerencia@guanajuato.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="19"><h1 class="font-weight-bold text-color-dark text-10 text-center">C</h1></td>
+                                    <td>CENTRAL DE AUTOBUSES ACAMBARO, SA DE CV.</td>
+                                    <td>ACAMBARO</td>
+                                    <td>gerencia@acambaro.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES CORTAZAR, SA DE CV</td>
+                                    <td>CORTAZAR</td>
+                                    <td>jc.quintana@cortazar.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES DE LA PIEDAD, SA DE CV</td>
+                                    <td>LA PIEDAD</td>
+                                    <td>gerencia@lapiedad.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES DE SALAMANCA, SA DE CV</td>
+                                    <td>SALAMANCA</td>
+                                    <td>gerencia@salamanca.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES LA BARCA, SA DE CV</td>
+                                    <td>LA BARCA</td>
+                                    <td>gerencia@labarca.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES OCOTLAN JALISCO, SA DE CV</td>
+                                    <td>OCOTLAN</td>
+                                    <td>m.tamayo@ocotlan.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES SALVATIERRA, SA DE CV</td>
+                                    <td>SLAVATIERRA</td>
+                                    <td>gerencia@salvatierra.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES SAN FELIPE GUANAJUATO SA DE CV</td>
+                                    <td>SAN FELIPE</td>
+                                    <td>terminal_sanfelipe@adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES CORTAZAR SA DE CV. SUC DOLORES HIDALGO.</td>
+                                    <td>DOLORES HIDALGO</td>
+                                    <td>terminal_dolores@adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES SAN MIGUEL DE ALLENDE, SA DE CV</td>
+                                    <td>SAN MIGUEL ALLENDE</td>
+                                    <td>terminal_sanmigueldeallende@adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES SAN LUIS DE LA PAZ, SA DE CV</td>
+                                    <td>SAN LUIS DE LA PAZ</td>
+                                    <td>terminal_sanluisdelapaz@adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>ESTACIÓN CENTRAL DE AUTOBUSES LEÓN DE LOS ALDAMAS, SA DE CV. SUC SILAO</td>
+                                    <td>SILAO</td>
+                                    <td>gerencia@silao.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>TERMINAL DE AUTOBUSES ZAPOTLAN, SA DE CV.</td>
+                                    <td>ZAPOTLAN</td>
+                                    <td>rh@zapotlan.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>TERMINAL DE AUTOBUSES DE JALPAN SA DE CV</td>
+                                    <td>JALPAN</td>
+                                    <td>terminal_jalpan@adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>TERMINAL DE AUTOBUSES TEQUISQUIAPAN, SA DE CV</td>
+                                    <td>TEQUISQUIAPAN</td>
+                                    <td>d.sandoval@tequis.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL ALMEALCENSE DE AUTOBUSES, SA DE CV.</td>
+                                    <td>AMEALCO</td>
+                                    <td>adelina@amealco.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>CENTRAL DE AUTOBUSES DE CADEREYTA, SA DE CV</td>
+                                    <td>CADEREYTA</td>
+                                    <td>central_cadereyta@cadereyta.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>TERMINAL DE AUTOBUSES MOROLEON, SA DE CV</td>
+                                    <td>MOROLEON</td>
+                                    <td>gerencia@moroleon.adcentrales.com</td>
+                                </tr>
+                                <tr>
+                                    <td>TERMINAL DE AUTOBUSES URIANGATO, SA DE CV.</td>
+                                    <td>URIANGATO</td>
+                                    <td>gerencia@uriangato.adcentrales.com</td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>

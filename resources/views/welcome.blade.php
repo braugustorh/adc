@@ -537,7 +537,7 @@
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
-                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">Portafolio Electrónico</h4>
+                                        <h4 class="font-weight-semibold text-color-light text-6 mb-1">Portafolio Digital</h4>
                                         <div class="custom-crooked-line">
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
@@ -545,7 +545,7 @@
                                     <img src="img/demos/business-consulting-3/services/services-4.jpg" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
-                                    <p class="card-text w-100 mb-0">Presenta el estado actual de la organización para apoyar diagnósticos y decisiones. </p>
+                                    <p class="card-text w-100 mb-0">Visualiza y descarga los documentos de cada uno de los colaboradores. </p>
                                     <img width="50" height="50" class="w-auto" src="img/demos/business-consulting-3/icons/arrow-right.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 50px;" />
                                 </div>
                             </div>
@@ -564,7 +564,7 @@
                                     <img src="img/demos/business-consulting-3/services/services-4.jpg" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
-                                    <p class="card-text w-100 mb-0">Presenta el estado actual de la organización para apoyar diagnósticos y decisiones. </p>
+                                    <p class="card-text w-100 mb-0">Visualiza el estado actual de indicadores, planes y estrategias de la organización. </p>
                                     <img width="50" height="50" class="w-auto" src="img/demos/business-consulting-3/icons/arrow-right.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 50px;" />
                                 </div>
                             </div>

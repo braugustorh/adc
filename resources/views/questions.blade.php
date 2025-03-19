@@ -66,7 +66,7 @@
 														<span>
 															<img width="25" src="img/demos/adc/icons/email.svg" alt="Email Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
 														</span>
-														<a class="text-color-light text-decoration-none font-weight-semibold text-3-5 ms-2" href="mailto:contacto@adc.com" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light">contacto@adc.com</a>
+														<a class="text-color-light text-decoration-none font-weight-semibold text-3-5 ms-2" href="mailto:contactorh@adcentrales.com" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light">contactorh@adcentrales.com</a>
 													</span>
                                                 </li>
                                             </ul>
@@ -99,7 +99,7 @@
                             <div class="header-column">
                                 <div class="header-row">
                                     <div class="header-logo">
-                                        <a href="demo-business-consulting-3.html">
+                                        <a href="#">
                                             <img alt="Porto" width="192" height="82" src="img/logo_header_home.png">
                                         </a>
                                     </div>
@@ -385,7 +385,7 @@
                                 </li>
                                 <li class="d-flex px-0 my-3">
                                     <img width="25" src="img/demos/business-consulting-3/icons/email.svg" alt="Email Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
-                                    <a href="mailto:contacto@adc.com" class="text-color-light font-weight-semibold text-3-4 ms-2">contacto@adc.com</a>
+                                    <a href="mailto:contactorh@adcentrales.com" class="text-color-light font-weight-semibold text-3-4 ms-2">contactorh@adcentrales.com</a>
                                 </li>
                                 <li class="d-flex font-weight-semibold text-color-light px-0 mb-1">
                                     <img width="25" src="img/demos/business-consulting-3/icons/map-pin.svg" alt="Location" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light me-2'}" />

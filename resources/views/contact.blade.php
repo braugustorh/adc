@@ -67,7 +67,7 @@
 														<span>
 															<img width="25" src="img/demos/adc/icons/email.svg" alt="Email Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
 														</span>
-														<a class="text-color-light text-decoration-none font-weight-semibold text-3-5 ms-2" href="mailto:contacto@adc.com" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light">contacto@adc.com</a>
+														<a class="text-color-light text-decoration-none font-weight-semibold text-3-5 ms-2" href="mailto:contactorh@adcentrales.com" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light">contactorh@adcentrales.com</a>
 													</span>
                                                 </li>
                                             </ul>
@@ -211,7 +211,7 @@
 							</div>
 							<div class="col-md-12 align-self-center order-1">
 								<ul class="breadcrumb d-block text-center">
-									<li><a href="demo-business-consulting-3.html">Inicio</a></li>
+									<li><a href="#">Inicio</a></li>
 									<li class="active">Directorio</li>
 								</ul>
 							</div>

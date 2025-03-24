@@ -47,7 +47,8 @@ class Panel360 extends Page
 
             $this->campaigns= Campaign::whereStatus('Activa')->first();
             $this->today= Carbon::now();
-            $this->daysRemaining= $this->today->diffInDays($this->campaigns->end_date);
+            $this->campaigns->end_date= Carbon::parse($this->campaigns->end_date);
+            $this->daysRemaining= (int)$this->today->diffInDays($this->campaigns->end_date);
             $position= Position::find(auth()->user()->position_id);
             $supervisor= User::where('position_id',$position->supervisor_id)
                 ->get()
@@ -75,9 +76,7 @@ class Panel360 extends Page
                         // ->where('user_to_evaluate_id','<>', $supervisor->id)
                         ->get();
                     $this->supervisors=collect();
-
                 }
-
             }
 
             /*busca al supervisor en una coleccion y lo compara con el usuario autenticado

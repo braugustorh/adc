@@ -23,6 +23,15 @@ Route::group(['prefix' => '/'], function () {
     Route::view('/about', 'about')->name('about');
     Route::view('/contact', 'contact')->name('contact');
     Route::view('/questions', 'questions')->name('questions');
+    Route::view('/modules', 'modules')->name('modules');
+    Route::view('/modules-360-detail', 'modules-360-detail')->name('modules-360-detail');
+    Route::view('/modules-f2f', 'modules-f2f')->name('modules-f2f');
+    Route::view('/modules-9box', 'modules-9box')->name('modules-9box');
+    Route::view('/modules-nom035', 'modules-nom035')->name('modules-nom035');
+    Route::view('/modules-clima', 'modules-clima')->name('modules-clima');
+    Route::view('/modules-tablero-de-control', 'modules-tablero-de-control')->name('modules-tablero-de-control');
+    Route::view('/modules-psicometria', 'modules-psicometria')->name('modules-psicometria');
+    Route::view('/modules-portafolio', 'modules-portafolio')->name('modules-portafolio');
 });
 Route::group(['middleware' => 'auth'], function () {
 

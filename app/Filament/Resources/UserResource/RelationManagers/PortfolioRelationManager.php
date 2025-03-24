@@ -132,7 +132,7 @@ class PortfolioRelationManager extends RelationManager
                     ->label('Penales')
                     ->icon(function ($record): string {
                         $url =$record->carta_no_antecedentes_url;
-                        dd($url);
+
                         return $url ? 'heroicon-m-check-circle' : 'heroicon-m-x-circle';
                     })->color(function ($record): string {
                         $url =$record->carta_no_antecedentes_url;

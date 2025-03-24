@@ -193,10 +193,10 @@ class UpdateCampaignStatus extends Command
         // Realiza la asignación de evaluación
         EvaluationAssign::create([
             'evaluation_id' => 2, // Ajusta esto según tu modelo
-            'position_id' => $evaluator->position_id,
             'campaign_id' => $campaign->id,
-            'user_id' => $evaluator->id,
+            'position_id' => $evaluator->position_id,
             'user_to_evaluate_id' => $evaluateeId,
+            'user_id' => $evaluator->id,
         ]);
         $this->info("Assigned evaluation from {$evaluator->name} to {$evaluateeId}");
     }

@@ -209,7 +209,6 @@
                                                         'campaign' => \Crypt::encryptString($campaigns->id)
                                                          ])}}"
                                             tag="a"
-                                            target="_blank"
                                             size="sm"
                                             disabled="{{$isEvaluated?'true':''}}"
                                         >

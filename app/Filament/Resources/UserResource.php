@@ -57,6 +57,7 @@ class UserResource extends Resource
                 Tables\Columns\ImageColumn::make('profile_photo')
                     ->circular()
                     ->label('Avatar'),
+                    //->defaultView('filament.components.user-avatar'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
                     ->sortable()

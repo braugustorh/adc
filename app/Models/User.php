@@ -121,4 +121,5 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Indicator::class);
     }
 
+
 }

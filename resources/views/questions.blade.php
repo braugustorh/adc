@@ -56,13 +56,7 @@
                                         <nav class="header-nav-top w-100 w-md-50pct w-xl-100pct">
                                             <ul class="nav nav-pills d-inline-flex custom-header-top-nav-background pe-5">
                                                 <li class="nav-item py-2 d-inline-flex z-index-1">
-													<span class="d-flex align-items-center p-0">
-														<span>
-															<img width="25" src="img/demos/adc/icons/phone.svg" alt="Phone Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
-														</span>
-														<a class="text-color-light text-decoration-none font-weight-semibold text-3-5 ms-2" href="tel:1234567890" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light">(800) 123-4567</a>
-													</span>
-                                                    <span class="font-weight-normal align-items-center px-0 d-none d-xl-flex ms-3">
+													<span class="font-weight-normal align-items-center px-0 d-none d-xl-flex ms-3">
 														<span>
 															<img width="25" src="img/demos/adc/icons/email.svg" alt="Email Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
 														</span>
@@ -122,33 +116,49 @@
                                                         </a>
                                                     </li>
                                                     <li class="dropdown">
-                                                        <a class="nav-link dropdown-toggle" href="#">
+                                                        <a class="nav-link dropdown-toggle" href="{{route('modules')}}">
                                                             Módulos
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li>
-                                                                <a href="#" class="dropdown-item">Evaluación 360</a>
+                                                                <a href="{{route('modules-360-detail')}}" class="dropdown-item">
+                                                                    Evaluación 360
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">Face to Face</a>
+                                                                <a href="{{route('modules-f2f')}}" class="dropdown-item">
+                                                                    Face to Face
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">9 Box</a>
+                                                                <a href="{{route('modules-9box')}}" class="dropdown-item">
+                                                                    9 Box
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">Clima Organizacional</a>
+                                                                <a href="{{route('modules-clima')}}" class="dropdown-item">
+                                                                    Clima Organizacional
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">Tablero de control</a>
+                                                                <a href="{{route('modules-tablero-de-control')}}" class="dropdown-item">
+                                                                    Tablero de control
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">Portafolio </a>
+                                                                <a href="{{route('modules-portafolio')}}" class="dropdown-item">
+                                                                    Portafolio
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">NOM 035 </a>
+                                                                <a href="{{route('modules-nom035')}}" class="dropdown-item">
+                                                                    NOM 035
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">Psicometrías </a>
+                                                                <a href="{{route('modules-psicometria')}}" class="dropdown-item">
+                                                                    Psicometrías
+                                                                </a>
                                                             </li>
 
                                                         </ul>
@@ -163,6 +173,7 @@
                                                             Directorio
                                                         </a>
                                                     </li>
+
                                                 </ul>
                                             </nav>
                                         </div>
@@ -226,106 +237,246 @@
 
 					<div class="row row-gutter-sm pt-4 pt-sm-0">
 						<div class="col-md-8 col-lg-9 mb-5 mb-md-0">
-							<div class="accordion custom-accordion-style-1 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="250" id="accordion1">
-								<div class="card card-default">
-									<div class="card-header" id="collapse1HeadingOne">
-										<h4 class="card-title m-0">
-											<a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1One" aria-expanded="false" aria-controls="collapse1One">
-												1 - Cómo ingresar a la plataforma?
-											</a>
-										</h4>
-									</div>
-									<div id="collapse1One" class="collapse" aria-labelledby="collapse1HeadingOne" data-bs-parent="#accordion1">
-										<div class="card-body">
-											<p class="mb-0">Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien.</p>
-										</div>
-									</div>
-								</div>
-								<div class="card card-default">
-									<div class="card-header" id="collapse1HeadingTwo">
-										<h4 class="card-title m-0">
-											<a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Two" aria-expanded="false" aria-controls="collapse1Two">
-												2 - Cuál es mi usuario y contraseña?
-											</a>
-										</h4>
-									</div>
-									<div id="collapse1Two" class="collapse" aria-labelledby="collapse1HeadingTwo" data-bs-parent="#accordion1">
-										<div class="card-body">
-											<p class="mb-0">Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien.</p>
-										</div>
-									</div>
-								</div>
-								<div class="card card-default">
-									<div class="card-header" id="collapse1HeadingThree">
-										<h4 class="card-title m-0">
-											<a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Three" aria-expanded="false" aria-controls="collapse1Three">
-												3 - Puedo cambiar mi contraseña?
-											</a>
-										</h4>
-									</div>
-									<div id="collapse1Three" class="collapse" aria-labelledby="collapse1HeadingThree" data-bs-parent="#accordion1">
-										<div class="card-body">
-											<p class="mb-0">Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien.</p>
-										</div>
-									</div>
-								</div>
-								<div class="card card-default">
-									<div class="card-header" id="collapse1HeadingFour">
-										<h4 class="card-title m-0">
-											<a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Four" aria-expanded="false" aria-controls="collapse1Four">
-												4 - A quién notifico de un error?
-											</a>
-										</h4>
-									</div>
-									<div id="collapse1Four" class="collapse" aria-labelledby="collapse1HeadingFour" data-bs-parent="#accordion1">
-										<div class="card-body">
-											<p class="mb-0">Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien.</p>
-										</div>
-									</div>
-								</div>
-								<div class="card card-default">
-									<div class="card-header" id="collapse1HeadingFive">
-										<h4 class="card-title m-0">
-											<a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Five" aria-expanded="false" aria-controls="collapse1Five">
-												5 - Cuáles son los documentos que debo de cargar?
-											</a>
-										</h4>
-									</div>
-									<div id="collapse1Five" class="collapse" aria-labelledby="collapse1HeadingFive" data-bs-parent="#accordion1">
-										<div class="card-body">
-											<p class="mb-0">Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien.</p>
-										</div>
-									</div>
-								</div>
-								<div class="card card-default">
-									<div class="card-header" id="collapse1HeadingSix">
-										<h4 class="card-title m-0">
-											<a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Six" aria-expanded="false" aria-controls="collapse1Six">
-												6 - Qué pasa si no contesté las evaluaciones?
-											</a>
-										</h4>
-									</div>
-									<div id="collapse1Six" class="collapse" aria-labelledby="collapse1HeadingSix" data-bs-parent="#accordion1">
-										<div class="card-body">
-											<p class="mb-0">Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien.</p>
-										</div>
-									</div>
-								</div>
-								<div class="card card-default">
-									<div class="card-header" id="collapse1HeadingSeven">
-										<h4 class="card-title m-0">
-											<a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Seven" aria-expanded="false" aria-controls="collapse1Seven">
-												7 - Es posible volver a evaluar a un colaborador?
-											</a>
-										</h4>
-									</div>
-									<div id="collapse1Seven" class="collapse" aria-labelledby="collapse1HeadingSeven" data-bs-parent="#accordion1">
-										<div class="card-body">
-											<p class="mb-0">Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien. Praesent id enim sit amet odio vulputate eleifend in in tortor. Donec tellus massa, tristique sit amet condim vel, facilisis quis sapien.</p>
-										</div>
-									</div>
-								</div>
-							</div>
+                            <div class="accordion custom-accordion-style-1 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="250" id="accordion1">
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingOne">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1One" aria-expanded="false" aria-controls="collapse1One">
+                                                1 - ¿Cómo ingresar a la plataforma?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1One" class="collapse" aria-labelledby="collapse1HeadingOne" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Para ingresar a la plataforma, primero asegúrate de tener tus credenciales (usuario y contraseña). Dirígete al sitio web oficial o abre la aplicación móvil, haz clic en "Ingresar", introduce tu usuario y contraseña, y presiona "Entrar". Si es tu primera vez, es posible que necesites registrarte o activar tu cuenta mediante un enlace enviado a tu correo.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingTwo">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Two" aria-expanded="false" aria-controls="collapse1Two">
+                                                2 - ¿Cuál es mi usuario y contraseña?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Two" class="collapse" aria-labelledby="collapse1HeadingTwo" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Tu usuario generalmente es tu correo electrónico registrado o un identificador proporcionado por la plataforma (correo institucional). La contraseña inicial suele enviarse a tu correo al registrarte. Si no la tienes, pregunta al responsable de Recursos Humanos de tu Central o revisa tu bandeja de entrada (o la carpeta de spam) o sigue el proceso de recuperación de contraseña.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingThree">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Three" aria-expanded="false" aria-controls="collapse1Three">
+                                                3 - ¿Puedo cambiar mi contraseña?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Three" class="collapse" aria-labelledby="collapse1HeadingThree" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Sí, puedes cambiar tu contraseña. Ve a la sección de "Configuración" o "Perfil" dentro de la plataforma, busca la opción "Cambiar contraseña", introduce tu contraseña actual y la nueva contraseña, y confirma el cambio. Asegúrate de usar una contraseña segura con letras, números y símbolos.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingFour">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Four" aria-expanded="false" aria-controls="collapse1Four">
+                                                4 - ¿A quién notifico de un error?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Four" class="collapse" aria-labelledby="collapse1HeadingFour" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Si encuentras un error, puedes notificarlo al equipo de soporte técnico. Notifica a tu responsable de RH de tu central o busca la sección de "Ayuda" o "Soporte" en la plataforma, donde suele haber un formulario de contacto o un correo electrónico (como contact@adcentrales.com). Proporciona detalles del error, como capturas de pantalla y una descripción clara.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingFive">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Five" aria-expanded="false" aria-controls="collapse1Five">
+                                                5 - ¿Cuáles son los documentos que debo de cargar?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Five" class="collapse" aria-labelledby="collapse1HeadingFive" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Los documentos requeridos deberás de entregárselos al responsable de RH, una vez cargados por el responsable tus documentos estarán disponibles en el apartado portafolio digital.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingSix">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Six" aria-expanded="false" aria-controls="collapse1Six">
+                                                6 - ¿Qué pasa si no contesté las evaluaciones?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Six" class="collapse" aria-labelledby="collapse1HeadingSix" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Si no contestaste las evaluaciones dentro del plazo establecido, es posible que tu evaluación se vea afectada. Sin embargo, algunas plataformas permiten solicitar una extensión o una nueva oportunidad contactando al administrador o al área de recursos humanos.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingSeven">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Seven" aria-expanded="false" aria-controls="collapse1Seven">
+                                                7 - ¿Es posible volver a evaluar a un colaborador?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Seven" class="collapse" aria-labelledby="collapse1HeadingSeven" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">No, las políticas de la plataforma y de la organización, no permite volver a evaluar a un colaborador. Si crees que hubo algún error, puedes comentar cual fue el error al equipo de recursos humanos, justificando la necesidad de una reevaluación.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingEight">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Eight" aria-expanded="false" aria-controls="collapse1Eight">
+                                                8 - ¿Puedo consultar mi cuenta si no tengo datos en mi celular?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Eight" class="collapse" aria-labelledby="collapse1HeadingEight" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Sí, siempre y cuando tengas acceso a una conexión Wi-Fi segura. Sin embargo, algunas funciones que requieran sincronización en tiempo real o actualizaciones pueden necesitar una conexión de datos activa.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingNine">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Nine" aria-expanded="false" aria-controls="collapse1Nine">
+                                                9 - ¿Puedo bajar documentos de mi expediente digital?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Nine" class="collapse" aria-labelledby="collapse1HeadingNine" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Sí, puedes descargar los documentos de tu expediente digital directamente desde la aplicación, siempre y cuando tengas acceso a una conexión a internet. Los documentos estarán disponibles para su descarga en formatos compatibles, como PDF y podrás almacenarlos en tu dispositivo para acceder a ellos sin conexión en el futuro.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingTen">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Ten" aria-expanded="false" aria-controls="collapse1Ten">
+                                                10 - ¿Puedo consultar mis resultados de la evaluación 360°?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Ten" class="collapse" aria-labelledby="collapse1HeadingTen" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Los resultados de la evaluación 360° se manejan de forma confidencial para garantizar la privacidad y el análisis imparcial. Por lo tanto, no es posible consultar los resultados directamente en la aplicación.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingEleven">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Eleven" aria-expanded="false" aria-controls="collapse1Eleven">
+                                                11 - ¿Está disponible en diferentes dispositivos o sistemas operativos?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Eleven" class="collapse" aria-labelledby="collapse1HeadingEleven" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Sí, nuestra aplicación está disponible en varios dispositivos y sistemas operativos, incluyendo Android, iOS y en la versión web. Puedes acceder a ella desde tu celular, tablet o computadora, asegurando una experiencia fluida y accesible en cualquier momento y lugar.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingTwelve">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Twelve" aria-expanded="false" aria-controls="collapse1Twelve">
+                                                12 - ¿Qué debo hacer si olvido mi contraseña?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Twelve" class="collapse" aria-labelledby="collapse1HeadingTwelve" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Si olvidas tu contraseña, no te preocupes. Solo tienes que hacer clic en la opción directorio, enviar a tu contacto de sede la solicitud de restablecer la contraseña y a través de un correo recibirás las instrucciones para poder ingresar con una contraseña provisional, que te permitirá acceder para cambiar tu nueva contraseña.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingThirteen">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Thirteen" aria-expanded="false" aria-controls="collapse1Thirteen">
+                                                13 - ¿Requiero de mucho tiempo para completar las actividades?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Thirteen" class="collapse" aria-labelledby="collapse1HeadingThirteen" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">El tiempo necesario para completar las actividades depende de las fechas establecidas de cada tarea o evaluación asignada.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingFourteen">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Fourteen" aria-expanded="false" aria-controls="collapse1Fourteen">
+                                                14 - ¿La aplicación tiene opción de personalización?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Fourteen" class="collapse" aria-labelledby="collapse1HeadingFourteen" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">[Respuesta pendiente de proporcionar].</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingFifteen">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Fifteen" aria-expanded="false" aria-controls="collapse1Fifteen">
+                                                15 - ¿Cómo protege la aplicación mi privacidad y datos personales?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Fifteen" class="collapse" aria-labelledby="collapse1HeadingFifteen" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Tu privacidad y seguridad son nuestra prioridad. La aplicación utiliza tecnologías avanzadas de encriptación para proteger tus datos personales y garantizar que toda la información se maneje de manera confidencial.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingSixteen">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Sixteen" aria-expanded="false" aria-controls="collapse1Sixteen">
+                                                16 - ¿Es anónima la participación en ejercicios o actividades dentro de la app?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Sixteen" class="collapse" aria-labelledby="collapse1HeadingSixteen" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">Tu información personal se mantiene protegida y solo se utiliza para mejorar tu experiencia dentro de la aplicación. Puedes consultar nuestra política de privacidad para obtener más detalles sobre cómo manejamos tus datos.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header" id="collapse1HeadingSeventeen">
+                                        <h4 class="card-title m-0">
+                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Seventeen" aria-expanded="false" aria-controls="collapse1Seventeen">
+                                                17 - ¿Cuál es el objetivo principal de la aplicación?
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1Seventeen" class="collapse" aria-labelledby="collapse1HeadingSeventeen" data-bs-parent="#accordion1">
+                                        <div class="card-body">
+                                            <p class="mb-0">El objetivo es ayudarte en tu desarrollo personal y profesional. Nuestra misión es brindarte los recursos necesarios para que puedas alcanzar tus metas y crecer de personal y profesional.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 						</div>
 						<div class="col-md-4 col-lg-3 text-center text-md-start">
 							<div class="appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="500">
@@ -333,11 +484,20 @@
 								<p class="pb-1 mb-2">Te invitamos a que contactes al responsable de RH de tu terminal. </p>
 								<span class="d-flex align-items-center justify-content-center justify-content-md-start pb-2 mb-3">
 									<span>
-										<img width="25" height="25" src="img/demos/business-consulting-3/icons/phone.svg" alt="Phone Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-dark'}" />
+										<div class="animated-icon animated fadeIn svg-fill-color-primary"><!--?xml version="1.0" encoding="utf-8"?-->
+<svg version="1.1" id="icon_91742787662047" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve" data-filename="email.svg" width="25" height="25">
+<path d="M32,60C16.5,60,4,47.5,4,32S16.5,4,32,4c15.9,0,25,8.7,25,24v1c0.2,3.4-0.6,6.8-2.3,9.7c-1.8,3.1-5.1,5.1-8.7,5
+	c-4,0-8.6-2.3-8.6-8.8v-0.1L38,22.9c-0.5-0.1-1-0.2-1.5-0.3c-1.4-0.2-2.7-0.3-4.1-0.3c-2.5-0.1-5,0.8-6.7,2.7
+	c-1.8,2.1-2.8,4.8-2.6,7.6c-0.1,2.2,0.5,4.3,1.7,6.1c1.1,1.3,2.7,1.9,4.3,1.8c1.2,0,2.4-0.3,3.4-0.9c0.9-0.6,2.2-0.4,2.8,0.6
+	s0.4,2.2-0.6,2.8C33,44,31,44.6,29.1,44.5c-2.8,0.1-5.6-1.1-7.4-3.3c-1.8-2.1-2.6-5-2.6-8.7c-0.2-3.8,1.1-7.5,3.7-10.3
+	c2.5-2.7,6-4.1,9.7-4c1.6,0,3.1,0.1,4.7,0.4c1.2,0.2,2.4,0.4,3.5,0.7l1.6,0.4L41.4,35c0,4.1,2.9,4.7,4.6,4.7c2.1,0,4.1-1.1,5.2-2.9
+	c1.4-2.4,2-5.1,1.8-7.8v-1c0-12.9-7.5-20-21-20C18.7,8,8,18.7,8,32c0,13.3,10.7,24,24,24c6.2,0,12.1-2.4,16.6-6.7
+	c0.8-0.8,2.1-0.7,2.8,0.1c0.8,0.8,0.7,2.1-0.1,2.8l0,0C46.2,57.2,39.2,60,32,60z"></path>
+</svg></div>
 									</span>
-									<a class="text-color-dark text-color-hover-primary text-decoration-none font-weight-semibold text-3-5 ms-2" href="tel:1234567890">(800) 123-4567</a>
+									<a class="text-color-dark text-color-hover-primary text-decoration-none font-weight-semibold text-3-5 ms-2" href="mail-to:contact@adcentrales.com">contact@adcentrales.com</a>
 								</span>
-								<a href="demo-business-consulting-3-contact.html" class="btn btn-primary custom-btn-style-1 font-weight-semibold btn-px-4 btn-py-2 text-3-5 mb-3" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light"><span>Directorio</span></a>
+								<a href="{{route('contact')}}" class="btn btn-primary custom-btn-style-1 font-weight-semibold btn-px-4 btn-py-2 text-3-5 mb-3" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light"><span>Directorio</span></a>
 
 								<hr class="my-4">
 							</div>
@@ -370,7 +530,9 @@
                             <a href="demo-business-consulting-3.html" class="text-decoration-none">
                                 <img src="img/logo_footer.png" class="img-fluid mb-4" width="123" height="33" alt="" />
                             </a>
-                            <p class="text-3-5">Cras a elit sit amet leo accumsan volutpat. Suspendisse hendreriast ehicula leo, vel efficitur fel. </p>
+                            <p class="text-3-5">
+                                Somos la administradora de centrales líder en el mercado, impulsando la vanguardia en cada viaje. Nos dedicamos a ofrecerte una experiencia de viaje excepcional, donde la comodidad y la eficiencia son nuestra prioridad.
+                            </p>
                             <ul class="social-icons social-icons-clean social-icons-clean-with-border social-icons-medium social-icons-icon-light">
                                 <li class="social-icons-facebook"><a href="http://www.facebook.com/" target="_blank" title="Facebook" data-cursor-effect-hover="fit"><i class="fab fa-facebook-f"></i></a></li>
                                 <li class="social-icons-twitter mx-2"><a href="http://www.twitter.com/" target="_blank" title="Twitter" data-cursor-effect-hover="fit"><i class="fab fa-x-twitter"></i></a></li>
@@ -399,19 +561,19 @@
                             <ul class="list list-icons list-icons-sm">
                                 <li>
                                     <i class="fas fa-angle-right text-color-default"></i>
-                                    <a href="demo-business-consulting-3-contact.html" class="link-hover-style-1 ms-1"> Inicio</a>
+                                    <a href="{{route('welcome')}}" class="link-hover-style-1 ms-1"> Inicio</a>
                                 </li>
                                 <li>
                                     <i class="fas fa-angle-right text-color-default"></i>
-                                    <a href="demo-business-consulting-3-services.html" class="link-hover-style-1 ms-1">Acerca de Nosotros</a>
+                                    <a href="{{route('about')}}" class="link-hover-style-1 ms-1">Acerca de Nosotros</a>
                                 </li>
                                 <li>
                                     <i class="fas fa-angle-right text-color-default"></i>
-                                    <a href="#" class="link-hover-style-1 ms-1"> Conoce Más</a>
+                                    <a href="{{route('modules')}}" class="link-hover-style-1 ms-1"> Módulos</a>
                                 </li>
                                 <li>
                                     <i class="fas fa-angle-right text-color-default"></i>
-                                    <a href="#" class="link-hover-style-1 ms-1"> Preguntas Frecuentes</a>
+                                    <a href="{{route('questions')}}" class="link-hover-style-1 ms-1"> Preguntas Frecuentes</a>
                                 </li>
 
                             </ul>
@@ -424,7 +586,7 @@
                     <div class="row pb-5">
                         <div class="col-lg-12 text-center m-0">
                             <hr class="bg-color-light opacity-1 mt-5 mb-4">
-                            <p class="text-3-4">ADC Administradora de Centrales . © 2024. Todos los derechos Reservados</p>
+                            <p class="text-3-4">ADC Administradora de Centrales . © {{ date('Y') }}. Todos los derechos Reservados</p>
                         </div>
                     </div>
                 </div>

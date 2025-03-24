@@ -9,7 +9,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListPortfolios extends ListRecords
 {
     protected static string $resource = PortfolioResource::class;
-    protected static ?string $title = 'Portafolios';
+    protected static ?string $title = 'Portafolio Digital';
 
     protected function getHeaderActions(): array
     {

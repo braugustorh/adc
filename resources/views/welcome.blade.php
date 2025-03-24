@@ -60,12 +60,12 @@
                                 <nav class="header-nav-top w-100 w-md-50pct w-xl-100pct">
                                     <ul class="nav nav-pills d-inline-flex custom-header-top-nav-background pe-5">
                                         <li class="nav-item py-2 d-inline-flex z-index-1">
-													<span class="d-flex align-items-center p-0">
+												<!--	<span class="d-flex align-items-center p-0">
 														<span>
 															<img width="25" src="img/demos/adc/icons/phone.svg" alt="Phone Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
 														</span>
 														<a class="text-color-light text-decoration-none font-weight-semibold text-3-5 ms-2" href="tel:1234567890" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light">(800) 123-4567</a>
-													</span>
+													</span> -->
                                             <span class="font-weight-normal align-items-center px-0 d-none d-xl-flex ms-3">
 														<span>
 															<img width="25" src="img/demos/adc/icons/email.svg" alt="Email Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
@@ -126,33 +126,49 @@
                                                 </a>
                                             </li>
                                             <li class="dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#">
+                                                <a class="nav-link dropdown-toggle" href="{{route('modules')}}">
                                                     Módulos
                                                 </a>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Evaluación 360</a>
+                                                        <a href="{{route('modules-360-detail')}}" class="dropdown-item">
+                                                            Evaluación 360
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Face to Face</a>
+                                                        <a href="{{route('modules-f2f')}}" class="dropdown-item">
+                                                            Face to Face
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">9 Box</a>
+                                                        <a href="{{route('modules-9box')}}" class="dropdown-item">
+                                                            9 Box
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Clima Organizacional</a>
+                                                        <a href="{{route('modules-clima')}}" class="dropdown-item">
+                                                            Clima Organizacional
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Tablero de control</a>
+                                                        <a href="{{route('modules-tablero-de-control')}}" class="dropdown-item">
+                                                            Tablero de control
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Portafolio </a>
+                                                        <a href="{{route('modules-portafolio')}}" class="dropdown-item">
+                                                            Portafolio
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">NOM 035 </a>
+                                                        <a href="{{route('modules-nom035')}}" class="dropdown-item">
+                                                            NOM 035
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Psicometrías </a>
+                                                        <a href="{{route('modules-psicometria')}}" class="dropdown-item">
+                                                            Psicometrías
+                                                        </a>
                                                     </li>
 
                                                 </ul>
@@ -282,7 +298,7 @@
                             </a>
                         </div>
                         <div>
-                            <a href="demo-business-consulting-3-services.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                            <a href="modules.blade.php" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                                 <div class="card border-0">
                                     <div class="card-body text-center py-5">
                                         <div class="animated-icon animated fadeIn svg-fill-color-primary">
@@ -321,7 +337,7 @@
                             </a>
                         </div>
                         <div>
-                            <a href="demo-business-consulting-3-services.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                            <a href="modules.blade.php" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                                 <div class="card border-0">
                                     <div class="card-body text-center py-5">
                                         <div class="animated-icon animated fadeIn svg-fill-color-primary">
@@ -453,7 +469,7 @@
                 </div>
                 <div class="row row-gutter-sm justify-content-center mb-5 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="1000">
                     <div class="col-sm-9 col-md-6 col-lg-4 mb-4">
-                        <a href="demo-business-consulting-3-services-detail.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                        <a href="{{route('modules-f2f')}}" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
@@ -462,7 +478,7 @@
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
                                     </div>
-                                    <img src="img/demos/business-consulting-3/services/services-1.jpg" class="img-fluid" alt="Card Image" />
+                                    <img src="img/demos/business-consulting-3/services/f2f.webp" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
                                     <p class="card-text w-100 mb-0">Revisa desempeño y planificar mejoras en reuniones <br> jefe-colaborador.</p>
@@ -472,8 +488,8 @@
                         </a>
                     </div>
                     <div class="col-sm-9 col-md-6 col-lg-4 mb-4">
-                        <a href="demo-business-consulting-3-services-detail.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
-                            <div class="card box-shadow-4">
+                        <a href="{{route('modules-360-detail')}}" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                            <div class="card box-shadow-2">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
                                         <h4 class="font-weight-semibold text-color-light text-6 mb-1">Evaluación 360</h4>
@@ -481,7 +497,7 @@
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
                                     </div>
-                                    <img src="img/demos/business-consulting-3/services/services-2.jpg" class="img-fluid" alt="Card Image" />
+                                    <img src="img/demos/business-consulting-3/services/module-360.webp" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
                                     <p class="card-text w-100 mb-0">Realiza evaluaciones para medir desempeño desde múltiples ángulos en diversos roles.. </p>
@@ -491,7 +507,7 @@
                         </a>
                     </div>
                     <div class="col-sm-9 col-md-6 col-lg-4 mb-4">
-                        <a href="demo-business-consulting-3-services-detail.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                        <a href="{{route('modules-9box')}}" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
@@ -502,7 +518,7 @@
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
                                     </div>
-                                    <img src="img/demos/business-consulting-3/services/services-3.jpg" class="img-fluid" alt="Card Image" />
+                                    <img src="img/demos/business-consulting-3/services/9box.webp" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
                                     <p class="card-text w-100 mb-0">Sitúa a los colaboradores en 9 cuadrantes para evaluar potencial y desempeño.</p>
@@ -512,7 +528,7 @@
                         </a>
                     </div>
                     <div class="col-sm-9 col-md-6 col-lg-4 mb-4">
-                        <a href="demo-business-consulting-3-services-detail.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                        <a href="{{route('modules-clima')}}" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
@@ -523,7 +539,7 @@
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
                                     </div>
-                                    <img src="img/demos/business-consulting-3/services/services-4.jpg" class="img-fluid" alt="Card Image" />
+                                    <img src="img/demos/business-consulting-3/services/clima.webp" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
                                     <p class="card-text w-100 mb-0">Presenta el estado actual de la organización para apoyar diagnósticos y decisiones. </p>
@@ -533,7 +549,7 @@
                         </a>
                     </div>
                     <div class="col-sm-9 col-md-6 col-lg-4 mb-4">
-                        <a href="demo-business-consulting-3-services-detail.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                        <a href="{{route('modules-portafolio')}}" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
@@ -542,7 +558,7 @@
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
                                     </div>
-                                    <img src="img/demos/business-consulting-3/services/services-4.jpg" class="img-fluid" alt="Card Image" />
+                                    <img src="img/demos/business-consulting-3/services/portafolio.webp" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
                                     <p class="card-text w-100 mb-0">Visualiza y descarga los documentos de cada uno de los colaboradores. </p>
@@ -552,7 +568,7 @@
                         </a>
                     </div>
                     <div class="col-sm-9 col-md-6 col-lg-4 mb-4">
-                        <a href="demo-business-consulting-3-services-detail.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                        <a href="{{route('modules-tablero-de-control')}}" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
@@ -561,7 +577,7 @@
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
                                     </div>
-                                    <img src="img/demos/business-consulting-3/services/services-4.jpg" class="img-fluid" alt="Card Image" />
+                                    <img src="img/demos/business-consulting-3/services/tablero.webp" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
                                     <p class="card-text w-100 mb-0">Visualiza el estado actual de indicadores, planes y estrategias de la organización. </p>
@@ -571,7 +587,7 @@
                         </a>
                     </div>
                     <div class="col-sm-9 col-md-6 col-lg-4 mb-4">
-                        <a href="demo-business-consulting-3-services-detail.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                        <a href="{{route('modules-nom035')}}" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
@@ -582,7 +598,7 @@
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
                                     </div>
-                                    <img src="img/demos/business-consulting-3/services/services-5.jpg" class="img-fluid" alt="Card Image" />
+                                    <img src="img/demos/business-consulting-3/services/nom035.webp" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
                                     <p class="card-text w-100 mb-0">Identifica y previene riesgos psicosociales para cuidar la salud emocional de los empleados.</p>
@@ -592,7 +608,7 @@
                         </a>
                     </div>
                     <div class="col-sm-9 col-md-6 col-lg-4">
-                        <a href="demo-business-consulting-3-services-detail.html" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                        <a href="{{route('modules-psicometria')}}" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                             <div class="card box-shadow-4">
                                 <div class="card-img-top position-relative overlay overlay-show">
                                     <div class="position-absolute bottom-0 left-0 w-100 py-3 px-4 z-index-3">
@@ -603,10 +619,11 @@
                                             <img width="154" height="26" src="img/demos/business-consulting-3/icons/infinite-crooked-line.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 154px;" />
                                         </div>
                                     </div>
-                                    <img src="img/demos/business-consulting-3/services/services-6.jpg" class="img-fluid" alt="Card Image" />
+                                    <img src="img/demos/business-consulting-3/services/psicometria.webp" class="img-fluid" alt="Card Image" />
                                 </div>
                                 <div class="card-body d-flex align-items-center custom-view-more px-4">
-                                    <p class="card-text w-100 mb-0">Realiza diversas pruebas que ayuden a detectar personalidad, inteligencia y comportamiento. </p>
+                                    <p class="card-text w-100 mb-0">
+                                        Realiza diversas pruebas que ayuden a detectar personalidad, inteligencia y comportamiento. </p>
                                     <img width="50" height="50" class="w-auto" src="img/demos/business-consulting-3/icons/arrow-right.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 50px;" />
                                 </div>
                             </div>
@@ -634,33 +651,47 @@
             <div class="container position-relative z-index-3 pt-5 mt-5">
                 <div class="row align-items-center">
                     <div class="col-lg-6">
-                        <h2 class="custom-text-background custom-big-font-size-1 text-15 font-weight-bold float-end clearfix line-height-1 lazyload pe-xl-5 me-3 mb-0 d-none d-lg-block" data-bg-src="img/demos/adc/backgrounds/text-background-2.jpg" data-plugin-float-element data-plugin-options="{'startPos': 'top', 'speed': 0.6, 'transition': true, 'horizontal': true, 'transitionDuration': 1000, 'isInsideSVG': true}">BENEFICIOS</h2>
+                        <h2 class="custom-text-background custom-big-font-size-1 text-15 font-weight-bold float-end clearfix line-height-1 lazyload pe-xl-5 me-3 mb-0 d-none d-lg-block" data-bg-src="img/demos/adc/backgrounds/text-background-2.jpg" data-plugin-float-element data-plugin-options="{'startPos': 'top', 'speed': 0.6, 'transition': true, 'horizontal': true, 'transitionDuration': 1000, 'isInsideSVG': true}">
+                            BENEFICIOS
+                        </h2>
                     </div>
                     <div class="col-lg-6">
                         <h2 class="custom-highlight-text-1 d-inline-block line-height-5 text-4 positive-ls-3 font-weight-medium text-color-primary mb-2 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="250">Por qué usar SEDyCO?</h2>
                         <h3 class="text-9 line-height-3 text-transform-none font-weight-medium text-color-light ls-0 mb-3 pb-1 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="500">Potencia el desempeño de tus colaboradores</h3>
-                        <p class="text-3-5 pb-2 mb-4 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="750">Con nuestro sistema de gestión de desempeño:</p>
+                        <p class="text-3-5 pb-2 mb-4 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="750">Con el sistema de gestión de desempeño:</p>
                         <ul class="list ps-0 pe-lg-5 mb-0">
                             <li class="d-flex align-items-start pb-1 mb-3 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="1000">
                                 <i class="fas fa-check text-color-light text-4 custom-bg-color-grey-1 rounded-circle p-3"></i>
-                                <span class="text-3-5 ps-3">Define los objetivos de tus colaboradores.</span>
+                                <span class="text-3-5 ps-3">Mejora de la capacitación y desarrollo .</span>
                             </li>
                             <li class="d-flex align-items-start pb-1 mb-3 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="1250">
                                 <i class="fas fa-check text-color-light text-4 custom-bg-color-grey-1 rounded-circle p-3"></i>
-                                <span class="text-3-5 ps-3">Evalúa sus diferentes competencias.
+                                <span class="text-3-5 ps-3">Retención de talentos
 										</span>
                             </li>
                             <li class="d-flex align-items-start appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="1500">
                                 <i class="fas fa-check text-color-light text-4 custom-bg-color-grey-1 rounded-circle p-3"></i>
-                                <span class="text-3-5 ps-3">Entrega feedback continuo.</span>
+                                <span class="text-3-5 ps-3">Mejor comunicación interna entre los Deptos involucrados</span>
                             </li>
-                            <li class="d-flex align-items-start appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="1500">
+                            <li class="d-flex align-items-start appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="1750">
                                 <i class="fas fa-check text-color-light text-4 custom-bg-color-grey-1 rounded-circle p-3"></i>
-                                <span class="text-3-5 ps-3">Realizar planes de acción de acuerdo a sus necesidades.</span>
+                                <span class="text-3-5 ps-3">Evaluación de desempeño objetiva</span>
                             </li>
-                            <li class="d-flex align-items-start appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="1500">
+                            <li class="d-flex align-items-start appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="2000">
                                 <i class="fas fa-check text-color-light text-4 custom-bg-color-grey-1 rounded-circle p-3"></i>
-                                <span class="text-3-5 ps-3">Y más.</span>
+                                <span class="text-3-5 ps-3">Reducción de conflictos laborales </span>
+                            </li>
+                            <li class="d-flex align-items-start appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="2250">
+                                <i class="fas fa-check text-color-light text-4 custom-bg-color-grey-1 rounded-circle p-3"></i>
+                                <span class="text-3-5 ps-3">Alineación con los objetivos organizacionales</span>
+                            </li>
+                            <li class="d-flex align-items-start appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="2500">
+                                <i class="fas fa-check text-color-light text-4 custom-bg-color-grey-1 rounded-circle p-3"></i>
+                                <span class="text-3-5 ps-3">Facilitar la reestructuración organizacional</span>
+                            </li>
+                            <li class="d-flex align-items-start appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="2750">
+                                <i class="fas fa-check text-color-light text-4 custom-bg-color-grey-1 rounded-circle p-3"></i>
+                                <span class="text-3-5 ps-3">Cumplimiento de normativas laborales</span>
                             </li>
                         </ul>
                     </div>
@@ -832,7 +863,9 @@
                     <a href="demo-business-consulting-3.html" class="text-decoration-none">
                         <img src="img/logo_footer.png" class="img-fluid mb-4" width="123" height="33" alt="" />
                     </a>
-                    <p class="text-3-5">Cras a elit sit amet leo accumsan volutpat. Suspendisse hendreriast ehicula leo, vel efficitur fel. </p>
+                    <p class="text-3-5">
+                        Somos la administradora de centrales líder en el mercado, impulsando la vanguardia en cada viaje. Nos dedicamos a ofrecerte una experiencia de viaje excepcional, donde la comodidad y la eficiencia son nuestra prioridad.
+                    </p>
                     <ul class="social-icons social-icons-clean social-icons-clean-with-border social-icons-medium social-icons-icon-light">
                         <li class="social-icons-facebook"><a href="http://www.facebook.com/" target="_blank" title="Facebook" data-cursor-effect-hover="fit"><i class="fab fa-facebook-f"></i></a></li>
                         <li class="social-icons-twitter mx-2"><a href="http://www.twitter.com/" target="_blank" title="Twitter" data-cursor-effect-hover="fit"><i class="fab fa-x-twitter"></i></a></li>
@@ -861,19 +894,19 @@
                     <ul class="list list-icons list-icons-sm">
                         <li>
                             <i class="fas fa-angle-right text-color-default"></i>
-                            <a href="demo-business-consulting-3-contact.html" class="link-hover-style-1 ms-1"> Inicio</a>
+                            <a href="{{route('welcome')}}" class="link-hover-style-1 ms-1"> Inicio</a>
                         </li>
                         <li>
                             <i class="fas fa-angle-right text-color-default"></i>
-                            <a href="demo-business-consulting-3-services.html" class="link-hover-style-1 ms-1">Acerca de Nosotros</a>
+                            <a href="{{route('about')}}" class="link-hover-style-1 ms-1">Acerca de Nosotros</a>
                         </li>
                         <li>
                             <i class="fas fa-angle-right text-color-default"></i>
-                            <a href="#" class="link-hover-style-1 ms-1"> Conoce Más</a>
+                            <a href="{{route('modules')}}" class="link-hover-style-1 ms-1"> Módulos</a>
                         </li>
                         <li>
                             <i class="fas fa-angle-right text-color-default"></i>
-                            <a href="#" class="link-hover-style-1 ms-1"> Preguntas Frecuentes</a>
+                            <a href="{{route('questions')}}" class="link-hover-style-1 ms-1"> Preguntas Frecuentes</a>
                         </li>
 
                     </ul>
@@ -886,7 +919,7 @@
             <div class="row pb-5">
                 <div class="col-lg-12 text-center m-0">
                     <hr class="bg-color-light opacity-1 mt-5 mb-4">
-                    <p class="text-3-4">ADC Administradora de Centrales . © 2024. Todos los derechos Reservados</p>
+                    <p class="text-3-4">ADC Administradora de Centrales . © {{ date('Y') }}. Todos los derechos Reservados</p>
                 </div>
             </div>
         </div>

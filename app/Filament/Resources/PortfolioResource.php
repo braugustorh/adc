@@ -27,9 +27,9 @@ class PortfolioResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
     protected static ?string $navigationGroup = 'Colaboradores';
-    protected static ?string $navigationLabel = 'Portafolio';
+    protected static ?string $navigationLabel = 'Portafolio Digital';
     protected static ?string $name = 'Portfolio';
-    protected static ?string $label = 'Portafolio';
+    protected static ?string $label = 'Portafolio Digital';
     protected static ?int $navigationSort = 2;
 
     public static function canViewAny(): bool

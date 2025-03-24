@@ -57,12 +57,7 @@
                                         <nav class="header-nav-top w-100 w-md-50pct w-xl-100pct">
                                             <ul class="nav nav-pills d-inline-flex custom-header-top-nav-background pe-5">
                                                 <li class="nav-item py-2 d-inline-flex z-index-1">
-													<span class="d-flex align-items-center p-0">
-														<span>
-															<img width="25" src="img/demos/adc/icons/phone.svg" alt="Phone Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
-														</span>
-														<a class="text-color-light text-decoration-none font-weight-semibold text-3-5 ms-2" href="tel:1234567890" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light">(800) 123-4567</a>
-													</span>
+
                                                     <span class="font-weight-normal align-items-center px-0 d-none d-xl-flex ms-3">
 														<span>
 															<img width="25" src="img/demos/adc/icons/email.svg" alt="Email Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
@@ -100,7 +95,7 @@
                             <div class="header-column">
                                 <div class="header-row">
                                     <div class="header-logo">
-                                        <a href="demo-business-consulting-3.html">
+                                        <a href="{{route('welcome')}}">
                                             <img alt="Porto" width="192" height="82" src="img/logo_header_home.png">
                                         </a>
                                     </div>
@@ -123,33 +118,49 @@
                                                         </a>
                                                     </li>
                                                     <li class="dropdown">
-                                                        <a class="nav-link dropdown-toggle" href="#">
+                                                        <a class="nav-link dropdown-toggle" href="{{route('modules')}}">
                                                             Módulos
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li>
-                                                                <a href="#" class="dropdown-item">Evaluación 360</a>
+                                                                <a href="{{route('modules-360-detail')}}" class="dropdown-item">
+                                                                    Evaluación 360
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">Face to Face</a>
+                                                                <a href="{{route('modules-f2f')}}" class="dropdown-item">
+                                                                    Face to Face
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">9 Box</a>
+                                                                <a href="{{route('modules-9box')}}" class="dropdown-item">
+                                                                    9 Box
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">Clima Organizacional</a>
+                                                                <a href="{{route('modules-clima')}}" class="dropdown-item">
+                                                                    Clima Organizacional
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">Tablero de control</a>
+                                                                <a href="{{route('modules-tablero-de-control')}}" class="dropdown-item">
+                                                                    Tablero de control
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">Portafolio </a>
+                                                                <a href="{{route('modules-portafolio')}}" class="dropdown-item">
+                                                                    Portafolio
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">NOM 035 </a>
+                                                                <a href="{{route('modules-nom035')}}" class="dropdown-item">
+                                                                    NOM 035
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a href="#" class="dropdown-item">Psicometrías </a>
+                                                                <a href="{{route('modules-psicometria')}}" class="dropdown-item">
+                                                                    Psicometrías
+                                                                </a>
                                                             </li>
 
                                                         </ul>
@@ -247,7 +258,11 @@
                                     <td>contactorh@adcentrales.com</td>
                                 </tr>
                                 <tr>
-                                    <td rowspan="6"><h1 class="font-weight-bold text-color-dark text-10 text-center">A</h1></td>
+                                    <td rowspan="6">
+                                        <h1 class="font-weight-bold text-color-primary text-10 text-center">
+                                            A
+                                        </h1>
+                                    </td>
                                     <td>ESTACIÓN CENTRAL DE AUTOBUSES LEÓN DE LOS ALDAMAS, SA DE CV</td>
                                     <td>LEÓN</td>
                                     <td>e.reyes@eca.adcentrales.com</td>
@@ -279,7 +294,11 @@
                                     <td>rh@gdl.adcentrales.com</td>
                                 </tr>
                                 <tr>
-                                    <td rowspan="4"><h1 class="font-weight-bold text-color-dark text-10 text-center">B</h1></td>
+                                    <td rowspan="4">
+                                        <h1 class="font-weight-bold text-color-primary text-10 text-center">
+                                            B
+                                        </h1>
+                                    </td>
                                     <td>CENTRAL CAMIONERA NUEVO MILENIO DE GUADALAJARA SA DE CV.</td>
                                     <td>MILENIO</td>
                                     <td>gerencia@milenio.adcentrales.com</td>
@@ -300,7 +319,10 @@
                                     <td>gerencia@guanajuato.adcentrales.com</td>
                                 </tr>
                                 <tr>
-                                    <td rowspan="19"><h1 class="font-weight-bold text-color-dark text-10 text-center">C</h1></td>
+                                    <td rowspan="19">
+                                        <h1 class="font-weight-bold text-color-primary text-10 text-center">
+                                            C</h1>
+                                    </td>
                                     <td>CENTRAL DE AUTOBUSES ACAMBARO, SA DE CV.</td>
                                     <td>ACAMBARO</td>
                                     <td>gerencia@acambaro.adcentrales.com</td>
@@ -417,14 +439,7 @@
 											</div>
 										</div>
 										<div class="row justify-content-center mb-5 mb-lg-0">
-											<div class="col-auto text-center ms-xl-auto mb-4 mb-xl-0">
-												<h3 class="font-weight-semibold text-color-primary text-3-5 mb-0">Soporte</h3>
-												<div class="d-flex">
-													<img width="25" height="25" src="img/demos/business-consulting-3/icons/phone.svg" alt="Phone Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" />
-													<a href="tel:8001234567" class="text-color-dark text-color-hover-primary font-weight-semibold text-decoration-none text-6 ms-2">800-123-4567</a>
-												</div>
-											</div>
-											<div class="col-auto text-center me-xl-auto">
+											<div class="col-auto text-center pt-4 mt-5">
 												<h3 class="font-weight-semibold text-color-primary text-3-5 mb-0">Sugerencias</h3>
 												<div class="d-flex">
 													<img width="25" height="25" src="img/demos/business-consulting-3/icons/phone.svg" alt="Phone Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" />
@@ -514,7 +529,9 @@
                             <a href="demo-business-consulting-3.html" class="text-decoration-none">
                                 <img src="img/logo_footer.png" class="img-fluid mb-4" width="123" height="33" alt="" />
                             </a>
-                            <p class="text-3-5">Cras a elit sit amet leo accumsan volutpat. Suspendisse hendreriast ehicula leo, vel efficitur fel. </p>
+                            <p class="text-3-5">
+                                Somos la administradora de centrales líder en el mercado, impulsando la vanguardia en cada viaje. Nos dedicamos a ofrecerte una experiencia de viaje excepcional, donde la comodidad y la eficiencia son nuestra prioridad.
+                            </p>
                             <ul class="social-icons social-icons-clean social-icons-clean-with-border social-icons-medium social-icons-icon-light">
                                 <li class="social-icons-facebook"><a href="http://www.facebook.com/" target="_blank" title="Facebook" data-cursor-effect-hover="fit"><i class="fab fa-facebook-f"></i></a></li>
                                 <li class="social-icons-twitter mx-2"><a href="http://www.twitter.com/" target="_blank" title="Twitter" data-cursor-effect-hover="fit"><i class="fab fa-x-twitter"></i></a></li>
@@ -529,7 +546,7 @@
                                 </li>
                                 <li class="d-flex px-0 my-3">
                                     <img width="25" src="img/demos/business-consulting-3/icons/email.svg" alt="Email Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
-                                    <a href="mailto:contacto@adc.com" class="text-color-light font-weight-semibold text-3-4 ms-2">contacto@adc.com</a>
+                                    <a href="mailto:contactorh@adcentrales.com" class="text-color-light font-weight-semibold text-3-4 ms-2">contactorh@adcentrales.com</a>
                                 </li>
                                 <li class="d-flex font-weight-semibold text-color-light px-0 mb-1">
                                     <img width="25" src="img/demos/business-consulting-3/icons/map-pin.svg" alt="Location" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light me-2'}" />
@@ -543,19 +560,19 @@
                             <ul class="list list-icons list-icons-sm">
                                 <li>
                                     <i class="fas fa-angle-right text-color-default"></i>
-                                    <a href="demo-business-consulting-3-contact.html" class="link-hover-style-1 ms-1"> Inicio</a>
+                                    <a href="{{route('welcome')}}" class="link-hover-style-1 ms-1"> Inicio</a>
                                 </li>
                                 <li>
                                     <i class="fas fa-angle-right text-color-default"></i>
-                                    <a href="demo-business-consulting-3-services.html" class="link-hover-style-1 ms-1">Acerca de Nosotros</a>
+                                    <a href="{{route('about')}}" class="link-hover-style-1 ms-1">Acerca de Nosotros</a>
                                 </li>
                                 <li>
                                     <i class="fas fa-angle-right text-color-default"></i>
-                                    <a href="#" class="link-hover-style-1 ms-1"> Conoce Más</a>
+                                    <a href="{{route('modules')}}" class="link-hover-style-1 ms-1"> Módulos</a>
                                 </li>
                                 <li>
                                     <i class="fas fa-angle-right text-color-default"></i>
-                                    <a href="#" class="link-hover-style-1 ms-1"> Preguntas Frecuentes</a>
+                                    <a href="{{route('questions')}}" class="link-hover-style-1 ms-1"> Preguntas Frecuentes</a>
                                 </li>
 
                             </ul>
@@ -568,7 +585,7 @@
                     <div class="row pb-5">
                         <div class="col-lg-12 text-center m-0">
                             <hr class="bg-color-light opacity-1 mt-5 mb-4">
-                            <p class="text-3-4">ADC Administradora de Centrales . © 2024. Todos los derechos Reservados</p>
+                            <p class="text-3-4">ADC Administradora de Centrales . © {{ date('Y') }}. Todos los derechos Reservados</p>
                         </div>
                     </div>
                 </div>

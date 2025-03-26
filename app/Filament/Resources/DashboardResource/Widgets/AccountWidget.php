@@ -25,10 +25,11 @@ class AccountWidget extends Widget
         $hoy = Carbon::now()->format('m-d');
         if (\DB::getDriverName()==='mysql'){
             $this->cumple = User::whereRaw("DATE_FORMAT(birthdate, '%m-%d') = '$hoy'")
-                ->where('id',auth()->user()->id)
+                ->where('id',auth()->user()->id??null)
                 ->get();
         }else{
             $this->cumple = User::whereRaw("TO_CHAR(birthdate, 'MM-DD') = '$hoy'")
+                ->where('id',auth()->user()->id??null)
                 ->get();
         }
 

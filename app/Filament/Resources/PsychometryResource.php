@@ -201,7 +201,7 @@ class PsychometryResource extends Resource
                                 ->inputMode('decimal')
                                 ->required(),
                             Forms\Components\TextInput::make('negotiation')
-                                ->label('Negoaciación')
+                                ->label('Negociación')
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
@@ -229,7 +229,7 @@ class PsychometryResource extends Resource
                                 ->inputMode('decimal')
                                 ->required(),
                             Forms\Components\TextInput::make('strategic_thinking')
-                                ->label('Penamiento Estratégico')
+                                ->label('Pensamiento Estratégico')
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)

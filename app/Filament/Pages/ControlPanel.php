@@ -116,7 +116,6 @@ class ControlPanel extends Page implements HasForms
                 TextInput::make('evaluation_formula')->label('Fórmula')->required(),
                 Select::make('indicator_type')->label('Tipo de Indicador')->options([
                     '1' => 'Cuantitativo',
-                    '2' => 'Cualitativo',
                 ])->required(),
                 TextInput::make('target_value')->type('number')->label('Objetivo')->required(),
                 Select::make('indicator_category_id')->label('Categoría')->options([

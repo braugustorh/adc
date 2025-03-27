@@ -113,8 +113,7 @@ class Panel9Box extends Page implements HasTable
             ->where('campaign_id', $this->campaignId)
             ->whereIn('evaluated_user_id', $this->users->pluck('id')->toArray())
             ->groupBy('competence_id') // Agregar id al GROUP BY
-            ->orderBy('competence_id')
-            ->get();// Agrupar por nombre de competencia
+            ->orderBy('competence_id');// Agrupar por nombre de competencia
     }
     protected function getTableColumns(): array
     {

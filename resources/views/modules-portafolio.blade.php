@@ -131,28 +131,44 @@
                                                 </a>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Evaluación 360</a>
+                                                        <a href="{{route('modules-360-detail')}}" class="dropdown-item">
+                                                            Evaluación 360
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Face to Face</a>
+                                                        <a href="{{route('modules-f2f')}}" class="dropdown-item">
+                                                            Face to Face
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">9 Box</a>
+                                                        <a href="{{route('modules-9box')}}" class="dropdown-item">
+                                                            9 Box
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Clima Organizacional</a>
+                                                        <a href="{{route('modules-clima')}}" class="dropdown-item">
+                                                            Clima Organizacional
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Tablero de control</a>
+                                                        <a href="{{route('modules-tablero-de-control')}}" class="dropdown-item">
+                                                            Tablero de control
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Portafolio </a>
+                                                        <a href="{{route('modules-portafolio')}}" class="dropdown-item">
+                                                            Portafolio
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">NOM 035 </a>
+                                                        <a href="{{route('modules-nom035')}}" class="dropdown-item">
+                                                            NOM 035
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Psicometrías </a>
+                                                        <a href="{{route('modules-psicometria')}}" class="dropdown-item">
+                                                            Psicometrías
+                                                        </a>
                                                     </li>
 
                                                 </ul>
@@ -231,33 +247,13 @@
             <div class="row mb-5">
                 <div class="col-lg-7">
                     <div class="container mt-5">
-                        <h3>Portafolio Digital: Gestiona y Accede a tus Documentos de Forma Segura y Eficiente</h3>
+                        <h4>Portafolio Digital: Gestiona y Accede a tus Documentos de Forma Segura y Eficiente</h4>
                         <p class="text-3-5">
                             Nuestro módulo de Portafolio Digital te permite centralizar y gestionar tus documentos personales de manera segura y eficiente.
                         </p>
                         <p class="text-3-5">
-                            El portafolio digital es un espacio virtual donde los colaboradores pueden almacenar y acceder a sus documentos personales,
-                            incluyendo:
+                            El portafolio digital es un espacio virtual donde los colaboradores pueden almacenar y acceder a sus documentos personales.
                         </p>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h4 class="text-color-primary">Documentos de identificación:</h4>
-                                <p class="text-3-5">Credenciales, pasaportes, etc.</p>
-
-                                <h4 class="text-color-primary">Documentos académicos:</h4>
-                                <p class="text-3-5">Títulos, certificados, etc.</p>
-                            </div>
-
-                            <div class="col-md-6">
-                                <h4 class="text-color-primary">Documentos laborales:</h4>
-                                <p class="text-3-5">Contratos, evaluaciones, etc.</p>
-
-                                <h4 class="text-color-primary">Otros documentos personales:</h4>
-                                <p class="text-3-5">Curriculum, etc.</p>
-                            </div>
-                        </div>
-
                         <h4 class="text-color-primary">Nuestro módulo de Portafolio Digital te permite:</h4>
                         <ul class="text-3-5">
                             <li>Cargar y almacenar documentos de forma segura, de los colaboradores.</li>
@@ -302,7 +298,7 @@
                 <div class="col-lg-2 mb-4 mb-lg-0">
                 </div>
                 <div class="col-lg-4 mb-4 mb-lg-0">
-                    <a href="demo-business-consulting-3.html" class="text-decoration-none">
+                    <a href="{{route('welcome')}}" class="text-decoration-none">
                         <img src="img/logo_footer.png" class="img-fluid mb-4" width="123" height="33" alt="" />
                     </a>
                     <p class="text-3-5">

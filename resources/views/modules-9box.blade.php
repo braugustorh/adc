@@ -276,7 +276,6 @@
                         <h4>Nuestro módulo de 9 Box te permite:</h4>
                         <ul class="text-3-5">
                             <li>Visualizar de manera clara la distribución del talento en tu organización.</li>
-                            <li>Personalizar los criterios de evaluación según tus necesidades.</li>
                             <li>Generar informes y análisis para la toma de decisiones estratégicas.</li>
                             <li>Apoyar la planificación de carrera y el desarrollo de los empleados.</li>
                             <li>Identificar rápidamente los empleados con mayor y menor potencial de crecimiento.</li>

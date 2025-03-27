@@ -450,7 +450,9 @@
 												<h3 class="font-weight-semibold text-color-primary text-3-5 mb-0">Correo Electrónico</h3>
 												<div class="d-flex">
 													<img width="25" height="25" src="img/demos/business-consulting-3/icons/email.svg" alt="Email Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" />
-													<a href="mailto:contact@adcentrales.com" class="text-color-dark text-color-hover-primary text-decoration-underline font-weight-semibold text-5-5 wb-all ms-2">contact@adcentrales.com</a>
+													<a href="mailto:contactorh@adcentrales.com " class="text-color-dark text-color-hover-primary text-decoration-underline font-weight-semibold text-5-5 wb-all ms-2">
+                                                        contactorh@adcentrales.com
+                                                    </a>
 												</div>
 											</div>
 										</div>
@@ -526,7 +528,7 @@
                         <div class="col-lg-2 mb-4 mb-lg-0">
                         </div>
                         <div class="col-lg-4 mb-4 mb-lg-0">
-                            <a href="demo-business-consulting-3.html" class="text-decoration-none">
+                            <a href="{{route('welcome')}}" class="text-decoration-none">
                                 <img src="img/logo_footer.png" class="img-fluid mb-4" width="123" height="33" alt="" />
                             </a>
                             <p class="text-3-5">

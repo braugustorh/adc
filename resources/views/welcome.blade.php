@@ -286,13 +286,7 @@
                                         </div>
                                         <h2 class="text-5 font-weight-semibold mb-1">Ganar-Ganar</h2>
                                         <p class="pb-1 mb-2">Desarrolla tus talentos en un entorno que te motive y explota al máximo tus habilidades.</p>
-                                        <span class="custom-view-more d-inline-flex font-weight-medium text-color-primary">
-													Mostrar Más
-													<div class="animated-icon animated fadeIn svg-fill-color-primary ms-2">
-													<svg version="1.1" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="icon_211722912978996" data-filename="arrow-right.svg" width="27" height="27">
-														<polygon points="1,26 44.586,26 38.293,32.293 39.707,33.707 48.414,25 39.707,16.293 38.293,17.707 44.586,24 1,24  "></polygon>
-													</svg></div>
-												</span>
+
                                     </div>
                                 </div>
                             </a>
@@ -324,20 +318,14 @@
                                             </div>
                                         </div>
                                         <h2 class="text-5 font-weight-semibold mb-1">Futuro más sólido</h2>
-                                        <p class="pb-1 mb-2">Sientete motivado, preparado y comprometido con tu trabajo, haciendo lo que más te gusta. </p>
-                                        <span class="custom-view-more d-inline-flex font-weight-medium text-color-primary">
-													Mostrar más
-													<div class="animated-icon animated fadeIn svg-fill-color-primary ms-2"><!--?xml version="1.0" ?-->
-<svg version="1.1" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="icon_211722912978996" data-filename="arrow-right.svg" width="27" height="27">
-	<polygon points="1,26 44.586,26 38.293,32.293 39.707,33.707 48.414,25 39.707,16.293 38.293,17.707 44.586,24 1,24  "></polygon>
-</svg></div>
-												</span>
+                                        <p class="pb-1 mb-2">Siéntete motivado, preparado y comprometido con tu trabajo, haciendo lo que más te gusta. </p>
+
                                     </div>
                                 </div>
                             </a>
                         </div>
                         <div>
-                            <a href="modules.blade.php" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
+                            <a href="#" class="custom-link-hover-effects text-decoration-none" data-cursor-effect-hover="plus">
                                 <div class="card border-0">
                                     <div class="card-body text-center py-5">
                                         <div class="animated-icon animated fadeIn svg-fill-color-primary">
@@ -363,13 +351,7 @@
                                         </div>
                                         <h2 class="text-5 font-weight-semibold mb-1">Ahorra tiempo</h2>
                                         <p class="pb-1 mb-2">Optimiza procesos, elimina el papeleo innecesario y simplifica la gestión de recursos humanos. </p>
-                                        <span class="custom-view-more d-inline-flex font-weight-medium text-color-primary">
-													Mostrar más
-													<div class="animated-icon animated fadeIn svg-fill-color-primary ms-2"><!--?xml version="1.0" ?-->
-<svg version="1.1" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="icon_211722912978996" data-filename="arrow-right.svg" width="27" height="27">
-	<polygon points="1,26 44.586,26 38.293,32.293 39.707,33.707 48.414,25 39.707,16.293 38.293,17.707 44.586,24 1,24  "></polygon>
-</svg></div>
-												</span>
+
                                     </div>
                                 </div>
                             </a>
@@ -860,7 +842,7 @@
                 <div class="col-lg-2 mb-4 mb-lg-0">
                 </div>
                 <div class="col-lg-4 mb-4 mb-lg-0">
-                    <a href="demo-business-consulting-3.html" class="text-decoration-none">
+                    <a href="{{route('welcome')}}" class="text-decoration-none">
                         <img src="img/logo_footer.png" class="img-fluid mb-4" width="123" height="33" alt="" />
                     </a>
                     <p class="text-3-5">

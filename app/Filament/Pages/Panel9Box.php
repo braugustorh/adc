@@ -106,7 +106,7 @@ class Panel9Box extends Page implements HasTable
             ->join('competences', 'evaluation360_responses.competence_id', '=', 'competences.id') // Unión con la tabla de competencias
             ->where('campaign_id', $this->campaignId)
             ->whereIn('evaluated_user_id', $this->users->pluck('id')->toArray())
-            ->groupBy('competences.name') // Agrupar por nombre de competencia
+            ->groupBy('competences.name','evaluation360_responses.id') // Agrupar por nombre de competencia
             ->get();
         /*
         return Evaluation360Response::select('evaluated_user_id', 'competence_id', DB::raw('AVG(response) as score'))

@@ -283,14 +283,14 @@
 
                         <p class="text-3-5">Nuestro Módulo Face to Face te permite:</p>
                         <ul>
-                            <li>Estructurar las entrevistas con una guía para abordar los aspectos principales de la conversación.</li>
+
                             <li>Registrar y hacer seguimiento de los planes de acción.</li>
                             <li>Generar informes para visualizar el progreso.</li>
                             <li>Promover una cultura de retroalimentación continua.</li>
                             <li>Mantener un historial de las conversaciones para poder ver la evolución del empleado.</li>
                         </ul>
 
-                        <p class="text-3-5">Con nuestro Módulo Face to Face, podrás optimizar las conversaciones de desarrollo, impulsar el rendimiento de tus colaboradores y fortalecer la comunicación dentro de tu organización.</p>
+                        <p class="text-3-5">Con nuestro Módulo Face to Face, podrás impulsar el rendimiento de tus colaboradores y fortalecer la comunicación dentro de tu organización.</p>
                     </div>
                 </div>
                 <div class="col-10 col-lg-4 ms-auto pt-4 pt-5 pt-lg-4 pb-5">
@@ -325,7 +325,7 @@
                 <div class="col-lg-2 mb-4 mb-lg-0">
                 </div>
                 <div class="col-lg-4 mb-4 mb-lg-0">
-                    <a href="demo-business-consulting-3.html" class="text-decoration-none">
+                    <a href="{{route('welcome')}}" class="text-decoration-none">
                         <img src="img/logo_footer.png" class="img-fluid mb-4" width="123" height="33" alt="" />
                     </a>
                     <p class="text-3-5">

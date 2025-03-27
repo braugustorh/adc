@@ -242,13 +242,15 @@
                                     <div class="card-header" id="collapse1HeadingOne">
                                         <h4 class="card-title m-0">
                                             <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1One" aria-expanded="false" aria-controls="collapse1One">
-                                                1 - ¿Cómo ingresar a la plataforma?
+                                                1 - ¿Cómo ingreso a la plataforma?
                                             </a>
                                         </h4>
                                     </div>
                                     <div id="collapse1One" class="collapse" aria-labelledby="collapse1HeadingOne" data-bs-parent="#accordion1">
                                         <div class="card-body">
-                                            <p class="mb-0">Para ingresar a la plataforma, primero asegúrate de tener tus credenciales (usuario y contraseña). Dirígete al sitio web oficial o abre la aplicación móvil, haz clic en "Ingresar", introduce tu usuario y contraseña, y presiona "Entrar". Si es tu primera vez, es posible que necesites registrarte o activar tu cuenta mediante un enlace enviado a tu correo.</p>
+                                            <p class="mb-0">
+                                                Para ingresar a la plataforma, primero asegúrate de tener tus credenciales (usuario y contraseña). Dirígete al sitio web oficial, introduce tu usuario y contraseña y presiona “ENTRAR”.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -262,7 +264,8 @@
                                     </div>
                                     <div id="collapse1Two" class="collapse" aria-labelledby="collapse1HeadingTwo" data-bs-parent="#accordion1">
                                         <div class="card-body">
-                                            <p class="mb-0">Tu usuario generalmente es tu correo electrónico registrado o un identificador proporcionado por la plataforma (correo institucional). La contraseña inicial suele enviarse a tu correo al registrarte. Si no la tienes, pregunta al responsable de Recursos Humanos de tu Central o revisa tu bandeja de entrada (o la carpeta de spam) o sigue el proceso de recuperación de contraseña.</p>
+                                            <p class="mb-0">
+                                                Tu usuario es tu correo electrónico institucional. La contraseña inicial suele enviarse a tu correo al registrarte. Si no la tienes, pregunta al responsable de Recursos Humanos de tu Central o revisa tu bandeja de entrada (o la carpeta de spam) o sigue el proceso de recuperación de contraseña.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -270,13 +273,16 @@
                                     <div class="card-header" id="collapse1HeadingThree">
                                         <h4 class="card-title m-0">
                                             <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Three" aria-expanded="false" aria-controls="collapse1Three">
-                                                3 - ¿Puedo cambiar mi contraseña?
+                                                3 - ¿Cómo puedo cambiar mi contraseña?
                                             </a>
                                         </h4>
                                     </div>
                                     <div id="collapse1Three" class="collapse" aria-labelledby="collapse1HeadingThree" data-bs-parent="#accordion1">
                                         <div class="card-body">
-                                            <p class="mb-0">Sí, puedes cambiar tu contraseña. Ve a la sección de "Configuración" o "Perfil" dentro de la plataforma, busca la opción "Cambiar contraseña", introduce tu contraseña actual y la nueva contraseña, y confirma el cambio. Asegúrate de usar una contraseña segura con letras, números y símbolos.</p>
+                                            <p class="mb-0">
+                                                Sí, puedes cambiar tu contraseña. Ve a la sección de "Configuración" o "Perfil" dentro de la plataforma, busca la opción "Cambiar contraseña", introduce tu contraseña actual y la nueva contraseña, y confirma el cambio. Asegúrate de usar una contraseña segura con letras, números y símbolos.
+                                            </p>
+                                            <i>Para crear una contraseña segura, se recomienda que tenga los siguientes caracteres: como mínimo 8 caracteres, 2 números, 1 carácter especial, Mínimo 1 letra mayúscula, 1 letra minúscula, incluir números y no debe tener espacios en blanco.</i>
                                         </div>
                                     </div>
                                 </div>
@@ -290,7 +296,9 @@
                                     </div>
                                     <div id="collapse1Four" class="collapse" aria-labelledby="collapse1HeadingFour" data-bs-parent="#accordion1">
                                         <div class="card-body">
-                                            <p class="mb-0">Si encuentras un error, puedes notificarlo al equipo de soporte técnico. Notifica a tu responsable de RH de tu central o busca la sección de "Ayuda" o "Soporte" en la plataforma, donde suele haber un formulario de contacto o un correo electrónico (como contact@adcentrales.com). Proporciona detalles del error, como capturas de pantalla y una descripción clara.</p>
+                                            <p class="mb-0">
+                                                Si encuentras un error, puedes notificarlo al responsable de RH de tu central o busca la sección de “Ayuda” o “Soporte” en la plataforma, donde habrá un correo electrónico en el cual podrás enviar los detalles del error, como capturas de pantalla y una descripción clara.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -318,7 +326,10 @@
                                     </div>
                                     <div id="collapse1Six" class="collapse" aria-labelledby="collapse1HeadingSix" data-bs-parent="#accordion1">
                                         <div class="card-body">
-                                            <p class="mb-0">Si no contestaste las evaluaciones dentro del plazo establecido, es posible que tu evaluación se vea afectada. Sin embargo, algunas plataformas permiten solicitar una extensión o una nueva oportunidad contactando al administrador o al área de recursos humanos.</p>
+                                            <p class="mb-0">
+                                                Si no contestaste las evaluaciones dentro del plazo establecido, es posible que tu evaluación se vea afectada.
+                                                Es posible que tu evolución se vea afectada y por tanto no podrás tener el seguimiento adecuado para tu desarrollo profesional.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -360,7 +371,8 @@
                                     </div>
                                     <div id="collapse1Nine" class="collapse" aria-labelledby="collapse1HeadingNine" data-bs-parent="#accordion1">
                                         <div class="card-body">
-                                            <p class="mb-0">Sí, puedes descargar los documentos de tu expediente digital directamente desde la aplicación, siempre y cuando tengas acceso a una conexión a internet. Los documentos estarán disponibles para su descarga en formatos compatibles, como PDF y podrás almacenarlos en tu dispositivo para acceder a ellos sin conexión en el futuro.</p>
+                                            <p class="mb-0">
+                                                Sí, puedes descargar los documentos de tu expediente digital directamente desde la plataforma, siempre y cuando tengas acceso a una conexión a internet. Los documentos estarán disponibles para su descarga en formatos compatibles, como PDF y podrás almacenarlos en tu dispositivo para acceder a ellos sin conexión en el futuro.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -374,7 +386,7 @@
                                     </div>
                                     <div id="collapse1Ten" class="collapse" aria-labelledby="collapse1HeadingTen" data-bs-parent="#accordion1">
                                         <div class="card-body">
-                                            <p class="mb-0">Los resultados de la evaluación 360° se manejan de forma confidencial para garantizar la privacidad y el análisis imparcial. Por lo tanto, no es posible consultar los resultados directamente en la aplicación.</p>
+                                            <p class="mb-0">Los resultados de la evaluación 360° se manejan de forma confidencial para garantizar la privacidad y el análisis imparcial. Por lo tanto, no es posible consultar los resultados directamente en la plataforma.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -388,7 +400,8 @@
                                     </div>
                                     <div id="collapse1Eleven" class="collapse" aria-labelledby="collapse1HeadingEleven" data-bs-parent="#accordion1">
                                         <div class="card-body">
-                                            <p class="mb-0">Sí, nuestra aplicación está disponible en varios dispositivos y sistemas operativos, incluyendo Android, iOS y en la versión web. Puedes acceder a ella desde tu celular, tablet o computadora, asegurando una experiencia fluida y accesible en cualquier momento y lugar.</p>
+                                            <p class="mb-0">
+                                                Puedes acceder a ella desde tu celular, tablet o computadora, asegurando una experiencia fluida y accesible en cualquier momento y lugar.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -420,31 +433,18 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card card-default">
-                                    <div class="card-header" id="collapse1HeadingFourteen">
-                                        <h4 class="card-title m-0">
-                                            <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Fourteen" aria-expanded="false" aria-controls="collapse1Fourteen">
-                                                14 - ¿La aplicación tiene opción de personalización?
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapse1Fourteen" class="collapse" aria-labelledby="collapse1HeadingFourteen" data-bs-parent="#accordion1">
-                                        <div class="card-body">
-                                            <p class="mb-0">[Respuesta pendiente de proporcionar].</p>
-                                        </div>
-                                    </div>
-                                </div>
+
                                 <div class="card card-default">
                                     <div class="card-header" id="collapse1HeadingFifteen">
                                         <h4 class="card-title m-0">
                                             <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Fifteen" aria-expanded="false" aria-controls="collapse1Fifteen">
-                                                15 - ¿Cómo protege la aplicación mi privacidad y datos personales?
+                                                14 - ¿Cómo protege la aplicación mi privacidad y datos personales?
                                             </a>
                                         </h4>
                                     </div>
                                     <div id="collapse1Fifteen" class="collapse" aria-labelledby="collapse1HeadingFifteen" data-bs-parent="#accordion1">
                                         <div class="card-body">
-                                            <p class="mb-0">Tu privacidad y seguridad son nuestra prioridad. La aplicación utiliza tecnologías avanzadas de encriptación para proteger tus datos personales y garantizar que toda la información se maneje de manera confidencial.</p>
+                                            <p class="mb-0">Tu privacidad y seguridad son nuestra prioridad. La plataforma utiliza tecnologías avanzadas de encriptación para proteger tus datos personales y garantizar que toda la información se maneje de manera confidencial.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -452,13 +452,15 @@
                                     <div class="card-header" id="collapse1HeadingSixteen">
                                         <h4 class="card-title m-0">
                                             <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Sixteen" aria-expanded="false" aria-controls="collapse1Sixteen">
-                                                16 - ¿Es anónima la participación en ejercicios o actividades dentro de la app?
+                                                15 - ¿Es anónima la participación en ejercicios o actividades dentro de la app?
                                             </a>
                                         </h4>
                                     </div>
                                     <div id="collapse1Sixteen" class="collapse" aria-labelledby="collapse1HeadingSixteen" data-bs-parent="#accordion1">
                                         <div class="card-body">
-                                            <p class="mb-0">Tu información personal se mantiene protegida y solo se utiliza para mejorar tu experiencia dentro de la aplicación. Puedes consultar nuestra política de privacidad para obtener más detalles sobre cómo manejamos tus datos.</p>
+                                            <p class="mb-0">
+                                                Solo podrás ver el resultado de tus evaluaciones cuando el jefe inmediato lleve a cabo el “face to face”. Algunas de las evaluaciones serán anomias; en las que no lo sean, porque así se requiere por norma te garantizamos total confidencialidad.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -466,7 +468,7 @@
                                     <div class="card-header" id="collapse1HeadingSeventeen">
                                         <h4 class="card-title m-0">
                                             <a class="accordion-toggle text-color-dark font-weight-bold collapsed" data-bs-toggle="collapse" data-bs-target="#collapse1Seventeen" aria-expanded="false" aria-controls="collapse1Seventeen">
-                                                17 - ¿Cuál es el objetivo principal de la aplicación?
+                                                16 - ¿Cuál es el objetivo principal de la plataforma?
                                             </a>
                                         </h4>
                                     </div>
@@ -495,7 +497,7 @@
 	c0.8-0.8,2.1-0.7,2.8,0.1c0.8,0.8,0.7,2.1-0.1,2.8l0,0C46.2,57.2,39.2,60,32,60z"></path>
 </svg></div>
 									</span>
-									<a class="text-color-dark text-color-hover-primary text-decoration-none font-weight-semibold text-3-5 ms-2" href="mail-to:contact@adcentrales.com">contact@adcentrales.com</a>
+									<a class="text-color-dark text-color-hover-primary text-decoration-none font-weight-semibold text-3-5 ms-2" href="mail-to:contactorh@adcentrales.com">contactorh@adcentrales.com </a>
 								</span>
 								<a href="{{route('contact')}}" class="btn btn-primary custom-btn-style-1 font-weight-semibold btn-px-4 btn-py-2 text-3-5 mb-3" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light"><span>Directorio</span></a>
 
@@ -527,7 +529,7 @@
                         <div class="col-lg-2 mb-4 mb-lg-0">
                         </div>
                         <div class="col-lg-4 mb-4 mb-lg-0">
-                            <a href="demo-business-consulting-3.html" class="text-decoration-none">
+                            <a href="{{route('welcome')}}" class="text-decoration-none">
                                 <img src="img/logo_footer.png" class="img-fluid mb-4" width="123" height="33" alt="" />
                             </a>
                             <p class="text-3-5">

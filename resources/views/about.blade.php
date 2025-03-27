@@ -244,58 +244,13 @@
                                         <img class="d-inline-block img-fluid" src="img/centrales/central-2.jpeg" alt="" style="max-width: 360px;" />
                                     </div>
                                     <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-3.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
                                         <img class="d-inline-block img-fluid" src="img/centrales/central-4.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-5.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-6.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-7.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-8.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-9.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-10.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-11.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-12.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-13.jpg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-14.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-15.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-16.jpg" alt="" style="max-width: 360px;" />
                                     </div>
                                     <div class="text-center mx-2">
                                         <img class="d-inline-block img-fluid" src="img/centrales/central-17.jpg" alt="" style="max-width: 360px;" />
                                     </div>
                                     <div class="text-center mx-2">
                                         <img class="d-inline-block img-fluid" src="img/centrales/central-18.jpg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-19.jpg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-20.jpg" alt="" style="max-width: 360px;" />
                                     </div>
 
 
@@ -379,14 +334,14 @@
 					</div>
 					<div class="row row-gutter-sm">
 						<div class="col-sm-6 mb-4 mb-sm-0">
-							<img src="img/centrales/central-14.jpeg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="800" alt="" />
+							<img src="img/centrales/central-4.jpeg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="800" alt="" />
 						</div>
 						<div class="col-6 col-sm-3">
 							<img src="img/centrales/vertical-central.jpg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="600" alt="" />
 						</div>
 						<div class="col-6 col-sm-3">
-							<img src="img/centrales/central-19.jpg" class="img-fluid box-shadow-5 mb-4 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="200" alt="" />
-							<img src="img/centrales/central-11.jpeg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="400" alt="" />
+							<img src="img/centrales/central-2.jpeg" class="img-fluid box-shadow-5 mb-4 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="200" alt="" />
+							<img src="img/centrales/central-14.jpeg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="400" alt="" />
 						</div>
 					</div>
 				</div>
@@ -409,7 +364,7 @@
                         <div class="col-lg-2 mb-4 mb-lg-0">
                         </div>
                         <div class="col-lg-4 mb-4 mb-lg-0">
-                            <a href="demo-business-consulting-3.html" class="text-decoration-none">
+                            <a href="{{route('welcome')}}" class="text-decoration-none">
                                 <img src="img/logo_footer.png" class="img-fluid mb-4" width="123" height="33" alt="" />
                             </a>
                             <p class="text-3-5">

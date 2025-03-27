@@ -131,28 +131,44 @@
                                                 </a>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Evaluación 360</a>
+                                                        <a href="{{route('modules-360-detail')}}" class="dropdown-item">
+                                                            Evaluación 360
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Face to Face</a>
+                                                        <a href="{{route('modules-f2f')}}" class="dropdown-item">
+                                                            Face to Face
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">9 Box</a>
+                                                        <a href="{{route('modules-9box')}}" class="dropdown-item">
+                                                            9 Box
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Clima Organizacional</a>
+                                                        <a href="{{route('modules-clima')}}" class="dropdown-item">
+                                                            Clima Organizacional
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Tablero de control</a>
+                                                        <a href="{{route('modules-tablero-de-control')}}" class="dropdown-item">
+                                                            Tablero de control
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Portafolio </a>
+                                                        <a href="{{route('modules-portafolio')}}" class="dropdown-item">
+                                                            Portafolio
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">NOM 035 </a>
+                                                        <a href="{{route('modules-nom035')}}" class="dropdown-item">
+                                                            NOM 035
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="dropdown-item">Psicometrías </a>
+                                                        <a href="{{route('modules-psicometria')}}" class="dropdown-item">
+                                                            Psicometrías
+                                                        </a>
                                                     </li>
 
                                                 </ul>
@@ -234,7 +250,7 @@
                     <div class="container mt-5">
                         <p class="text-3-5">Nuestro módulo NOM-035 te ayudará a cumplir con la normativa y a cuidar la salud mental y emocional de tus colaboradores.</p>
                         <p class="text-3-5">
-                            La NOM-035 es una norma oficial mexicana que se enfoca en la identificación, análisis y prevención de los factores de riesgo psicosocial en el trabajo, incluyendo:
+                            La NOM-035 es una norma oficial mexicana que se enfoca en establecer los elementos para identificar, analizar y prevenir los factores de riesgo psicosocial, así como para promover un entorno organizacional favorable en los centros de trabajo.
                         </p>
                         <div class="row">
                             <div class="col-md-6">
@@ -256,12 +272,14 @@
 
                         <h4>Nuestro módulo NOM-035 te permitirá:</h4>
                         <ul class="text-3-5">
-                            <li>Realizar evaluaciones para identificar factores de riesgo.</li>
-                            <li>Generar informes y análisis detallados.</li>
-                            <li>Implementar planes de acción para prevenir riesgos.</li>
-                            <li>Dar seguimiento a las acciones implementadas.</li>
-                            <li>Permitir tomar decisiones estratégicas para mejorar la salud emocional de los empleados.</li>
-                            <li>Cumplir con la normativa mexicana.</li>
+                            <li>Identificar el campo de aplicación por centro de trabajo.</li>
+                            <li>Habilitar solamente, los requerimientos y guías de acuerdo con el campo de aplicación.</li>
+                            <li>Realizar la aplicación en línea de las guías de referencia I, II, III y V; cuando corresponda.</li>
+                            <li>Habilitar un ejemplo completo con referencia a resultados de la política (guía de referencia IV).</li>
+                            <li>Generar informes y registros, individuales y generales de los resultados de las guías de referencia I, II y III, según corresponda.</li>
+                            <li>Generar archivo con ejemplos de medidas de prevención y acción por categoría y dominio, de acuerdo con los 3 niveles de la Norma.</li>
+                            <li>Generar de manera autentica el informe que contenga los resultados con base al numeral 7.7 de la norma. </li>
+                            <li>Generar informes de datos del colaborador (guía de referencia V).</li>
                         </ul>
 
                         <p class="text-3-5">Con nuestro módulo NOM-035, podrás crear un ambiente de trabajo más saludable, reducir el estrés laboral y mejorar el bienestar de tus colaboradores.</p>
@@ -299,7 +317,7 @@
                 <div class="col-lg-2 mb-4 mb-lg-0">
                 </div>
                 <div class="col-lg-4 mb-4 mb-lg-0">
-                    <a href="demo-business-consulting-3.html" class="text-decoration-none">
+                    <a href="{{route('welcome')}}" class="text-decoration-none">
                         <img src="img/logo_footer.png" class="img-fluid mb-4" width="123" height="33" alt="" />
                     </a>
                     <p class="text-3-5">

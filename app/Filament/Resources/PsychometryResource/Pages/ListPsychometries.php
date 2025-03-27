@@ -9,7 +9,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListPsychometries extends ListRecords
 {
     protected static string $resource = PsychometryResource::class;
-    protected static ?string $title = 'Talento';
+    protected static ?string $title = 'Talento ';
 
     protected function getHeaderActions(): array
     {

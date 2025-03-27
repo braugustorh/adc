@@ -9,7 +9,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditPsychometry extends EditRecord
 {
     protected static string $resource = PsychometryResource::class;
-    protected static ?string $title = 'Editar Registro de Talentos';
+    protected static ?string $title = 'Editar Registro de Talentos ';
 
     protected function getHeaderActions(): array
     {

@@ -26,7 +26,7 @@ class PsychometryResource extends Resource
     protected static ?string $navigationLabel = 'Talento';
     protected static ?string $name = 'Talento';
     protected static ?string $label = 'Talento';
-    protected static ?string $title= 'Talento';
+    protected static ?string $title= 'Talento ';
 
     protected static ?int $navigationSort = 3;
 

@@ -9,5 +9,5 @@ use Filament\Resources\Pages\CreateRecord;
 class CreatePsychometry extends CreateRecord
 {
     protected static string $resource = PsychometryResource::class;
-    protected static ?string $title = 'Crear Registro de Talentos';
+    protected static ?string $title = 'Crear Registro de Talentos ';
 }

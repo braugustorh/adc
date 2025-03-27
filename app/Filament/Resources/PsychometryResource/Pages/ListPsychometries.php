@@ -9,12 +9,12 @@ use Filament\Resources\Pages\ListRecords;
 class ListPsychometries extends ListRecords
 {
     protected static string $resource = PsychometryResource::class;
-    protected static ?string $title = 'Psicometrías';
+    protected static ?string $title = 'Talento';
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Agregar Psicometría'),
+            Actions\CreateAction::make()->label('Agregar Talento'),
         ];
     }
 }

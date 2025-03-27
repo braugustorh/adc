@@ -23,9 +23,10 @@ class PsychometryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-puzzle-piece';
     protected static ?string $navigationGroup = 'Colaboradores';
-    protected static ?string $navigationLabel = 'Psicometría';
-    protected static ?string $name = 'Psicometría';
-    protected static ?string $label = 'Psicometría';
+    protected static ?string $navigationLabel = 'Talento';
+    protected static ?string $name = 'Talento';
+    protected static ?string $label = 'Talento';
+    protected static ?string $title= 'Talento';
 
     protected static ?int $navigationSort = 3;
 

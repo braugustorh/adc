@@ -126,8 +126,10 @@ class Panel9Box extends Page implements HasTable
                 )->wrap(),
         //Tables\Columns\TextColumn::make('competences.description')->label('Descripción')->wrap(),
             // Tables\Columns\TextColumn::make('questions.question')->label('Pregunta'),
-            Tables\Columns\TextColumn::make('score')->label('Score')
-            ->badge()
+            Tables\Columns\TextColumn::make('score')
+                ->label('Score')
+                ->formatStateUsing(fn (string $state): string => is_numeric($state) ? number_format((float)$state, 3) : $state)
+                ->badge()
                 ->color(function (string $state): string {
                     $score = (float) $state;
                     return match (true) {

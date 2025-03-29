@@ -23,7 +23,9 @@ Route::group(['prefix' => '/'], function () {
     Route::view('/about', 'about')->name('about');
     //Route::view('/contact', 'contact')->name('contact');
     Route::get('/contact', fn () => view('contact'))->name('contact');
-    Route::post('/contact', App\Livewire\ContactForm::class);
+    Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'submit'])->name('contact.submit');
+    //Route::post('/contact/submit', App\Livewire\ContactForm::class)->name('contact.submit');
+    //Route::get('/contact', \App\Livewire\ContactForm::class)->name('contact');
     Route::view('/questions', 'questions')->name('questions');
     Route::view('/modules', 'modules')->name('modules');
     Route::view('/modules-360-detail', 'modules-360-detail')->name('modules-360-detail');

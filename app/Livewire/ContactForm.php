@@ -21,13 +21,13 @@ class ContactForm extends Component
         'message' => 'required|max:5000',
         'recaptchaToken' => 'required'
     ];
-    public function submitForm()
+    public function submit()
     {
         $this->validate();
 
         // Validar reCAPTCHA v3 con Google
         $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => env('RECAPTCHA_SECRET_KEY')??'6Lc8ywMrAAAAAMohSS_wpCtrqk9hVR3ljqaIiM5I',
+            'secret' => env('RECAPTCHA_SECRET_KEY'),
             'response' => $this->recaptchaToken
         ]);
 
@@ -38,13 +38,26 @@ class ContactForm extends Component
             return;
         }
 
-        // Enviar el correo
-        Mail::to('braugustorh@gmail.com')->send(new ContactFormMail($this->name, $this->company, $this->email, $this->message));
+        try {
+            // Enviar el correo
+            Mail::to('braugustorh@gmail.com')->send(new ContactFormMail(
+                $this->name,
+                $this->company,
+                $this->email,
+                $this->message
+            ));
 
+            // Resetear los campos
+            $this->reset(['name', 'company', 'email', 'message']);
+            session()->flash('success', 'Tu mensaje ha sido enviado correctamente.');
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Ocurrió un error en el envío del mensaje.');
+            Log::error('Error sending contact form: '.$e->getMessage());
+        }
         // Resetear los campos
-        $this->reset(['name', 'company', 'email', 'message', 'recaptchaToken']);
 
-        session()->flash('success', 'Tu mensaje ha sido enviado correctamente.');
+
     }
 
     #[On('setRecaptchaToken')]

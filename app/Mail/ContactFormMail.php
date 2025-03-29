@@ -11,7 +11,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ContactFormMail extends Mailable
+class ContactFormMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -31,8 +31,10 @@ class ContactFormMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address($this->email,$this->name),
-            subject: 'Contact Form Mail',
+            from: new Address(
+                $this->email,
+                $this->name),
+            subject: 'Nuevo mensaje de contacto desde ADC Plataforma',
         );
     }
 
@@ -43,6 +45,12 @@ class ContactFormMail extends Mailable
     {
         return new Content(
             view: 'emails.contact-form',
+            with: [
+                'name' => $this->name,
+                'company' => $this->company,
+                'email' => $this->email,
+                'message' => $this->message,
+            ],
         );
     }
 

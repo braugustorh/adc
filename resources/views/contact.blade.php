@@ -475,6 +475,7 @@
 
                                             <form wire:submit.prevent="submitForm"
                                                   class="contact-form form-style-4 form-placeholders-light form-errors-light mb-5 mb-lg-0">
+                                                @csrf
                                                 <div class="row">
                                                     <div class="form-group col">
                                                         <input type="text" wire:model="name"

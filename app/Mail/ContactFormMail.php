@@ -24,10 +24,7 @@ class ContactFormMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address(
-                $this->data['email'], // Accede desde el array
-                $this->data['name']
-            ),
+            from: new Address('sedyco@adcentrales.com', 'Plataforma ADC'),
             subject: 'Nuevo mensaje de contacto desde ADC Plataforma',
         );
     }

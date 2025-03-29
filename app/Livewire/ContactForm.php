@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
@@ -46,10 +47,12 @@ class ContactForm extends Component
         session()->flash('success', 'Tu mensaje ha sido enviado correctamente.');
     }
 
-    #[On('setRecaptchaToken.{token}')]
+    #[On('setRecaptchaToken')]
     public function setRecaptchaToken($token)
     {
+        Log::info('Si llega aqui');
         $this->recaptchaToken = $token;
+        Log::info($this->recaptchaToken);
     }
 
     public function render()

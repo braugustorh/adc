@@ -642,7 +642,7 @@
                 grecaptcha.ready(function () {
                     grecaptcha.execute("{{ env('RECAPTCHA_SITE_KEY')??'6Lc8ywMrAAAAAFN8d0RhfmXkGIs8gPwYgvhRvx7h
 ' }}", { action: "submit" }).then(function (token) {
-                        window.Livewire.dispatch('setRecaptchaToken', { token });
+                        window.Livewire.dispatch('setRecaptchaToken',token);
                     });
                 });
             });

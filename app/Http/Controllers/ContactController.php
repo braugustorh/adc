@@ -36,10 +36,11 @@ class ContactController extends Controller
         // Enviar correo
         try {
             Mail::to('braugustorh@gmail.com')->send(new ContactFormMail($request->all()));
+            return back()->with('success', '¡Mensaje enviado con éxito!');
         } catch (\Exception $e) {
             \Log::error("Error al enviar correo: " . $e->getMessage());
             return back()->with('error', 'Error al enviar el mensaje');
         }
-        return back()->with('success', '¡Mensaje enviado con éxito!');
+
     }
 }

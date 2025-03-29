@@ -464,44 +464,83 @@
 									<div class="text-center text-md-start p-5 h-100 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="750">
 										<h2 class="text-color-light font-weight-medium mb-4 mt-5 mt-lg-0">Envía un mensaje</h2>
 										<p class="text-3-5 font-weight-medium mb-4">Envíanos un mensaje directo al corporativo a través de nuestro formulario. </p>
-										<form class="contact-form form-style-4 form-placeholders-light form-errors-light mb-5 mb-lg-0" action="php/contact-form.php" method="POST">
-											<div class="contact-form-success alert alert-success d-none mt-4">
-												<strong>Enviado!</strong> Tu mensaje se há enviado.
-											</div>
+                                        <div>
+                                            @if(session()->has('success'))
+                                                <div class="alert alert-success">{{ session('success') }}</div>
+                                            @endif
 
-											<div class="contact-form-error alert alert-danger d-none mt-4">
-												<strong>Error!</strong> Algo pasó en el envío.
-												<span class="mail-error-message text-1 d-block"></span>
-											</div>
+                                            @if(session()->has('error'))
+                                                <div class="alert alert-danger">{{ session('error') }}</div>
+                                            @endif
 
-											<div class="row">
-												<div class="form-group col">
-													<input type="text" value="" data-msg-required="Escribe tu nombre completo." maxlength="100" class="form-control text-3 custom-border-color-grey-1 h-auto py-2" name="name" placeholder="* Nombre Completo" required>
-												</div>
-											</div>
-                                            <div class="row">
-                                                <div class="form-group col">
-                                                    <input type="text" value="" data-msg-required="Ingresa la Terminal en la que laboras." maxlength="100" class="form-control text-3 custom-border-color-grey-1 h-auto py-2" name="company" placeholder="* Termial en la que laboras" required>
+                                            <form wire:submit.prevent="submitForm"
+                                                  class="contact-form form-style-4 form-placeholders-light form-errors-light mb-5 mb-lg-0">
+                                                <div class="row">
+                                                    <div class="form-group col">
+                                                        <input type="text" wire:model="name"
+                                                               class="form-control"
+                                                               data-msg-required="Escribe tu nombre completo."
+                                                               maxlength="100"
+                                                               class="form-control text-3 custom-border-color-grey-1 h-auto py-2"
+                                                               name="name"
+                                                               placeholder="* Nombre Completo" required>
+                                                        @error('name') <span class="text-danger">{{ $message }}</span> @enderror
+                                                    </div>
                                                 </div>
-                                            </div>
-											<div class="row">
-												<div class="form-group col">
-													<input type="email" value="" data-msg-required="Escribe tu email address." data-msg-email="Please enter a valid email address." maxlength="100" class="form-control text-3 custom-border-color-grey-1 h-auto py-2" name="email" placeholder="* Correo Electrónico Institucional" required>
-												</div>
-											</div>
-											<div class="row mb-4">
-												<div class="form-group col">
-													<textarea maxlength="5000" data-msg-required="Escribe tu mensaje." rows="4" class="form-control text-3 custom-border-color-grey-1 h-auto py-2" name="message" placeholder="* Mensaje" required></textarea>
-												</div>
-											</div>
-											<div class="row">
-												<div class="form-group col">
-													<button type="submit" class="btn btn-primary custom-btn-style-1 font-weight-semibold btn-px-4 btn-py-2 text-3-5" data-loading-text="Loading..." data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light">
-														<span>Enviar mensaje</span>
-													</button>
-												</div>
-											</div>
-										</form>
+                                                <div class="row">
+                                                    <div class="form-group col">
+                                                        <input type="text" wire:model="company"
+                                                               data-msg-required="Ingresa la Terminal en la que laboras." maxlength="100"
+                                                               class="form-control text-3 custom-border-color-grey-1 h-auto py-2" name="company"
+                                                               placeholder="* Terminal en la que laboras" required>
+                                                        @error('company') <span class="text-danger">{{ $message }}</span> @enderror
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col">
+                                                        <input type="email" wire:model="email"
+                                                               data-msg-required="Escribe tu email address."
+                                                               data-msg-email="Please enter a valid email address."
+                                                               maxlength="100"
+                                                               class="form-control text-3 custom-border-color-grey-1 h-auto py-2"
+                                                               name="email"
+                                                               placeholder="* Correo Electrónico"
+                                                               required>
+                                                        @error('email') <span class="text-danger">{{ $message }}</span> @enderror
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-4">
+                                                    <div class="form-group col">
+                                                    <textarea wire:model="message"
+                                                              maxlength="5000"
+                                                              data-msg-required="Escribe tu mensaje."
+                                                              class="form-control text-3 custom-border-color-grey-1 h-auto py-2"
+                                                              name="message"
+                                                              placeholder="* Mensaje"
+                                                              rows="8" required></textarea>
+                                                        @error('message') <span class="text-danger">{{ $message }}</span> @enderror
+                                                    </div>
+                                                </div>
+
+                                                <input type="hidden" id="recaptchaToken" wire:model="recaptchaToken">
+                                                <div class="row">
+                                                    <div class="form-group col">
+                                                        <button type="submit"
+                                                                class="btn btn-primary
+                                                                custom-btn-style-1
+                                                                font-weight-semibold
+                                                                btn-px-4 btn-py-2
+                                                                text-3-5"
+                                                                data-loading-text="Loading..."
+                                                                data-cursor-effect-hover="plus"
+                                                                data-cursor-effect-hover-color="light">
+                                                            <span>Enviar Mensaje</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+
 									</div>
 								</div>
 							</div>
@@ -593,6 +632,21 @@
                 </div>
             </footer>
 		</div>
+
+        <script
+            src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY')??'6Lc8ywMrAAAAAFN8d0RhfmXkGIs8gPwYgvhRvx7h
+' }}"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                grecaptcha.ready(function () {
+                    grecaptcha.execute("{{ env('RECAPTCHA_SITE_KEY')??'6Lc8ywMrAAAAAFN8d0RhfmXkGIs8gPwYgvhRvx7h
+' }}", { action: "submit" }).then(function (token) {
+                        window.Livewire.dispatch('setRecaptchaToken', { token });
+                    });
+                });
+            });
+        </script>
+
 
 		<!-- Vendor -->
 		<script src="vendor/plugins/js/plugins.min.js"></script>

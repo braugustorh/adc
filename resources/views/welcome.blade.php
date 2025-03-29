@@ -227,7 +227,7 @@
                     <div class="col-md-7 col-lg-12">
                         <div class="appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="0">
                             <h1 class="custom-text-background custom-big-font-size-1 text-14 font-weight-bold float-xl-center clearfix line-height-1 custom-ws-mobile-wrap ws-nowrap pb-2 mb-3 mb-xl-5"
-                                style="background-image: url(img/demos/adc/text-background.jpg);">SEDyCO
+                                style="background-image: url('img/demos/adc/text-background.jpg');">SEDyCO
                                 <br></h1>
                         </div>
                     </div>
@@ -750,7 +750,12 @@
 
                             <div class="row">
                                 <div class="form-group col">
-                                    <input type="text" value="" data-msg-required="Ingresa tu nombre completo." maxlength="100" class="form-control text-3 custom-border-color-grey-1 h-auto py-2" name="name" placeholder="* Nombre Completo" required>
+                                    <input type="text"
+                                           value=""
+                                           data-msg-required="Ingresa tu nombre completo."
+                                           maxlength="100"
+                                           class="form-control text-3 custom-border-color-grey-1 h-auto py-2"
+                                           name="name" placeholder="* Nombre Completo" required>
                                 </div>
                             </div>
                             <div class="row">
@@ -760,7 +765,14 @@
                             </div>
                             <div class="row mb-4">
                                 <div class="form-group col">
-                                    <textarea maxlength="5000" data-msg-required="Ingresa tu mensaje." rows="8" class="form-control text-3 custom-border-color-grey-1 h-auto py-2" name="message" placeholder="* Mensaje" required></textarea>
+                                    <textarea
+                                        maxlength="5000"
+                                        data-msg-required="Ingresa tu mensaje."
+                                        rows="8"
+                                        class="form-control text-3 custom-border-color-grey-1 h-auto py-2"
+                                        name="message"
+                                        placeholder="* Mensaje"
+                                        required></textarea>
                                 </div>
                             </div>
                             <div class="row">

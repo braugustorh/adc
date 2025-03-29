@@ -24,7 +24,7 @@ class ContactFormMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('sedyco@adcentrales.com', 'Plataforma ADC'),
+            from: new Address('sedyco@adcentrales.com', 'SEDyCO adc'),
             subject: 'Nuevo mensaje de contacto desde ADC Plataforma',
         );
     }

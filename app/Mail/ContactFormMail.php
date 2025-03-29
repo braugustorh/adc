@@ -11,45 +11,36 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ContactFormMail extends Mailable implements ShouldQueue
+class ContactFormMail extends Mailable
 {
     use Queueable, SerializesModels;
+    public $data; // Almacena todos los datos
 
-    public $name, $company, $email, $message;
-
-    public function __construct($name, $company, $email, $message)
+    public function __construct(array $data)
     {
-        $this->name = $name;
-        $this->company = $company;
-        $this->email = $email;
-        $this->message = $message;
+        $this->data = $data; // Recibe el array completo
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
             from: new Address(
-                $this->email,
-                $this->name),
+                $this->data['email'], // Accede desde el array
+                $this->data['name']
+            ),
             subject: 'Nuevo mensaje de contacto desde ADC Plataforma',
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
             view: 'emails.contact-form',
             with: [
-                'name' => $this->name,
-                'company' => $this->company,
-                'email' => $this->email,
-                'message' => $this->message,
+                'name' => $this->data['name'],
+                'terminal' => $this->data['terminal'] ?? null, // Usa null si no existe
+                'email' => $this->data['email'],
+                'message_form' => $this->data['message'],
             ],
         );
     }

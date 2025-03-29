@@ -12,6 +12,7 @@ class ContactController extends Controller
 {
     public function submit(Request $request) {
         // Validar datos
+        //dd($request->all());
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email',
@@ -27,12 +28,13 @@ class ContactController extends Controller
         ]);
 
         $responseData = $response->json();
-
+    /*
         if (!$responseData['success'] || $responseData['score'] < 0.5) {
             return back()->withErrors(['recaptcha_token' => '¡Actividad sospechosa detectada!'])->withInput();
         }
-
+    */
         // Enviar correo
+
         Mail::to('braugustorh@gmail.com')->send(new ContactFormMail($request->all()));
 
         return back()->with('success', '¡Mensaje enviado con éxito!');

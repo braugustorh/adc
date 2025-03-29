@@ -6,6 +6,8 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use App\Mail\ContactFormMail;
+use Livewire\Attributes\On;
+
 
 class ContactForm extends Component
 {
@@ -18,12 +20,6 @@ class ContactForm extends Component
         'message' => 'required|max:5000',
         'recaptchaToken' => 'required'
     ];
-    public function boot()
-    {
-        // Escuchar evento de reCAPTCHA
-        $this->dispatch('setRecaptchaToken')->to(fn ($token) => $this->recaptchaToken = $token);
-    }
-
     public function submitForm()
     {
         $this->validate();
@@ -48,6 +44,12 @@ class ContactForm extends Component
         $this->reset(['name', 'company', 'email', 'message', 'recaptchaToken']);
 
         session()->flash('success', 'Tu mensaje ha sido enviado correctamente.');
+    }
+
+    #[On('setRecaptchaToken.{token}')]
+    public function setRecaptchaToken($token)
+    {
+        $this->recaptchaToken = $token;
     }
 
     public function render()

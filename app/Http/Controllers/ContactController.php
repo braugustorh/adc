@@ -27,7 +27,7 @@ class ContactController extends Controller
         ]);
 
         $responseData = $response->json();
-        dd($responseData);
+
         if (!$responseData['success'] || $responseData['score'] < 0.5) {
             return back()->withErrors(['recaptcha_token' => '¡Actividad sospechosa detectada!'])->withInput();
         }

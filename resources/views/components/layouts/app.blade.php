@@ -4,7 +4,7 @@
     <script src="js/color-modes.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{$tipodeEvaluacion}}</title>
+    <title>{{$tipodeEvaluacion??null}}</title>
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/offcanvas-navbar/">
 
 
@@ -74,7 +74,7 @@
     <div class="container-fluid">
         <div class="d-flex align-items-center p-3 my-3 text-white rounded shadow-sm">
             <img class="me-3" src="img/360/logoDark.png" alt="" width="38" height="38">
-            <a class="navbar-brand" href="#">{{$tipodeEvaluacion}}</a>
+            <a class="navbar-brand" href="#">{{$tipodeEvaluacion??null}}</a>
         </div>
         <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>

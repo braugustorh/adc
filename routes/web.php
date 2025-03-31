@@ -20,6 +20,7 @@ use App\Filament\Pages\ExitSurveyPage;
 
 Route::group(['prefix' => '/'], function () {
     Route::view('/', 'welcome')->name('welcome');
+    Route::post('/',[\App\Http\Controllers\ContactController::class, 'submit'])->name('welcome.submit');
     Route::view('/about', 'about')->name('about');
     //Route::view('/contact', 'contact')->name('contact');
     Route::get('/contact', fn () => view('contact'))->name('contact');

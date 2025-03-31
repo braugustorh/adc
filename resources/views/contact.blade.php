@@ -48,7 +48,22 @@
 	<body data-plugin-cursor-effect>
 		<div class="body">
 			<header id="header" class="header-effect-shrink" data-plugin-options="{'stickyEnabled': true, 'stickyEffect': 'shrink', 'stickyEnableOnBoxed': true, 'stickyEnableOnMobile': false, 'stickyChangeLogo': true, 'stickyStartAt': 120, 'stickyHeaderContainerHeight': 85}">
-				<div class="header-body border-top-0">
+                @if(session('success'))
+                    <div aria-live="polite" aria-atomic="true" class="position-relative">
+                        <div class="toast-container top-0 end-0 p-4">
+
+                            <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="d-flex">
+                                    <div class="toast-body">
+                                        <i class="fas fa-check-circle"></i><span> <strong>  Gracias!...</strong> hemos recibido tu mensaje.</span>
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                <div class="header-body border-top-0">
                     <div class="header-top header-top-default header-top-borders border-bottom-0 bg-color-light">
                         <div class="container">
                             <div class="header-row">
@@ -429,7 +444,7 @@
 							<div class="col-lg-6 px-0">
 								<div class="bg-light h-100">
 									<div class="d-flex flex-column justify-content-center p-5 h-100 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="500">
-										<div class="pb-5 mb-4 mt-5 mt-lg-0">
+										<div class="pb-5 mb-2 mt-5 mt-lg-0">
 											<div class="d-flex flex-column flex-md-row align-items-center justify-content-center pe-lg-4">
 												<img width="105" height="105" src="img/demos/business-consulting-3/icons/map-pin.svg" alt="Location" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary mb-4 mb-md-0'}" style="width: 105px;" />
 												<div class="text-center text-md-start ps-md-3">
@@ -439,14 +454,7 @@
 											</div>
 										</div>
 										<div class="row justify-content-center mb-5 mb-lg-0">
-											<div class="col-auto text-center pt-4 mt-5">
-												<h3 class="font-weight-semibold text-color-primary text-3-5 mb-0">Sugerencias</h3>
-												<div class="d-flex">
-													<img width="25" height="25" src="img/demos/business-consulting-3/icons/phone.svg" alt="Phone Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" />
-													<a href="tel:8001234567" class="text-color-dark text-color-hover-primary font-weight-semibold text-decoration-none text-6 ms-2">800-123-4567</a>
-												</div>
-											</div>
-											<div class="col-auto text-center pt-4 mt-5">
+											<div class="col-auto text-center pt-4 mt-2">
 												<h3 class="font-weight-semibold text-color-primary text-3-5 mb-0">Correo Electrónico</h3>
 												<div class="d-flex">
 													<img width="25" height="25" src="img/demos/business-consulting-3/icons/email.svg" alt="Email Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" />
@@ -467,21 +475,25 @@
                                         <form
                                             class="contact-form form-style-4 form-placeholders-light form-errors-light mb-5 mb-lg-0"
                                             action="{{ route('contact.submit') }}"
+                                            id="form"
                                             method="POST">
                                             @csrf
-                                            @if(session('success'))
-                                                <div class="alert alert-success">
-                                                    {{ session('success') }}
+                                            @if (session('success'))
+                                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                                    <strong>{{session('success')}}</strong>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                 </div>
                                             @endif
-                                            <div class="contact-form-success alert alert-success d-none mt-4">
-                                                <strong>Envío Correcto!</strong> Tu mensaje se ha enviado correctamente.
-                                            </div>
 
-                                            <div class="contact-form-error alert alert-danger d-none mt-4">
-                                                <strong>Ups!</strong> Estamos presentando dificultades con el envío de tu mensaje .
-                                                <span class="mail-error-message text-1 d-block"></span>
-                                            </div>
+                                            @if ($errors->any())
+                                                <div class="alert alert-danger">
+                                                    <ul>
+                                                        @foreach ($errors->all() as $error)
+                                                            <li>{{ $error }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
 
                                             <div class="row">
                                                 <div class="form-group col">
@@ -526,10 +538,14 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <input type="hidden" name="recaptcha_token" id="recaptcha_token">
-
+                                                <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+                                                @if ($errors->has('g-recaptcha-response'))
+                                                    <span class="help-block">
+                                                        <strong>{{ $errors->first('g-recaptcha-response') }}</strong>
+                                                    </span>
+                                                @endif
                                                 <!-- Mensaje de error -->
-                                                @error('recaptcha_token')
+                                                @error('g-recaptcha-response')
                                                 <div
                                                     class="alert alert-danger">{{ $message }}</div>
                                                 @enderror
@@ -634,14 +650,40 @@
             </footer>
 		</div>
 
-        <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script>
-        <script>
+        <script src="https://www.google.com/recaptcha/api.js?render={{ env('NOCAPTCHA_SITEKEY') }}"></script>
+    <!--    <script>
             grecaptcha.ready(function() {
-                grecaptcha.execute('{{ env('RECAPTCHA_SITE_KEY') }}', {action: 'contact'})
+                grecaptcha.execute('{{ env('NOCAPTCHA_SITEKEY') }}', {action: 'submit'})
                     .then(function(token) {
-                        document.getElementById('recaptcha_token').value = token;
+                        document.getElementById('g-recaptcha-response').value = token;
                     });
             });
+        </script>-->
+
+      <script>
+            console.log('Script cargado'); // Verifica que el script se ejecute
+            const form = document.getElementById('form');
+            if (!form) {
+                console.error('Formulario no encontrado');
+            } else {
+                console.log('Formulario encontrado');
+                form.addEventListener('submit', function(e) {
+                    console.log('Evento submit disparado');
+                    e.preventDefault();
+                    grecaptcha.ready(function() {
+                        grecaptcha.execute('{{ env('NOCAPTCHA_SITEKEY') }}', { action: 'submit' })
+                            .then(function(token) {
+                                console.log('Token generado:', token);
+                                document.getElementById('g-recaptcha-response').value = token;
+                                console.log('Valor asignado a recaptcha_token:', document.getElementById('g-recaptcha-response').value);
+                                e.target.submit();
+                            })
+                            .catch(function(error) {
+                                console.error('Error al generar el token:', error);
+                            });
+                    });
+                });
+            }
         </script>
 
 

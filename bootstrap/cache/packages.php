@@ -10,6 +10,17 @@
       0 => 'Althinect\\FilamentSpatieRolesPermissions\\FilamentSpatieRolesPermissionsServiceProvider',
     ),
   ),
+  'anhskohbo/no-captcha' => 
+  array (
+    'aliases' => 
+    array (
+      'NoCaptcha' => 'Anhskohbo\\NoCaptcha\\Facades\\NoCaptcha',
+    ),
+    'providers' => 
+    array (
+      0 => 'Anhskohbo\\NoCaptcha\\NoCaptchaServiceProvider',
+    ),
+  ),
   'anourvalar/eloquent-serialize' => 
   array (
     'aliases' => 

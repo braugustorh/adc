@@ -163,7 +163,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\Filament\AdminPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
         \Nihir\CountryStateCity\CountryStateCityServiceProvider::class
+
     ])->toArray(),
 
     /*
@@ -178,6 +180,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 

@@ -11,6 +11,7 @@
         "php": "^8.2",
         "ext-zip": "*",
         "althinect/filament-spatie-roles-permissions": "^2.3",
+        "anhskohbo/no-captcha": "^3.7",
         "barryvdh/laravel-dompdf": "^3.1",
         "blade-ui-kit/blade-heroicons": "^2.5",
         "codeat3/blade-solar-icons": "^1.1",

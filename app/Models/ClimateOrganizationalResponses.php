@@ -32,10 +32,10 @@ class ClimateOrganizationalResponses extends Model
 
         return $query->get();
     }
-    public static function getCompetenceAverages($queryClima)
+    public static function getCompetenceAverages($queryClima,$evaluationId)
     {
         $competences = Competence::where('status', 1)
-            ->where('evaluations_type_id', 4)
+            ->where('evaluations_type_id', $evaluationId)
             ->get();
         $data = [];
 

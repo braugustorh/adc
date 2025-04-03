@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 
 
@@ -19,6 +20,7 @@ class CompetencesClimaChart extends ChartWidget
     public function handleChartDataUpdated($chartData): void
     {
         $this->chartData = $chartData;
+        Log::info('Se Carga esto al CHART COMPETENCES'.$chartData);
         $this->updateChartData();
     }
 

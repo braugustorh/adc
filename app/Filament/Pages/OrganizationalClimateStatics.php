@@ -128,7 +128,7 @@ class OrganizationalClimateStatics extends Page implements HasTable
             ->count('user_id');
 
         $climateModel = new ClimateOrganizationalResponses();
-        $this->chartData = $climateModel->getCompetenceAverages($query->get());
+        $this->chartData = $climateModel->getCompetenceAverages($query->get(),$this->evaluation_id);
         // Calcular el score global basado en los mismos filtros
         $this->globalScore = ClimateOrganizationalResponses::getGlobalScore($query->get());
         // Calcular el porcentaje (asumiendo que la escala máxima es 5)
@@ -264,7 +264,7 @@ class OrganizationalClimateStatics extends Page implements HasTable
             'labels' => $labels,
             'datasets' => [
                 [
-                    'label' => 'Masculino',
+                    'label' => 'Hombres',
                     'data' => $maleScores,
                     'fill' => true,
                     'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
@@ -277,7 +277,7 @@ class OrganizationalClimateStatics extends Page implements HasTable
                     'pointHoverBorderColor' => 'rgba(54, 162, 235, 1)'
                 ],
                 [
-                    'label' => 'Femenino',
+                    'label' => 'Mujeres',
                     'data' => $femaleScores,
                     'fill' => true,
                     'backgroundColor' => 'rgba(255, 99, 132, 0.2)',

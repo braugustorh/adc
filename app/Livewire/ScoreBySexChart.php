@@ -7,7 +7,7 @@ use Livewire\Attributes\On;
 
 class ScoreBySexChart extends ChartWidget
 {
-    protected static ?string $heading = 'Competencias por Género';
+    protected static ?string $heading = 'Promedio de Respuesta por Sexo';
     protected static bool $isLazy = true;
     protected static ?string $maxHeight = '800px';
 

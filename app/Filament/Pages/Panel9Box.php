@@ -23,6 +23,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Livewire\Attributes\On;
 
+
 class Panel9Box extends Page implements HasTable
 {
     use InteractsWithTable;
@@ -157,7 +158,6 @@ class Panel9Box extends Page implements HasTable
     #[On('show-chart')]
     public function showChart():void
     {
-
         $this->showChartOnView=true;
     }
 

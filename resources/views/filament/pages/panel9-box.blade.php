@@ -22,7 +22,7 @@
         </x-filament::tabs.item>
     </x-filament::tabs>
     @if($activeTab === 'tab3')
-        <x-filament::section label="tab3"  wire:key="tab2-section">
+        <x-filament::section label="tab3"  wire:key="tab3-section">
             <x-slot name="heading">
                 9-Box
             </x-slot>
@@ -81,8 +81,7 @@
     @endif
     @if($activeTab === 'tab2')
 
-            <!-- Contenido del Tab 3 (Tabla) -->
-            {{-- $this->table --}}
+
         <div>
             @livewire(\App\Livewire\CompetencesChartTeam::class)
         </div>

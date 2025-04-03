@@ -5,6 +5,7 @@ namespace App\Livewire;
 
 use App\Models\ClimateOrganizationalResponses;
 use App\Models\Competence;
+use App\Models\EvaluationsTypes;
 use App\Models\Question;
 use Livewire\Component;
 use App\Models\User;
@@ -37,10 +38,12 @@ class OrganizationalClimateController extends Component
                 $this->campaign = \Crypt::decryptString(request()->query('campaign'));
                 $user = User::find($this->user);
                 $this->fullName = $user->name . ' ' . $user->first_name . ' ' . $user->second_name;
-                $this->competencias = Competence::where('evaluations_type_id', 3)
+                $evaluation=EvaluationsTypes::where('name','Clima Organizacional')->first();
+                $this->competencias = Competence::where('evaluations_type_id', $evaluation->id)
                     ->where('status',1)
                     ->with('questions')
                     ->get();
+
                 $this->competenciasCount = $this->competencias->whereNotNull('questions')->where('evaluations_type_id',3)->count();
                 $this->responses=ClimateOrganizationalResponses::where('campaign_id',$this->campaign)
                     ->where('user_id',$this->user)

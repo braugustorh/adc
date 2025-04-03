@@ -16,8 +16,6 @@ class CompetencesChart extends ChartWidget
     protected static bool $isLazy = true;
     protected static ?string $maxHeight = '300px';
 
-
-
     #[On('update-chart')]
     public function updateChart($user, $campaignId): void
     {

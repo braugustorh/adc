@@ -294,8 +294,13 @@ class OrganizationalClimateStatics extends Page implements HasTable
     }
 
 
-    public static function canViewAny(): bool
+    public static function canView(): bool
     {
-        return auth()->user()->hasAnyRole(['RH Corp','RH' , 'Supervisor', 'Administrador']);
+        return auth()->user()->hasAnyRole(['RH Corp','RH', 'Administrador']);
+    }
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Esto controla la visibilidad en la navegación.
+        return static::canView();
     }
 }

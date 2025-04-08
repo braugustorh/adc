@@ -21,6 +21,7 @@ class Indicator extends Model
         'target_period',
         'indicator_type',
         'indicator_unit_id',
+        'target_period',
         'target_period_start',
         'target_period_end',
     ];

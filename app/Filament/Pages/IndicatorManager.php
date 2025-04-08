@@ -62,8 +62,8 @@ class IndicatorManager extends Page
     public function mount()
     {
 
-        $this->campaignId = Campaign::whereStatus('Activa')->first()->id??null;
-        if ($this->campaignId){
+       // $this->campaignId = Campaign::whereStatus('Activa')->first()->id??null;
+       // if ($this->campaignId){
             $supervisorId = auth()->user()->position_id;
 
             $this->users = User::where('status', true)
@@ -74,9 +74,9 @@ class IndicatorManager extends Page
                     $query->where('supervisor_id', $supervisorId);
                 })
                 ->get();
-        }else{
-            $this->users = collect();
-        }
+      //  }else{
+        //    $this->users = collect();
+       // }
 
 
     }

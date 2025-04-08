@@ -20,7 +20,7 @@ class CompetencesClimaChart extends ChartWidget
     public function handleChartDataUpdated($chartData): void
     {
         $this->chartData = $chartData;
-        Log::info('Se Carga esto al CHART COMPETENCES'.$chartData);
+       // Log::info('Se Carga esto al CHART COMPETENCES'.$chartData);
         $this->updateChartData();
     }
 

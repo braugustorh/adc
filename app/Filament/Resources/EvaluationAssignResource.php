@@ -33,6 +33,12 @@ class EvaluationAssignResource extends Resource
     protected static ?int $navigationSort = 6;
     protected static ?string $pluralLabel='Red de Evaluados';
 
+    public static function canViewAny():bool
+    {
+        return \auth()->user()->hasAnyRole('Administrador','RH Corp');
+
+    }
+
 
     public static function form(Form $form): Form
     {

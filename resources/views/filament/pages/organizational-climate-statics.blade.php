@@ -7,10 +7,10 @@
             <div class="fi-section-content p-2">
                 <div class="grid gap-2 grid-cols-1 sm:grid-cols-3 xl:grid-cols-3">
                     <div>
-                        <label for="campaign_id">Campaña</label>
+                        <label for="_campaign_id">Campaña</label>
                         <x-filament::input.wrapper class="mt-2">
                             <x-filament::input.select
-                                id="campaign_id"
+                                id="_campaign_id"
                                 wire:model.live="campaign_id">
                                 <option selected value="">Todas </option>
                                 @foreach($campaigns as $camp)

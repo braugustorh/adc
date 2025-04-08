@@ -16,6 +16,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 use pxlrbt\FilamentExcel\Actions\Concerns\ExportableAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
@@ -104,6 +105,9 @@ class OrganizationalClimateStatics extends Page implements HasTable
             });
             $userQuery->where('sede_id', $this->sede_id);
         }
+        Log::info('entro a loadChartData');
+        Log::info('Sede ID: ' . $this->sede_id); // Para depuración
+        Log::info('Campaña ID: ' . $this->campaign_id); // Para depuración
 
         if ($this->campaign_id) {
             $query->where('campaign_id', $this->campaign_id);

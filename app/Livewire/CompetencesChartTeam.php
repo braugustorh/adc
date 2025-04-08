@@ -23,7 +23,12 @@ class CompetencesChartTeam extends ChartWidget
 
     public function mount(): void
     {
-        $this->campaignId = Campaign::whereStatus('Activa')->first()->id;
+        $this->campaignId = Campaign::whereStatus('Activa')->first();
+        if (!$this->campaignId) {
+            $this->bandera=false;
+            return;
+        }
+        $this->campaignId = $this->campaignId->id;
         $supervisorId = auth()->user()->position_id;
         $this->users = User::where('status', true)
             ->whereNotNull('department_id')

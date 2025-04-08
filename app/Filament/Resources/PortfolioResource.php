@@ -120,7 +120,7 @@ class PortfolioResource extends Resource
                                 ->previewable('true')
                                 ->acceptedFileTypes(['image/*', 'application/pdf'])
                                 ->maxSize('2048')
-                                ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                                ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                                 ->default(null),
                             Forms\Components\FileUpload::make('ine_url')
                                 ->label('Identificación Oficial Vigente')
@@ -129,7 +129,7 @@ class PortfolioResource extends Resource
                                 ->previewable('true')
                                 ->helperText('Los documentos válidos son: Credencial para votar (INE), Pasaporte o Cédula Profesional.')
                                 ->acceptedFileTypes(['image/*', 'application/pdf'])
-                                ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                                ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                                 ->maxSize('2048')
                                 ->default(null),
                             Forms\Components\FileUpload::make('curp_url')
@@ -139,7 +139,7 @@ class PortfolioResource extends Resource
                                 ->previewable('true')
                                 ->acceptedFileTypes(['image/*', 'application/pdf'])
                                 ->maxSize('2048')
-                                ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                                ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                                 ->default(null),
                     ]),
                 Forms\Components\Fieldset::make('Comprobantes de Domicilio y Situación Fiscal')
@@ -152,7 +152,7 @@ class PortfolioResource extends Resource
                             ->previewable('true')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         Forms\Components\FileUpload::make('rfc_url')
                             ->label('Constancia Situación Fiscal')
@@ -162,7 +162,7 @@ class PortfolioResource extends Resource
                             ->acceptedFileTypes(['application/pdf'])
                             ->maxSize('2048')
                             ->helperText('Constancia de Situación Fiscal actualizada')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         ]),
                 Forms\Components\Fieldset::make('Información Laboral')
@@ -174,7 +174,7 @@ class PortfolioResource extends Resource
                             ->openable()
                             ->acceptedFileTypes(['image/*','application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         Forms\Components\FileUpload::make('recomendacion_url')
                             ->label('Carta de recomendación 1')
@@ -183,7 +183,7 @@ class PortfolioResource extends Resource
                             ->previewable('true')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         Forms\Components\FileUpload::make('comprobante_estudios_url')
                             ->label('Comprobante del último grado de estudios')
@@ -192,7 +192,7 @@ class PortfolioResource extends Resource
                             ->previewable('true')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         ]),
                 Forms\Components\Fieldset::make('Documentos médicos y de seguridad social')
@@ -204,7 +204,7 @@ class PortfolioResource extends Resource
                             ->previewable('true')
                             ->acceptedFileTypes(['image/*','application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         Forms\Components\FileUpload::make('nss_url')
                             ->label('Número de Seguro Social')
@@ -213,7 +213,7 @@ class PortfolioResource extends Resource
                             ->openable()
                             ->acceptedFileTypes(['image/*','application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         Forms\Components\FileUpload::make('alta_imss_url')
                             ->downloadable('true')
@@ -223,7 +223,7 @@ class PortfolioResource extends Resource
                             ->label('Alta en el IMSS')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         Forms\Components\FileUpload::make('modificacion_imss_url')
                             ->downloadable('true')
@@ -233,7 +233,7 @@ class PortfolioResource extends Resource
                             ->label('Modificación en el IMSS')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         Forms\Components\FileUpload::make('baja_imss_url')
                             ->downloadable('true')
@@ -243,7 +243,7 @@ class PortfolioResource extends Resource
                             ->label('Baja en el IMSS')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         ]),
                 Forms\Components\Fieldset::make(' Documentos legales y financieros')
@@ -255,7 +255,7 @@ class PortfolioResource extends Resource
                             ->label('Carta de no antecedentes penales')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         Forms\Components\FileUpload::make('retencion_url')
                             ->label('Retención de Crédito Infonavit')
@@ -264,7 +264,7 @@ class PortfolioResource extends Resource
                             ->openable()
                             ->acceptedFileTypes(['image/*','application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         Forms\Components\FileUpload::make('renuncia_url')
                             ->downloadable('true')
@@ -274,7 +274,7 @@ class PortfolioResource extends Resource
                             ->label('Renuncia')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         Forms\Components\FileUpload::make('finiquito_url')
                             ->downloadable('true')
@@ -284,7 +284,7 @@ class PortfolioResource extends Resource
                             ->label('Finiquito')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
                             ->maxSize('2048')
-                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}/")
+                            ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                     ]),
             ])->columns(3);

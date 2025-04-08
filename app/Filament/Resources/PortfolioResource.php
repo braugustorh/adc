@@ -143,6 +143,7 @@ class PortfolioResource extends Resource
                                 ->default(null),
                     ]),
                 Forms\Components\Fieldset::make('Comprobantes de Domicilio y Situación Fiscal')
+
                     ->schema([
                         Forms\Components\FileUpload::make('comprobante_domicilio_url')
                             ->label('Comprobante de domicilio')

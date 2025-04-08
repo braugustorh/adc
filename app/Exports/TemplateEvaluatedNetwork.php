@@ -22,7 +22,6 @@ class TemplateEvaluatedNetwork implements FromCollection, WithHeadings
         }
 
         foreach ($this->users as $user) {
-
                 $data[] = [
                     'sede_name'=> $user->sede->name,
                     'department_name'=> $user->department->name,

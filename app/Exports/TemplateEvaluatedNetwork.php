@@ -17,6 +17,9 @@ class TemplateEvaluatedNetwork implements FromCollection, WithHeadings
     {
         $data = [];
         $campaignId=Campaign::where('status','!=','Concluida')->first();
+        if (!$campaignId) {
+            return collect($data);
+        }
 
         foreach ($this->users as $user) {
 

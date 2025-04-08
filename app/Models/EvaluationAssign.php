@@ -8,7 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class EvaluationAssign extends Model
 {
     use HasFactory;
-    protected $fillable = ['evaluation_id', 'campaign_id', 'position_id', 'user_to_evaluate_id', 'user_id'];
+    protected $fillable = [
+        'evaluation_id',
+        'campaign_id',
+        'position_id',
+        'user_to_evaluate_id',
+        'user_id'
+    ];
 
     // Relación con Campaign
     public function campaign()

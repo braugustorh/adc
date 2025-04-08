@@ -16,6 +16,9 @@ class IndicatorRange extends Model
         'satisfactory_threshold',
         'expression_unsatisfactory',
         'unsatisfactory_threshold',
+        'excellent_maximum_value',
+        'satisfactory_maximum_value',
+        'unsatisfactory_maximum_value',
     ];
 
     public function indicator()

@@ -36,12 +36,14 @@ class Panel360 extends Page
 
     public function mount()
     {
-        $exists=Campaign::whereStatus('Activa')->whereHas('sedes', function ($query) {
-            $query->where('sede_id', auth()->user()->sede_id);
+        $exists=Campaign::whereStatus('Activa')
+            ->whereHas('sedes', function ($query) {
+                $query->where('sede_id', auth()->user()->sede_id);
         })->exists();
 
         if($exists  && !auth()->user()->hasRole('Administrador')){
-            $campaigns= Campaign::whereStatus('Activa')->whereHas('sedes', function ($query) {
+            $campaigns= Campaign::whereStatus('Activa')
+                ->whereHas('sedes', function ($query) {
                 $query->where('sede_id', auth()->user()->sede_id);
             })->first();
 
@@ -64,7 +66,7 @@ class Panel360 extends Page
                         ->where('user_to_evaluate_id','<>', $supervisor->id)
                         ->get();
                     $this->supervisors= EvaluationAssign::where('campaign_id', $campaigns->id)
-                        ->where('user_id',auth()->user()->id)
+                        ->where('user_id', auth()->user()->id)
                         ->where('user_to_evaluate_id', $supervisor->id)
                         ->get();
                     if ($this->supervisors->count()===0){
@@ -84,7 +86,6 @@ class Panel360 extends Page
                 return $item->user->position->supervisor_id == auth()->user()->id;
             });
             */
-
             $this->responses= Evaluation360Response::where('campaign_id', $campaigns->id)
                 ->where('user_id', auth()->user()->id)
                 ->get();

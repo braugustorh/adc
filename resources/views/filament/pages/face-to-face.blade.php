@@ -360,7 +360,23 @@
                                     @endphp
                                     @foreach ($months as $progressValue)
                                         <td class="px-3 py-3 font-bold text-center align-middle bg-transparent border-b border-gray-200 shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-500">
-                                            {{ $progressValue }}
+                                            @if($progressValue > 0)
+                                                @php
+                                                    $rangeCategory = $this->evaluateProgressRange($progressValue, $indicator->indicatorRanges);
+                                                    $badgeClass = [
+                                                                    'excellent' => 'success',
+                                                                    'satisfactory' => 'info',
+                                                                    'unsatisfactory' => 'warning'
+                                                                ][$rangeCategory];
+
+                                                @endphp
+                                                <x-filament::badge color="{{$badgeClass}}">
+                                                    {{ $progressValue }}
+                                                </x-filament::badge>
+                                            @else
+                                                {{ $progressValue }}
+                                            @endif
+
                                         </td>
                                     @endforeach
                                 </tr>

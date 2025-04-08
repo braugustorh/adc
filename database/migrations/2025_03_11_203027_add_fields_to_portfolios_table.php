@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        /*
         Schema::table('portfolios', function (Blueprint $table) {
             // Agregar los nuevos campos después de 'carta_no_antecedentes_url'
             $table->string('recomendacion_url', 250)->nullable()->after('carta_no_antecedentes_url');
@@ -23,7 +24,7 @@ return new class extends Migration
             $table->string('baja_imss_url', 250)->nullable()->after('modificacion_imss_url');
             $table->string('renuncia_url', 250)->nullable()->after('baja_imss_url');
             $table->string('finiquito_url', 250)->nullable()->after('renuncia_url');
-        });
+        });*/
     }
 
     /**
@@ -31,6 +32,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        /*
         Schema::table('portfolios', function (Blueprint $table) {
             // Eliminar los campos agregados
             $table->dropColumn([
@@ -46,5 +48,6 @@ return new class extends Migration
                 'finiquito_url',
             ]);
         });
+        */
     }
 };

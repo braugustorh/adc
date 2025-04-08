@@ -36,6 +36,7 @@ class UpdateCampaignStatus extends Command
                 $campaign->status = 'Activa';
                 $this->info('Campaign: ' . $campaign->name . ' has started.');
 
+                /*
                 $this->info('Assigning evaluation 360');
 
                 $teams = User::where('status', true)
@@ -49,6 +50,7 @@ class UpdateCampaignStatus extends Command
                 foreach ($teams as $team) {
                     $this->assignEvaluations($team, $campaign);
                 }
+                */
             }
             // Actualiza el estado de la campaña
             $campaign->save();
@@ -57,7 +59,6 @@ class UpdateCampaignStatus extends Command
             if ($campaign->status === 'Activa') {
                 $this->sendNotificationsToAssignedUsers($campaign);
             }
-
 
         }
 
@@ -80,26 +81,43 @@ class UpdateCampaignStatus extends Command
             ->with(['user', 'userToEvaluate'])
             ->get();
 
-        foreach ($assignedEvaluations as $assignment) {
-            // Notificar al evaluador
-            $user = $assignment->user;
-            $userToEvaluate = $assignment->userToEvaluate;
+        // Si no hay asignaciones, enviar notificaciones a todos los usuarios activos
+        if ($assignedEvaluations->isEmpty()) {
+            $activeUsers = User::where('status', true)
+                ->whereNotNull('department_id')
+                ->whereNotNull('position_id')
+                ->whereNotNull('sede_id')
+                ->where('id', '!=', 1) // Excluir al usuario administrador
+                ->get();
 
-            if ($user) {
-                // Enviar notificación al evaluador
+            foreach ($activeUsers as $user) {
                 Notification::make()
-                    ->title('Campaña de Evaluación Activa')
+                    ->title('Nueva Campaña de Evaluación')
                     ->info()
                     ->icon('heroicon-m-information-circle')
-                    ->body("Hola ha iniciado la campaña de evaluación {$campaign->name}.")
+                    ->body("Hola, se ha iniciado la campaña de evaluación {$campaign->name}.")
                     ->sendToDatabase($user);
-
-
             }
+
+            $this->info("Se enviaron notificaciones a {$activeUsers->count()} usuarios activos.");
+        } else {
+            // Si hay asignaciones, seguir con el comportamiento original
+            foreach ($assignedEvaluations as $assignment) {
+                $user = $assignment->user;
+
+                if ($user) {
+                    Notification::make()
+                        ->title('Campaña de Evaluación Activa')
+                        ->info()
+                        ->icon('heroicon-m-information-circle')
+                        ->body("Hola ha iniciado la campaña de evaluación {$campaign->name}.")
+                        ->sendToDatabase($user);
+                }
+            }
+
+            $this->info("Se enviaron notificaciones a {$assignedEvaluations->count()} evaluadores asignados.");
         }
     }
-
-
     protected function assignEvaluations($team, $campaign)
     {
 

@@ -68,6 +68,17 @@
       0 => 'Codeat3\\BladeTeenyIcons\\BladeTeenyIconsServiceProvider',
     ),
   ),
+  'eightynine/filament-excel-import' => 
+  array (
+    'aliases' => 
+    array (
+      'ExcelImportAction' => 'EightyNine\\ExcelImport\\Facades\\ExcelImportAction',
+    ),
+    'providers' => 
+    array (
+      0 => 'EightyNine\\ExcelImport\\ExcelImportServiceProvider',
+    ),
+  ),
   'filament/actions' => 
   array (
     'providers' => 
@@ -193,6 +204,13 @@
     'providers' => 
     array (
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    ),
+  ),
+  'postare/blade-mdi' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Postare\\BladeMdi\\BladeMdiServiceProvider',
     ),
   ),
   'pxlrbt/filament-excel' => 

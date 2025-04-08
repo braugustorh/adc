@@ -98,7 +98,7 @@ class IndicatorManager extends Page
     public function getIndicatorProgressesForUser($userId)
     {
 
-        $this->indicatorProgresses = Indicator::where('user_id', $userId)
+        $this->indicatorProgresses = Indicator::where('user_id', $userId) //Falta acotarlo al año
             ->with('progresses')// Cargar progresos relacionados
             ->get(); // Devuelve los indicadores con progresos
 
@@ -196,6 +196,56 @@ class IndicatorManager extends Page
             ->send();
 
         $this->closeModal();
+    }
+    public function evaluateProgressRange($progressValue, $ranges)
+    {
+
+        // Evaluar si está en rango excelente
+        if ($this->isInRange($progressValue, $ranges->expression_excellent, $ranges->excellent_threshold, $ranges->excellent_maximum_value ?? null)) {
+            return 'excellent';
+        }
+
+        // Evaluar si está en rango satisfactorio
+        if ($this->isInRange($progressValue, $ranges->expression_satisfactory, $ranges->satisfactory_threshold, $ranges->satisfactory_maximum_value ?? null)) {
+            return 'satisfactory';
+        }
+
+        // Evaluar si está en rango insatisfactorio
+        if ($this->isInRange($progressValue, $ranges->expression_unsatisfactory, $ranges->unsatisfactory_threshold, $ranges->unsatisfactory_maximum_value ?? null)) {
+            return 'unsatisfactory';
+        }
+
+        // Si no está en ningún rango, devolver insatisfactorio por defecto
+        return 'unsatisfactory';
+    }
+
+    /**
+     * Determina si un valor está dentro del rango especificado
+     *
+     * @param float $value Valor a evaluar
+     * @param int $expression Tipo de expresión (1-6)
+     * @param float $threshold Valor umbral
+     * @param float|null $maxValue Valor máximo (para expresión 'Entre')
+     * @return bool
+     */
+    private function isInRange($value, $expression, $threshold, $maxValue = null)
+    {
+        switch ($expression) {
+            case '1': // Mayor que
+                return $value > $threshold;
+            case '2': // Menor que
+                return $value < $threshold;
+            case '3': // Igual a
+                return $value == $threshold;
+            case '4': // Mayor o igual que
+                return $value >= $threshold;
+            case '5': // Menor o igual que
+                return $value <= $threshold;
+            case '6': // Entre
+                return $value >= $threshold && $value <= $maxValue;
+            default:
+                return false;
+        }
     }
 
 

@@ -30,6 +30,7 @@ class PortfolioResource extends Resource
     protected static ?string $navigationLabel = 'Portafolio Digital';
     protected static ?string $name = 'Portfolio';
     protected static ?string $label = 'Portafolio Digital';
+    protected static ?string $title= 'Portafolio Digital';
     protected static ?int $navigationSort = 2;
 
     public static function canViewAny(): bool

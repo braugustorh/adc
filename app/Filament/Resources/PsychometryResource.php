@@ -142,7 +142,7 @@ class PsychometryResource extends Resource
                             Forms\Components\Select::make('test_name')
                                 ->label('Tipo de Prueba')
                                 ->options([
-                                    'Diectivo'=>'Plan de Desarrollo Directivo',
+                                    'Directivo'=>'Plan de Desarrollo Directivo',
                                     'Mando Medio'=>'Plan de Desarrollo Mando Medio',
                                     'Supervisor' =>'Plan de Desarrollo Supervisor',
                                     'Administrativo'=>'Plan de Desarrollo Administrativo',
@@ -166,6 +166,9 @@ class PsychometryResource extends Resource
                                 ->maxLength(255),
                             Forms\Components\FileUpload::make('result_url')
                                 ->label('Documento de Respaldo')
+                                ->disk('sedyco_disk')
+                                ->visibility('public')
+                                ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                                 ->acceptedFileTypes(['application/pdf'])
                                 ->downloadable('true')
                                 ->required()
@@ -173,6 +176,10 @@ class PsychometryResource extends Resource
                             Forms\Components\FileUpload::make('interpretation_url')
                                 ->label('Interpretación del Resultado')
                                 ->acceptedFileTypes(['application/pdf'])
+                                ->label('Documento de Respaldo')
+                                ->disk('sedyco_disk')
+                                ->visibility('public')
+                                ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                                 ->downloadable('true')
                                 ->required()
                                 ->columnSpan('full'),

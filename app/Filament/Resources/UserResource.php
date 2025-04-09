@@ -60,6 +60,7 @@ class UserResource extends Resource
                     ->boolean(),
                 Tables\Columns\ImageColumn::make('profile_photo')
                     ->circular()
+                    ->disk('sedyco_disk')
                     ->label('Avatar')
                     ->defaultImageUrl(function (User $record): string {
                         $initials = mb_substr($record->name, 0, 1);

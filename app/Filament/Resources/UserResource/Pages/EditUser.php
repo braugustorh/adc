@@ -378,6 +378,8 @@ class EditUser extends EditRecord
                 ->schema([
                     FileUpload::make('profile_photo')
                         ->label('Foto de Perfil')
+                        ->disk('sedyco_disk')
+                        ->visibility('public')
                         ->preserveFilenames()
                         ->image()
                         ->avatar()

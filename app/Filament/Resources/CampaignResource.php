@@ -36,7 +36,7 @@ class CampaignResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return \auth()->user()->hasRole('Administrador');
+        return \auth()->user()->hasAnyRole('Administrador','RH Corp');
 
     }
 

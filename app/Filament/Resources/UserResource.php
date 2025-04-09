@@ -60,7 +60,11 @@ class UserResource extends Resource
                     ->boolean(),
                 Tables\Columns\ImageColumn::make('profile_photo')
                     ->circular()
-                    ->label('Avatar'),
+                    ->label('Avatar')
+                    ->default(fn ($record) => view('components.filament-panels.avatar.user', ['user' => $record])),
+//                Tables\Columns\ImageColumn::make('profile_photo')
+//                    ->circular()
+//                    ->label('Avatar'),
                     //->defaultView('filament.components.user-avatar'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')

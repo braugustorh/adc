@@ -171,6 +171,7 @@ class PsychometryResource extends Resource
                                 ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                                 ->acceptedFileTypes(['application/pdf'])
                                 ->downloadable('true')
+                                ->openable('true')
                                 ->required()
                                 ->columnSpan('full'),
                             Forms\Components\FileUpload::make('interpretation_url')
@@ -181,6 +182,7 @@ class PsychometryResource extends Resource
                                 ->visibility('public')
                                 ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                                 ->downloadable('true')
+                                ->openable('true')
                                 ->required()
                                 ->columnSpan('full'),
                         ])->columns(2),

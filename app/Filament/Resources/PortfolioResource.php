@@ -115,9 +115,9 @@ class PortfolioResource extends Resource
                         ->schema([
                             Forms\Components\FileUpload::make('acta_url')
                                 ->label('Acta de nacimiento')
-                                ->downloadable()
-                                ->openable()
-                                ->previewable()
+                                ->downloadable(true)
+                                ->openable(true)
+                                ->previewable(true)
                                 ->acceptedFileTypes(['image/*', 'application/pdf'])
                                 ->maxSize('2048')
                                 ->disk('sedyco_disk') // Usar el nombre específico del disco
@@ -126,6 +126,8 @@ class PortfolioResource extends Resource
                                 ->default(null),
                             Forms\Components\FileUpload::make('ine_url')
                                 ->label('Identificación Oficial Vigente')
+                                ->disk('sedyco_disk')
+                                ->visibility('public') // Asegurarse que sea público
                                 ->downloadable('true')
                                 ->openable()
                                 ->disk('public')
@@ -137,6 +139,8 @@ class PortfolioResource extends Resource
                                 ->default(null),
                             Forms\Components\FileUpload::make('curp_url')
                                 ->label('CURP')
+                                ->disk('sedyco_disk')
+                                ->visibility('public')
                                 ->downloadable('true')
                                 ->openable()
                                 ->previewable('true')
@@ -151,6 +155,8 @@ class PortfolioResource extends Resource
                         Forms\Components\FileUpload::make('comprobante_domicilio_url')
                             ->label('Comprobante de domicilio')
                             ->helperText('Los documentos válidos son: Recibo de luz, agua, teléfono o predial. No mayor a 3 meses de antigüedad.')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->downloadable('true')
                             ->openable()
                             ->previewable('true')
@@ -160,6 +166,8 @@ class PortfolioResource extends Resource
                             ->default(null),
                         Forms\Components\FileUpload::make('rfc_url')
                             ->label('Constancia Situación Fiscal')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->downloadable('true')
                             ->previewable('true')
                             ->openable()
@@ -173,6 +181,8 @@ class PortfolioResource extends Resource
                     ->schema([
                         Forms\Components\FileUpload::make('sol_empleo_url')
                             ->label('Solicitud de Empleo')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->downloadable('true')
                             ->previewable('true')
                             ->openable()
@@ -182,6 +192,8 @@ class PortfolioResource extends Resource
                             ->default(null),
                         Forms\Components\FileUpload::make('recomendacion_url')
                             ->label('Carta de recomendación 1')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->downloadable('true')
                             ->openable()
                             ->previewable('true')
@@ -192,6 +204,8 @@ class PortfolioResource extends Resource
                         Forms\Components\FileUpload::make('comprobante_estudios_url')
                             ->label('Comprobante del último grado de estudios')
                             ->downloadable('true')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->openable()
                             ->previewable('true')
                             ->acceptedFileTypes(['image/*', 'application/pdf'])
@@ -203,6 +217,8 @@ class PortfolioResource extends Resource
                     ->schema([
                         Forms\Components\FileUpload::make('cert_medico_url')
                             ->label('Certificado médico')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->downloadable('true')
                             ->openable()
                             ->previewable('true')
@@ -212,6 +228,8 @@ class PortfolioResource extends Resource
                             ->default(null),
                         Forms\Components\FileUpload::make('nss_url')
                             ->label('Número de Seguro Social')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->downloadable('true')
                             ->previewable('true')
                             ->openable()
@@ -221,6 +239,8 @@ class PortfolioResource extends Resource
                             ->default(null),
                         Forms\Components\FileUpload::make('alta_imss_url')
                             ->downloadable('true')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->previewable('true')
                             ->openable()
                             ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'RH Corp', 'RH','Supervior']))
@@ -231,6 +251,8 @@ class PortfolioResource extends Resource
                             ->default(null),
                         Forms\Components\FileUpload::make('modificacion_imss_url')
                             ->downloadable('true')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->previewable('true')
                             ->openable()
                             ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'RH','RH Corp']))
@@ -240,6 +262,8 @@ class PortfolioResource extends Resource
                             ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         Forms\Components\FileUpload::make('baja_imss_url')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->downloadable('true')
                             ->previewable('true')
                             ->openable()
@@ -253,6 +277,8 @@ class PortfolioResource extends Resource
                 Forms\Components\Fieldset::make(' Documentos legales y financieros')
                     ->schema([
                         Forms\Components\FileUpload::make('carta_no_antecedentes_url')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->downloadable('true')
                             ->previewable('true')
                             ->openable()
@@ -263,6 +289,8 @@ class PortfolioResource extends Resource
                             ->default(null),
                         Forms\Components\FileUpload::make('retencion_url')
                             ->label('Retención de Crédito Infonavit')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->downloadable('true')
                             ->previewable('true')
                             ->openable()
@@ -273,6 +301,8 @@ class PortfolioResource extends Resource
                         Forms\Components\FileUpload::make('renuncia_url')
                             ->downloadable('true')
                             ->previewable('true')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->openable()
                             ->hidden(fn (): bool => !auth()->user()->hasAnyRole(['Administrador', 'RH','RH Corp']))
                             ->label('Renuncia')
@@ -281,6 +311,8 @@ class PortfolioResource extends Resource
                             ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                             ->default(null),
                         Forms\Components\FileUpload::make('finiquito_url')
+                            ->disk('sedyco_disk')
+                            ->visibility('public')
                             ->downloadable('true')
                             ->previewable('true')
                             ->openable()

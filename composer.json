@@ -22,6 +22,7 @@
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
+        "league/flysystem-aws-s3-v3": "^3.29",
         "postare/blade-mdi": "^1.1",
         "pxlrbt/filament-excel": "^2.3",
         "spatie/laravel-permission": "^6.4",

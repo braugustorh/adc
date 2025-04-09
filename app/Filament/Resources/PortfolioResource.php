@@ -115,17 +115,20 @@ class PortfolioResource extends Resource
                         ->schema([
                             Forms\Components\FileUpload::make('acta_url')
                                 ->label('Acta de nacimiento')
-                                ->downloadable('true')
+                                ->downloadable()
                                 ->openable()
-                                ->previewable('true')
+                                ->previewable()
                                 ->acceptedFileTypes(['image/*', 'application/pdf'])
                                 ->maxSize('2048')
+                                ->disk('sedyco_disk') // Usar el nombre específico del disco
                                 ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
+                                ->visibility('public') // Asegurarse que sea público
                                 ->default(null),
                             Forms\Components\FileUpload::make('ine_url')
                                 ->label('Identificación Oficial Vigente')
                                 ->downloadable('true')
                                 ->openable()
+                                ->disk('public')
                                 ->previewable('true')
                                 ->helperText('Los documentos válidos son: Credencial para votar (INE), Pasaporte o Cédula Profesional.')
                                 ->acceptedFileTypes(['image/*', 'application/pdf'])

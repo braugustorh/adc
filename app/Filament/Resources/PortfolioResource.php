@@ -61,6 +61,7 @@ class PortfolioResource extends Resource
                         if ($get('user_id')!==null){
                             $user= User::query()
                                 ->where('id', $get('user_id'))
+                                ->where('status',1)
                                 ->where('id','!=',1)
                                 ->get()
                                 ->mapWithKeys(fn (User $user): array => [$user->id => $user->name.' '.$user->first_name .' '.$user->last_name]);
@@ -69,6 +70,7 @@ class PortfolioResource extends Resource
                                 $user=User::query()
                                     ->doesntHave('portfolio')
                                     ->where('status',1)
+                                    ->where('id','!=',1)
                                     ->with('portfolio') // Incluye la relación 'portfolio' en la consulta
                                     ->get()
                                     ->mapWithKeys(fn (User $user): array => [
@@ -78,6 +80,7 @@ class PortfolioResource extends Resource
                                 $user= User::query()
                                     ->doesntHave('portfolio')
                                     ->where('status',1)
+                                    ->where('id','!=',1)
                                     ->where('sede_id',\auth()->user()->sede_id)
                                     ->with('portfolio') // Incluye la relación 'portfolio' en la consulta
                                     ->get()

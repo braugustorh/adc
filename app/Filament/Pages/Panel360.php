@@ -10,7 +10,7 @@ use App\Models\Position;
 use Carbon\Carbon;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
-use mysql_xdevapi\Collection;
+use Illuminate\Support\Collection;
 
 class Panel360 extends Page
 {
@@ -21,80 +21,73 @@ class Panel360 extends Page
     protected ?string $subheading = 'Visualiza a las personas a evaluar y el estatus de las evaluaciones';
     protected static ?int $navigationSort = 1;
     protected static string $view = 'filament.pages.360-panel';
-    public string $activeTab='tab1';
-    public $users;
-    public $members;
+    public string $activeTab = 'tab1';
+    public Collection $members;
+    public Collection $supervisors;
+    public Collection $subordinates;
+    public Collection $peers;
+    public Collection $clients;
+    public Collection $autoEvaluations;
     public $campaigns;
     public $daysRemaining;
     public $today;
-    public $supervisors;
     public $responses;
-    public function getTitle(): string | Htmlable
+
+    public function getTitle(): string|Htmlable
     {
         return __('Panel 360');
     }
 
     public function mount()
     {
-        $exists=Campaign::whereStatus('Activa')
-            ->whereHas('sedes', function ($query) {
-                $query->where('sede_id', auth()->user()->sede_id);
-        })->exists();
+        $loggedInUser = auth()->user();
 
-        if($exists  && !auth()->user()->hasRole('Administrador')){
-            $campaigns= Campaign::whereStatus('Activa')
-                ->whereHas('sedes', function ($query) {
-                $query->where('sede_id', auth()->user()->sede_id);
-            })->first();
+        $exists = Campaign::whereStatus('Activa')
+            ->whereHas('sedes', function ($query) use ($loggedInUser) {
+                $query->where('sede_id', $loggedInUser->sede_id);
+            })->exists();
 
-            $this->campaigns= Campaign::whereStatus('Activa')->first();
-            $this->today= Carbon::now();
-            $this->campaigns->end_date= Carbon::parse($this->campaigns->end_date);
-            $this->daysRemaining= (int)$this->today->diffInDays($this->campaigns->end_date);
-            $position= Position::find(auth()->user()->position_id);
-            $supervisor= User::where('position_id',$position->supervisor_id)
-                ->get()
-                ->first();
+        if ($exists && !$loggedInUser->hasRole('Administrador')) {
+            $campaign = Campaign::whereStatus('Activa')
+                ->whereHas('sedes', function ($query) use ($loggedInUser) {
+                    $query->where('sede_id', $loggedInUser->sede_id);
+                })->first();
 
-            if(auth()->user()->hasRole('Administrador')){ //se le pone el rol mas alto
-                $this->members= EvaluationAssign::where('campaign_id', $campaigns->id)->get();
-                $this->supervisors=collect();
-            }else{
-                if ($supervisor){
-                    $this->members= EvaluationAssign::where('campaign_id', $campaigns->id)
-                        ->where('user_id', auth()->user()->id)
-                        ->where('user_to_evaluate_id','<>', $supervisor->id)
-                        ->get();
-                    $this->supervisors= EvaluationAssign::where('campaign_id', $campaigns->id)
-                        ->where('user_id', auth()->user()->id)
-                        ->where('user_to_evaluate_id', $supervisor->id)
-                        ->get();
-                    if ($this->supervisors->count()===0){
-                        $this->supervisors=collect();
-                    }
-                }else{
-                    $this->members= EvaluationAssign::where('campaign_id', $campaigns->id)
-                        ->where('user_id', auth()->user()->id)
-                        // ->where('user_to_evaluate_id','<>', $supervisor->id)
-                        ->get();
-                    $this->supervisors=collect();
-                }
-            }
+            $this->campaigns = $campaign;
+            $this->today = Carbon::now();
+            $this->campaigns->end_date = Carbon::parse($this->campaigns->end_date);
+            $this->daysRemaining = (int)$this->today->diffInDays($this->campaigns->end_date);
 
-            /*busca al supervisor en una coleccion y lo compara con el usuario autenticado
-            $searchResponse = $this->members->search(function ($item, $key) {
-                return $item->user->position->supervisor_id == auth()->user()->id;
-            });
-            */
-            $this->responses= Evaluation360Response::where('campaign_id', $campaigns->id)
-                ->where('user_id', auth()->user()->id)
+            // Obtener todas las asignaciones para el usuario actual en la campaña activa
+            $allAssignments = EvaluationAssign::where('campaign_id', $campaign->id)
+                ->where('user_id', $loggedInUser->id)
                 ->get();
-        }else{
-            $this->campaigns=collect();
-            $this->members=collect();
-            $this->supervisors=collect();
-            $this->responses=collect();
-        }
 
+            // Filtrar las asignaciones por tipo
+            $this->autoEvaluations = $allAssignments->where('type', 'A');
+            $this->supervisors = $allAssignments->where('type', 'J');
+            $this->subordinates = $allAssignments->where('type', 'S');
+            $this->peers = $allAssignments->where('type', 'P');
+            $this->clients = $allAssignments->where('type', 'C');
+
+
+
+            // La colección $members ahora contendrá todas las asignaciones para la tabla general
+            $this->members = $allAssignments;
+
+            $this->responses = Evaluation360Response::where('campaign_id', $campaign->id)
+                ->where('user_id', $loggedInUser->id)
+                ->get();
+
+        } else {
+            $this->campaigns = collect();
+            $this->members = collect();
+            $this->supervisors = collect();
+            $this->subordinates = collect();
+            $this->peers = collect();
+            $this->clients = collect();
+            $this->autoEvaluations = collect();
+            $this->responses = collect();
+        }
     }
 }

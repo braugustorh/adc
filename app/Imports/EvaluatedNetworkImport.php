@@ -48,13 +48,14 @@ class EvaluatedNetworkImport implements ToCollection, WithHeadingRow, WithValida
             foreach ($collection as $row) {
                 $campaignId = $row['campana_id'];
                 $evaluadorId = $row['evaluador_id'];
-                for ($i = 1; $i <= 6; $i++) {
+                for ($i = 1; $i <= 8; $i++) {
+                    $typeEvaluadoColumn = "tipo_ev_u$i";
                     $evaluadoIdColumn = "evaluado_id_$i";
                     $evaluadoId = $row[$evaluadoIdColumn] ?? null;
+                    $evaluadoType = $row[$typeEvaluadoColumn] ?? null;
 
                     if ($evaluadoId && $evaluadoId > 0) {
                         $evaluado = User::find($evaluadoId);
-
                         if ($evaluado && $evaluado->position_id) {
                             EvaluationAssign::updateOrCreate(
                                 [
@@ -64,6 +65,7 @@ class EvaluatedNetworkImport implements ToCollection, WithHeadingRow, WithValida
                                     'user_to_evaluate_id' => $evaluadoId,
                                 ],
                                 [
+                                    'type' => $evaluadoType, // Guardamos el tipo, con "null" como valor por defecto
                                     'position_id' => $evaluado->position_id,
                                 ]
                             );
@@ -107,11 +109,21 @@ class EvaluatedNetworkImport implements ToCollection, WithHeadingRow, WithValida
             'campana_id' => 'required|exists:campaigns,id',
             'evaluador_id' => 'required|exists:users,id',
             'evaluado_id_1' => 'nullable|exists:users,id',
+            'tipo_ev_u1' => 'nullable|in:A,J,S,P,C',
             'evaluado_id_2' => 'nullable|exists:users,id',
+            'tipo_ev_u2' => 'nullable|in:A,J,S,P,C',
             'evaluado_id_3' => 'nullable|exists:users,id',
+            'tipo_ev_u3' => 'nullable|in:A,J,S,P,C',
             'evaluado_id_4' => 'nullable|exists:users,id',
+            'tipo_ev_u4' => 'nullable|in:A,J,S,P,C',
             'evaluado_id_5' => 'nullable|exists:users,id',
+            'tipo_ev_u5' => 'nullable|in:A,J,S,P,C',
             'evaluado_id_6' => 'nullable|exists:users,id',
+            'tipo_ev_u6' => 'nullable|in:A,J,S,P,C',
+            'evaluado_id_7' => 'nullable|exists:users,id',
+            'tipo_ev_u7' => 'nullable|in:A,J,S,P,C',
+            'evaluado_id_8' => 'nullable|exists:users,id',
+            'tipo_ev_u8' => 'nullable|in:A,J,S,P,C',
         ];
     }
 
@@ -123,11 +135,22 @@ class EvaluatedNetworkImport implements ToCollection, WithHeadingRow, WithValida
             '*.evaluador_id.required' => 'El ID del evaluador es obligatorio.',
             '*.evaluador_id.exists' => 'El evaluador no existe en el sistema.',
             '*.evaluado_id_1.exists' => 'El evaluado 1 no existe en el sistema.',
+            '*.tipo_ev_u1.in' => 'El tipo de evaluado debe ser uno de los siguientes: A, J, S, P, C.',
+            '*.tipo_ev_u2.in' => 'El tipo de evaluado debe ser uno de los siguientes: A, J, S, P, C.',
+            '*.tipo_ev_u3.in' => 'El tipo de evaluado debe ser uno de los siguientes: A, J, S, P, C.',
+            '*.tipo_ev_u4.in' => 'El tipo de evaluado debe ser uno de los siguientes: A, J, S, P, C.',
+            '*.tipo_ev_u5.in' => 'El tipo de evaluado debe ser uno de los siguientes: A, J, S, P, C.',
+            '*.tipo_ev_u6.in' => 'El tipo de evaluado debe ser uno de los siguientes: A, J, S, P, C.',
+            '*.tipo_ev_u7.in' => 'El tipo de evaluado debe ser uno de los siguientes: A, J, S, P, C.',
+            '*.tipo_ev_u8.in' => 'El tipo de evaluado debe ser uno de los siguientes: A, J, S, P, C.',
             '*.evaluado_id_2.exists' => 'El evaluado 2 no existe en el sistema.',
             '*.evaluado_id_3.exists' => 'El evaluado 3 no existe en el sistema.',
             '*.evaluado_id_4.exists' => 'El evaluado 4 no existe en el sistema.',
             '*.evaluado_id_5.exists' => 'El evaluado 5 no existe en el sistema.',
             '*.evaluado_id_6.exists' => 'El evaluado 6 no existe en el sistema.',
+            '*.evaluado_id_7.exists' => 'El evaluado 7 no existe en el sistema.',
+            '*.evaluado_id_8.exists' => 'El evaluado 8 no existe en el sistema.',
+
         ];
     }
 

@@ -98,6 +98,16 @@ class EvaluationAssignResource extends Resource
                                     ->label('Seleccionar evaluado')
                                     ->preload()
                                     ->searchable(),
+                                Forms\Components\Select::make('type')
+                                    ->label('Tipo de evaluado')
+                                    ->required()
+                                    ->options([
+                                        'A' => 'Evaluador',
+                                        'J' => 'Jefe Inmediato',
+                                        'S' => 'Subordinado',
+                                        'P'=> 'Par',
+                                        'C'=> 'Cliente',
+                                    ]),
 
                                 Forms\Components\Actions::make([
                                     Forms\Components\Actions\Action::make('addEvaluado')
@@ -108,6 +118,7 @@ class EvaluationAssignResource extends Resource
                                             $evaluadoId = $get('temp_user_to_evaluate_id');
                                             $campaignId = $get('campaign_id');
                                             $userId = $get('user_id');
+
 
                                             if (!$evaluadoId || !$campaignId || !$userId) {
                                                 return;
@@ -139,13 +150,14 @@ class EvaluationAssignResource extends Resource
                                                     'id' => $evaluadoId,
                                                     'name' => $evaluado->name . ' ' . $evaluado->first_name . ' ' . $evaluado->last_name,
                                                     'position_id' => $position_id,
+                                                    'type' => $get('type'),
                                                 ];
 
                                                 $set('selected_evaluados', $selectedEvaluados);
                                                 $set('temp_user_to_evaluate_id', null);
                                             }
                                         }),
-                                ])->alignRight(),
+                                ])->alignLeft()
                             ]),
 
                         // Lista de evaluados seleccionados
@@ -164,9 +176,18 @@ class EvaluationAssignResource extends Resource
 
                                     $html = '<div class="space-y-2">';
                                     foreach ($selectedEvaluados as $index => $evaluado) {
+                                        $tipoLabel = match ($evaluado['type']) {
+                                            'A' => 'Autoevaluación',
+                                            'J' => 'Jefe Inmediato',
+                                            'S' => 'Subordinado',
+                                            'P' => 'Par',
+                                            'C' => 'Cliente',
+                                            default => '?',
+                                        };
+
                                         $html .= '
                                             <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                                                <span>' . $evaluado['name'] . '</span>
+                                                <span><strong>' . $tipoLabel . ':</strong> ' . $evaluado['name'] . '</span>
                                                 <button
                                                     type="button"
                                                     data-action="removeEvaluado"
@@ -210,6 +231,7 @@ class EvaluationAssignResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->sortable()
+                    ->hidden()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('evaluation.name')
                     ->label('Evaluación')
@@ -223,16 +245,26 @@ class EvaluationAssignResource extends Resource
                     ->label('Evaluador')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Tipo de Evaluado')
+                    ->sortable()
+                    ->searchable()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'A' => 'Autoevaluación',
+                        'J' => 'Jefe Inmediato',
+                        'S' => 'Subordinado',
+                        'P' => 'Par',
+                        'C' => 'Cliente',
+                        default => $state,
+                    }),
                 Tables\Columns\TextColumn::make('userToEvaluate.name')
                     ->label('Evaluado')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('position.name')
-                    ->label('Puesto')
+                Tables\Columns\TextColumn::make('userToEvaluate.position.name')
+                    ->label('Puesto Evaluado')
                     ->sortable()
                     ->searchable(),
-
-
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('campaign_id')

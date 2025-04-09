@@ -29,7 +29,7 @@ class PositionResource extends Resource
     protected static ?int $navigationSort = 3;
     public static function canViewAny(): bool
     {
-        return \auth()->user()->hasRole('Administrador');
+        return \auth()->user()->hasAnyRole('Administrador','RH Corp');
 
     }
 
@@ -76,15 +76,28 @@ class PositionResource extends Resource
                     ->maxLength(255)
                     ->default(null),
                 Forms\Components\TextInput::make('order')
-                    ->label('Orden Jerarquico del Puesto')
+                    ->label('Orden Jerárquico del Puesto')
                     ->required()
                     ->numeric(),
                 Forms\Components\Select::make('supervisor_id')
                     ->label('Supervisor')
-                    ->relationship('supervisor', 'name')
+                    ->options(function (Get $get, ?string $state): Collection {
+                        $selectedSedeId = $get('sede');
+
+                        if (!$selectedSedeId) {
+                            return Position::where('id', $state ?? 0)->pluck('name', 'id');
+                        }
+
+                        return Position::whereHas('department', function (Builder $query) use ($selectedSedeId) {
+                            $query->where('sede_id', $selectedSedeId);
+                        })
+                            ->where('id', '!=', $state ?? 0) // Evitar que se seleccione a sí mismo
+                            ->pluck('name', 'id');
+                    })
                     ->nullable()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->reactive(),
                 Forms\Components\Select::make('evaluation_grades')
                     ->label('Tipos de Evaluación 360')
                     ->helperText('Selecciona el tipo de evaluación 360 correspondiente al puesto')

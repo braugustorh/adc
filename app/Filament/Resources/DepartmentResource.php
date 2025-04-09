@@ -25,7 +25,7 @@ class DepartmentResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
     public static function canViewAny(): bool
     {
-        return \auth()->user()->hasRole('Administrador');
+        return \auth()->user()->hasAnyRole('Administrador','RH Corp');
 
     }
 

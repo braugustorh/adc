@@ -22,11 +22,13 @@ class CreateEvaluationAssign extends CreateRecord
         $createdRecords = [];
 
         if (empty($selectedEvaluados)) {
-            // Si no hay evaluados, crear un registro vacío
+            // Si no hay evaluados, crear un registro con datos mínimos
             return EvaluationAssign::create([
                 'campaign_id' => $campaignId,
                 'evaluation_id' => $evaluationId,
                 'user_id' => $userId,
+                'user_to_evaluate_id' => $userId, // Autoevaluación por defecto
+                'type' => 'A', // Tipo Autoevaluación por defecto
             ]);
         }
 
@@ -37,6 +39,7 @@ class CreateEvaluationAssign extends CreateRecord
                 'user_id' => $userId,
                 'user_to_evaluate_id' => $evaluado['id'],
                 'position_id' => $evaluado['position_id'],
+                'type' => $evaluado['type'] ?? 'P', // Guardamos el tipo, con "Par" como valor por defecto
             ]);
 
             $createdRecords[] = $record;

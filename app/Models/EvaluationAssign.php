@@ -12,6 +12,7 @@ class EvaluationAssign extends Model
         'evaluation_id',
         'campaign_id',
         'position_id',
+        'type',
         'user_to_evaluate_id',
         'user_id'
     ];

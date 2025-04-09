@@ -27,7 +27,7 @@ class SedeResource extends Resource
     protected static ?string $navigationGroup = 'ADC Estructura';
     public static function canViewAny(): bool
     {
-        return \auth()->user()->hasRole('Administrador');
+        return \auth()->user()->hasAnyRole('Administrador','RH Corp');
     }
 
     public static function form(Form $form): Form

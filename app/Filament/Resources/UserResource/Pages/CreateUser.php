@@ -377,7 +377,6 @@ class CreateUser extends CreateRecord
                         ->label('Foto de Perfil')
                         ->disk('sedyco_disk')
                         ->visibility('public')
-                        ->preserveFilenames()
                         ->image()
                         ->avatar()
                         ->imageEditor()

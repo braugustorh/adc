@@ -380,7 +380,6 @@ class EditUser extends EditRecord
                         ->label('Foto de Perfil')
                         ->disk('sedyco_disk')
                         ->visibility('public')
-                        ->preserveFilenames()
                         ->image()
                         ->avatar()
                         ->imageEditor()

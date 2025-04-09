@@ -130,7 +130,6 @@ class PortfolioResource extends Resource
                                 ->visibility('public') // Asegurarse que sea público
                                 ->downloadable('true')
                                 ->openable()
-                                ->disk('public')
                                 ->previewable('true')
                                 ->helperText('Los documentos válidos son: Credencial para votar (INE), Pasaporte o Cédula Profesional.')
                                 ->acceptedFileTypes(['image/*', 'application/pdf'])

@@ -271,7 +271,7 @@
                                 </div>
                                 <div class="mt-3 text-sm/6 sm:text-xs/6 text-center">
                                     <span class="text-sm text-gray-500 dark:text-gray-400">
-                                        +4.5% campaña pasada
+                                        {{$campaignName}}
                                     </span>
                                 </div>
                             @else
@@ -293,7 +293,7 @@
                                 </div>
                                 <div class="mt-3 text-sm/6 sm:text-xs/6 text-center">
                                     <span class="text-sm text-gray-500 dark:text-gray-400">
-                                        Última evaluación cargada
+                                        Vencimiento:{{$this->vencimiento??'No existe'}}
                                     </span>
 
                                 </div>

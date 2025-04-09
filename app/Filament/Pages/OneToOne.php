@@ -49,6 +49,7 @@ class OneToOne extends Page implements HasForms
     public $evaluation360;
     public $campaignId;
     public $evaluationPotential;
+    public $vencimiento;
     public $showEvaluation=false;
     public $themes;
     public $theme;
@@ -59,6 +60,7 @@ class OneToOne extends Page implements HasForms
     public $showResults=false;
     public $indicatorProgresses;
     public $hideCreate=false;
+    public $campaignName;
     public $quadrant;
     public $titles = [
         9 => 'Futuro Líder',
@@ -102,9 +104,14 @@ class OneToOne extends Page implements HasForms
     public function mount($evaluationId = null)
         //Esto se debe de quitar para que no dependa de una campaña.
     {
-        $this->campaignId = Campaign::whereStatus('Activa')->first();
-        if ($this->campaignId) {
-            $this->campaignId = $this->campaignId->id;
+        //$this->campaignId = Campaign::whereStatus('Activa')->first();
+        //if ($this->campaignId) {
+        $this->campaignId = Campaign::whereStatus('Activa')->first()
+            ?? Campaign::latest('created_at')->whereStatus('Concluida')->first();
+        $this->campaignName=$this->campaignId ? $this->campaignId->name : "No Existe Registro";
+        $this->campaignId = $this->campaignId ? $this->campaignId->id : 0;
+
+          //  $this->campaignId = $this->campaignId->id;
             $supervisorId = auth()->user()->position_id;
             $this->themes = collect();
             $this->users = User::where('status', true)
@@ -116,10 +123,10 @@ class OneToOne extends Page implements HasForms
                 })
                 ->get();
             $this->evaluation = new OneToOneEvaluation();
-        }else{
+       /* }else{
             $this->users = collect();
             $this->evaluation = new OneToOneEvaluation();
-        }
+        }*/
 
     }
     public function formCultura(Form $form): Form
@@ -348,6 +355,10 @@ class OneToOne extends Page implements HasForms
     }
     public function getAveragePotential($user_id)
     {
+        $vencimiento=Psychometry::where('user_id', $user_id)
+            ->first();
+        $this->vencimiento=$vencimiento->expiration_date??'null';
+        // Obtener el promedio de las columnas de la tabla Psychometry
         return Psychometry::select('user_id',DB::raw('
             (SUM(leadership) +
             SUM(communication) +
@@ -379,6 +390,7 @@ class OneToOne extends Page implements HasForms
             ->groupBy('user_id')
             ->pluck('total_average','user_id')
             ->first();
+
     }
 
     public function getIndicatorProgressesForUser($userId)

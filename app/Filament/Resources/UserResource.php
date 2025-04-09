@@ -61,7 +61,13 @@ class UserResource extends Resource
                 Tables\Columns\ImageColumn::make('profile_photo')
                     ->circular()
                     ->label('Avatar')
-                    ->default(fn ($record) => view('components.filament-panels.avatar.user', ['user' => $record])),
+                    ->defaultImageUrl(function (User $record): string {
+                        $initials = mb_substr($record->name, 0, 1);
+                        if (isset($record->first_name)) {
+                            $initials .= mb_substr($record->first_name, 0, 1);
+                        }
+                        return "https://ui-avatars.com/api/?name=" . urlencode($initials) . "&color=7F9CF5&background=EBF4FF";
+                    }),
 //                Tables\Columns\ImageColumn::make('profile_photo')
 //                    ->circular()
 //                    ->label('Avatar'),

@@ -133,9 +133,6 @@ class CampaignResource extends Resource
                         'Suspendida' => 'Suspendida',
                         'Cancelada' => 'Cancelada',
                     ])
-                    ->disabled(fn (callable $get, $record) =>
-                        $get('isStatusDisabled') || ($record && $record->status !== 'Activa')
-                    )
             ]);
 
 

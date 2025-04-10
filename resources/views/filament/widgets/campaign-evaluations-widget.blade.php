@@ -5,6 +5,10 @@
                 <h2 class="text-lg font-bold">{{ $campaign->name }}</h2>
                 <ul>
                     @foreach ($campaign->evaluations as $evaluation)
+                        @if($evaluation->name !== 'Face to Face'
+                            && $evaluation->name !== '9 Box' )
+
+
                         <li class="flex items-center justify-between py-2 border-b">
                             <span>{{ $evaluation->name }}</span>
                             @if($evaluation->id===1 && $user->hasAnyRole('Supervisor','RH','RH Corp','Administrador'))
@@ -79,19 +83,20 @@
                                         {{ __('Revisar evaluaciones') }}
                                     </x-filament::button>
                                 @endif
-                            @elseif($evaluation->id===4 && $user->hasAnyRole('Supervisor','RH','RH Corp','Administrador'))
-                                    <x-filament::button
-                                        color="warning"
-                                        icon="heroicon-c-paper-airplane"
-                                        icon-position="after"
-                                        labeled-from="sm"
-                                        href="/dashboard/one-to-one"
-                                        tag="a"
-                                    >
-                                        {{ __('Ir al panel') }}
-                                    </x-filament::button>
+{{--                            @elseif($evaluation->id===4 && $user->hasAnyRole('Supervisor','RH','RH Corp','Administrador'))--}}
+{{--                                    <x-filament::button--}}
+{{--                                        color="warning"--}}
+{{--                                        icon="heroicon-c-paper-airplane"--}}
+{{--                                        icon-position="after"--}}
+{{--                                        labeled-from="sm"--}}
+{{--                                        href="/dashboard/one-to-one"--}}
+{{--                                        tag="a"--}}
+{{--                                    >--}}
+{{--                                        {{ __('Ir al panel') }}--}}
+{{--                                    </x-filament::button>--}}
                             @endif
                         </li>
+                        @endif
                     @endforeach
                 </ul>
             @empty

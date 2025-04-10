@@ -107,7 +107,7 @@ class BulkImportIndicator extends Page
     public function import()
     {
         // Validar que el archivo se haya cargado
-        if (!isset($this->bulkImport['file'])) {
+        if (!isset($this->bulkImport['file']) || !is_array($this->bulkImport['file']) || empty($this->bulkImport['file'])) {
             Notification::make()
                 ->danger()
                 ->title('Error en la importación')
@@ -116,41 +116,47 @@ class BulkImportIndicator extends Page
                 ->send();
             return;
         }
-        Log::debug('Información de $this->bulkImport[\'file\']:', (array) $this->bulkImport['file']);
 
-        $uploadedFiles = $this->bulkImport['file'];
-        if (is_array($uploadedFiles) && !empty($uploadedFiles)) {
-            $uploadedFile = reset($uploadedFiles); // Obtiene el primer elemento del array
-        } else {
-            Notification::make()
-                ->danger()
-                ->title('Error en la importación')
-                ->body('No se encontró el archivo cargado.')
-                ->duration(5000)
-                ->send();
-            return;
-        }
+        $fileInfo = reset($this->bulkImport['file']); // Obtiene el primer (y único) elemento del array
+        $localFilePath = $fileInfo; // El valor es la ruta local temporal
+
+        Log::debug('Ruta del archivo temporal local:', ['path' => $localFilePath]);
 
         try {
-            // Obtener el stream del archivo desde S3
-            $stream = \Storage::disk('sedyco_disk')->readStream($uploadedFile->getClientOriginalName());
+            // Verificar si el archivo temporal existe
+            if (!file_exists($localFilePath)) {
+                Notification::make()
+                    ->danger()
+                    ->title('Error en la importación')
+                    ->body('No se encontró el archivo temporal.')
+                    ->duration(5000)
+                    ->send();
+                return;
+            }
+
+            // Subir el archivo a S3
+            $s3FileName = 'imports/' . time() . '_' . basename($localFilePath); // Genera un nombre único para S3
+            \Storage::disk('sedyco_disk')->putFileAs('imports', $localFilePath, basename($s3FileName));
+            $s3FilePath = Storage::disk('sedyco_disk')->url($s3FileName);
+
+            Log::debug('Archivo subido a S3:', ['path' => $s3FilePath]);
+
+            // Importar el archivo desde el stream de S3
+            $stream = Storage::disk('sedyco_disk')->readStream('imports/' . basename($s3FileName));
 
             if (!$stream) {
                 Notification::make()
                     ->danger()
-                    ->title('Error al leer el archivo')
-                    ->body('No se pudo leer el archivo desde S3.')
+                    ->title('Error al leer el archivo desde S3')
+                    ->body('No se pudo leer el archivo desde S3 después de la carga.')
                     ->duration(5000)
                     ->send();
                 return;
             }
 
             $import = new IndicatorProgressImport($this->getValidUserIds());
+            Excel::import($import, $stream, null, \Maatwebsite\Excel\Excel::XLSX);
 
-            // Importar directamente desde el stream
-            Excel::import($import, $stream, null, \Maatwebsite\Excel\Excel::XLSX); // Especifica el tipo si es necesario
-
-            // Mostrar resultados
             Notification::make()
                 ->success()
                 ->title('Importación Realizada')
@@ -158,11 +164,16 @@ class BulkImportIndicator extends Page
                 ->duration(5000)
                 ->send();
 
-            // Limpiar formulario
             $this->reset('bulkImport');
             $this->dispatch('reset-file');
 
-        } catch (\Maatwebsite\Excel\Validators\ValidationException $e)  {
+            // Eliminar el archivo temporal local
+            if (file_exists($localFilePath)) {
+                unlink($localFilePath);
+                Log::debug('Archivo temporal local eliminado:', ['path' => $localFilePath]);
+            }
+
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $errors = $e->validator->errors()->all();
             Notification::make()
                 ->danger()
@@ -171,7 +182,12 @@ class BulkImportIndicator extends Page
                 ->duration(10000)
                 ->send();
             $this->reset('bulkImport');
+            // Eliminar el archivo temporal local en caso de error
+            if (file_exists($localFilePath)) {
+                unlink($localFilePath);
+            }
         } catch (\Exception $e) {
+            Log::error('Error durante la importación:', ['error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
             Notification::make()
                 ->danger()
                 ->title('Error en la importación')
@@ -179,6 +195,10 @@ class BulkImportIndicator extends Page
                 ->duration(10000)
                 ->send();
             $this->reset('bulkImport');
+            // Eliminar el archivo temporal local en caso de error
+            if (file_exists($localFilePath)) {
+                unlink($localFilePath);
+            }
         }
     }
 

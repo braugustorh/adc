@@ -59,6 +59,7 @@ class BulkImportIndicator extends Page
                         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
                         'text/csv',
                     ])
+                    ->disk('sedyco_disk')
                     ->rules([
                         'required',
                         'file',

@@ -146,7 +146,7 @@ class BulkImportIndicator extends Page
         $import = new IndicatorProgressImport($validUserIds);
 
         try {
-            Excel::import($import, $filePath);
+            Excel::import($import, $filePath,'sedyco_disk');
 
             // Mostrar resultados
             Notification::make()

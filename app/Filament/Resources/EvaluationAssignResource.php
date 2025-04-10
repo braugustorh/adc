@@ -102,7 +102,7 @@ class EvaluationAssignResource extends Resource
                                     ->label('Tipo de evaluado')
                                     ->required()
                                     ->options([
-                                        'A' => 'Evaluador',
+                                        'A' => 'Autoevaluación',
                                         'J' => 'Jefe Inmediato',
                                         'S' => 'Subordinado',
                                         'P'=> 'Par',

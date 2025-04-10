@@ -67,7 +67,7 @@ return [
             'throw' => false,
         ],
         'livewire-tmp' => [
-            'driver' => 'local',
+            'driver' => 's3',
             'root' => storage_path('app/livewire-tmp'),
         ],
 

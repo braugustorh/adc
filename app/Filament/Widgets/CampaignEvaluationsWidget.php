@@ -25,7 +25,7 @@ public $qtty;
 
         // Obtener campañas activas para la sede del usuario
         $campaigns = Campaign::where('status', 'Activa')
-            ->where('start_date', '<=', $currentDate)
+            //->where('start_date', '<=', $currentDate)
             ->where('end_date', '>=', $currentDate)
             ->whereHas('sedes', function ($query) use ($user) {
                 $query->where('sede_id', $user->sede_id);

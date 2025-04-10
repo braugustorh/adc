@@ -434,13 +434,6 @@
 
                     </x-filament::button>
                 <x-filament::button
-                    icon="heroicon-c-check-circle"
-                    color="success"
-                    wire:click="finishEvaluation"
-                    icon-position="after">
-                    {{ __('Terminar Face to Face') }}
-                </x-filament::button>
-                <x-filament::button
                     icon="heroicon-s-document-magnifying-glass"
                     color="info"
                     wire:click="generatePdf"
@@ -448,6 +441,14 @@
                     {{ __('Generar Formato') }}
 
                 </x-filament::button>
+                <x-filament::button
+                    icon="heroicon-c-check-circle"
+                    color="success"
+                    wire:click="finishEvaluation"
+                    icon-position="after">
+                    {{ __('Terminar Face to Face') }}
+                </x-filament::button>
+
 
             </x-filament::section>
 

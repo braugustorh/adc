@@ -22,7 +22,7 @@
                                 >
                                     {{ __('Ir al panel') }}
                                 </x-filament::button>
-                            @elseif($evaluation->id==='Clima Organizacional')
+                            @elseif($evaluation->name ==='Clima Organizacional')
                                 @if($responseCO->where('campaign_id', $campaign->id)->count() !== 0)
                                     <x-filament::button
                                         color="success"

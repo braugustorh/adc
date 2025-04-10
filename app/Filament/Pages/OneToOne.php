@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Indicator;
+use AWS\CRT\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\OneToOneEvaluation;
 use Filament\Forms;
@@ -434,26 +435,44 @@ class OneToOne extends Page implements HasForms
                 ->send();
             return;
         }
+        DB::beginTransaction();
 
-        // Crea la evaluación
-        $this->evaluation = OneToOneEvaluation::create([
-            'user_id' => $this->userToEvaluated->id,
-            'supervisor_id' => auth()->id(),
-            'evaluation_date' => now(),
-            'status' => 'in_progress',
-            'initial'=>false,
-            'follow_up'=>false,
-            'consolidated'=>false,
-            'final'=>false,
-        ]);
+        try {
+            // Crea la evaluación
+            $this->evaluation = OneToOneEvaluation::create([
+                'user_id' => $this->userToEvaluated->id,
+                'supervisor_id' => auth()->id(),
+                'evaluation_date' => now(),
+                'status' => 'in_progress',
+                'initial' => false,
+                'follow_up' => false,
+                'consolidated' => false,
+                'final' => false,
+            ]);
+            DB::commit();
 
+            Notification::make()
+                ->success()
+                ->title('Se ha creado la Evaluación One to One')
+                ->send();
+
+
+        } catch (QueryException $e) {
+            DB::rollBack();
+            Notification::make()
+                ->danger()
+                ->title('Error al crear la evaluación')
+                ->body('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.')
+                ->send();
+            // Registrar el error en los logs
+            \Log::info('Error al crear la evaluación One to One: ' . $this->evaluation->id);
+            \Log::error('Error al crear la evaluación One to One: ' . $e->getMessage());
+            return;
+        }
         // Notifica al colaborador
        // $this->userToEvaluated->notify(new OneToOneEvaluationCreated($this->evaluation));
 
-        Notification::make()
-            ->success()
-            ->title('Se ha creado la Evaluación One to One')
-            ->send();
+
 
         // Actualiza el estado para mostrar los formularios
         $this->show = false;
@@ -461,9 +480,10 @@ class OneToOne extends Page implements HasForms
         $this->existEvaluations=false;
         $this->hideCreate=true;
 
-
+        \Log::info('evaluation ' . $this->evaluation->id);
         // Llama a mount() para llenar los formularios con la evaluación recién creada
-        $this->mount($this->evaluation->id);
+        $this->editEvaluation($this->evaluation->id);
+
 
     }
 

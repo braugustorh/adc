@@ -10,4 +10,5 @@ return [
      * if left empty, config('filesystems.default') will be used
      */
     'upload_disk' => 'sedyco_disk',
+    'disk' => 'sedyco_disk',
 ];

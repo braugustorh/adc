@@ -135,7 +135,8 @@ class CampaignResource extends Resource
                     ])
                     ->disabled(fn (callable $get, $record) =>
                         $get('isStatusDisabled') || ($record && $record->status !== 'Activa')
-                    )]);
+                    )
+            ]);
 
 
         return $form

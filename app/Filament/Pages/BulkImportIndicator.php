@@ -116,7 +116,18 @@ class BulkImportIndicator extends Page
             return;
         }
 
-        $uploadedFile = $this->bulkImport['file'];
+        $uploadedFiles = $this->bulkImport['file'];
+        if (is_array($uploadedFiles) && !empty($uploadedFiles)) {
+            $uploadedFile = reset($uploadedFiles); // Obtiene el primer elemento del array
+        } else {
+            Notification::make()
+                ->danger()
+                ->title('Error en la importación')
+                ->body('No se encontró el archivo cargado.')
+                ->duration(5000)
+                ->send();
+            return;
+        }
 
         try {
             // Obtener el stream del archivo desde S3

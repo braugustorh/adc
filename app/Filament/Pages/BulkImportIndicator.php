@@ -60,6 +60,7 @@ class BulkImportIndicator extends Page
                         'text/csv',
                     ])
                     ->disk('sedyco_disk')
+                    ->visibility('public')
                     ->rules([
                         'required',
                         'file',

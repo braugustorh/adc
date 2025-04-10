@@ -105,6 +105,86 @@ class BulkImportIndicator extends Page
 
     public function import()
     {
+        // Validar que el archivo se haya cargado
+        if (!isset($this->bulkImport['file'])) {
+            Notification::make()
+                ->danger()
+                ->title('Error en la importación')
+                ->body('No se ha seleccionado ningún archivo.')
+                ->duration(5000)
+                ->send();
+            return;
+        }
+
+        $uploadedFile = $this->bulkImport['file'];
+
+        try {
+            // Obtener el stream del archivo desde S3
+            $stream = \Storage::disk('sedyco_disk')->readStream($uploadedFile->getClientOriginalName());
+
+            if (!$stream) {
+                Notification::make()
+                    ->danger()
+                    ->title('Error al leer el archivo')
+                    ->body('No se pudo leer el archivo desde S3.')
+                    ->duration(5000)
+                    ->send();
+                return;
+            }
+
+            $import = new IndicatorProgressImport($this->getValidUserIds());
+
+            // Importar directamente desde el stream
+            Excel::import($import, $stream, null, \Maatwebsite\Excel\Excel::XLSX); // Especifica el tipo si es necesario
+
+            // Mostrar resultados
+            Notification::make()
+                ->success()
+                ->title('Importación Realizada')
+                ->body('Se importaron ' . $import->getRowCount() . ' registros correctamente.')
+                ->duration(5000)
+                ->send();
+
+            // Limpiar formulario
+            $this->reset('bulkImport');
+            $this->dispatch('reset-file');
+
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e)  {
+            $errors = $e->validator->errors()->all();
+            Notification::make()
+                ->danger()
+                ->title('Error en la importación')
+                ->body('Errores encontrados: <br>' . implode(', ', $errors))
+                ->duration(10000)
+                ->send();
+            $this->reset('bulkImport');
+        } catch (\Exception $e) {
+            Notification::make()
+                ->danger()
+                ->title('Error en la importación')
+                ->body('Ocurrió un error durante la importación: ' . $e->getMessage())
+                ->duration(10000)
+                ->send();
+            $this->reset('bulkImport');
+        }
+    }
+
+    protected function getValidUserIds(): array
+    {
+        $supervisorId = auth()->user()->position_id;
+        return User::where('status', true)
+            ->whereNotNull('department_id')
+            ->whereNotNull('position_id')
+            ->whereNotNull('sede_id')
+            ->whereHas('position', function ($query) use ($supervisorId) {
+                $query->where('supervisor_id', $supervisorId);
+            })
+            ->pluck('id')->toArray();
+    }
+
+
+   /* public function import()
+    {
         // Validar que el archivo exista
         if (!isset($this->bulkImport['file'])) {
             Notification::make()
@@ -201,5 +281,5 @@ class BulkImportIndicator extends Page
 
 
 
-    }
+    }*/
 }

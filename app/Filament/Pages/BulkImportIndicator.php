@@ -8,6 +8,7 @@ use Filament\Pages\Page;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\IndicatorProgressTemplateExport;
 use App\Imports\IndicatorProgressImport;
@@ -115,6 +116,7 @@ class BulkImportIndicator extends Page
                 ->send();
             return;
         }
+        Log::debug('Información de $this->bulkImport[\'file\']:', (array) $this->bulkImport['file']);
 
         $uploadedFiles = $this->bulkImport['file'];
         if (is_array($uploadedFiles) && !empty($uploadedFiles)) {

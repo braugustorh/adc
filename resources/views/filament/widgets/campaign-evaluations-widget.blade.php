@@ -22,7 +22,7 @@
                                 >
                                     {{ __('Ir al panel') }}
                                 </x-filament::button>
-                            @elseif($evaluation->id===3)
+                            @elseif($evaluation->id==='Clima Organizacional')
                                 @if($responseCO->where('campaign_id', $campaign->id)->count() !== 0)
                                     <x-filament::button
                                         color="success"
@@ -49,7 +49,7 @@
                                         {{ __('Realizar Evaluación') }}
                                     </x-filament::button>
                                 @endif
-                            @elseif($evaluation->id===2)
+                            @elseif($evaluation->name==='360')
                                @php
                                $response = $this->response360->where('campaign_id', $campaign->id)
                                ->unique('evaluated_user_id')->count();

@@ -16,6 +16,7 @@ class VacancyStats extends BaseWidget
     {
         if (auth()->user()->hasRole('RH') ||
             auth()->user()->hasRole('RH Corp') ||
+            auth()->user()->hasRole('Visor') ||
             auth()->user()->hasRole('Administrador') ||
             auth()->user()->hasRole('Supervisor')) {
 

@@ -73,7 +73,11 @@ class Panel9Box extends Page implements HasTable
     {
         //Este Panel solo lo debe de ver los Jefes de Área y el Administrador
         //Se debe de agregar la comprobación de que estpo se cumpla para que solo sea visible para los Jefes de Área
-        if (\auth()->user()->hasRole('RH Corp')||\auth()->user()->hasRole('RH') || \auth()->user()->hasRole('Supervisor') || \auth()->user()->hasRole('Administrador')) {
+        if (\auth()->user()->hasRole('RH Corp')||
+            \auth()->user()->hasRole('RH') ||
+            \auth()->user()->hasRole('Supervisor') ||
+            \auth()->user()->hasRole('Visor') ||
+            \auth()->user()->hasRole('Administrador')) {
             return true;
         }else{
             return false;

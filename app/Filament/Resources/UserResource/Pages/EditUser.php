@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Helpers\VisorRoleHelper;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\Department;
@@ -39,6 +40,10 @@ class EditUser extends EditRecord
     public String $cp;
     public $countries=[];
     public $estadosMexico=[];
+    protected function authorizeAccess(): void
+    {
+        abort_unless(VisorRoleHelper::canEdit(), 403, __('Ups!, no estas autorizado para realizar esta acción.'));
+    }
     protected function getHeaderActions(): array
     {
         return [

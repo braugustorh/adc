@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PositionResource\Pages;
 use App\Filament\Resources\PositionResource\RelationManagers;
+use App\Helpers\VisorRoleHelper;
 use App\Models\Department;
 use App\Models\Position;
 use App\Models\Sede;
@@ -29,7 +30,7 @@ class PositionResource extends Resource
     protected static ?int $navigationSort = 3;
     public static function canViewAny(): bool
     {
-        return \auth()->user()->hasAnyRole('Administrador','RH Corp');
+        return \auth()->user()->hasAnyRole('Administrador','RH Corp','Visor');
 
     }
 
@@ -168,11 +169,17 @@ class PositionResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn()=>VisorRoleHelper::canEdit()),
+                Tables\Actions\ViewAction::make()
+                    ->label('Ver')
+                    ->icon('heroicon-o-eye')
+                    ->modal(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn()=>VisorRoleHelper::canEdit()),
                     ExportBulkAction::make(),
                 ]),
             ]);

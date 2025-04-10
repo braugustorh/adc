@@ -23,7 +23,7 @@ class NineBoxResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-squares-plus';
     public static function canViewAny(): bool
     {
-        return \auth()->user()->hasRole('Administrador');
+        return false;
 
     }
 

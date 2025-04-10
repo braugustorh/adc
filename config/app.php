@@ -156,7 +156,6 @@ return [
     */
 
     'providers' => ServiceProvider::defaultProviders()->merge([
-
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
@@ -164,8 +163,8 @@ return [
         App\Providers\Filament\AdminPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
         Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
-        \Nihir\CountryStateCity\CountryStateCityServiceProvider::class
-
+        \Nihir\CountryStateCity\CountryStateCityServiceProvider::class,
+        App\Providers\HelperServiceProvider::class,
     ])->toArray(),
 
     /*

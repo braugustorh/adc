@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DepartmentResource\Pages;
 use App\Filament\Resources\DepartmentResource\RelationManagers;
+use App\Helpers\VisorRoleHelper;
 use App\Models\Department;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
@@ -25,7 +26,7 @@ class DepartmentResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
     public static function canViewAny(): bool
     {
-        return \auth()->user()->hasAnyRole('Administrador','RH Corp');
+        return \auth()->user()->hasAnyRole('Administrador','RH Corp','Visor');
 
     }
 
@@ -80,14 +81,19 @@ class DepartmentResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->label('Ver')
+                    ->icon('heroicon-o-eye')
+                    ->modal(),
+                Tables\Actions\EditAction::make()->visible(fn()=>VisorRoleHelper::canEdit()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn()=>VisorRoleHelper::canEdit()),
                     ExportBulkAction::make(),
                 ]),
+
             ])
             ->defaultSort('sede_id', 'desc');
     }

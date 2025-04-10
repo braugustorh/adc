@@ -49,7 +49,7 @@ class OrganizationalClimateStatics extends Page implements HasTable
         $this->campaigns = Campaign::all();
         $this->evaluation_id = EvaluationsTypes::where('name', 'Clima Organizacional')->first()->id;
 
-        if (auth()->user()->hasAnyRole(['RH Corp', 'Administrador'])) {
+        if (auth()->user()->hasAnyRole(['RH Corp', 'Administrador','Visor'])) {
             $this->sedes = Sede::all();
         } elseif (auth()->user()->hasRole('Supervisor')) {
             $this->sedes = Sede::where('id', auth()->user()->sede_id)->get();
@@ -300,7 +300,7 @@ class OrganizationalClimateStatics extends Page implements HasTable
 
     public static function canView(): bool
     {
-        return auth()->user()->hasAnyRole(['RH Corp','RH', 'Administrador']);
+        return auth()->user()->hasAnyRole(['RH Corp','RH', 'Administrador','Visor']);
     }
     public static function shouldRegisterNavigation(): bool
     {

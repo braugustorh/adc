@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PortfolioResource\Pages;
 use App\Filament\Resources\PortfolioResource\RelationManagers;
+use App\Helpers\VisorRoleHelper;
 use App\Models\User;
 use App\Models\Portfolio;
 use Filament\Forms;
@@ -36,7 +37,7 @@ class PortfolioResource extends Resource
     public static function canViewAny(): bool
     {
 
-        return (\auth()->user()->hasAnyRole('RH','RH Corp','Administrador','Supervisor','Colaborador'));
+        return (\auth()->user()->hasAnyRole('RH','RH Corp','Administrador','Supervisor','Colaborador','Visor'));
 
     }
     public static function canCreate(): bool
@@ -67,7 +68,7 @@ class PortfolioResource extends Resource
                                 ->get()
                                 ->mapWithKeys(fn (User $user): array => [$user->id => $user->name.' '.$user->first_name .' '.$user->last_name]);
                         }else{
-                            if (auth()->user()->hasAnyRole('Administrador','RH Corp')){
+                            if (auth()->user()->hasAnyRole('Administrador','RH Corp','Visor')){
                                 $user=User::query()
                                     ->doesntHave('portfolio')
                                     ->where('status',1)
@@ -429,7 +430,8 @@ class PortfolioResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn()=>VisorRoleHelper::canEdit()),
                 ]),
             ])->modifyQueryUsing(function (Builder $query) {
                 // Si el usuario tiene el rol "Jefe RH", filtrar por su sede_id

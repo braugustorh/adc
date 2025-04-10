@@ -22,7 +22,7 @@ class EvaluationResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
     public static function canViewAny(): bool
     {
-        return \auth()->user()->hasRole('Administrador');
+        return false;
 
     }
     public static function form(Form $form): Form

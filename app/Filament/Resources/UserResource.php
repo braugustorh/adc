@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\Widgets\UsersStatsOverview;
+use App\Helpers\VisorRoleHelper;
 use App\Models\User;
 use App\Models\Sede;
 use Filament\Actions\Action;
@@ -38,7 +39,7 @@ class UserResource extends Resource
 
     public static function canViewAny():bool
     {
-        return \auth()->user()->hasAnyRole('RH','RH Corp','Administrador','Supervisor');
+        return \auth()->user()->hasAnyRole('RH','RH Corp','Administrador','Supervisor','Visor');
     }
 
 
@@ -408,7 +409,8 @@ class UserResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn()=>VisorRoleHelper::canEdit()),
                 ]),
                 ExportBulkAction::make(),
             ])->modifyQueryUsing(function (Builder $query) {

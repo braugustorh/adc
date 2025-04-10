@@ -62,6 +62,7 @@
     58 => 'App\\Providers\\RouteServiceProvider',
     59 => 'Anhskohbo\\NoCaptcha\\NoCaptchaServiceProvider',
     60 => 'Nihir\\CountryStateCity\\CountryStateCityServiceProvider',
+    61 => 'App\\Providers\\HelperServiceProvider',
   ),
   'eager' => 
   array (
@@ -111,6 +112,7 @@
     43 => 'App\\Providers\\RouteServiceProvider',
     44 => 'Anhskohbo\\NoCaptcha\\NoCaptchaServiceProvider',
     45 => 'Nihir\\CountryStateCity\\CountryStateCityServiceProvider',
+    46 => 'App\\Providers\\HelperServiceProvider',
   ),
   'deferred' => 
   array (

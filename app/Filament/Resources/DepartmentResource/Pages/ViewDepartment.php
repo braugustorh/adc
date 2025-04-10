@@ -11,10 +11,5 @@ class ViewDepartment extends ViewRecord
     protected static string $resource = DepartmentResource::class;
     protected static ?string $title='Departamentos';
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
+
 }

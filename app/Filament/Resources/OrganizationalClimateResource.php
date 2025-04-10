@@ -17,7 +17,7 @@ class OrganizationalClimateResource extends Resource
 {
     public static function canViewAny(): bool
     {
-        return \auth()->user()->hasRole('Administrador');
+        return false;
 
     }
     protected static ?string $model = OrganizationalClimate::class;

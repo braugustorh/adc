@@ -4,7 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SedeResource\Pages;
 use App\Filament\Resources\SedeResource\RelationManagers;
+use App\Helpers\VisorRoleHelper;
 use App\Models\Sede;
+use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -27,7 +29,7 @@ class SedeResource extends Resource
     protected static ?string $navigationGroup = 'ADC Estructura';
     public static function canViewAny(): bool
     {
-        return \auth()->user()->hasAnyRole('Administrador','RH Corp');
+        return \auth()->user()->hasAnyRole('Administrador','RH Corp','Visor');
     }
 
     public static function form(Form $form): Form
@@ -162,11 +164,17 @@ class SedeResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->label('Ver')
+                    ->icon('heroicon-o-eye')
+                    ->modal(),
+                Tables\Actions\EditAction::make()
+                ->visible(fn()=>VisorRoleHelper::canEdit()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn()=>VisorRoleHelper::canEdit()),
                     ExportBulkAction::make(),
                 ]),
             ]);

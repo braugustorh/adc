@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PsychometryResource\Pages;
 use App\Filament\Resources\PsychometryResource\RelationManagers;
+use App\Helpers\VisorRoleHelper;
 use App\Models\Psychometry;
 use App\Models\User;
 use Filament\Forms;
@@ -14,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 
@@ -36,10 +38,24 @@ class PsychometryResource extends Resource
             'Supervisor',
             'Administrador',
             'RH',
-            'RH Corp'
+            'RH Corp',
+                'Visor',
         ]);
 
     }
+    public static function canCreate(): bool
+    {
+        return auth()->check() && auth()->user()?->hasAnyRole([
+            'Administrador',
+            'RH',
+            'RH Corp',
+        ]);
+    }
+    public static function canEdit(Model $record): bool
+    {
+        return (\auth()->user()->hasAnyRole('RH','RH Corp','Administrador'));
+    }
+
 
     public static function form(Form $form): Form
     {
@@ -391,11 +407,17 @@ class PsychometryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->label('Ver')
+                    ->icon('heroicon-o-eye')
+                    ->modal(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn()=>VisorRoleHelper::canEdit()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn()=>VisorRoleHelper::canEdit()),
                 ]),
             ])->modifyQueryUsing(function (Builder $query) {
                 // Si el usuario tiene el rol "Jefe RH", filtrar por su sede_id

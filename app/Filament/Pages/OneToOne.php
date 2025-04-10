@@ -583,6 +583,7 @@ class OneToOne extends Page implements HasForms
     }
     public function finishEvaluation()
     {
+        $this->validate();
         if ($this->evaluation->initial && $this->evaluation->follow_up) {
             $this->evaluation->final = true;
             $this->evaluation->status = 'completed';

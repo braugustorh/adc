@@ -23,7 +23,7 @@ class Score360 extends BaseWidget
         7 => 'heroicon-s-rocket-launch',
         6 => 'heroicon-m-face-smile',
         5 => 'heroicon-s-key',
-        4 => 'fas-hand-sparkles',
+        4 => 'heroicon-s-sparkles',
         3 => 'heroicon-s-check-badge',
         2 => 'heroicon-c-exclamation-triangle',
         1 => 'heroicon-c-face-frown',

@@ -54,6 +54,20 @@
       0 => 'BladeUI\\Icons\\BladeIconsServiceProvider',
     ),
   ),
+  'codeat3/blade-google-material-design-icons' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Codeat3\\BladeGoogleMaterialDesignIcons\\BladeGoogleMaterialDesignIconsServiceProvider',
+    ),
+  ),
+  'codeat3/blade-iconpark' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Codeat3\\BladeIconpark\\BladeIconparkServiceProvider',
+    ),
+  ),
   'codeat3/blade-solar-icons' => 
   array (
     'providers' => 
@@ -204,6 +218,13 @@
     'providers' => 
     array (
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    ),
+  ),
+  'owenvoke/blade-fontawesome' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'OwenVoke\\BladeFontAwesome\\BladeFontAwesomeServiceProvider',
     ),
   ),
   'postare/blade-mdi' => 

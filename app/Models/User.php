@@ -90,7 +90,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function sede()
     {
-        return $this->belongsTo(Sede::class);
+        return $this->belongsTo(Sede::class,'sede_id');
     }
     public function position(): belongsTo
     {
@@ -123,6 +123,18 @@ class User extends Authenticatable implements FilamentUser
     public function climaResponses(): hasMany
     {
         return $this->hasMany(ClimateOrganizationalResponses::class);
+    }
+    public function identifiedCollaborators(): hasMany
+    {
+        return $this->hasMany(IdentifiedCollaborator::class, 'user_id');
+    }
+    public function traumaticEvents(): hasMany
+    {
+        return $this->hasMany(TraumaticEvent::class, 'user_id');
+    }
+    public function traumaticEventSurveys(): hasMany
+    {
+        return $this->hasMany(TraumaticEventSurvey::class, 'user_id');
     }
 
 

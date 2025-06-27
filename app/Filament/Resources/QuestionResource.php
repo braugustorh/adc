@@ -55,7 +55,7 @@ class QuestionResource extends Resource
                     ->maxLength(255),
 
                 Forms\Components\Toggle::make('status')
-                    ->label('Active')
+                    ->label('Estatus')
                     ->default(true),
 
                 Forms\Components\Select::make('evaluations_type_id')
@@ -68,7 +68,7 @@ class QuestionResource extends Resource
                     }),
 
                 Forms\Components\Select::make('competence_id')
-                    ->label('Competence')
+                    ->label('Competencia')
                     ->required()
                     ->options(function (callable $get) {
                         $evaluationTypeId = $get('evaluations_type_id');
@@ -81,8 +81,8 @@ class QuestionResource extends Resource
                     }),
 
 
-                Forms\Components\Select::make('evaluationType')
-                    ->label('Tipo de Respuesta')
+                Forms\Components\Select::make('answer_type_id')  // Nombre correcto del campo
+                ->label('Tipo de Respuesta')
                     ->relationship('answerType', 'name')
                     ->required(),
             ]);
@@ -107,6 +107,7 @@ class QuestionResource extends Resource
                 Tables\Columns\TextColumn::make('question')
                 ->wrap()
                     ->searchable()
+                    ->html()
                     ->label('Pregunta'),
                 Tables\Columns\BooleanColumn::make('status')
                     ->label('Estatus')

@@ -1,7 +1,13 @@
 
 <x-filament-widgets::widget>
-    <x-filament::section>
-            @forelse ($campaigns as $campaign)
+    <x-filament::section icon="gmdi-task-alt-r"
+                         icon-color="success"
+                         icon-size="md">
+        <x-slot name="heading">
+            <h4 class="text-xl font-bold">{{ __('Actividades Pendientes') }}</h4>
+        </x-slot>
+        @if($campaigns || $norma)
+            @foreach($campaigns as $campaign)
                 <h2 class="text-lg font-bold">{{ $campaign->name }}</h2>
                 <ul>
                     @foreach ($campaign->evaluations as $evaluation)
@@ -99,8 +105,28 @@
                         @endif
                     @endforeach
                 </ul>
-            @empty
-                <p>No hay campañas activas para tu sede en este momento.</p>
-            @endforelse
+
+            @endforeach
+
+                <div class="flex items-center space-x-2">
+
+                <x-filament::icon
+                        icon="gmdi-arrow-drop-down-circle-tt"
+                        class="h-5 w-5 text-gray-500 dark:text-gray-400"
+                    />
+                <h5 class="text-lg font-bold">{{ __('Norma 035') }}</h5>
+                </div>
+
+            @foreach($surveys as $survey)
+                <ul>
+                    <li>
+                        {{$survey->evaluation->name}}
+                    </li>
+
+                </ul>
+            @endforeach
+        @else
+            <p class="text-gray-500">{{ __('No hay actividades por realizar') }}</p>
+        @endif
     </x-filament::section>
 </x-filament-widgets::widget>

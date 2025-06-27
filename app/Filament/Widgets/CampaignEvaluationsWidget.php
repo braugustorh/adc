@@ -37,6 +37,8 @@ public $qtty;
                 ])
                 ->get();
 
+        }else{
+            $surveys=collect();
         }
 
         // Obtener campañas activas para la sede del usuario

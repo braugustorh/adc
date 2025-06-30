@@ -24,7 +24,6 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use mysql_xdevapi\TableSelect;
 use PhpParser\Node\Scalar\String_;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Hash;
@@ -178,15 +177,23 @@ class EditUser extends EditRecord
                             function(Get $get): array{
                                 $state= $get('state');
                                 if($state){
+                                    $res=Http::withHeaders([
+                                        "Accept"=> "application/json",
+                                        "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
+                                    ])->get('https://api.tau.com.mx/dipomex/v1/estados');
+
+                                    $estadosArray = collect(json_decode($res->body(), true)['estados'] ?? [])->firstWhere('ESTADO', $state);
+                                    $estadoId = $estadosArray['ESTADO_ID'] ?? null;
                                     $citiesResponse = Http::withHeaders([
                                         "Accept"=> "application/json",
                                         "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
-                                    ])->get('https://api.tau.com.mx/dipomex/v1/municipios?id_estado='.$state);
+                                    ])->get('https://api.tau.com.mx/dipomex/v1/municipios?id_estado='.$estadoId);
+
                                     $citiesArray = json_decode($citiesResponse->body(), true);
 
                                     if (is_array($citiesArray)) {
 
-                                        $cities = array_column($citiesArray['municipios'], 'MUNICIPIO', 'MUNICIPIO_ID');
+                                        $cities = array_column($citiesArray['municipios'], 'MUNICIPIO', 'MUNICIPIO');
                                     } else {
                                         Notification::make()
                                             ->title('Error')
@@ -207,49 +214,9 @@ class EditUser extends EditRecord
                         ->loadingMessage('Cargando Municipios...')
                         ->searchingMessage('Buscando Municipios...')
                         ->default(null),
-                    Select::make('colony')
+                    TextInput::make('colony')
                         ->label('Colonia')
                         ->live()
-                        ->options(function(Get $get): array {
-                                $estado = $get('state');
-                                $ciudad = $get('city');
-                                $colonies = [];
-                                if ($ciudad && $estado) {
-                                    $coloniesResponse = Http::withHeaders([
-                                        "Accept" => "application/json",
-                                        "APIKEY" => "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
-                                    ])->get('https://api.tau.com.mx/dipomex/v1/colonias?id_estado='.$estado.'&id_mun='.$ciudad);
-                                    $coloniesArray = json_decode($coloniesResponse->body(), true);
-                                    if (is_array($coloniesArray)) {
-                                        $colonies = array_column($coloniesArray['colonias'], 'COLONIA', 'ASENTA_ID');
-                                    } else {
-                                        Notification::make()
-                                            ->title('Error')
-                                            ->danger()
-                                            ->icon('heroicon-o-x-circle')
-                                            ->iconColor('danger')
-                                            ->body('No se logró obtener la lista de colonias')
-                                            ->send();
-                                    }
-                                }
-                                return $colonies;
-                            }
-                        )
-                        ->searchable()
-                        ->loadingMessage('Cargando Colonias...')
-                        ->searchingMessage('Buscando Colonias...')
-                        /*->afterStateUpdated(function (Get $get, Set $set):string {
-                            $colonia = $get('colony');
-
-                            $postalCode = $colonia;
-                            if($colonia!==null){
-                                //dd($colonia);
-                                return $set('cp', $postalCode);
-                            }else{
-                                return $set('cp', '');
-                            }
-
-                        })*/
                         ->default(null),
                     TextInput::make('cp')
                         ->label('Código Postal')
@@ -439,9 +406,12 @@ class EditUser extends EditRecord
         ])->get('https://api.tau.com.mx/dipomex/v1/estados');
 
         $colonyArray=json_decode($res->body(),true);
+
         if (is_array($colonyArray)) {
 
-          $this->estadosMexico = array_column($colonyArray['estados'], 'ESTADO', 'ESTADO_ID');
+          $this->estadosMexico = array_column($colonyArray['estados'], 'ESTADO', 'ESTADO');
+
+
         }else{
             Notification::make()
                 ->title('Error')

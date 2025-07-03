@@ -26,7 +26,6 @@ public $qtty;
             ->get();
 
         $norma=Nom035Process::findActiveProcess(auth()->user()->sede_id);
-        dd($norma);
         if ($norma) {
 
             $surveys = ActiveSurvey::where('norma_id', $norma->id)

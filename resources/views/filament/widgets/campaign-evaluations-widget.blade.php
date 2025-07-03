@@ -105,9 +105,7 @@
                         @endif
                     @endforeach
                 </ul>
-
             @endforeach
-
                 @if($norma)
                     <div class="flex items-center space-x-2">
 

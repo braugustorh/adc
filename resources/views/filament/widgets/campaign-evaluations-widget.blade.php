@@ -6,7 +6,7 @@
         <x-slot name="heading">
             <h4 class="text-xl font-bold">{{ __('Actividades Pendientes') }}</h4>
         </x-slot>
-        @if($campaigns || $norma)
+        @if(($campaigns && $campaigns->count() > 0) || $norma)
             @foreach($campaigns as $campaign)
                 <h2 class="text-lg font-bold">{{ $campaign->name }}</h2>
                 <ul>
@@ -123,8 +123,6 @@
 
                         </ul>
                     @endforeach
-                @else
-                    <p class="text-gray-500">{{ __('No hay actividades de Norma 035') }}</p>
                 @endif
         @else
             <p class="text-gray-500">{{ __('No hay actividades por realizar') }}</p>

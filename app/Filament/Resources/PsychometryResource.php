@@ -148,7 +148,7 @@ class PsychometryResource extends Resource
                                             ->with('psychometry') // Incluye la relación 'portfolio' en la consulta
                                             ->get()
                                             ->mapWithKeys(fn (User $user): array => [
-                                                $user->id => $user->name.' '.$user->firts_name.' '.$user->last_name
+                                                $user->id => $user->name.' '.$user->first_name.' '.$user->last_name
                                             ]);
                                     }
                                     return $user;
@@ -188,7 +188,6 @@ class PsychometryResource extends Resource
                                 ->acceptedFileTypes(['application/pdf'])
                                 ->downloadable('true')
                                 ->openable('true')
-                                ->required()
                                 ->columnSpan('full'),
                             Forms\Components\FileUpload::make('interpretation_url')
                                 ->label('Interpretación del Resultado')
@@ -199,7 +198,6 @@ class PsychometryResource extends Resource
                                 ->directory(fn (Get $get): string => "portafolio/{$get('user_id')}")
                                 ->downloadable('true')
                                 ->openable('true')
-                                ->required()
                                 ->columnSpan('full'),
                         ])->columns(2),
                     Forms\Components\Section::make('Resultados')
@@ -209,6 +207,7 @@ class PsychometryResource extends Resource
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
+                                ->maxValue(5)
                                 ->inputMode('decimal')
                                 ->required(),
                             Forms\Components\TextInput::make('communication')
@@ -216,6 +215,7 @@ class PsychometryResource extends Resource
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
+                                ->maxValue(5)
                                 ->inputMode('decimal')
                                 ->required(),
                             Forms\Components\TextInput::make('conflict_management')
@@ -223,6 +223,7 @@ class PsychometryResource extends Resource
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
+                                ->maxValue(5)
                                 ->inputMode('decimal')
                                 ->required(),
                             Forms\Components\TextInput::make('negotiation')
@@ -230,6 +231,7 @@ class PsychometryResource extends Resource
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
+                                ->maxValue(5)
                                 ->inputMode('decimal')
                                 ->required(),
                             Forms\Components\TextInput::make('organization')
@@ -237,6 +239,7 @@ class PsychometryResource extends Resource
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
+                                ->maxValue(5)
                                 ->inputMode('decimal')
                                 ->required(),
                             Forms\Components\TextInput::make('problem_analysis')
@@ -244,6 +247,7 @@ class PsychometryResource extends Resource
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
+                                ->maxValue(5)
                                 ->inputMode('decimal')
                                 ->required(),
                             Forms\Components\TextInput::make('decision_making')
@@ -251,6 +255,7 @@ class PsychometryResource extends Resource
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
+                                ->maxValue(5)
                                 ->inputMode('decimal')
                                 ->required(),
                             Forms\Components\TextInput::make('strategic_thinking')
@@ -258,6 +263,7 @@ class PsychometryResource extends Resource
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
+                                ->maxValue(5)
                                 ->inputMode('decimal')
                                 ->required(),
                             Forms\Components\TextInput::make('resilience')
@@ -265,6 +271,7 @@ class PsychometryResource extends Resource
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
+                                ->maxValue(5)
                                 ->inputMode('decimal')
                                 ->required(),
                             Forms\Components\TextInput::make('focus_on_results')
@@ -272,6 +279,7 @@ class PsychometryResource extends Resource
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
+                                ->maxValue(5)
                                 ->inputMode('decimal')
                                 ->required(),
 
@@ -280,6 +288,7 @@ class PsychometryResource extends Resource
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
+                                ->maxValue(5)
                                 ->inputMode('decimal')
                                 ->required(),
 
@@ -288,6 +297,7 @@ class PsychometryResource extends Resource
                                 ->numeric()
                                 ->step(1)
                                 ->minValue(0)
+                                ->maxValue(5)
                                 ->inputMode('decimal')
                                 ->required(),
                         ])->columns(4),

@@ -33,6 +33,18 @@ class Panel360 extends Page
     public $today;
     public $responses;
 
+    public static function canView(): bool
+    {
+        return \auth()->user()->hasAnyRole(['Administrador','RH Corp','RH','Supervisor','Colaborador']);
+
+    }
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Esto controla la visibilidad en la navegación.
+        return static::canView();
+
+    }
+
     public function getTitle(): string|Htmlable
     {
         return __('Panel 360');

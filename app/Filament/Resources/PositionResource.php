@@ -18,6 +18,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use PHPUnit\Util\Filter;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class PositionResource extends Resource
@@ -166,7 +167,27 @@ class PositionResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('sede')
+                    ->form([
+                        Forms\Components\Select::make('sede_id')
+                            ->relationship('department.sede', 'name')
+                            ->label('Sede')
+                            ->preload()
+                            ->searchable(),
+
+                        Forms\Components\Select::make('department_id')
+                                    ->label('Departamento')
+                                    ->relationship('department', 'name', function (Builder $query, Get $get) {
+                                        $sedeId = $get('sede_id');
+                                        if ($sedeId) {
+                                            $query->where('sede_id', $sedeId)->pluck('name', 'id');
+                                        }
+                                    })
+                                    ->preload()
+                                    ->reactive()
+                                    ->searchable()
+                    ])
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

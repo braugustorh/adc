@@ -54,6 +54,7 @@ public $qtty;
         $this->response360= Evaluation360Response::where('user_id', $user->id)
             ->get();
 
+
         return [
             'campaigns' => $campaigns,
             'user' => $user,

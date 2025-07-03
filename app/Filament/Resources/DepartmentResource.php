@@ -78,7 +78,12 @@ class DepartmentResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                //agregar filtro para sedes
+                Tables\Filters\SelectFilter::make('sede_id')
+                    ->relationship('sede', 'name')
+                    ->label('Sede')
+                    ->preload()
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()

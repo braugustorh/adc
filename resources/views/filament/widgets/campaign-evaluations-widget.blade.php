@@ -108,23 +108,26 @@
 
             @endforeach
 
-                <div class="flex items-center space-x-2">
+                @if($norma)
+                    <div class="flex items-center space-x-2">
 
-                <x-filament::icon
-                        icon="gmdi-arrow-drop-down-circle-tt"
-                        class="h-5 w-5 text-gray-500 dark:text-gray-400"
-                    />
-                <h5 class="text-lg font-bold">{{ __('Norma 035') }}</h5>
-                </div>
+                        <x-filament::icon
+                            icon="gmdi-arrow-drop-down-circle-tt"
+                            class="h-5 w-5 text-gray-500 dark:text-gray-400"
+                        />
+                        <h5 class="text-lg font-bold">{{ __('Norma 035') }}</h5>
+                    </div>
+                    @foreach($surveys as $survey)
+                        <ul>
+                            <li>
+                                {{$survey->evaluation->name}}
+                            </li>
 
-            @foreach($surveys as $survey)
-                <ul>
-                    <li>
-                        {{$survey->evaluation->name}}
-                    </li>
-
-                </ul>
-            @endforeach
+                        </ul>
+                    @endforeach
+                @else
+                    <p class="text-gray-500">{{ __('No hay actividades de Norma 035') }}</p>
+                @endif
         @else
             <p class="text-gray-500">{{ __('No hay actividades por realizar') }}</p>
         @endif

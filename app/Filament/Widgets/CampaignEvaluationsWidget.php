@@ -26,6 +26,7 @@ public $qtty;
             ->get();
 
         $norma=Nom035Process::findActiveProcess(auth()->user()->sede_id);
+        dd($norma);
         if ($norma) {
 
             $surveys = ActiveSurvey::where('norma_id', $norma->id)
@@ -59,6 +60,7 @@ public $qtty;
             'campaigns' => $campaigns,
             'user' => $user,
             'surveys' => $surveys,
+            'norma' => $norma,
         ];
     }
     protected static string $view = 'filament.widgets.campaign-evaluations-widget';

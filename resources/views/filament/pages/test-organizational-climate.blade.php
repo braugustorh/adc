@@ -47,12 +47,6 @@
                 <p class="mt-6 text-lg leading-8 text-gray-600">
                     Queremos enfatizar que todas las respuestas serán tratadas con el más alto nivel de confidencialidad. La información que proporciones será utilizada exclusivamente para análisis general y mejora del ambiente laboral, sin revelar identidades ni asociar respuestas a personas específicas.
                    <br> Tus comentarios serán manejados de manera estrictamente reservada garantizando así un espacio seguro y libre para expresar tu opinión con total sinceridad.
-                    <br>Tu participación es clave para identificar oportunidades de mejora y seguir construyendo un equipo más fuerte y unido.
-
-                    ¡Agradecemos tu confianza y colaboración! Este cuestionario es una oportunidad para que compartas tu perspectiva sobre el ambiente de trabajo en nuestra empresa. Tu opinión es fundamental para mejorar y fortalecer nuestro entorno laboral, buscando siempre el bienestar y el crecimiento de todos los colaboradores.
-                </p>
-                <p class="mt-6 text-lg leading-8 text-gray-600">
-                    Te invitamos a responder de manera sincera, ya que tus respuestas serán clave para identificar áreas de mejora y continuar construyendo un equipo más unido y eficiente.
                 </p>
                 <p class="mt-6 text-lg leading-8 text-gray-600">
                     ¡Gracias por tu valiosa participación!

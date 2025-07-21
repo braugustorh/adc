@@ -49,6 +49,7 @@ class EvaluationAssignResource extends Resource
                         Forms\Components\Select::make('campaign_id')
                             ->relationship('campaign', 'name', fn (Builder $query) =>
                             $query->where('status', '!=', 'Concluida'))
+                            ->label('Campaña')
                             ->required(),
 
                         Forms\Components\Hidden::make('evaluation_id')

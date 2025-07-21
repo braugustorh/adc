@@ -121,7 +121,7 @@ class ControlPanel extends Page implements HasForms
                         Select::make('indicator_type')->label('Tipo de Indicador')->options([
                             '1' => 'Cuantitativo',
                         ])->required(),
-                        TextInput::make('target_value')->type('number')->label('Objetivo')->required(),
+                        //TextInput::make('target_value')->type('number')->label('Objetivo')->required(),
                         Select::make('indicator_category_id')->label('Categoría')->options([
                             '1' => 'Estratégico',
                             '2' => 'Operativo',
@@ -134,10 +134,7 @@ class ControlPanel extends Page implements HasForms
                             '4' => 'Otro',
                         ])->required(),
                         Select::make('periodicity')->label('Periodicidad')->required()->options([
-                            '1' => 'Mensual',
-                            '2' => 'Bimestral',
                             '3' => 'Trimestral',
-                            '4' => 'Semestral',
                             '5' => 'Anual',
                         ]),
                         DatePicker::make('target_period_start')->label('Fecha de Inicio')->required(),
@@ -204,7 +201,7 @@ class ControlPanel extends Page implements HasForms
                                             ->columnSpan(4),
 
                                         Select::make('expression_unsatisfactory')
-                                            ->label('Rango para Insatisfactorio')
+                                            ->label('Rango para Deficiente')
                                             ->options([
                                                 '1' => 'Mayor que',
                                                 '2' => 'Menor que',

@@ -27,6 +27,7 @@
         "league/commonmark": "^2.7",
         "league/flysystem-aws-s3-v3": "^3.29",
         "owenvoke/blade-fontawesome": "^2.9",
+        "phpoffice/phpword": "^1.4",
         "postare/blade-mdi": "^1.1",
         "pxlrbt/filament-excel": "^2.3",
         "spatie/laravel-permission": "^6.4",

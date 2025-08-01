@@ -14,6 +14,9 @@ use App\Models\User;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Events\Dispatcher;
+use PhpOffice\PhpWord\TemplateProcessor;
+
+
 
 class Nom035 extends Page
 {
@@ -46,6 +49,8 @@ class Nom035 extends Page
     public Int $level = 0; //Nivel de encuesta depende de la cantidad de colaboradores
     public $activeGuideI = false, $activeGuideII = false, $activeGuideIII = false;
     public $eventTypesByCategory;
+    public $muestraGuideIII = 0;
+
 
     public $categories=[
       'Ambiente de trabajo'=> [2,1,3],
@@ -73,14 +78,34 @@ class Nom035 extends Page
         if($this->norma !== null){
             // Si ya existe un proceso activo, redirigir al panel
             $activeSurvey = ActiveSurvey::where('norma_id', $this->norma->id)->get();
+/*
             $guideTypes = EvaluationsTypes::where('name', 'like', 'Nom035: Guía %')
                 ->pluck('id', 'name');
+
             $this->colabResponsesG1= TraumaticEventSurvey::where('norma_id', $this->norma->id)
                 ->distinct('user_id')
                 ->count();
+
             $this->activeGuideI = $activeSurvey->contains('evaluations_type_id', $guideTypes['Nom035: Guía I'] ?? 0);
             $this->activeGuideII = $activeSurvey->contains('evaluations_type_id', $guideTypes['Nom035: Guía II'] ?? 0);
             $this->activeGuideIII = $activeSurvey->contains('evaluations_type_id', $guideTypes['Nom035: Guía III'] ?? 0);
+           */
+            // Debug: verificar qué registros existen
+            $guideTypes = EvaluationsTypes::where('name', 'like', 'Nom035: Guía %')
+                ->pluck('id', 'name');
+
+            // Temporal: ver qué claves tienes disponibles
+            \Log::info('Available guide types:', $guideTypes->toArray());
+
+            // Usar get() en lugar de acceso directo al array
+            $guideIId = EvaluationsTypes::where('name', 'Nom035: Guía I')->first()?->id;
+            $guideIIId = EvaluationsTypes::where('name', 'Nom035: Guía II')->first()?->id;
+            $guideIIIId = EvaluationsTypes::where('name', 'Nom035: Guía III')->first()?->id;
+
+            $this->activeGuideI = $activeSurvey->contains('evaluations_type_id', $guideIId);
+            $this->activeGuideII = $activeSurvey->contains('evaluations_type_id', $guideIIId);
+            $this->activeGuideIII = $activeSurvey->contains('evaluations_type_id', $guideIIIId);
+
             $this->stage = 'panel';
             $this->calificacion=RiskFactorSurvey::where('norma_id', $this->norma->id)->sum('equivalence_response')??null;
             $this->loadIdentifiedEvents();
@@ -462,6 +487,88 @@ class Nom035 extends Page
             'evaluations_type_id' => $evaluationId,
             'some_users' => 0,
         ]);
+    }
+
+    public function activeGuiaIII($value)
+    {
+        if($value) {
+            //obetnemos la cantidad de colaboradores que seran asignados de manera aleatoria en esa sede $this->muestraGuideIII
+            //Selecciona la cantidad de colaboradores a asignar el test $this->muestraGuideIII;
+
+            $collaborators = IdentifiedCollaborator::where('sede_id', $this->norma->sede_id)
+                ->where('norma_id', $this->norma->id)
+                ->where('type_identification','manual')
+                ->inRandomOrder()
+                ->take($this->muestraGuideIII)
+                ->pluck('user_id')
+                ->toArray();
+
+
+        }else{
+            // Verificar si ya existe una encuesta activa para la Guía III
+            $evaluationId=EvaluationsTypes::select('id')
+                ->where('name', 'like', 'Nom035: Guía III')
+                ->first()->id ?? null;
+
+            // Aquí puedes implementar la lógica para enviar el cuestionario
+
+            $send= ActiveSurvey::create([
+                'norma_id' => $this->norma->id,
+                'evaluations_type_id' => $evaluationId,
+                'some_users' => 0,
+            ]);
+
+            //Hacer la alerta de que ha sido habilitada la guia III
+            Notification::make()
+                ->title('Guía III habilitada')
+                ->body('Se habilitó la Guía III para su sede.')
+                ->success()
+                ->send();
+
+            // Si no hay colaboradores seleccionados, no hacemos nada
+            //Obtenemos todos los ids de los usuarios de esa sede para enviar las notificaciones de que se ha habilitado la GUIA III
+            $collaborators=User::where('sede_id', $this->norma->sede_id)
+                ->where('status', true)
+                ->get();
+            //Ahora enviamos las notificaciones a los usuarios
+            foreach ($collaborators as $collaboratorId) {
+                Notification::make()
+                    ->title('Guía III habilitada')
+                    ->info()
+                    ->icon('heroicon-m-information-circle')
+                    ->body('La Guía III ha sido habilitada para su sede. Por favor, complete el cuestionario.')
+                    ->sendToDatabase($collaboratorId);
+            }
+            $this->closeTypeTest();
+            return;
+
+        }
+
+    }
+    public function openTypeTest(){
+        $this->muestraGuideIII= $this->calculateSampleSize(131);
+
+        $this->dispatch('open-modal', id: 'type-test-modal');
+    }
+    public function closeTypeTest()
+    {
+        $this->dispatch('close-modal', id: 'type-test-modal');
+    }
+
+    public function descargarWord()
+    {
+        $templatePath = storage_path('app/plantillas/Política_de_riesgos.docx'); // Mueve el archivo ahí
+        $sede = auth()->user()->sede->name;
+        $name=auth()->user()->name . ' ' . auth()->user()->first_mame . ' ' . auth()->user()->last_name;
+        $template = new TemplateProcessor($templatePath);
+        $template->setValue('sede', $sede);
+        $template->setValue('fecha', now()->format('d/m/Y'));
+        $template->setValue('name', $name);
+
+        $outputPath = storage_path('app/livewire-tmp/Política_de_riesgos_personalizada.docx');
+        $template->saveAs($outputPath);
+
+        return response()->download($outputPath)->deleteFileAfterSend();
     }
 
 

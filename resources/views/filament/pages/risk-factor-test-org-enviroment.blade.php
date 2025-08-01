@@ -2,7 +2,7 @@
     @if($existingResponses)
         <x-filament::section icon="heroicon-s-exclamation-circle" icon-color="warning">
             <x-slot name="heading" class="text-xl font-bold">
-                    Ya has completado la encuesta.
+                Ya has completado la encuesta.
             </x-slot>
             <div class="mb-4">
 
@@ -12,8 +12,8 @@
                 </p>
             </div>
         </x-filament::section>
-    @elseif($page === 'welcome')
-        <x-filament::section>
+    @elseif($page==='welcome')
+        <x-filament::section icon="heroicon-s-exclamation-circle" icon-color="warning">
             <div class="mb-4">
                 <p class="text-xl font-bold text-gray-900 dark:text-white">
                     Bienvenido(a) a la Encuesta de Identificación de los Factores de Riesgo Psicosociales.
@@ -59,7 +59,7 @@
                 </x-filament::button>
             </div>
         </x-filament::section>
-    @elseif($page === 'survey')
+    @elseif($page==='survey')
         <x-filament::section>
             <x-slot name="heading">
                 {{ $sections[$currentSection]['title'] }} ({{ $currentSection }}/{{ $totalSections }})
@@ -73,40 +73,40 @@
                     @if($sections[$currentSection]['type'] === 'likert')
                         {{-- Preguntas tipo Likert --}}
 
-                            <div class="border-b pb-4">
-                                <div class="flex items-center">
-                                    <span class="mb-4">{{$question['order'].'.-'}}</span>
-                                    <h3 class="font-semibold text-base mb-4">
+                        <div class="border-b pb-4">
+                            <div class="flex items-center">
+                                <span class="mb-4">{{$question['order'].'.-'}}</span>
+                                <h3 class="font-semibold text-base mb-4">
 
-                                        {!!$question['question'] !!}
+                                    {!!$question['question'] !!}
 
-                                    </h3>
-                                </div>
-                                <div class="flex items-center space-x-7">
-                                    @foreach($likertOptionsDisplay as $key => $label)
-                                        <label class="flex flex-col items-center mx-3">
-                                            <span class="text-sm mb-2">{{ $label }}</span>
-                                            <br>
-                                            <x-filament::input.radio
-                                                wire:model.live="responses.{{ $question['id'] }}"
-                                                value="{{ in_array($question['order'], $itemScoreMappings['inverse'])
+                                </h3>
+                            </div>
+                            <div class="flex items-center space-x-7">
+                                @foreach($likertOptionsDisplay as $key => $label)
+                                    <label class="flex flex-col items-center mx-3">
+                                        <span class="text-sm mb-2">{{ $label }}</span>
+                                        <br>
+                                        <x-filament::input.radio
+                                            wire:model.live="responses.{{ $question['id'] }}"
+                                            value="{{ in_array($question['order'], $itemScoreMappings['inverse'])
                                                                           ? $likertOptionsValues['inverse'][$key]
                                                                           : $likertOptionsValues['normal'][$key] }}"
-                                            />
-                                        </label>
-                                    @endforeach
-                                </div>
+                                        />
+                                    </label>
+                                @endforeach
+                            </div>
 
-                                @error("responses.{$question['id']}")
-                                    <span class="text-danger-600 text-sm block mt-1">
+                            @error("responses.{$question['id']}")
+                            <span class="text-danger-600 text-sm block mt-1">
                                         {{ $message }}
                                     </span>
-                                @enderror
-                            </div>
+                            @enderror
+                        </div>
 
                     @elseif($sections[$currentSection]['type'] === 'yes_no')
                         {{-- Preguntas tipo SI/NO --}}
-                        @if($currentSection === '7-preview')
+                        @if($currentSection === '13-preview')
                             <div class="border-b pb-4">
                                 <h3 class="font-semibold text-base mb-4">
                                     {!! $question['question'] !!}
@@ -116,7 +116,7 @@
                                     @foreach($yesNoOptions as $value => $label)
                                         <label class="flex items-center mx-3">
                                             <x-filament::input.radio
-                                                wire:model.live="section6Preview"
+                                                wire:model.live="section13Preview"
                                                 value="{{ $value }}"
                                             />
                                             <span>{{ $label }}</span>
@@ -124,13 +124,13 @@
                                     @endforeach
                                 </div>
 
-                                @error('section6Preview')
+                                @error('section13Preview')
                                 <span class="text-danger-600 text-sm block mt-1">
                                     {{ $message }}
                                 </span>
                                 @enderror
                             </div>
-                        @elseif($currentSection === '8-preview')
+                        @elseif($currentSection === '14-preview')
                             <div class="border-b pb-4">
                                 <h3 class="font-semibold text-base mb-4">
                                     {!! $question['question'] !!}
@@ -140,7 +140,7 @@
                                     @foreach($yesNoOptions as $value => $label)
                                         <label class="flex items-center mx-3">
                                             <x-filament::input.radio
-                                                wire:model.live="section7Preview"
+                                                wire:model.live="section14Preview"
                                                 value="{{ $value }}"
                                             />
                                             <span>{{ $label }}</span>
@@ -148,8 +148,8 @@
                                     @endforeach
                                 </div>
 
-                                @error('section7Preview')
-                                    <span class="text-danger-600 text-sm block mt-1">
+                                @error('section14Preview')
+                                <span class="text-danger-600 text-sm block mt-1">
                                         {{ $message }}
                                     </span>
                                 @enderror
@@ -175,42 +175,7 @@
                 </x-filament::button>
             </div>
         </x-filament::section>
-    @elseif($page === 'finish')
-        <x-filament::section>
-            <div class="mb-4">
-                <p class="text-xl font-bold text-gray-900 dark:text-white">
-                    ¡Gracias por completar la encuesta!
-                </p>
-                <br>
-                <p>
-                    {{ $finishMessage }}
-                </p>
-                <br>
-                <p>
-                    Tus respuestas son valiosas para nosotros y nos ayudarán a tomar acciones para mejorar.
-                </p>
-            </div>
-            <div class="flex justify-end">
-                <x-filament::button
-                    color="primary"
-                    class="mt-4"
-                    icon="fas-check"
-                    wire:loading.attr="disabled"
-                    wire:target="finish"
-                    wire:click="finish">
-                    <div class="flex items-center space-x-4">
-                        <x-filament::icon
-                            icon="fas-spinner"
-                            wire:loading.class="animate-spin"
-                            class="h-4 w-4 hidden display-inline"
-                            wire:loading.remove.class="hidden"
-                            wire:target="finish"/>
-                        <span> Finalizar </span>
-                    </div>
-                </x-filament::button>
-            </div>
-        </x-filament::section>
-    @endif
 
+    @endif
 
 </x-filament-panels::page>

@@ -15,8 +15,8 @@ use function PHPUnit\Framework\assertFalse;
 class TestGuiaI extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    protected static ?string $navigationLabel = 'Encuesta Guía I';
-    protected static ?string $title= '';
+    protected static ?string $navigationLabel = 'Guía I';
+    protected static ?string $title= 'Guía I: Identificación de factores de riesgo psicosocial';
     protected static string $view = 'filament.pages.test-guia-i';
     protected static ?string $navigationGroup='NOM-035';
     protected static ?int $navigationSort = 2;
@@ -33,8 +33,9 @@ class TestGuiaI extends Page
     // Variables determination
     public $reqAtt= false;
     public $finalMessage = '';
+    public $existingResponses = false;
     public $flagFinish = false;
-    public $norma_id = 1; // Asumiendo que el ID de la norma es 1
+    public $norma_id;
     public $sede_id;
     /**
      * Verifica si el usuario puede ver la página.
@@ -48,6 +49,7 @@ class TestGuiaI extends Page
         //verifica que exista un proceso en esa sede de la Norma 035 y además de que
         //Primero verificamos que hay un processo de Norma en la sede
         $norma=Nom035Process::findActiveProcess($sede_id);
+
         if($norma !== null) {
             // Si ya existe un proceso activo, redirigir al panel
             $activeSurvey = ActiveSurvey::where('norma_id', $norma->id)->get();
@@ -94,6 +96,7 @@ class TestGuiaI extends Page
     {
         $this->sede_id = auth()->user()->sede_id ?? null;
         $norma=Nom035Process::findActiveProcess($this->sede_id);
+        $this->norma_id= $norma->id ?? null;
         if(!IdentifiedCollaborator::where('user_id',auth()->id())->where('sede_id',$this->sede_id)
             ->where('norma_id',$norma->id??null)
             ->where('type_identification','encuesta')
@@ -101,7 +104,13 @@ class TestGuiaI extends Page
             $this->page = 'welcome';
         }else{
             // Si el usuario ya ha sido identificado, redirigir al panel
-            $this->redirect('/dashboard');
+            //$this->redirect('/dashboard'); //En lugar de redirigir al dashboard, notificamos que ya ha contestado
+            Notification::make()
+                ->warning()
+                ->title('Encuesta ya contestada')
+                ->body('Ya has completado esta encuesta anteriormente.')
+                ->send();
+            $this->existingResponses=true;
             //Se podría mostrar un mensaje de notificación e incluso una pantalla personalizada poniendo
             //que ya ha sido identificado y no puede volver a realizar la encuesta
             //$this->page = 'contestada';
@@ -280,7 +289,7 @@ class TestGuiaI extends Page
         // Verificar si ya existe una respuesta para el usuario y la sede
         $existingSurvey = TraumaticEventSurvey::where('sede_id', $this->sede_id)
             ->where('user_id', auth()->id())
-            ->where('norma_id', 1) // Asumiendo que el ID de la norma es 1
+            ->where('norma_id', 3) // Asumiendo que el ID de la norma es 1
             ->first();
         if ($existingSurvey){
             Notification::make()

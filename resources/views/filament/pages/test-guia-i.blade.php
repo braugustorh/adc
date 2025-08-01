@@ -1,5 +1,27 @@
 <x-filament-panels::page>
-    @if($page==='welcome')
+    @if($existingResponses)
+        <x-filament::section icon="heroicon-s-exclamation-circle" icon-color="warning">
+            <x-slot name="heading">
+                Cuestionario de Identificación de Acontecimientos Traumáticos Severos
+            </x-slot>
+            <div class="mb-4">
+                <p class="text-xl font-bold text-gray-900 dark:text-white">
+                    Ya has completado el Cuestionario de Identificación de Acontecimientos Traumáticos Severos.
+                </p>
+                <br>
+                <p>
+                    Tu bienestar es importante para nosotros. Si tienes alguna pregunta o necesitas apoyo adicional, no dudes en contactar al equipo de Recursos Humanos o llamar a la línea de atención en crisis al
+                    <a href="tel:8002900024" class="text-primary-600 hover:underline">
+                        <strong>800-290-0024</strong>
+                    </a>
+                    o al
+                    <a href="tel:8009112000" class="text-primary-600 hover:underline">
+                        <strong>800-911-2000</strong>
+                    </a>.
+                </p>
+            </div>
+        </x-filament::section>
+    @elseif($page==='welcome')
     <x-filament::section>
         <div class="mb-4">
             <p class="text-xl font-bold text-gray-900 dark:text-white">

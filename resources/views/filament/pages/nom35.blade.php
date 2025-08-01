@@ -434,7 +434,7 @@
                                     color="gray"
                                     disabled
                                     icon="fas-list-check">
-                                    Test
+                                    Activar Test
                                 </x-filament::button>
                             @endif
                                 <x-filament::button
@@ -467,9 +467,10 @@
                         <div class="flex items-center gap-2">
                             <x-filament::button
                                 color="primary"
-                                wire:click="openGeneralTestDialog"
-                                icon="fas-list-check">
-                                Test
+                                wire:click="openTypeTest"
+                                icon="fas-list-check"
+                                :disabled="$activeGuideIII">
+                                Activar Test
                             </x-filament::button>
 
                         </div>
@@ -511,7 +512,7 @@
                     <div class="flex items-center gap-2">
                         <x-filament::icon-button
                             icon="heroicon-s-cloud-arrow-down"
-                            wire:click="openNewUserModal"
+                            wire:click="descargarWord"
                             label="descargar"
                             size="sm"
                         />
@@ -551,8 +552,10 @@
                     <!-- Stats -->
                     <div class="lg:pe-6 xl:pe-12 my-3 mt-3 my-3">
                         <p class="text-3xl font-bold leading-10 text-blue-600">
-                            @if($norma->identifiedCollaborators()->where('type_identification','encuesta')->count()>0)
-                                {{$norma->identifiedCollaborators()->where('type_identification','encuesta')->count()}}
+                            @if($norma->identifiedCollaborators()->where('type_identification','encuesta')->where('norma_id',$norma->id)
+                                ->count() > 0)
+                                {{$norma->identifiedCollaborators()->where('type_identification','encuesta')->where('norma_id',$norma->id)->count()}}
+
                                 <span class="text-xs">Colaboradores</span>
                             @else
                                 <span class="text-xs">Aún nigún colaborador</span>
@@ -790,6 +793,46 @@
                 Guardar
             </x-filament::button>
         </x-slot>
+    </x-filament::modal>
+    <x-filament::modal id="type-test-modal" >
+        <x-filament::modal.heading>
+            Seleccione el método de testeo
+        </x-filament::modal.heading>
+        <!-- aqui el usuario deberá de elegir si realiza el test al total de los colaboradores o solo a la muestra -->
+        <div class="flex flex-col gap-4">
+            <p>Seleccione el método de testeo que desea aplicar:</p>
+            <div class="flex items-center gap-4">
+                <x-filament::button
+                    color="primary"
+                    wire:click="activeGuiaIII(0)"
+                    :disabled="$activeGuideIII"
+                    icon="fas-list-check">
+                    Aplicar al total de colaboradores
+                </x-filament::button>
+                <x-filament::button
+                    color="info"
+                    disabled="{{$activeGuideIII}}"
+                    :disabled="$activeGuideIII"
+                    wire:click="activeGuiaIII(1)"
+                    icon="fas-list-check">
+                    Aplicar a {{$muestraGuideIII}} colaboradores.
+                </x-filament::button>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">
+                <strong>Nota:</strong> Si selecciona <strong>"Aplicar a todos los colaboradores"</strong>, el cuestionario se enviará a todos los colaboradores del centro de trabajo.
+                Si selecciona <strong>"Aplicar a la muestra seleccionada"</strong>, solo se enviará a la muestra calculada de colaboradores de manera aleatoria.
+            </p>
+        </div>
+        <x-slot name="footerActions">
+            <x-filament::button
+                wire:click="closeTypeTest"
+                color="gray"
+            >
+                Cerrar
+            </x-filament::button>
+
+        </x-slot>
+
     </x-filament::modal>
 
 </x-filament-panels::page>

@@ -13,8 +13,8 @@ use Filament\Notifications\Notification;
 class RiskFactorTest extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
-    protected static ?string $navigationLabel = 'Encuesta Likert';
-    protected static ?string $title = 'Encuesta Evaluación';
+    protected static ?string $navigationLabel = 'Guía II';
+    protected static ?string $title = 'Guía II: Factores de Riesgo Psicosocial';
     protected static string $view = 'filament.pages.risk-factor-test';
     protected static ?string $navigationGroup='NOM-035';
     protected static ?int $navigationSort = 3;
@@ -27,8 +27,9 @@ class RiskFactorTest extends Page
     public $responses = [];
     public $finishMessage = '';
     public $flagFinish = false;
-    public $norma_id = 1;
+    public $norma_id; //Se le quito el id 1 para que sea dinámico
     public $evaluations_type_id = null;
+    public $existingResponses = false;
 
     // Escala Likert - Mapeo de valores
    // public $currentSection = 1;
@@ -96,8 +97,6 @@ class RiskFactorTest extends Page
             'no' => 0
         ]
     ];
-
-
     public $likertOptionsDisplay = [
         'Siempre' => 'Siempre',
         'Casi siempre' => 'Casi siempre',
@@ -117,6 +116,7 @@ class RiskFactorTest extends Page
     {
         // Verificar si hay una encuesta activa para el usuario
         $norma = Nom035Process::findActiveProcess(auth()->user()->sede_id);
+        // Si no hay un proceso activo, no se puede ver la página
         if ($norma === null) {
             return false;
         }
@@ -158,18 +158,23 @@ class RiskFactorTest extends Page
                     ->exists();
 
                 if ($existingResponses) {
+
+                    $this->existingResponses = true;
                     // Redirigir al dashboard si ya completó la encuesta
-                    $this->redirect('/dashboard');
+                    //$this->redirect('/dashboard');
                     return;
+                }else{
+                    // Cargar preguntas
+                    $this->loadQuestions();
+
+                    // Iniciar en la primera sección
+                    $this->currentSection = 1;
                 }
 
-                // Cargar preguntas
-                $this->loadQuestions();
 
-                // Iniciar en la primera sección
-                $this->currentSection = 1;
             }
         } else {
+
             // No hay proceso activo, redirigir al dashboard
             $this->redirect('/dashboard');
         }

@@ -75,6 +75,7 @@ class Nom035 extends Page
     public function mount()
     {
         $this->norma=Nom035Process::findActiveProcess(auth()->user()->sede_id);
+        // Cargar colaboradores de la sede actual
         if($this->norma !== null){
             // Si ya existe un proceso activo, redirigir al panel
             $activeSurvey = ActiveSurvey::where('norma_id', $this->norma->id)->get();

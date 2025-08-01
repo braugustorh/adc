@@ -46,22 +46,25 @@ class TestGuiaI extends Page
     public static function canView(): bool
     {
         $sede_id = auth()->user()->sede_id ?? null;
-        //verifica que exista un proceso en esa sede de la Norma 035 y además de que
-        //Primero verificamos que hay un processo de Norma en la sede
-        $norma=Nom035Process::findActiveProcess($sede_id);
+        $norma = Nom035Process::findActiveProcess($sede_id);
 
         if($norma !== null) {
-            // Si ya existe un proceso activo, redirigir al panel
             $activeSurvey = ActiveSurvey::where('norma_id', $norma->id)->get();
-            $guideTypes = EvaluationsTypes::all()->pluck('id', 'name')->toArray();
+
+            // Buscar el ID de forma segura
+            $guideIType = EvaluationsTypes::where('name', 'Nom035: Guía I')->first();
+
+            if (!$guideIType) {
+                return false; // Si no existe el tipo de evaluación, no mostrar la página
+            }
 
             $existProcess = Nom035Process::where('sede_id', $sede_id)
                 ->whereIn('status', ['iniciado', 'en_progreso'])
                 ->get();
 
-            //Posterior a esto vemos si existe una encuesta activa
-            if($activeSurvey->contains('evaluations_type_id', $guideTypes['Nom035: Guía I']) && $activeSurvey->where('evaluations_type_id', $guideTypes['Nom035: Guía I'])->first()->some_users){
-                //Buscamos los usuario identificados manualmente en la sede
+            if($activeSurvey->contains('evaluations_type_id', $guideIType->id) &&
+                $activeSurvey->where('evaluations_type_id', $guideIType->id)->first()->some_users) {
+
                 return $norma->identifiedCollaborators()
                     ->where('sede_id', $sede_id)
                     ->where('user_id', auth()->id())
@@ -69,21 +72,18 @@ class TestGuiaI extends Page
                     ->where('type_identification','manual')
                     ->exists();
 
-                }elseif($activeSurvey->contains('evaluations_type_id', $guideTypes['Nom035: Guía I'])&&
-                !IdentifiedCollaborator::where('user_id',auth()->id())->where('sede_id',$sede_id)
+            } elseif($activeSurvey->contains('evaluations_type_id', $guideIType->id) &&
+                !IdentifiedCollaborator::where('user_id',auth()->id())
+                    ->where('sede_id',$sede_id)
                     ->where('norma_id',$norma->id)
-                    ->exists()){ //Si existe una encuesta activa y no hay un usuario identificado manualmente
-                //Si la encuesta es para todos los usuarios, entonces retornamos true
+                    ->exists()) {
                 return true;
-            }else{
-                //Si no hay una encuesta activa, entonces retornamos false
+            } else {
                 return false;
             }
-
-        }else{
+        } else {
             return false;
         }
-
     }
     public static function shouldRegisterNavigation(): bool
     {

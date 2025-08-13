@@ -1,4 +1,20 @@
+
 <x-filament-panels::page>
+@push('style')
+    <style>
+        .card {
+            /* Add shadows to create the "card" effect */
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+
+        /* On mouse-over, add a deeper shadow */
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+    </style>
+
+    @endpush
     <!-- Hero -->
     @if($stage==='welcome')
         <div class="relative overflow-hidden before:absolute before:top-0 before:start-1/2
@@ -319,6 +335,7 @@
                     <x-slot name="description">
                         Identifica a los colaboradores expuestos a eventos traumáticos severos.
                     </x-slot>
+                    <!--
                     <p>Para identificar a los colaboradores tienes dos formas de hacerlo:</p>
                     <br>
                     <div class="flex items-center gap-2">
@@ -326,78 +343,32 @@
                         1.- Si usted o el centro de trabajo ya <strong>cuenta con información sobre los trabajadores expuestos a acontecimientos traumáticos severos</strong> (acorde con la NOM-019-STPS-2011), genére un listado de forma manual.
                     </p>
 
-                    @if($activeGuideI)
-                        <x-filament::button
-                            color="gray"
-                            icon="fas-user-plus" disabled="true">
-                            Listado
-                        </x-filament::button>
-                    @else
-                            <x-filament::button
-                                color="info"
-                                wire:click="openIdentificationModal"
-                                icon="fas-user-plus">
-                                Listado
-                            </x-filament::button>
-                        @endif
-                    </div>
-                    <br>
-                    <div class="flex items-center gap-2">
-                    <p>
-                        2.- Aplica el Cuestionario (Guía I) para identificar a los colaboradores que han sido expuestos a eventos traumáticos severos.
-                       <i>Si has seleccionado colaboradores de forma manual, solo ellos recibirán este cuestionario, en caso contrario este se enviará a todos los colaboradores del centro de trabajo.</i>
-                    </p>
-                    @if($activeGuideI)
-                        <x-filament::button
-                            color="gray"
-                            icon="fas-list-check"
-                            disabled="true">
-                            Test
-                        </x-filament::button>
-                        @else
-                            <x-filament::button
-                                color="primary"
-                                wire:click="openTestDialog"
-                                icon="fas-list-check">
-                                Test
-                            </x-filament::button>
-                    @endif
 
                     </div>
+                    -->
+                    <br>
+
+                    <p>
+                        Aplica el Cuestionario (Guía I) para identificar a los colaboradores que han sido expuestos a eventos traumáticos severos.
+
+                    </p>
 
                     <br>
                     <span class="text-xs bg-gray-50 dark:bg-gray-800 mt-2 ">
-                         <strong>Nota:</strong> Si no se identifican colaboradores, no se podrá continuar con el proceso de aplicación de encuestas.
+                         <strong>Nota:</strong> El proceso no podrá continuar si la identificación no se ha llevado a cabo.
                     </span>
-
-
-                </x-filament::section>
-
-                <x-filament::section class="mb-4"
-                                     collapsible
-                                     collapsed
-                >
-                    <x-slot name="heading">
-                        Canalización para usuarios identificados.
-                    </x-slot>
-                    <x-slot name="description">
-                        Canaliza a los colaboradores identificados para su atención.
-                    </x-slot>
-                    <p>
-                        Se han identificado <strong>{{$norma->identifiedCollaborators()->where('type_identification','encuesta')->count()}}</strong> colaboradores que han sido expuestos a eventos traumáticos severos.
-                        Descarga la canalización:
-                    </p>
-                    <br>
-                    <div class="flex items-center gap-2">
+                    <x-slot name="footerActions">
                         <x-filament::button
-                            color="primary"
-                            wire:click="downloadIdentificationList"
-                            icon="fas-file-download">
-                            Descargar
+                            icon="fas-list-check"
+                            wire:click="openTestDialog"
+                            :disabled="$activeGuideI">
+                            Activar Cuestionario
                         </x-filament::button>
+                    </x-slot>
 
-                    </div>
                 </x-filament::section>
+
+
                 <x-filament::section class="mb-4"
                                      collapsible
                                      collapsed
@@ -414,10 +385,11 @@
                     <x-slot name="description">
                         Solo los colaboradores identificados responderán la siguiente encuesta.
                     </x-slot>
+
                     <div>
                         <p>
                             Esta encuesta se aplica a todos los colaboradores del centro de trabajo, independientemente de si han sido identificados o no.
-                            La finalidad es evaluar el entorno organizacional y los factores de riesgo psicosocial.
+                            La finalidad es evaluar los factores de riesgo psicosocial.
                         </p>
                         <br>
                         <div class="flex items-center gap-2">
@@ -472,6 +444,13 @@
                                 :disabled="$activeGuideIII">
                                 Activar Test
                             </x-filament::button>
+                            <x-filament::button
+                                color="info"
+                                wire:click="resultsGuideIII"
+                                icon="fas-list-check"
+                                >
+                                Ver Reporte
+                            </x-filament::button>
 
                         </div>
                     </div>
@@ -480,6 +459,7 @@
                 </x-filament::section>
 
             </div>
+
 
             <div class="sm:col-span-1 ">
                 <x-filament::section
@@ -568,6 +548,31 @@
                     <!-- End Stats -->
 
 
+
+                </x-filament::section>
+                <x-filament::section class="mb-4"
+                                     collapsible
+                                     collapsed
+                >
+                    <x-slot name="heading">
+                        Canalización para usuarios identificados.
+                    </x-slot>
+                    <p>
+                        Se han identificado <strong>{{$norma->identifiedCollaborators()->where('type_identification','encuesta')->count()}}</strong> colaboradores que han sido expuestos a eventos traumáticos severos.
+                        Descarga el resumen y la canalización de los colaboradores identificados para su atención.
+                    </p>
+                    <br>
+                    <x-slot name="footerActions">
+                        <div class="flex items-center gap-2">
+                            <x-filament::button
+                                color="info"
+                                wire:click="downloadPdfShift"
+                                icon="fas-file-download">
+                                Descargar
+                            </x-filament::button>
+
+                        </div>
+                    </x-slot>
 
                 </x-filament::section>
 
@@ -744,36 +749,100 @@
     </x-filament::modal>
     <x-filament::modal :close-by-clicking-away="false"
                        id="modal-result"
-                        width="xl">
+                        width="4xl">
         <x-filament::modal.heading>
-            Resultados de la Identificación y Análisis de los Factores de Riesgo Psicosocial
+           Guía de Referencia II: Resultados de la Identificación y Análisis de los Factores de Riesgo Psicosocial
         </x-filament::modal.heading>
 
-        <h4>Puntuaciones del Cuestionario</h4>
-        <div>
+        <h3><strong>Resultados del Cuestionario</strong></h3>
+        <div style="background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;">
             <p>Puntos Obtenidos:<strong>{{$calificacion}}</strong> </p>
             <p>Calificación Final: <strong>{{$resultCuestionario}} </strong> </p>
+            <p>Tests Realizado: <strong>{{$responsesTotalG2}}</strong></p>
         </div>
-        <h4>Puntuaciones de Categoría</h4>
-        <div class="overflow-x-auto mb-4">
-            <table class="max-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <div class="overflow-x-auto">
+            <table class="table-auto border-collapse border border-gray-400 w-full text-center">
                 <thead>
                 <tr>
-                    <th class="px-2 py-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400">Categoría</th>
-                    <th class="px-2 py-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400">Puntos</th>
-                    <th class="px-2 py-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400">Calificación</th>
-                    <th class="px-2 py-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400">Acciones</th>
+                    <th class="bg-gray-200 font-bold border border-gray-400 p-2">Calificación Final</th>
+                    <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
+                    <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
+                    <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
+                    <th style="background-color: #22c55e; color: white;" class="font-bold border border-gray-400 p-2">Bajo</th>
+                    <th style="background-color: #3b82f6; color: white;" class="font-bold border border-gray-400 p-2">Nulo o despreciable</th>
                 </tr>
                 </thead>
+                <tbody>
                 <tr>
-                    <td class="px-2 py-2 text-sm"> 1</td>
-                    <td class="px-2 py-2 text-sm"> 1</td>
-                    <td class="px-2 py-2 text-sm"> 1</td>
-                    <td class="px-2 py-2 text-sm"> 1</td>
+                    <td class="font-bold border border-gray-400 p-2">No. de Trabajadores</td>
+                    <td class="border border-gray-400 p-2">{{$generalResults['very_high']??null}}</td>
+                    <td class="border border-gray-400 p-2">{{$generalResults['high']??null}}</td>
+                    <td class="border border-gray-400 p-2">{{$generalResults['medium']??null}}</td>
+                    <td class="border border-gray-400 p-2">{{$generalResults['low']??null}}</td>
+                    <td class="border border-gray-400 p-2">{{$generalResults['null']??null}}</td>
                 </tr>
+                </tbody>
+            </table>
+        </div>
+        {{-- poner un linea de separación --}}
+        <!-- hr class="my-4 border-gray-300 dark:border-gray-600" -->
+        <h3><strong>Calificación de la Categoría</strong></h3>
+        <div class="overflow-x-auto">
+            <table class="table-auto border-collapse border border-gray-400 w-full text-center">
+                <thead>
                 <tr>
+                    <th class="bg-gray-200 font-bold border border-gray-400 p-2">Calificación Categoria</th>
+                    <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
+                    <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
+                    <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
+                    <th style="background-color: #22c55e; color: white;" class="font-bold border border-gray-400 p-2">Bajo</th>
+                    <th style="background-color: #3b82f6; color: white;" class="font-bold border border-gray-400 p-2">Nulo o despreciable</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($generalResultsCategory as $categoria)
+                    <tr>
+                        <td class="font-bold border border-gray-400 p-2">{{ $categoria['nombre'] }}</td>
+                        <td class="border border-gray-400 p-2">{{ $categoria['very_high'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $categoria['high'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $categoria['medium'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $categoria['low'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $categoria['null'] ?? 0 }}</td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
 
+        <h3><strong>Resultados del Dominio</strong></h3>
+        <div class="overflow-x-auto">
+            <table class="table-auto border-collapse border border-gray-400 w-full text-center">
+                <thead>
+                <tr>
+                    <th class="bg-gray-200 font-bold border border-gray-400 p-2">Calificación de Dominio</th>
+                    <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
+                    <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
+                    <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
+                    <th style="background-color: #22c55e; color: white;" class="font-bold border border-gray-400 p-2">Bajo</th>
+                    <th style="background-color: #3b82f6; color: white;" class="font-bold border border-gray-400 p-2">Nulo o despreciable</th>
                 </tr>
+                </thead>
+                <tbody>
+                @foreach($domainResults as $dominio)
+                    <tr>
+                        <td class="font-bold border border-gray-400 p-2">{{ $dominio['nombre'] }}</td>
+                        <td class="border border-gray-400 p-2">{{ $dominio['very_high'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $dominio['high'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $dominio['medium'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $dominio['low'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $dominio['null'] ?? 0 }}</td>
+                    </tr>
+                @endforeach
+                </tbody>
             </table>
         </div>
 
@@ -788,9 +857,21 @@
 
             <x-filament::button
                 color="primary"
-                :disabled="count($identifiedColaborators) === 0"
+                wire:click="reportGeneralGIIDownload"
             >
-                Guardar
+                Descargar Reporte General
+            </x-filament::button>
+            <x-filament::button
+                color="primary"
+               wire:click="reportIndividualGIIDownload"
+            >
+                Descargar Reporte Individual
+            </x-filament::button>
+            <x-filament::button
+                color="primary"
+                wire:click="reportCoverGII"
+            >
+                Descargar Carátula
             </x-filament::button>
         </x-slot>
     </x-filament::modal>
@@ -832,6 +913,127 @@
             </x-filament::button>
 
         </x-slot>
+
+    </x-filament::modal>
+
+    <x-filament::modal :close-by-clicking-away="false"
+                       id="test-results-guia-iii"
+    width="4xl">
+        <x-filament::modal.heading>
+            Resultados de la Guía III
+        </x-filament::modal.heading>
+
+        <div class="flex flex-col gap-4">
+            <p>Resultados de la Guía III: Encuesta general de riesgos psicosociales y entorno organizacional.</p>
+            <br>
+            <p>Calificación: {{$calificacionG3}}</p>
+            <p>Determinación: {{$resultCuestionarioG3}}</p>
+            <p>Colaboradores que han respondido la encuesta: <strong>{{$colabResponsesG3}}</strong></p>
+            <p>Colaboradores que no han respondido la encuesta: <strong>{{$colabs->count() - $colabResponsesG3}}</strong></p>
+        </div>
+        <div class="overflow-x-auto">
+            <x-slot name="heading">
+                Resultados Generales
+            </x-slot>
+            <section class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 mb-4">
+                <header class="fi-section-header flex flex-col gap-3 px-6 py-4">
+                    Resultados Generales
+                </header>
+                <div class="fi-section-content-ctn border-t border-gray-200 dark:border-white/10">
+                   <div class="fi-section-content p-6">
+
+
+                    <table class="table-auto border-collapse border border-gray-400 w-full text-center">
+                        <thead>
+                        <tr>
+                            <th class="bg-gray-200 font-bold border border-gray-400 p-2">Calificación Final</th>
+                            <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
+                            <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
+                            <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
+                            <th style="background-color: #22c55e; color: white;" class="font-bold border border-gray-400 p-2">Bajo</th>
+                            <th style="background-color: #3b82f6; color: white;" class="font-bold border border-gray-400 p-2">Nulo o despreciable</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="font-bold border border-gray-400 p-2">No. de Trabajadores</td>
+                            <td class="border border-gray-400 p-2">{{$generalResultsGuideIII['very_high']??null}}</td>
+                            <td class="border border-gray-400 p-2">{{$generalResultsGuideIII['high']??null}}</td>
+                            <td class="border border-gray-400 p-2">{{$generalResultsGuideIII['medium']??null}}</td>
+                            <td class="border border-gray-400 p-2">{{$generalResultsGuideIII['low']??null}}</td>
+                            <td class="border border-gray-400 p-2">{{$generalResultsGuideIII['null']??null}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                   </div>
+                </div>
+            </section>
+        </div>
+
+        <h3><strong>Calificación de la Categoría</strong></h3>
+        <div class="overflow-x-auto">
+            <table class="table-auto border-collapse border border-gray-400 w-full text-center">
+                <thead>
+                <tr>
+                    <th class="bg-gray-200 font-bold border border-gray-400 p-2">Calificación Categoria</th>
+                    <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
+                    <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
+                    <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
+                    <th style="background-color: #22c55e; color: white;" class="font-bold border border-gray-400 p-2">Bajo</th>
+                    <th style="background-color: #3b82f6; color: white;" class="font-bold border border-gray-400 p-2">Nulo o despreciable</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($generalResultsGuideIIICategory as $categoria)
+                    <tr>
+                        <td class="font-bold border border-gray-400 p-2">{{ $categoria['nombre'] }}</td>
+                        <td class="border border-gray-400 p-2">{{ $categoria['very_high'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $categoria['high'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $categoria['medium'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $categoria['low'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $categoria['null'] ?? 0 }}</td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+        <h3><strong>Resultados del Dominio</strong></h3>
+        <div class="overflow-x-auto">
+            <table class="table-auto border-collapse border border-gray-400 w-full text-center">
+                <thead>
+                <tr>
+                    <th class="bg-gray-200 font-bold border border-gray-400 p-2">Calificación Categoria</th>
+                    <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
+                    <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
+                    <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
+                    <th style="background-color: #22c55e; color: white;" class="font-bold border border-gray-400 p-2">Bajo</th>
+                    <th style="background-color: #3b82f6; color: white;" class="font-bold border border-gray-400 p-2">Nulo o despreciable</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($generalDomainResultsGuideIII as $dominio)
+                    <tr>
+                        <td class="font-bold border border-gray-400 p-2">{{ $dominio['nombre'] }}</td>
+                        <td class="border border-gray-400 p-2">{{ $dominio['very_high'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $dominio['high'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $dominio['medium'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $dominio['low'] ?? 0 }}</td>
+                        <td class="border border-gray-400 p-2">{{ $dominio['null'] ?? 0 }}</td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <x-slot name="footerActions">
+            <x-filament::button
+                wire:click="closeTestResultsGuideIII"
+                color="gray"
+            >
+                Cerrar
+            </x-filament::button>
+        </x-slot>
+
 
     </x-filament::modal>
 

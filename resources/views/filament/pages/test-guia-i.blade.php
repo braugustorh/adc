@@ -98,12 +98,12 @@
 
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s1p1" value="si"/>
+                            <x-filament::input.radio wire:model.live="s1p1" value="si" id="s1p1_si"/>
                             <span>Sí</span>
                         </label>
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s1p1" value="no"/>
+                            <x-filament::input.radio wire:model.live="s1p1" value="no" id="s1p1_no"/>
                             <span>
                                 No
                             </span>
@@ -149,6 +149,7 @@
                             <x-filament::input.radio
                                 wire:model.live="s2p1"
                                 value="si"
+                                id="s2p1_si"
                                 />
                             <span>
                                 Sí
@@ -160,6 +161,7 @@
                             <x-filament::input.radio
                                 wire:model.live="s2p1"
                                 value="no"
+                                id="s2p1_no"
                             />
                             <span>
                                 No
@@ -178,7 +180,7 @@
                     <p class="mb-3 font-semibold">¿Ha tenido sueños de carácter recurrente sobre el acontecimiento, que le producen malestar?</p>
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s2p2" value="si"/>
+                            <x-filament::input.radio wire:model.live="s2p2" value="si" id="s2p2_si"/>
                             <span>
                                 Sí
                                 </span>
@@ -186,7 +188,7 @@
 
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s2p2" value="no"/>
+                            <x-filament::input.radio wire:model.live="s2p2" id="s2p2_no" value="no"/>
                             <span>
                                 No
                             </span>
@@ -227,7 +229,7 @@
                     </p>
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p1" value="si"/>
+                            <x-filament::input.radio wire:model.live="s3p1" value="si" id="s3p1_si" />
                             <span>
                                 Sí
                             </span>
@@ -235,7 +237,7 @@
 
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p1" value="no"/>
+                            <x-filament::input.radio wire:model.live="s3p1" value="no" id="s3p1_no" />
                             <span>
                                 No
                             </span>
@@ -256,7 +258,7 @@
                     </p>
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p2" value="si"/>
+                            <x-filament::input.radio wire:model.live="s3p2" value="si" id="s3p2_si" />
                             <span>
                                 Sí
                             </span>
@@ -264,7 +266,7 @@
 
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p2" value="no"/>
+                            <x-filament::input.radio wire:model.live="s3p2" value="no" id="s3p2_no" />
                             <span>
                                 No
                             </span>
@@ -282,7 +284,7 @@
                     </p>
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p3" value="si"/>
+                            <x-filament::input.radio wire:model.live="s3p3" value="si" id="s3p3_si" />
                             <span>
                                 Sí
                                 </span>
@@ -290,7 +292,7 @@
 
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p3" value="no"/>
+                            <x-filament::input.radio wire:model.live="s3p3" value="no" id="s3p3_no" />
                             <span>
                                 No
                             </span>
@@ -316,7 +318,7 @@
 
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p4" value="no"/>
+                            <x-filament::input.radio wire:model.live="s3p4" value="no" id="s3p4_no" />
                             <span>
                                 No
                             </span>
@@ -334,7 +336,7 @@
                     </p>
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p5" value="si"/>
+                            <x-filament::input.radio wire:model.live="s3p5" value="si" id="s3p5_si" />
                             <span>
                                 Sí
                                 </span>
@@ -342,7 +344,7 @@
 
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p5" value="no"/>
+                            <x-filament::input.radio wire:model.live="s3p5" value="no" id="s3p5_no" />
                             <span>
                                 No
                             </span>
@@ -360,7 +362,7 @@
                     </p>
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p6" value="si"/>
+                            <x-filament::input.radio wire:model.live="s3p6" value="si" id="s3p6_si" />
                             <span>
                                 Sí
                                 </span>
@@ -368,7 +370,7 @@
 
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p6" value="no"/>
+                            <x-filament::input.radio wire:model.live="s3p6" value="no" id="s3p6_no" />
                             <span>
                                 No
                             </span>
@@ -387,7 +389,7 @@
                     </p>
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p7" value="si"/>
+                            <x-filament::input.radio wire:model.live="s3p7" value="si" id="s3p7_si" />
                             <span>
                                 Sí
                                 </span>
@@ -395,7 +397,7 @@
 
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s3p7" value="no"/>
+                            <x-filament::input.radio wire:model.live="s3p7" value="no" id="s3p7_no" />
                             <span>
                                 No
                             </span>
@@ -439,7 +441,7 @@
                     </p>
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s4p1" value="si"/>
+                            <x-filament::input.radio wire:model.live="s4p1" value="si" id="s4p1_si" />
                             <span>
                                 Sí
                             </span>
@@ -447,7 +449,7 @@
 
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s4p1" value="no"/>
+                            <x-filament::input.radio wire:model.live="s4p1" value="no" id="s4p1_no" />
                             <span>
                                 No
                             </span>
@@ -467,14 +469,14 @@
                     </p>
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s4p2" value="si"/>
+                            <x-filament::input.radio wire:model.live="s4p2" value="si" id="s4p2_si" />
                             <span>
                                 Sí
                                 </span>
                         </label>
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s4p2" value="no"/>
+                            <x-filament::input.radio wire:model.live="s4p2" value="no" id="s4p2_no" />
                             <span>
                                 No
                             </span>
@@ -492,7 +494,7 @@
                     </p>
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s4p3" value="si"/>
+                            <x-filament::input.radio wire:model.live="s4p3" value="si" id="s4p3_si"/>
                             <span>
                                 Sí
                                 </span>
@@ -500,7 +502,7 @@
 
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s4p3" value="no"/>
+                            <x-filament::input.radio wire:model.live="s4p3" value="no" id="s4p3_no"/>
                             <span>
                                 No
                             </span>
@@ -518,7 +520,7 @@
                     </p>
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s4p4" value="si"/>
+                            <x-filament::input.radio wire:model.live="s4p4" value="si" id="s4p4_si" />
                             <span>
                                 Sí
                                 </span>
@@ -526,7 +528,7 @@
 
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s4p4" value="no"/>
+                            <x-filament::input.radio wire:model.live="s4p4" value="no" id="s4p4_no"/>
                             <span>
                                 No
                             </span>
@@ -544,7 +546,7 @@
                     </p>
                     <div class="flex items-center space-x-4">
                         <label>
-                            <x-filament::input.radio wire:model.live="s4p5" value="si"/>
+                            <x-filament::input.radio wire:model.live="s4p5" value="si" id="s4p5_si"/>
                             <span>
                                 Sí
                             </span>
@@ -552,7 +554,7 @@
 
                         <span>&nbsp;&nbsp;&nbsp;</span>
                         <label>
-                            <x-filament::input.radio wire:model.live="s4p5" value="no"/>
+                            <x-filament::input.radio wire:model.live="s4p5" value="no" id="s4p5_no"/>
                             <span>
                                 No
                             </span>

@@ -92,6 +92,7 @@
                                                 value="{{ in_array($question['order'], $itemScoreMappings['inverse'])
                                                                           ? $likertOptionsValues['inverse'][$key]
                                                                           : $likertOptionsValues['normal'][$key] }}"
+                                                id="{{'id' . $question['id'] . str_replace(' ', '', $key)}}"
                                             />
                                         </label>
                                     @endforeach

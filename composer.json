@@ -30,6 +30,7 @@
         "phpoffice/phpword": "^1.4",
         "postare/blade-mdi": "^1.1",
         "pxlrbt/filament-excel": "^2.3",
+        "spatie/browsershot": "^5.0",
         "spatie/laravel-permission": "^6.4",
         "swisnl/filament-backgrounds": "^1.1",
         "zalanihir/country-state-city": "^1.1"

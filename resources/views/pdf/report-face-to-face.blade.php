@@ -201,17 +201,24 @@ body {
 
         <h2>Desarrollo</h2>
         <table>
-            @foreach($evaluation->performanceFeedback as $performance)
+            @if($evaluation->performanceFeedback && count($evaluation->performanceFeedback) > 0)
+                @foreach($evaluation->performanceFeedback as $performance)
+                    <tr>
+                        <th>Fortalezas auto detectadas:</th>
+                        <td>{{$performance->strengths}}</td>
+                    </tr>
+                    <tr>
+                        <th>Áreas de oportunidad auto detectadas:</th>
+                        <td>{{$performance->opportunities}}</td>
+                    </tr>
+                @endforeach
+            @else
                 <tr>
-                    <th>Fortalezas auto detectadas:</th>
-                    <td>{{$performance->strengths}}</td>
+                    <td colspan="2">No hay información de retroalimentación disponible</td>
                 </tr>
-                <tr>
-                    <th>Áreas de oportunidad auto detectadas:</th>
-                    <td>{{$performance->opportunities}}</td>
-                </tr>
-            @endforeach
+            @endif
         </table>
+
 
         <h2>Aspectos a Trabajar</h2>
         <table>

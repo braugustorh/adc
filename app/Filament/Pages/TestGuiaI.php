@@ -97,10 +97,10 @@ class TestGuiaI extends Page
         $this->sede_id = auth()->user()->sede_id ?? null;
         $norma=Nom035Process::findActiveProcess($this->sede_id);
         $this->norma_id= $norma->id ?? null;
-        if(!IdentifiedCollaborator::where('user_id',auth()->id())->where('sede_id',$this->sede_id)
-            ->where('norma_id',$norma->id??null)
-            ->where('type_identification','encuesta')
-            ->exists()){
+        if(!$existingSurvey = TraumaticEventSurvey::where('sede_id', $this->sede_id)
+            ->where('user_id', auth()->id())
+            ->where('norma_id', $this->norma_id)
+            ->first()){
             $this->page = 'welcome';
         }else{
             // Si el usuario ya ha sido identificado, redirigir al panel
@@ -289,8 +289,9 @@ class TestGuiaI extends Page
         // Verificar si ya existe una respuesta para el usuario y la sede
         $existingSurvey = TraumaticEventSurvey::where('sede_id', $this->sede_id)
             ->where('user_id', auth()->id())
-            ->where('norma_id', 3) // Asumiendo que el ID de la norma es 1
+            ->where('norma_id', $this->norma_id) // Asumiendo que el ID de la norma es 1
             ->first();
+        // Si ya existe una respuesta, no permitir guardar nuevamente
         if ($existingSurvey){
             Notification::make()
                 ->warning()

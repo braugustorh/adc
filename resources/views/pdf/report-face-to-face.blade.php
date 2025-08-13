@@ -73,20 +73,21 @@ body {
                 <th>% Avance</th>
             </tr>
             @foreach($evaluation->cultureTopics as $culture)
-            <tr>
-                <td>{{$culture->theme??null}}</td>
-                <td>
-                    <strong>Comentarios:</strong>
-                    {{$culture->comments??null}}<br>
-                    <strong>Compromisos:</strong>
-                    {{$culture->commitments??null}}
-                </td>
-                <td>{{$culture->scheduled_date??null}}</td>
-                <td>{{$culture->progress??null}}</td>
-            </tr>
+                <tr>
+                    <td>{{$culture->theme??null}}</td>
+                    <td>
+                        <strong>Comentarios:</strong>
+                        {{$culture->comments??null}}<br>
+                        <strong>Compromisos:</strong>
+                        {{$culture->commitments??null}}
+                    </td>
+                    <td>{{$culture->scheduled_date??null}}</td>
+                    <td>{{$culture->progress??null}}</td>
+                </tr>
 
         </table>
         @endforeach
+
         <h2>Desempeño</h2>
         <table>
             <tr>

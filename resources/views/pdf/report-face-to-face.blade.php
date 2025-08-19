@@ -85,8 +85,9 @@ body {
                     <td>{{$culture->progress??null}}</td>
                 </tr>
 
+
+          @endforeach
         </table>
-        @endforeach
 
         <h2>Desempeño</h2>
         <table>

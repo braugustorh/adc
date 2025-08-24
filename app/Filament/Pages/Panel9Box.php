@@ -139,7 +139,7 @@ class Panel9Box extends Page implements HasTable
                     $score = (float) $state;
                     return match (true) {
                         $score >= 4.0 && $score <= 5.0 => 'success',
-                        $score >= 2.0 && $score <= 3.99 => 'warning',
+                        $score >= 2.0 && $score <= 3.9999 => 'warning',
                         $score >= 0.0 && $score <= 1.99 => 'danger',
                         default => 'gray',
                     };
@@ -245,19 +245,30 @@ class Panel9Box extends Page implements HasTable
         $potentialScore = $potential;
 
         // Mapear los puntajes a niveles (1: Bajo, 2: Medio, 3: Alto)
-        $performanceLevel = $this->mapScoreToLevel($performanceScore);
-        $potentialLevel = $this->mapScoreToLevel($potentialScore);
+        $performanceLevel = $this->mapScoreToLevel($performanceScore); //2
+        $potentialLevel = $this->mapScoreToLevel($potentialScore); //3
 
-        // Calcular el cuadrante (1 a 9)
+
         $quadrant = ($performanceLevel - 1) * 3 + $potentialLevel;
+        static $remap = [
+            1 => 1,
+            2 => 2,
+            3 => 4,
+            4 => 3,
+            5 => 5,
+            6 => 7,
+            7 => 6,
+            8 => 8,
+            9 => 9,
+        ];
 
-        return $quadrant;
+        return $remap[$quadrant];
     }
     private function mapScoreToLevel($score)
     {
         if ($score >= 4.0 && $score <= 5.0) {
             return 3; // Alto
-        } elseif ($score >= 3.0 && $score <= 3.9) {
+        } elseif ($score >= 3.0 && $score < 4){
             return 2; // Medio
         } else {
             return 1; // Bajo

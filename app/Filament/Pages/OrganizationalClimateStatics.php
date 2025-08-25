@@ -352,16 +352,39 @@ class OrganizationalClimateStatics extends Page implements HasTable
             $data = [];
 
             foreach ($competencias as $competencia) {
-                $avg = ClimateOrganizationalResponses::query()
-                    ->join('users', 'users.id', '=', 'climate_organizational_responses.user_id')
-                    ->when($campaignId, fn ($q) => $q->where('climate_organizational_responses.campaign_id', $campaignId))
-                    ->where('climate_organizational_responses.competence_id', $competencia->id)
-                    ->when($this->sede_id, fn ($q) => $q->where('users.sede_id', $this->sede_id))
-                    // Ajusta 'date_of_birth' si tu columna tiene otro nombre
-                    ->when($range['min'], fn ($q) => $q->whereRaw('TIMESTAMPDIFF(YEAR, users.birthdate, CURDATE()) >= ?', [$range['min']]))
-                    ->when($range['max'], fn ($q) => $q->whereRaw('TIMESTAMPDIFF(YEAR, users.birthdate, CURDATE()) <= ?', [$range['max']]))
-                    // Ajusta 'score' si tu columna de puntaje se llama distinto (p. ej. value, points)
-                    ->avg('climate_organizational_responses.response');
+                //Si usamos MYSQL ejecutamos la sentencia si no, vamos al else
+
+                if (config('database.default') === 'mysql') {
+                    $avg = ClimateOrganizationalResponses::query()
+                        ->join('users', 'users.id', '=', 'climate_organizational_responses.user_id')
+                        ->when($campaignId, fn ($q) => $q->where('climate_organizational_responses.campaign_id', $campaignId))
+                        ->where('climate_organizational_responses.competence_id', $competencia->id)
+                        ->when($this->sede_id, fn ($q) => $q->where('users.sede_id', $this->sede_id))
+                        // Ajusta 'date_of_birth' si tu columna tiene otro nombre
+                        ->when($range['min'], fn ($q) => $q->whereRaw('TIMESTAMPDIFF(YEAR, users.birthdate, CURDATE()) >= ?', [$range['min']]))
+                        ->when($range['max'], fn ($q) => $q->whereRaw('TIMESTAMPDIFF(YEAR, users.birthdate, CURDATE()) <= ?', [$range['max']]))
+                        // Ajusta 'score' si tu columna de puntaje se llama distinto (p. ej. value, points)
+                        ->avg('climate_organizational_responses.response');
+                } else {
+                    // Para otros motores de base de datos como PostgreSQL
+                    $avg = ClimateOrganizationalResponses::query()
+                        ->join('users', 'users.id', '=', 'climate_organizational_responses.user_id')
+                        ->when($campaignId, fn ($q) =>
+                        $q->where('climate_organizational_responses.campaign_id', $campaignId)
+                        )
+                        ->where('climate_organizational_responses.competence_id', $competencia->id)
+                        ->when($this->sede_id, fn ($q) =>
+                        $q->where('users.sede_id', $this->sede_id)
+                        )
+                        // Rango de edad en PostgreSQL
+                        ->when($range['min'], fn ($q) =>
+                        $q->whereRaw('EXTRACT(YEAR FROM AGE(NOW(), users.birthdate)) >= ?', [$range['min']])
+                        )
+                        ->when($range['max'], fn ($q) =>
+                        $q->whereRaw('EXTRACT(YEAR FROM AGE(NOW(), users.birthdate)) <= ?', [$range['max']])
+                        )
+                        ->avg('climate_organizational_responses.response');
+               }
 
                 $data[] = round((float)($avg ?? 0), 2);
             }

@@ -160,6 +160,16 @@
         <div>
             @livewire(\App\Livewire\ScoreBySexChart::class,['chartData' => $sexChartData])
         </div>
+
+        <div class="fi-section-content-ctn">
+            <div class="fi-section-content p-2">
+
+                @livewire(\App\Livewire\CompetencesClimaAgesChart::class,['chartData' => $chartDataAges])
+
+            </div>
+        </div>
+
+
         <div>
             @livewire(\App\Livewire\CompetencesClimaChart::class,['chartData' => $chartData])
         </div>

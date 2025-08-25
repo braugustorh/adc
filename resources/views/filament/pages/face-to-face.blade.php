@@ -397,7 +397,7 @@
                     <strong>Desarrollo</strong>
                 </x-slot>
                 <x-slot name="description">
-                    Es una revisión sobre las competencias y conocimientos que el colaborador necesita para el cumplimiento de sus FC´s.
+                    Es una revisión sobre las competencias y conocimientos que el colaborador necesita para el cumplimiento de sus objetivos.
                     Es importante que se establezca el compromiso recíproco en los planes de desarrollo individuales que se puedan generar de esta conversación y realizar los ajustes pertinentes y necesarios.
                 </x-slot>
                 <div class="p-4 sm:p-10 text-center overflow-y-auto">

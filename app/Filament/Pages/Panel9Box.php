@@ -246,7 +246,7 @@ class Panel9Box extends Page implements HasTable
 
         // Mapear los puntajes a niveles (1: Bajo, 2: Medio, 3: Alto)
         $performanceLevel = $this->mapScoreToLevel($performanceScore); //2
-        $potentialLevel = $this->mapScoreToLevel($potentialScore); //3
+        $potentialLevel = $this->mapScoreToLevel($potentialScore); //1
 
 
         $quadrant = ($performanceLevel - 1) * 3 + $potentialLevel;

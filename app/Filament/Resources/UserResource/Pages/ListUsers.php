@@ -22,16 +22,20 @@ class ListUsers extends ListRecords
                     ->label('Agregar Usuario')
                     ->icon('heroicon-o-plus'),
             ];
-        }else{
+        }elseif(auth()->user()->hasRole('RH')) {
             // Obtener la sede del usuario autenticado esta es para el jefe de RRH
             $sede = Sede::find(auth()->user()->sede_id);
             //Si el jefe de Área está autenticado se deberá de cargar únicamente lo de su equipo
 
             // Verificar si se ha alcanzado el límite de open_positions
             $disabled = false;
-            if ($sede && $sede->count_positions($sede->id) >= $sede->open_positions) {
+            if ($sede && ($sede->count_positions($sede->id) >= $sede->open_positions)) {
                 $disabled = true;
             }
+        }else {
+
+            $disabled = true;
+        }
 
             return [
                 Actions\CreateAction::make()
@@ -39,7 +43,7 @@ class ListUsers extends ListRecords
                     ->disabled($disabled) // Deshabilitar el botón si se cumple la condición
                     ->tooltip($disabled ? 'Se ha alcanzado el límite de posiciones abiertas' : null),
             ];
-        }
+
     }
 
 

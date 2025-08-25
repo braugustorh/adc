@@ -33,7 +33,7 @@ class ComunicadosManager extends Page
     {
         //Este Panel solo lo debe de ver los Jefes de Área y el Administrador
         //Se debe de agregar la comprobación de que estpo se cumpla para que solo sea visible para los Jefes de Área
-        return \auth()->user()->hasAnyRole('RH','Administrador','Super Administrador');
+        return \auth()->user()->hasAnyRole('Administrador','Super Administrador','RH Corp');
 
     }
     public static function shouldRegisterNavigation(): bool

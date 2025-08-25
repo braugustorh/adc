@@ -37,7 +37,7 @@ class PortfolioResource extends Resource
     public static function canViewAny(): bool
     {
 
-        return (\auth()->user()->hasAnyRole('RH','RH Corp','Administrador','Supervisor','Colaborador','Visor'));
+        return (\auth()->user()->hasAnyRole('RH','RH Corp','Administrador','Supervisor','Colaborador','Visor','Gerente','Operativo'));
 
     }
     public static function canCreate(): bool

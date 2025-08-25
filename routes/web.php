@@ -37,6 +37,7 @@ Route::group(['prefix' => '/'], function () {
     Route::view('/modules-tablero-de-control', 'modules-tablero-de-control')->name('modules-tablero-de-control');
     Route::view('/modules-psicometria', 'modules-psicometria')->name('modules-psicometria');
     Route::view('/modules-portafolio', 'modules-portafolio')->name('modules-portafolio');
+    Route::view('/aviso-privacidad', 'aviso-privacidad')->name('aviso-privacidad');
 });
 Route::group(['middleware' => 'auth'], function () {
 

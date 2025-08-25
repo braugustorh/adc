@@ -73,7 +73,7 @@ class ControlPanel extends Page implements HasForms
         //Este Panel solo lo debe de ver los Jefes de Área y el Administrador
         //Se debe de agregar la comprobación de que estpo se cumpla para que solo sea visible para los Jefes de Área
 
-        return \auth()->user()?->hasAnyRole('RH','Administrador','Super Administrador','RH Corp','Supervisor');
+        return \auth()->user()?->hasAnyRole('RH','Administrador','Super Administrador','RH Corp','Supervisor','Gerente');
 
     }
     public static function shouldRegisterNavigation(): bool
@@ -134,6 +134,7 @@ class ControlPanel extends Page implements HasForms
                             '4' => 'Otro',
                         ])->required(),
                         Select::make('periodicity')->label('Periodicidad')->required()->options([
+                            '1' => 'Mensual',
                             '3' => 'Trimestral',
                             '5' => 'Anual',
                         ]),
@@ -306,7 +307,7 @@ class ControlPanel extends Page implements HasForms
                     'objective_description' => $indicador['objective_description'],
                     'evaluation_formula' => $indicador['evaluation_formula'],
                     'indicator_type' => $indicador['indicator_type'],
-                    'target_value' => $indicador['target_value'],
+                    'target_value' => $indicador['indicatorRanges']['expression_excellent']??0,
                     'type_of_target' => $indicador['indicator_category_id'] ?? null,
                     'indicator_unit_id' => $indicador['indicator_unit_id'],
                     'periodicity' => $indicador['periodicity'],

@@ -2,18 +2,12 @@
 <html lang="en">
 	<head>
 
-		<!-- Basic -->
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-
-		<title>ADC Plataforma | SEDyCO</title>
+        <!-- Basic -->
+        <title>ADC Plataforma | SEDYCO</title>
 
         <meta name="keywords" content="ADC - SEDYCO" />
         <meta name="description" content="Plataforma para la Evaluación al Desempeño y el Clima Organizacional">
         <meta name="author" content="NetInnfode">
-
-        <title>ADC Plataforma | SEDYCO</title>
-
 
         <!-- Favicon -->
         <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
@@ -62,8 +56,7 @@
                                         <nav class="header-nav-top w-100 w-md-50pct w-xl-100pct">
                                             <ul class="nav nav-pills d-inline-flex custom-header-top-nav-background pe-5">
                                                 <li class="nav-item py-2 d-inline-flex z-index-1">
-
-                                                    <span class="font-weight-normal align-items-center px-0 d-none d-xl-flex ms-3">
+													<span class="font-weight-normal align-items-center px-0 d-none d-xl-flex ms-3">
 														<span>
 															<img width="25" src="img/demos/adc/icons/email.svg" alt="Email Icon" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-light'}" />
 														</span>
@@ -100,7 +93,7 @@
                             <div class="header-column">
                                 <div class="header-row">
                                     <div class="header-logo">
-                                        <a href="{{route('welcome')}}">
+                                        <a href="#">
                                             <img alt="Porto" width="192" height="82" src="img/logo_header_home.png">
                                         </a>
                                     </div>
@@ -118,7 +111,7 @@
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <a class="nav-link active" href="{{ route('about') }}">
+                                                        <a class="nav-link" href="{{ route('about') }}">
                                                             Acerca de Nosotros
                                                         </a>
                                                     </li>
@@ -217,63 +210,17 @@
 
 			<div role="main" class="main">
 
-				<section class="section page-header page-header-modern page-header-lg border-0 my-0 lazyload" data-bg-src="img/demos/business-consulting-3/backgrounds/background-5.jpg" style="background-size: cover; background-position: center;">
-					<div class="container my-2">
-						<div class="row">
+				<section class="section mt-4 mb-5 section-with-shape-divider page-header page-header-modern page-header-lg border-0 my-0 lazyload" data-bg-src="img/demos/business-consulting-3/backgrounds/background-5.jpg" style="background-size: cover; background-position: center;">
+					<div class="container pb-5 my-3">
+						<div class="row mb-4">
 							<div class="col-md-12 align-self-center p-static order-2 text-center">
-								<h1 class="font-weight-bold text-color-dark text-10">Acerca de Nosotros</h1>
+								<h1 class="font-weight-bold text-color-dark text-10">Aviso de Privacidad</h1>
 							</div>
 							<div class="col-md-12 align-self-center order-1">
 								<ul class="breadcrumb d-block text-center">
 									<li><a href="{{route('welcome')}}">Inicio</a></li>
-									<li class="active">Acerca de Nosotros</li>
+									<li class="active">Aviso de Privacidad</li>
 								</ul>
-							</div>
-						</div>
-                    </div>
-                    <div class="container-fluid pt-2 mt-2 mb-2">
-                        <div class="row">
-                            <div class="col appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="250">
-                                <div class="owl-carousel owl-theme carousel-center-active-item custom-carousel-vertical-center-items custom-dots-style-1"
-                                     data-plugin-options="{'responsive': {'0': {'items': 1}, '476': {'items': 3}, '768': {'items': 4}, '992': {'items': 5}, '1200': {'items': 6}, '1600': {'items': 7}},'loop': true, 'nav': true, 'autoplay': true, 'autoplayTimeout': 3000, 'dots': true}">
-
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-1.png" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-2.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-4.jpeg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-17.jpg" alt="" style="max-width: 360px;" />
-                                    </div>
-                                    <div class="text-center mx-2">
-                                        <img class="d-inline-block img-fluid" src="img/centrales/central-18.jpg" alt="" style="max-width: 360px;" />
-                                    </div>
-
-
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-				</section>
-
-				<section class="section section-with-shape-divider bg-color-grey border-0 pb-5 m-0">
-
-					<div class="container pb-5">
-						<div class="row align-items-center py-2 my-5 mb-lg-0 my-xl-5">
-							<div class="col-lg-12 mb-5 mb-lg-0">
-								<h2 class="text-9 text-center line-height-3 text-transform-none font-weight-semibold mb-4 appear-animation"
-									data-appear-animation="fadeInUpShorter" data-appear-animation-delay="150">
-									Nuestra Historia
-								</h2>
-								<p class="text-3-5 font-weight-medium mb-5 appear-animation text-center" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="350">
-                                    Conoce el trayecto que grupo <strong>Flecha Amarilla</strong> ha recorrido desde sus inicios hasta consolidarse como un referente en terminales terrestres.
-								</p>
-								<img src="img/demos/business-consulting-3/historia.webp" class="img-fluid" alt="" />
 							</div>
 						</div>
 					</div>
@@ -285,67 +232,150 @@
 					</div>
 				</section>
 
-				<div class="container pt-3 mt-4">
-					<div class="row">
-						<div class="col">
-							<h2 class="text-9 text-lg-5 text-xl-9 line-height-3 text-transform-none font-weight-semibold mb-4 mb-lg-3 mb-xl-4 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="250">
-								En adc, brindamos las estrategias más avanzadas para ofrecer una experiencia superior a los pasajeros.
-							</h2>
-							{{-- <h5 class="appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="350">Visión</h5>--}}
-							<p class="text-3-5 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="500">
-								En ADC, tenemos como <strong>misión:</strong> <strong>brindar una estadía placentera para cada viajero</strong>. Trabajamos incansablemente para gestionar de manera eficiente y eficaz las terminales de autobuses, creando espacios funcionales y seguros que inviten a la relajación y el confort.
-							{{-- <h5 class="appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="600">Misión</h5>--}}
-							<p class="text-3-5  appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="750">
-								Nuestra <strong>visión</strong> es clara: <strong> seguir siendo una organización sustentable ofreciendo una gestión de operación funcional y eficiente para nuestros viajeros. Generando un entorno colaborativo y de networking con las compañías presentes en nuestras instalaciones de terminales terrestres, enriqueciendo así la experiencia de viaje.</strong>
-							</p>
-							<p class="text-3-5  mb-5 appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="950">
-								Nuestros <strong>valores</strong> son parte fundamental de nuestra visión, valores como: <strong>la honestidad, lealtad, pasión, colaboración, compromiso y seguridad</strong>; nos impulsan a desarrollar soluciones innovadoras y la optimización constante de nuestros procesos, buscando superar las expectativas de nuestros clientes, haciendo de cada visita a nuestras terminales un momento agradable y memorable.
-							</p>
-							<div class="row row-gutter-sm align-items-center pb-3 mb-5">
-								<div class="col-lg-6 col-xl-7">
-									<div class="row flex-xl-nowrap align-items-center mb-4 mb-lg-0">
-										<div class="col-sm-auto mb-4 mb-sm-0">
-											<div class="d-flex appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="1000">
-												<img width="63" height="63" src="img/demos/business-consulting-3/icons/label.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'd-lg-none d-xl-block'}" />
-												<span class="text-3 font-weight-bold text-color-dark pt-2 ms-3">
-													<strong class="d-block font-weight-bold text-10 mb-0">+40mil</strong>
-													Clientes Satisfechos
-												</span>
-											</div>
-										</div>
-										<div class="col-sm-7 col-md-8">
-											<blockquote class="custom-blockquote-style-1 m-0 pt-1 pb-2 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="1200">
-												<p class="mb-0">Seguimos trabajando para brindar la mejor experiencia de servicio. </p>
-											</blockquote>
-										</div>
-									</div>
-								</div>
-								<div class="col-lg-6 col-xl-5">
-									<div class="row row-gutter-sm align-items-center">
-										<div class="col-auto appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="1400">
-											<a href="" class="btn btn-primary custom-btn-style-1 font-weight-semibold btn-px-3 btn-py-2 text-3-5" data-cursor-effect-hover="plus" data-cursor-effect-hover-color="light">
-												<span>Directorio</span>
-											</a>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row row-gutter-sm">
-						<div class="col-sm-6 mb-4 mb-sm-0">
-							<img src="img/centrales/central-4.jpeg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="800" alt="" />
-						</div>
-						<div class="col-6 col-sm-3">
-							<img src="img/centrales/vertical-central.jpg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="600" alt="" />
-						</div>
-						<div class="col-6 col-sm-3">
-							<img src="img/centrales/central-2.jpeg" class="img-fluid box-shadow-5 mb-4 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="200" alt="" />
-							<img src="img/centrales/central-14.jpeg" class="img-fluid box-shadow-5 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="400" alt="" />
-						</div>
-					</div>
-				</div>
+				<div class="container my-5">
 
+                        <div class="card shadow-lg border-0 rounded-3">
+                            <div class="card-body p-4">
+                                <h1 class="text-center mb-4">Aviso de Privacidad</h1>
+
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs mb-3" id="privacyTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="simplificado-tab" data-bs-toggle="tab" data-bs-target="#simplificado" type="button" role="tab" aria-controls="simplificado" aria-selected="true">
+                                            Versión Simplificada
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="extenso-tab" data-bs-toggle="tab" data-bs-target="#extenso" type="button" role="tab" aria-controls="extenso" aria-selected="false">
+                                            Versión Extensa
+                                        </button>
+                                    </li>
+                                </ul>
+
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+
+                                    <!-- Simplificada -->
+                                    <div class="tab-pane fade show active" id="simplificado" role="tabpanel" aria-labelledby="simplificado-tab">
+                                        <h5 class="mb-3">Versión Simplificada</h5>
+                                        <p>
+                                            ADC a través de la plataforma SEDYCO es responsable del tratamiento de sus datos personales. La información recabada será utilizada para la administración de la plataforma, la gestión de evaluaciones de desempeño, clima organizacional, psicometría y el cumplimiento de la NOM-035-STPS-2018. En caso de ser requerido, los resultados de la NOM-035 podrán ser entregados a la Secretaría del Trabajo y Previsión Social (STPS).
+                                        </p>
+                                        <p>
+                                            Usted tiene derecho a Acceder, Rectificar, Cancelar u Oponerse al tratamiento de sus datos personales (Derechos ARCO), mediante solicitud enviada a <a href="mailto:sedyco@adcentrales.com" class="text-decoration-none">sedyco@adcentrales.com</a>.
+                                        </p>
+                                        <p>
+                                            El tratamiento de datos sensibles relacionados con factores psicosociales y psicometría requiere de su consentimiento expreso.
+                                        </p>
+                                        <p>
+                                        Conoce el Aviso de Privacidad Extendido, dentro de esta misma sección.
+                                        </p>
+                                    </div>
+
+                                    <!-- Extenso -->
+                                    <div class="tab-pane fade" id="extenso" role="tabpanel" aria-labelledby="extenso-tab">
+                                        <h4 class="mb-3">Versión Extensa</h4>
+
+                                        <p>
+                                            En ADC nos comprometemos a proteger la privacidad de nuestros usuarios, clientes y colaboradores. Este Aviso de Privacidad tiene como finalidad informarle sobre la manera en que recabamos, utilizamos, almacenamos y protegemos sus datos personales, en cumplimiento con lo dispuesto en la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP) y demás normatividad aplicable en los Estados Unidos Mexicanos.
+                                        </p>
+
+                                        <h5>1. Responsable del tratamiento de sus datos</h5>
+                                        <p>ADC a través de la plataforma SEDYCO y con domicilio fiscal en Boulevard Hilario Medina 308, 37260 León, Guanajuato, es responsable de la obtención, uso, divulgación y almacenamiento de sus datos personales conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares.</p>
+
+                                        <h5>2. Finalidades del tratamiento</h5>
+                                        <p>Los datos personales recabados serán utilizados para las siguientes finalidades:</p>
+                                        <ul>
+                                            <li>Evaluación de desempeño laboral y retroalimentación organizacional.</li>
+                                            <li>Evaluaciones relacionadas con la Norma Oficial Mexicana NOM-035-STPS-2018, cuyos resultados podrán ser auditados por la Secretaría del Trabajo y Previsión Social.</li>
+                                            <li>Aplicación de evaluaciones psicométricas.</li>
+                                            <li>Gestión administrativa de colaboradores.</li>
+                                        </ul>
+
+                                        <h5>3. Datos recabados</h5>
+                                        <p>
+                                            Para la correcta operación de la plataforma y la prestación de nuestros servicios,
+                                            podemos recabar las siguientes categorías de datos personales:
+                                        </p>
+                                        <ul class="list">
+                                            <li class="list-group-item">
+                                                <strong>Datos de identificación:</strong> nombre completo, número de empleado, área/departamento, CURP, RFC, NSS, puesto.
+                                            </li>
+                                            <li class="list-group-item">
+                                                <strong>Datos de contacto:</strong> correo electrónico institucional o personal, teléfono laboral o personal.
+                                            </li>
+                                            <li class="list-group-item">
+                                                <strong>Datos laborales y de desempeño:</strong> historial de evaluaciones de desempeño, métricas de productividad, retroalimentación.
+                                            </li>
+                                            <li class="list-group-item">
+                                                <strong>Datos relacionados con factores de riesgo psicosocial (NOM-035):</strong> respuestas a cuestionarios sobre ambiente laboral, condiciones organizacionales, factores de riesgo psicosocial y percepción de clima de trabajo.
+                                            </li>
+                                            <li class="list-group-item">
+                                                <strong>Datos psicométricos:</strong> resultados de pruebas de personalidad, cognitivas, emocionales o de habilidades aplicadas con fines de evaluación laboral.
+                                            </li>
+                                            <li class="list-group-item">
+                                                <strong>Datos de navegación y uso del sistema:</strong> registros de acceso, fecha y hora de uso.
+                                            </li>
+                                        </ul>
+
+                                        <h5 class="mt-3">4. Transferencia de datos personales</h5>
+                                        <p>
+                                            Sus datos personales no serán compartidos con terceros ajenos a <strong>SEDYCO</strong>, salvo en los siguientes casos:
+                                        </p>
+                                        <ul class="list mb-3">
+                                            <li class="list-group-item">Cuando lo requiera la Secretaría del Trabajo y Previsión Social (STPS) en el marco de auditorías, verificaciones o inspecciones relacionadas con la NOM-035.</li>
+                                            <li class="list-group-item">Cuando lo exija la ley o una autoridad competente.</li>
+                                            <li class="list-group-item">Cuando sea necesario para el cumplimiento de obligaciones contractuales.</li>
+                                            <li class="list-group-item">Cuando usted otorgue su consentimiento expreso.</li>
+                                        </ul>
+
+                                        <!-- Sección 5 -->
+                                        <h5 class="mt-4">5. Medidas de seguridad</h5>
+                                        <p>
+                                            En <strong>SEDYCO</strong> implementamos medidas técnicas, administrativas y físicas para proteger sus datos personales contra daño, pérdida, alteración, destrucción o uso no autorizado.
+                                        </p>
+                                        <p>
+                                            En el caso de datos personales sensibles (relacionados con factores psicosociales y resultados psicométricos), aplicamos medidas de seguridad reforzadas para garantizar la confidencialidad y evitar accesos no autorizados.
+                                        </p>
+
+                                        <!-- Sección 6 -->
+                                        <h5 class="mt-4">6. Derechos ARCO (Acceso, Rectificación, Cancelación y Oposición)</h5>
+                                        <p>Usted tiene derecho a:</p>
+                                        <ul class="list mb-3">
+                                            <li class="list-group-item">Acceder a sus datos personales.</li>
+                                            <li class="list-group-item">Rectificar los datos que sean inexactos o incompletos.</li>
+                                            <li class="list-group-item">Cancelar sus datos cuando considere que no son necesarios para las finalidades señaladas.</li>
+                                            <li class="list-group-item">Oponerse al tratamiento de sus datos para fines específicos.</li>
+                                        </ul>
+                                        <p>
+                                            Para ejercer cualquiera de estos derechos, deberá enviar una solicitud al correo:
+                                            <a href="mailto:sedyco@adcentrales.com" class="text-decoration-none">sedyco@adcentrales.com</a>,
+                                            indicando su nombre completo, el derecho que desea ejercer y la descripción de los datos sobre los que solicita acción.
+                                        </p>
+
+                                        <h5 class="mt-4">7. Conservación de datos</h5>
+                                        <p>Sus datos se conservarán durante el tiempo que sea necesario para cumplir con las finalidades señaladas en este aviso y conforme a la normativa aplicable.</p>
+
+                                        <h5 class="mt-4">8. Consentimiento expreso</h5>
+                                        <p>
+                                            El tratamiento de datos personales sensibles, relacionados con la NOM-035 y las evaluaciones psicométricas, requiere de su consentimiento expreso, el cual podrá otorgar mediante aceptación electrónica en la plataforma o por escrito, según corresponda.
+                                        </p>
+
+                                        <h5 class="mt-4">9. Cambios al Aviso de Privacidad</h5>
+                                        <p>
+                                            Nos reservamos el derecho de modificar o actualizar este Aviso de Privacidad en cualquier momento. Cualquier cambio será notificado a través de la plataforma SEDYCO y/o al correo electrónico registrado por el usuario.
+                                        </p>
+
+                                        <h5 class="mt-4">10. Aceptación</h5>
+                                        <p>
+                                            Al utilizar la plataforma SEDYCO, usted manifiesta haber leído y comprendido este Aviso de Privacidad, y otorga su consentimiento para el tratamiento de sus datos en los términos aquí establecidos.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
 			</div>
             <footer id="footer" class="border-top-0 m-0 lazyload" data-bg-src="img/demos/adc/backgrounds/background-4.jpg" style="background-size: cover; background-position: center; background-repeat: no-repeat;">
                 <div class="container pt-3">
@@ -431,22 +461,24 @@
             </footer>
 
 
-
 		</div>
-        <!-- Vendor -->
-        <script src="vendor/plugins/js/plugins.min.js"></script>
 
-        <!-- Theme Base, Components and Settings -->
-        <script src="js/theme.js"></script>
+		<!-- Vendor -->
+		<script src="vendor/plugins/js/plugins.min.js"></script>
 
-        <!-- Current Page Vendor and Views -->
-        <script src="js/views/view.contact.js"></script>
+		<!-- Theme Base, Components and Settings -->
+		<script src="js/theme.js"></script>
 
-        <!-- Theme Custom -->
-        <script src="js/custom.js"></script>
+		<!-- Current Page Vendor and Views -->
+		<script src="js/views/view.contact.js"></script>
 
-        <!-- Theme Initialization Files -->
-        <script src="js/theme.init.js"></script>
+		<!-- Theme Custom -->
+		<script src="js/custom.js"></script>
+
+		<!-- Theme Initialization Files -->
+		<script src="js/theme.init.js"></script>
+
+	<!-- Google Maps -->
 
 	</body>
 </html>

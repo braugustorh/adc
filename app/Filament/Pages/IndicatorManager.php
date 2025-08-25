@@ -40,7 +40,7 @@ class IndicatorManager extends Page
     {
         //Este Panel solo lo debe de ver los Jefes de Área y el Administrador
         //Se debe de agregar la comprobación de que estpo se cumpla para que solo sea visible para los Jefes de Área
-        if (\auth()->user()->hasRole('RH Corp')||\auth()->user()->hasRole('RH') || \auth()->user()->hasRole('Supervisor') || \auth()->user()->hasRole('Administrador')) {
+        if (\auth()->user()->hasAnyRole('RH Corp','RH','Supervisor','Administrador','Gerente')) {
             return true;
         }else{
             return false;

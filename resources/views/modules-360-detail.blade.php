@@ -346,6 +346,7 @@
                 <div class="col-lg-12 text-center m-0">
                     <hr class="bg-color-light opacity-1 mt-5 mb-4">
                     <p class="text-3-4">ADC Administradora de Centrales . © {{ date('Y') }}. Todos los derechos Reservados</p>
+                    <a href="{{ route('aviso-privacidad') }}" class="text-decoration-underline text-color-light">Aviso de Privacidad</a>
                 </div>
             </div>
         </div>

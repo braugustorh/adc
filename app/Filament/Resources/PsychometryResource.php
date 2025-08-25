@@ -39,7 +39,7 @@ class PsychometryResource extends Resource
             'Administrador',
             'RH',
             'RH Corp',
-                'Visor',
+             'Visor',
         ]);
 
     }

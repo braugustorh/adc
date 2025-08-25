@@ -39,7 +39,12 @@ class UserResource extends Resource
 
     public static function canViewAny():bool
     {
-        return \auth()->user()->hasAnyRole('RH','RH Corp','Administrador','Supervisor','Visor');
+        return \auth()->user()->hasAnyRole(
+            'RH',
+            'RH Corp',
+            'Administrador',
+            'Supervisor',
+            'Visor','Gerente');
     }
 
 
@@ -415,7 +420,7 @@ class UserResource extends Resource
                 ExportBulkAction::make(),
             ])->modifyQueryUsing(function (Builder $query) {
                 // Si el usuario tiene el rol "Jefe RH", filtrar por su sede_id
-                if (auth()->user()->hasRole('RH')) {
+                if (auth()->user()->hasAnyRole('RH','Gerente')) {
                     $query->where('sede_id', \auth()->user()->sede_id);
                 }elseif ( auth()->user()->hasRole('Supervisor') ) {
                     $supervisorId = auth()->user()->position_id;
@@ -428,8 +433,10 @@ class UserResource extends Resource
                         })
                         ->pluck('users.id');
 
-
                     $query->whereIn('id', $users);
+                }elseif ( !auth()->user()->hasAnyRole('RH Corp','Administrador','Director') ) {
+
+                    $query->where('id',auth()->id());
                 }
             });
     }

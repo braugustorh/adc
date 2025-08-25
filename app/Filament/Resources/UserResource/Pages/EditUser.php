@@ -177,23 +177,15 @@ class EditUser extends EditRecord
                             function(Get $get): array{
                                 $state= $get('state');
                                 if($state){
-                                    $res=Http::withHeaders([
-                                        "Accept"=> "application/json",
-                                        "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
-                                    ])->get('https://api.tau.com.mx/dipomex/v1/estados');
-
-                                    $estadosArray = collect(json_decode($res->body(), true)['estados'] ?? [])->firstWhere('ESTADO', $state);
-                                    $estadoId = $estadosArray['ESTADO_ID'] ?? null;
                                     $citiesResponse = Http::withHeaders([
                                         "Accept"=> "application/json",
                                         "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
-                                    ])->get('https://api.tau.com.mx/dipomex/v1/municipios?id_estado='.$estadoId);
-
+                                    ])->get('https://api.tau.com.mx/dipomex/v1/municipios?id_estado='.$state);
                                     $citiesArray = json_decode($citiesResponse->body(), true);
 
                                     if (is_array($citiesArray)) {
 
-                                        $cities = array_column($citiesArray['municipios'], 'MUNICIPIO', 'MUNICIPIO');
+                                        $cities = array_column($citiesArray['municipios'], 'MUNICIPIO', 'MUNICIPIO_ID');
                                     } else {
                                         Notification::make()
                                             ->title('Error')
@@ -377,7 +369,18 @@ class EditUser extends EditRecord
                         ->multiple()
                         ->preload()
                         ->searchable()
-                        ->relationship('roles', 'name'),
+                        ->relationship('roles', 'name', function ($query) {
+                            $user = auth()->user();
+                            // Filtra los roles según el rol del usuario actual
+                            if ($user->hasRole('Administrador')) {
+                                return $query; // Admin ve todos los roles
+                            }elseif($user->hasRole('RH Corp')) {
+
+                                return $query->whereIn('name', ['RH Corp','RH', 'Colaborador', 'Supervisor','Operativo']);
+                            }
+                            // Ejemplo: solo roles específicos para otros usuarios
+                            return $query->whereIn('name', ['Colaborador', 'Supervisor','Operativo']);
+                        }),
                 ])->columns(2),
 
         ];

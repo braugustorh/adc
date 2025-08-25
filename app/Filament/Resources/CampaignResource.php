@@ -43,11 +43,11 @@ class CampaignResource extends Resource
     }
     public static function canCreate(): bool
     {
-        return \auth()->user()->hasAnyRole('Administrador','RH Corp');
+        return \auth()->user()->hasAnyRole('Administrador','RH Corp','RH');
     }
     public static function canEdit(Model $record): bool
     {
-        return (\auth()->user()->hasAnyRole('RH Corp','Administrador'));
+        return (\auth()->user()->hasAnyRole('RH Corp','Administrador','RH'));
     }
 
     public static function form(Form $form): Form

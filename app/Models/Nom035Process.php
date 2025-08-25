@@ -60,4 +60,6 @@ class Nom035Process extends Model
             ->whereIn('status', ['iniciado','en_progreso'])
             ->first();
     }
+
+
 }

@@ -43,6 +43,8 @@ class OrganizationalClimateStatics extends Page implements HasTable
     public $evaluation_id= null;
     public $campaignScores = [];
     public $sexChartData = [];
+    public $chartDataAges = [];
+
 
     public function mount(): void
     {
@@ -51,9 +53,14 @@ class OrganizationalClimateStatics extends Page implements HasTable
 
         if (auth()->user()->hasAnyRole(['RH Corp', 'Administrador','Visor'])) {
             $this->sedes = Sede::all();
-        } elseif (auth()->user()->hasRole('Supervisor')) {
+            $this->campaigns = Campaign::all();
+        } elseif (auth()->user()->hasAnyRole('RH','Gerente')) {
             $this->sedes = Sede::where('id', auth()->user()->sede_id)->get();
             $this->sede_id = auth()->user()->sede_id;
+            //Traer de la relación campaign_sede las campañas relacionadas a la sede del usuario
+            $this->campaigns = Campaign::whereHas('sedes', function ($query) {
+                $query->where('sede_id', auth()->user()->sede_id);
+            })->get();
         }
 
         $this->loadChartData();
@@ -61,6 +68,8 @@ class OrganizationalClimateStatics extends Page implements HasTable
         //$this->dispatch('line-chart-data-updated', chartData: $this->campaignScores);
         $this->sexChartData= $this->getScoresBySex();
         //$this->dispatch('sex-chart-data-updated', chartData: $this->getScoresBySex());
+        $this->updateAgesChart(property_exists($this, 'campaign_id') ? $this->campaign_id : null);
+
 
     }
 
@@ -73,16 +82,18 @@ class OrganizationalClimateStatics extends Page implements HasTable
         $this->campaignScores = $this->getCampaignScores($this->sede_id);
         $this->dispatch('line-chart-data-updated', chartData: $this->campaignScores);
        $this->dispatch('sex-chart-data-updated', chartData: $this->getScoresBySex());
-
+         $this->updateAgesChart();
     }
 
     // Cambiado a updatedCampaignId para que coincida con la propiedad
     public function updatedCampaignId():void    {
-
+        //$campaign = Campaign::find($this->campaign_id);
         // dd('Campaña actualizada:', $this->campaign_id); // Para depuración
         $this->loadChartData();
         $this->resetTable();
         $this->dispatch('sex-chart-data-updated', chartData: $this->getScoresBySex());
+
+        $this->updateAgesChart();
 
     }
 
@@ -300,11 +311,98 @@ class OrganizationalClimateStatics extends Page implements HasTable
 
     public static function canView(): bool
     {
-        return auth()->user()->hasAnyRole(['RH Corp','RH', 'Supervisor', 'Administrador','Visor']);
+        return auth()->user()->hasAnyRole(['RH Corp','RH', 'Administrador','Visor']);
     }
     public static function shouldRegisterNavigation(): bool
     {
         // Esto controla la visibilidad en la navegación.
         return static::canView();
     }
+    /**
+     * Construye el dataset para la gráfica por rangos de edad.
+     * Ajusta los nombres de columnas/joins a tu estructura real.
+     */
+    protected function getScoresByAgeRanges(): array
+    {   $campaignId = $this->campaign_id;
+        // Rango de edades
+        $ranges = [
+            ['label' => '18-25', 'min' => 18, 'max' => 25],
+            ['label' => '26-35', 'min' => 26, 'max' => 35],
+            ['label' => '36-45', 'min' => 36, 'max' => 45],
+            ['label' => '46-55', 'min' => 46, 'max' => 55],
+            ['label' => '56+',   'min' => 56, 'max' => null],
+        ];
+
+        // Paleta de colores (ajústala a tu gusto)
+        $palette = ['#2563eb', '#16a34a', '#dc2626', '#f59e0b', '#7c3aed'];
+
+        // Competencias filtradas por el tipo de evaluación si aplica
+        $competencias = Competence::query()
+            ->where('status', true)
+            ->when(property_exists($this, 'evaluation_id') && $this->evaluation_id, function ($q) {
+                $q->where('evaluations_type_id', $this->evaluation_id);
+            })
+            ->orderBy('name')
+            ->get();
+
+        $labels = $competencias->pluck('name')->toArray();
+        $datasets = [];
+
+        foreach ($ranges as $i => $range) {
+            $data = [];
+
+            foreach ($competencias as $competencia) {
+                $avg = ClimateOrganizationalResponses::query()
+                    ->join('users', 'users.id', '=', 'climate_organizational_responses.user_id')
+                    ->when($campaignId, fn ($q) => $q->where('climate_organizational_responses.campaign_id', $campaignId))
+                    ->where('climate_organizational_responses.competence_id', $competencia->id)
+                    ->when($this->sede_id, fn ($q) => $q->where('users.sede_id', $this->sede_id))
+                    // Ajusta 'date_of_birth' si tu columna tiene otro nombre
+                    ->when($range['min'], fn ($q) => $q->whereRaw('TIMESTAMPDIFF(YEAR, users.birthdate, CURDATE()) >= ?', [$range['min']]))
+                    ->when($range['max'], fn ($q) => $q->whereRaw('TIMESTAMPDIFF(YEAR, users.birthdate, CURDATE()) <= ?', [$range['max']]))
+                    // Ajusta 'score' si tu columna de puntaje se llama distinto (p. ej. value, points)
+                    ->avg('climate_organizational_responses.response');
+
+                $data[] = round((float)($avg ?? 0), 2);
+            }
+
+            $color = $palette[$i % count($palette)];
+            $datasets[] = [
+                'label' => $range['label'],
+                'data' => $data,
+                'tension' => 0.3,
+                'fill' => false,
+                'borderWidth' => 2,
+                'pointRadius' => 3,
+                'borderColor' => $color,
+                'backgroundColor' => $color,
+            ];
+        }
+
+        return [
+            'labels' => $labels,
+            'datasets' => $datasets,
+        ];
+    }
+
+    /**
+     * Despacha el dataset al widget de la gráfica por edades.
+     * Llama a este método cuando cambien filtros (campaña, evaluación, etc).
+     */
+    public function updateAgesChart(): void
+    {
+        $this->chartDataAges = $this->getScoresByAgeRanges();
+        // Livewire v3: enviar evento al componente específico
+        $this->dispatch('ages-chart-data-updated', $this->chartDataAges)
+            ;
+    }
+
+    /**
+     * Ejemplo de cómo podrías invocarlo al montar la página o al cambiar filtros.
+     * Si ya tienes un ciclo de actualización, llama updateAgesChart() allí en su lugar.
+     */
+
+
+
+
 }

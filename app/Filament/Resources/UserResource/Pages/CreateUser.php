@@ -396,7 +396,9 @@ class CreateUser extends CreateRecord
                         ->required()
                         ->unique('users', 'email', fn ($record) => $record ? $record->id : null)
                         ->maxLength(80),
-                    DateTimePicker::make('email_verified_at'),
+                    DateTimePicker::make('email_verified_at')
+                    ->hidden()
+                    ->default(now()),
                     TextInput::make('password')
                         ->label('Contraseña')
                         ->password()
@@ -409,10 +411,20 @@ class CreateUser extends CreateRecord
                         ->revealable()
                         ->maxLength(255),
                     Select::make('roles')
-                        ->multiple()
+                        //->multiple()
                         ->preload()
                         ->searchable()
-                        ->relationship('roles', 'name'),
+                        ->relationship('roles', 'name', function ($query) {
+                            $user = auth()->user();
+                            // Filtra los roles según el rol del usuario actual
+                            if ($user->hasRole('Administrador')) {
+                                return $query; // Admin ve todos los roles
+                            }elseif($user->hasRole('RH Corp')) {
+                                return $query->whereIn('name', ['RH Corp','RH', 'Colaborador', 'Supervisor','Operativo']);
+                            }
+                            // Ejemplo: solo roles específicos para otros usuarios
+                            return $query->whereIn('name', ['Colaborador', 'Supervisor','Operativo']);
+                        }),
                 ])->columns(2),
         ];
     }

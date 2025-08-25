@@ -66,6 +66,16 @@ class ClimateOrganizationalResponses extends Model
         // Calcular el promedio global de todas las respuestas
         return round($responses->avg('response'), 2);
     }
+    public function competence(){
+        return $this->belongsTo(Competence::class, 'competence_id');
+    }
+    public function question(){
+        return $this->belongsTo(Question::class, 'question_id');
+    }
+    public function campaign(){
+        return $this->belongsTo(Campaign::class, 'campaign_id');
+    }
+
 
 
 

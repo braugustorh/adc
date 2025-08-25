@@ -153,10 +153,12 @@ class OneToOne extends Page implements HasForms
                         Textarea::make('comments')
                             ->label('Comentarios')
                             ->rows(3)
+                            ->hidden()
                             ->placeholder('Escribe los comentarios aquí...'),
                         Textarea::make('commitments')
                             ->label('Compromisos')
                             ->rows(3)
+
                             ->placeholder('Escribe los compromisos aquí...'),
 
                         TextInput::make('progress')

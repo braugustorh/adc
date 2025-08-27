@@ -50,6 +50,7 @@ class User extends Authenticatable implements FilamentUser
         'contract_type',
         'entry_date',
         'position_id',
+        'mi',
         'department_id',
         'address',
         'city',

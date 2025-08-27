@@ -14,8 +14,10 @@ use Filament\Actions;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -301,12 +303,18 @@ class EditUser extends EditRecord
                             ->where('sede_id', $get('sede_id'))
                             ->pluck('name', 'id'))
                         ->default(null),
-                    Select::make('position_id')
-                        ->label('Puesto')
-                        ->options(fn (Get $get): Collection => Position::query()
-                            ->where('department_id', $get('department_id'))
-                            ->pluck('name', 'id'))
-                        ->default(null),
+                    Group::make([
+                        Select::make('position_id')
+                            ->label('Puesto')
+                            ->options(fn (Get $get): Collection => Position::query()
+                                ->where('department_id', $get('department_id'))
+                                ->pluck('name', 'id'))
+                            ->default(null),
+                        Toggle::make('mi')
+                            ->label('Pertenece a Marcas Internas?')
+                            ->default(false),
+                    ])->columnSpan(2),
+
                     Select::make('contract_type')
                         ->label('Tipo de Contrato')
                         ->options([

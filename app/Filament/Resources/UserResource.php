@@ -166,6 +166,9 @@ class UserResource extends Resource
                     ->label('Puesto')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\IconColumn::make('mi')
+                    ->label('Mi')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('rfc')
                     ->label('RFC')
                     ->toggleable(isToggledHiddenByDefault: true)

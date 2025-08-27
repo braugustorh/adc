@@ -14,6 +14,7 @@ use Faker\Provider\Text;
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Collection;
@@ -350,7 +351,9 @@ class CreateUser extends CreateRecord
                             ->where('department_id', $get('department_id'))
                             ->pluck('name', 'id'))
                         ->default(null),
-
+                    Toggle::make('mi')
+                ->label('Pertenece a Marcas Internas?')
+                ->default(false),
                     Select::make('contract_type')
                         ->label('Tipo de Contrato')
                         ->options([

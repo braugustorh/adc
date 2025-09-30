@@ -20,6 +20,8 @@ use PhpOffice\PhpWord\TemplateProcessor;
 use PhpOffice\PhpWord\Writer\PDF\DomPDF;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Response;
+use PhpOffice\PhpPresentation\IOFactory;
+use PhpOffice\PhpPresentation\PhpPresentation;
 
 
 class Nom035 extends Page
@@ -131,12 +133,13 @@ class Nom035 extends Page
             $this->activeGuideII = $activeSurvey->contains('evaluations_type_id', $guideIIId);
             $this->activeGuideIII = $activeSurvey->contains('evaluations_type_id', $guideIIIId);
 
+
             $this->stage = 'panel';
             $queryResG2=RiskFactorSurvey::where('norma_id', $this->norma->id)
                         ->where('sede_id', $this->norma->sede_id);
             $calificacion=$queryResG2->sum('equivalence_response');
             $this->responsesTotalG2=$queryResG2->distinct('user_id')->count('user_id');
-                $this->calificacion = $calificacion/$this->responsesTotalG2;
+            $this->calificacion = $this->responsesTotalG2 > 0 ? $calificacion / $this->responsesTotalG2 : 0;
 
             $this->loadIdentifiedEvents();
         }else{
@@ -571,20 +574,23 @@ class Nom035 extends Page
     {
         $queryResG3=RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', $this->norma->sede_id);
+
+
         $calificacion=$queryResG3->sum('equivalence_response');
-        $this->totalResponsesG3=$queryResG3->distinct('user_id')->count('user_id');
+        $countCollabs=$queryResG3->distinct('user_id')->count('user_id');
+        $this->totalResponsesG3=$countCollabs;
         $this->calificacionG3 = $this->totalResponsesG3 > 0 ? $calificacion / $this->totalResponsesG3 : 0;
 
 
-        if($calificacion>=90){
+        if($calificacion>=140){
             $this->resultCuestionarioG3='Muy Alto';
-        }elseif ($calificacion>=70 && $calificacion<90 ) {
+        }elseif ($calificacion>=99 && $calificacion<140 ) {
             $this->resultCuestionarioG3='Alto';
-        }elseif ($calificacion>=45 && $calificacion<70) {
+        }elseif ($calificacion>=75 && $calificacion<99) {
             $this->resultCuestionarioG3='Medio';
-        }elseif ($calificacion>=20 && $calificacion<45) {
+        }elseif ($calificacion>=50 && $calificacion<75) {
             $this->resultCuestionarioG3='Bajo';
-        }elseif ($calificacion<20) {
+        }elseif ($calificacion<50) {
             $this->resultCuestionarioG3='Despreciable';
         }
         //Se trabaja con los resultados generales de la guía III
@@ -826,19 +832,19 @@ class Nom035 extends Page
                 'nombre' => 'Carga de Trabajo',
                 'total' => $workActivityResponses->count(),
                 'null' => $workActivityResponses->filter(fn($value) => $value < 15)->count(),
-                'low' => $workActivityResponses->filter(fn($value) => $value >= 15 && $value < 30)->count(),
-                'medium' => $workActivityResponses->filter(fn($value) => $value >= 30 && $value < 45)->count(),
-                'high' => $workActivityResponses->filter(fn($value) => $value >= 45 && $value < 60)->count(),
-                'very_high' => $workActivityResponses->filter(fn($value) => $value >= 60)->count(),
+                'low' => $workActivityResponses->filter(fn($value) => $value >= 15 && $value < 21)->count(),
+                'medium' => $workActivityResponses->filter(fn($value) => $value >= 21 && $value < 27)->count(),
+                'high' => $workActivityResponses->filter(fn($value) => $value >= 27 && $value < 37)->count(),
+                'very_high' => $workActivityResponses->filter(fn($value) => $value >= 37)->count(),
             ],
             'work_control'=>[
                 'nombre' => 'Falta de control sobre el trabajo',
                 'total' => $workControlResponses->count(),
-                'null' => $workControlResponses->filter(fn($value) => $value < 5)->count(),
-                'low' => $workControlResponses->filter(fn($value) => $value >= 5 && $value < 8)->count(),
-                'medium' => $workControlResponses->filter(fn($value) => $value >= 8 && $value < 11)->count(),
-                'high' => $workControlResponses->filter(fn($value) => $value >= 11 && $value < 14)->count(),
-                'very_high' => $workControlResponses->filter(fn($value) => $value >= 14)->count(),
+                'null' => $workControlResponses->filter(fn($value) => $value < 11)->count(),
+                'low' => $workControlResponses->filter(fn($value) => $value >= 11 && $value < 16)->count(),
+                'medium' => $workControlResponses->filter(fn($value) => $value >= 16 && $value < 21)->count(),
+                'high' => $workControlResponses->filter(fn($value) => $value >= 21 && $value < 25)->count(),
+                'very_high' => $workControlResponses->filter(fn($value) => $value >= 25)->count(),
             ],
             'work_journey'=>[
                 'nombre' => 'Jornada de trabajo',
@@ -852,29 +858,29 @@ class Nom035 extends Page
             'work_family'=>[
                 'nombre' => 'Interferencia en la relación trabajo-familia',
                 'total' => $wordAndFamilyResponses->count(),
-                'null' => $wordAndFamilyResponses->filter(fn($value) => $value < 1)->count(),
-                'low' => $wordAndFamilyResponses->filter(fn($value) => $value >= 1 && $value < 2)->count(),
-                'medium' => $wordAndFamilyResponses->filter(fn($value) => $value >= 2 && $value < 4)->count(),
-                'high' => $wordAndFamilyResponses->filter(fn($value) => $value >= 4 && $value < 6)->count(),
-                'very_high' => $wordAndFamilyResponses->filter(fn($value) => $value >= 6)->count(),
+                'null' => $wordAndFamilyResponses->filter(fn($value) => $value < 4)->count(),
+                'low' => $wordAndFamilyResponses->filter(fn($value) => $value >= 4 && $value < 6)->count(),
+                'medium' => $wordAndFamilyResponses->filter(fn($value) => $value >= 6 && $value < 8)->count(),
+                'high' => $wordAndFamilyResponses->filter(fn($value) => $value >= 8 && $value < 10)->count(),
+                'very_high' => $wordAndFamilyResponses->filter(fn($value) => $value >= 10)->count(),
             ],
             'leadership'=>[
                 'nombre' => 'Liderazgo',
                 'total' => $leadershipResponses->count(),
-                'null' => $leadershipResponses->filter(fn($value) => $value < 3)->count(),
-                'low' => $leadershipResponses->filter(fn($value) => $value >= 3 && $value < 5)->count(),
-                'medium' => $leadershipResponses->filter(fn($value) => $value >= 5 && $value < 8)->count(),
-                'high' => $leadershipResponses->filter(fn($value) => $value >= 8 && $value < 11)->count(),
-                'very_high' => $leadershipResponses->filter(fn($value) => $value >= 11)->count(),
+                'null' => $leadershipResponses->filter(fn($value) => $value < 9)->count(),
+                'low' => $leadershipResponses->filter(fn($value) => $value >= 9 && $value < 12)->count(),
+                'medium' => $leadershipResponses->filter(fn($value) => $value >= 12 && $value < 16)->count(),
+                'high' => $leadershipResponses->filter(fn($value) => $value >= 16 && $value < 20)->count(),
+                'very_high' => $leadershipResponses->filter(fn($value) => $value >= 20)->count(),
             ],
             'work_relations'=>[
                 'nombre' => 'Relaciones en el trabajo',
                 'total' => $workRelationsResponses->count(),
-                'null' => $workRelationsResponses->filter(fn($value) => $value < 5)->count(),
-                'low' => $workRelationsResponses->filter(fn($value) => $value >= 5 && $value < 8)->count(),
-                'medium' => $workRelationsResponses->filter(fn($value) => $value >= 8 && $value < 11)->count(),
-                'high' => $workRelationsResponses->filter(fn($value) => $value >= 11 && $value < 14)->count(),
-                'very_high' => $workRelationsResponses->filter(fn($value) => $value >= 14)->count(),
+                'null' => $workRelationsResponses->filter(fn($value) => $value < 10)->count(),
+                'low' => $workRelationsResponses->filter(fn($value) => $value >= 10 && $value < 13)->count(),
+                'medium' => $workRelationsResponses->filter(fn($value) => $value >= 13 && $value < 17)->count(),
+                'high' => $workRelationsResponses->filter(fn($value) => $value >= 17 && $value < 21)->count(),
+                'very_high' => $workRelationsResponses->filter(fn($value) => $value >= 21)->count(),
             ],
             'violence'=>[
                 'nombre' => 'Violencia',
@@ -888,20 +894,20 @@ class Nom035 extends Page
             'performance'=>[
                 'nombre' => 'Reconocimiento del desempeño',
                 'total' => $performanceResponses->count(),
-                'null' => $performanceResponses->filter(fn($value) => $value < 5)->count(),
-                'low' => $performanceResponses->filter(fn($value) => $value >= 5 && $value < 8)->count(),
-                'medium' => $performanceResponses->filter(fn($value) => $value >= 8 && $value < 11)->count(),
-                'high' => $performanceResponses->filter(fn($value) => $value >= 11 && $value < 14)->count(),
-                'very_high' => $performanceResponses->filter(fn($value) => $value >= 14)->count(),
+                'null' => $performanceResponses->filter(fn($value) => $value < 6)->count(),
+                'low' => $performanceResponses->filter(fn($value) => $value >=6 && $value < 10)->count(),
+                'medium' => $performanceResponses->filter(fn($value) => $value >= 10 && $value < 14)->count(),
+                'high' => $performanceResponses->filter(fn($value) => $value >= 14 && $value < 16)->count(),
+                'very_high' => $performanceResponses->filter(fn($value) => $value >= 16)->count(),
             ],
             'inestable'=>[
                 'nombre' => 'Insuficiente sentido de pertenencia e, inestabilidad',
                 'total' => $inestableResponses->count(),
-                'null' => $inestableResponses->filter(fn($value) => $value < 5)->count(),
-                'low' => $inestableResponses->filter(fn($value) => $value >= 5 && $value < 8)->count(),
-                'medium' => $inestableResponses->filter(fn($value) => $value >= 8 && $value < 11)->count(),
-                'high' => $inestableResponses->filter(fn($value) => $value >= 11 && $value < 14)->count(),
-                'very_high' => $inestableResponses->filter(fn($value) => $value >= 14)->count(),
+                'null' => $inestableResponses->filter(fn($value) => $value < 4)->count(),
+                'low' => $inestableResponses->filter(fn($value) => $value >= 4 && $value < 6)->count(),
+                'medium' => $inestableResponses->filter(fn($value) => $value >= 6 && $value < 8)->count(),
+                'high' => $inestableResponses->filter(fn($value) => $value >= 8 && $value < 10)->count(),
+                'very_high' => $inestableResponses->filter(fn($value) => $value >= 10)->count(),
             ],
         ];
 
@@ -1266,7 +1272,7 @@ class Nom035 extends Page
 
     }
     public function openTypeTest(){
-        $this->muestraGuideIII= $this->calculateSampleSize(131);
+        $this->muestraGuideIII= $this->calculateSampleSize($this->colabs->count());
 
         $this->dispatch('open-modal', id: 'type-test-modal');
     }
@@ -1279,6 +1285,7 @@ class Nom035 extends Page
     public function descargarWord()
     {
         $templatePath = storage_path('app/plantillas/Política_de_riesgos.docx'); // Mueve el archivo ahí
+        //$templatePath = storage_path('app/plantillas/politica_adc.pptx'); // Mueve el archivo ahí
         $sede = auth()->user()->sede->name;
         $name=auth()->user()->name . ' ' . auth()->user()->first_mame . ' ' . auth()->user()->last_name;
         $template = new TemplateProcessor($templatePath);
@@ -1289,6 +1296,48 @@ class Nom035 extends Page
         $outputPath = storage_path('app/livewire-tmp/Política_de_riesgos_personalizada.docx');
         $template->saveAs($outputPath);
 
+        return response()->download($outputPath)->deleteFileAfterSend();
+    }
+    public function descargarExcel()
+    {
+        $path = storage_path('app/plantillas/plan_de_accion.xlsx');
+        return response()->download($path, 'Plan_de_Accion_NOM035.xlsx');
+    }
+
+    public function descargarPowerPoint()
+    {
+        $templatePath = storage_path('app/plantillas/politica_adc.pptx');
+        //$templatePath = storage_path('app/plantillas/Politica_de_riesgos.pptx');
+        $sede = auth()->user()->sede->name;
+        $name = auth()->user()->name . ' ' . auth()->user()->first_name . ' ' . auth()->user()->last_name;
+
+        // Cargar la presentación existente
+        $pptReader = IOFactory::createReader('PowerPoint2007');
+        $presentation = $pptReader->load($templatePath);
+
+        // Recorrer todas las diapositivas y sus shapes
+        foreach ($presentation->getAllSlides() as $slide) {
+            foreach ($slide->getShapeCollection() as $shape) {
+                if ($shape instanceof \PhpOffice\PhpPresentation\Shape\RichText) {
+                    $text = $shape->getPlainText();
+
+                    // Reemplazos de placeholders
+                    $text = str_replace('${sede}', $sede, $text);
+                    $text = str_replace('${fecha}', now()->format('d/m/Y'), $text);
+                    $text = str_replace('${name}', $name, $text);
+
+                    // Actualizar el shape con el texto reemplazado
+                    $shape->createTextRun($text);
+                }
+            }
+        }
+
+        // Guardar en temporal
+        $outputPath = storage_path('app/livewire-tmp/Politica_de_riesgos_personalizada.pptx');
+        $writer = IOFactory::createWriter($presentation, 'PowerPoint2007');
+        $writer->save($outputPath);
+
+        // Descargar
         return response()->download($outputPath)->deleteFileAfterSend();
     }
 

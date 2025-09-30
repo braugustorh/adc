@@ -27,4 +27,11 @@ class Response extends Model
     {
         return $this->belongsTo(Answer::class);
     }
+    /*
+    public function psychometricEvaluation(): BelongsTo
+    {
+        return $this->belongsTo(PsychometricEvaluation::class, 'psychometric_evaluation_id');
+    }
+    */
+
 }

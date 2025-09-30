@@ -32,4 +32,10 @@ class EvaluationsTypes extends Model
     {
         return $this->hasMany(EvaluationAssign::class, 'evaluation_id');
     }
+    // Agregar esta relación
+    public function psychometricEvaluations()
+    {
+        return $this->hasMany(PsychometricEvaluation::class, 'evaluations_type_id');
+    }
+
 }

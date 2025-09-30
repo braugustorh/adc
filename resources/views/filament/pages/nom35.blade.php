@@ -17,7 +17,7 @@
     @endpush
     <!-- Hero -->
     @if($stage==='welcome')
-        <div class="relative overflow-hidden before:absolute before:top-0 before:start-1/2
+    <div class="relative overflow-hidden before:absolute before:top-0 before:start-1/2
     before:bg-no-repeat before:bg-top before:bg-cover before:size-full before:-z-1
     before:transform before:-translate-x-1/2"
              style="background: url('/img/polygon-bg-element.svg') center/cover no-repeat; position: relative; overflow: hidden;"
@@ -420,43 +420,46 @@
                     </div>
 
                 </x-filament::section>
-                <x-filament::section class="mb-4"
-                                     collapsible
-                                     collapsed
-                >
-                    <x-slot name="heading">
-                        Encuesta general de riesgos psicosociales y entorno organizacional.
-                    </x-slot>
-                    <x-slot name="description">
-                        Solo los colaboradores identificados responderán la siguiente encuesta.
-                    </x-slot>
-                    <div>
-                        <p>
-                            Esta encuesta se aplica a todos los colaboradores del centro de trabajo, independientemente de si han sido identificados o no.
-                            La finalidad es evaluar el entorno organizacional y los factores de riesgo psicosocial.
-                        </p>
-                        <br>
-                        <div class="flex items-center gap-2">
-                            <x-filament::button
-                                color="primary"
-                                wire:click="openTypeTest"
-                                icon="fas-list-check"
-                                :disabled="$activeGuideIII">
+                @if($level===3)
+                    <x-filament::section class="mb-4"
+                                         collapsible
+                                         collapsed
+                    >
+                        <x-slot name="heading">
+                            Encuesta general de riesgos psicosociales y entorno organizacional.
+                        </x-slot>
+                        <x-slot name="description">
+                            Solo los colaboradores identificados responderán la siguiente encuesta.
+                        </x-slot>
+                        <div>
+                            <p>
+                                Esta encuesta se aplica a todos los colaboradores del centro de trabajo, independientemente de si han sido identificados o no.
+                                La finalidad es evaluar el entorno organizacional y los factores de riesgo psicosocial.
+                            </p>
+                            <br>
+                            <div class="flex items-center gap-2">
+                                <x-filament::button
+                                    color="primary"
+                                    wire:click="openTypeTest"
+                                    icon="fas-list-check"
+                                    :disabled="$activeGuideIII">
+
                                 Activar Test
-                            </x-filament::button>
-                            <x-filament::button
-                                color="info"
-                                wire:click="resultsGuideIII"
-                                icon="fas-list-check"
-                                >
-                                Ver Reporte
-                            </x-filament::button>
+                                </x-filament::button>
+                                <x-filament::button
+                                    color="info"
+                                    wire:click="resultsGuideIII"
+                                    icon="fas-list-check"
+                                    >
+                                    Ver Reporte
+                                </x-filament::button>
 
+                            </div>
                         </div>
-                    </div>
 
 
-                </x-filament::section>
+                    </x-filament::section>
+                @endif
 
             </div>
 
@@ -497,6 +500,16 @@
                             size="sm"
                         />
                         <span>Política de prevención de riesgos psicosociales</span>
+                    </div>
+                    <div class="flex items-center gap-2 mt-2">
+                        <x-filament::icon-button
+                            icon="heroicon-s-cloud-arrow-down"
+                            color="success"
+                            wire:click="descargarExcel"
+                            label="descargar"
+                            size="sm"
+                        />
+                        <span>Plantilla Plan de Acción NOM 035</span>
                     </div>
 
                 </x-filament::section>
@@ -762,7 +775,7 @@
             margin-bottom: 20px;">
             <p>Puntos Obtenidos:<strong>{{$calificacion}}</strong> </p>
             <p>Calificación Final: <strong>{{$resultCuestionario}} </strong> </p>
-            <p>Tests Realizado: <strong>{{$responsesTotalG2}}</strong></p>
+            <p>Tests Realizados: <strong>{{$responsesTotalG2}}</strong></p>
         </div>
         <div class="overflow-x-auto">
             <table class="table-auto border-collapse border border-gray-400 w-full text-center">
@@ -886,8 +899,9 @@
                 <x-filament::button
                     color="primary"
                     wire:click="activeGuiaIII(0)"
-                    :disabled="$activeGuideIII"
-                    icon="fas-list-check">
+                    icon="fas-list-check"
+                    :disabled="$activeGuideIII" >
+
                     Aplicar al total de colaboradores
                 </x-filament::button>
                 <x-filament::button
@@ -920,16 +934,18 @@
                        id="test-results-guia-iii"
     width="4xl">
         <x-filament::modal.heading>
-            Resultados de la Guía III
+            Resultados de la Guía III: Encuesta general de riesgos psicosociales y entorno organizacional
         </x-filament::modal.heading>
 
-        <div class="flex flex-col gap-4">
-            <p>Resultados de la Guía III: Encuesta general de riesgos psicosociales y entorno organizacional.</p>
-            <br>
-            <p>Calificación: {{$calificacionG3}}</p>
-            <p>Determinación: {{$resultCuestionarioG3}}</p>
-            <p>Colaboradores que han respondido la encuesta: <strong>{{$colabResponsesG3}}</strong></p>
-            <p>Colaboradores que no han respondido la encuesta: <strong>{{$colabs->count() - $colabResponsesG3}}</strong></p>
+        <div style="background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;">
+            <p>Puntos Obtenidos: <strong>{{$calificacionG3}}</strong></p>
+            <p>Determinación: <strong>{{$resultCuestionarioG3}}</strong></p>
+            <p>Tests Realizados: <strong>{{$totalResponsesG3}}</strong>
+            <p>Tests Restantes: <strong>{{$colabs->count() - $totalResponsesG3}}</strong></p>
         </div>
         <div class="overflow-x-auto">
             <x-slot name="heading">
@@ -1027,8 +1043,7 @@
 
         <x-slot name="footerActions">
             <x-filament::button
-                wire:click="closeTestResultsGuideIII"
-                color="gray"
+                wire:click="closeTestResultsGuideIII"          color="gray"
             >
                 Cerrar
             </x-filament::button>

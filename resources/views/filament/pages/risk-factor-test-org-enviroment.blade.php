@@ -176,7 +176,41 @@
                 </x-filament::button>
             </div>
         </x-filament::section>
-
+    @elseif($page === 'finish')
+        <x-filament::section>
+            <div class="mb-4">
+                <p class="text-xl font-bold text-gray-900 dark:text-white">
+                    ¡Gracias por completar la encuesta!
+                </p>
+                <br>
+                <p>
+                    {{ $finishMessage }}
+                </p>
+                <br>
+                <p>
+                    Tus respuestas son valiosas para nosotros y nos ayudarán a tomar acciones para mejorar.
+                </p>
+            </div>
+            <div class="flex justify-end">
+                <x-filament::button
+                    color="primary"
+                    class="mt-4"
+                    icon="fas-check"
+                    wire:loading.attr="disabled"
+                    wire:target="finish"
+                    wire:click="finish">
+                    <div class="flex items-center space-x-4">
+                        <x-filament::icon
+                            icon="fas-spinner"
+                            wire:loading.class="animate-spin"
+                            class="h-4 w-4 hidden display-inline"
+                            wire:loading.remove.class="hidden"
+                            wire:target="finish"/>
+                        <span> Finalizar </span>
+                    </div>
+                </x-filament::button>
+            </div>
+        </x-filament::section>
     @endif
 
 </x-filament-panels::page>

@@ -437,6 +437,11 @@ class RiskFactorTestOrgEnviroment extends Page
 
 
     }
+    public function finish(): void
+    {
+        $this->flagFinish = true;
+        $this->redirect('/dashboard');
+    }
 
 
 

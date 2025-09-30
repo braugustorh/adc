@@ -14,6 +14,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 
 class User extends Authenticatable implements FilamentUser
@@ -137,6 +138,22 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(TraumaticEventSurvey::class, 'user_id');
     }
+
+
+
+// Nueva relación para el módulo de psicometrías
+    public function psychometricEvaluations(): MorphMany
+    {
+        return $this->morphMany(PsychometricEvaluation::class, 'evaluable');
+    }
+
+    // Evaluaciones psicométricas asignadas por este usuario (como RH o supervisor)
+    public function assignedPsychometricEvaluations(): HasMany
+    {
+        return $this->hasMany(PsychometricEvaluation::class, 'assigned_by');
+    }
+
+
 
 
 }

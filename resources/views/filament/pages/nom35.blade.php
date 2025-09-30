@@ -511,6 +511,16 @@
                         />
                         <span>Plantilla Plan de Acción NOM 035</span>
                     </div>
+                    <div class="flex items-center gap-2 mt-2">
+                        <x-filament::icon-button
+                            icon="heroicon-s-cloud-arrow-down"
+                            color="info"
+                            label="descargar"
+                            size="sm"
+                            disabled="true"
+                        />
+                        <span>Informe de Resultados</span>
+                    </div>
 
                 </x-filament::section>
 

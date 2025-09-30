@@ -327,7 +327,7 @@
 <div class="container">
     <!-- Header -->
     <div class="header">
-        <h1>REPORTE DE EVALUACIÓN PSICOSOCIAL</h1>
+        <h1>Identificación de Sujetos Expuestos a Eventos Traumáticos Severos</h1>
         <h2>Norma Oficial Mexicana NOM-035-STPS-2018</h2>
     </div>
 

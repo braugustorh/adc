@@ -4,7 +4,9 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\UserResource\Widgets\UsersStatsOverview;
 use App\Filament\Widgets\CampaignEvaluationsWidget;
+use App\Filament\Widgets\DocumentsLibraryWidget;
 use App\Filament\Widgets\VacancyStats;
+use App\Filament\Widgets\ViolenceProtocolWidget;
 use App\Http\Middleware\CheckUserStatusAndEvaluation;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -59,6 +61,8 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class, // Primera posición
                 CampaignEvaluationsWidget::class, // Tercera posición
                 VacancyStats::class, // Cuarta posición
+                DocumentsLibraryWidget::class,
+                ViolenceProtocolWidget::class,
                 //Widgets\FilamentInfoWidget::class, // Comentado
             ])
             ->profile()

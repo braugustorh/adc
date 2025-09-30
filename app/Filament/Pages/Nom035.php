@@ -2276,6 +2276,9 @@ class Nom035 extends Page
                 ->send();
         }
     }
+    public function downloadNorma(){
+        return response()->download(storage_path('app/documents/NORMA_Oficial_Mexicana_NOM-035-STPS-2018.pdf'),'NORMA_Oficial_Mexicana_NOM-035-STPS-2018.pdf');
+    }
 
 
 

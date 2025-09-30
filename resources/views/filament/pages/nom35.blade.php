@@ -29,8 +29,8 @@
                 <div class="flex justify-center py-6">
                     <a class="inline-flex items-center gap-x-2 bg-white border border-gray-200 text-sm text-gray-800 p-1 ps-3 rounded-full
                 transition hover:border-gray-300 focus:outline-hidden focus:border-gray-300
-                dark:bg-neutral-800 dark:border-neutral-700 dark:text-gray-700 dark:hover:border-neutral-600 dark:focus:border-neutral-600" href="#">
-                        Apegado en la NOM-035-STPS-2018
+                dark:bg-neutral-800 dark:border-neutral-700 dark:text-gray-700 dark:hover:border-neutral-600 dark:focus:border-neutral-600" href="#" wire:click="downloadNorma">
+                        Norma Oficial Mexicana NOM-035-STPS-2018
                         <span class="py-1.5 px-2.5 inline-flex justify-center items-center gap-x-2 rounded-full bg-gray-200 font-semibold text-sm text-gray-600 dark:bg-neutral-700 dark:text-neutral-400">
                         <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                     </span>
@@ -81,7 +81,7 @@
                     <svg class="hidden sm:block size-5 text-gray-300 dark:text-neutral-600" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path d="M6 13L10 3" stroke="currentColor" stroke-linecap="round"/>
                     </svg>
-                    <a class="inline-flex items-center gap-x-1 text-sm text-blue-600 decoration-2 hover:underline focus:outline-hidden focus:underline font-medium dark:text-blue-500" href="../docs/index.html">
+                    <a class="inline-flex items-center gap-x-1 text-sm text-blue-600 decoration-2 hover:underline focus:outline-hidden focus:underline font-medium dark:text-blue-500" href="#">
                         Guía NOM-035
                         <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                     </a>

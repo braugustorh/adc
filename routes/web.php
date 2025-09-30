@@ -44,6 +44,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/evaluation360', \App\Livewire\Evaluation360Controller::class)->name('evaluacion.index');
     Route::get('/organizational-climate', \App\Livewire\OrganizationalClimateController::class)->name('clima-organizacional.index');
     Route::get('/exit-survey', ExitSurveyPage::class)->name('filament.pages.exit-survey-page');
+    Route::post('/quejas-violencia/store', [QuejaViolenciaLaboralController::class, 'store'])
+        ->name('quejas-violencia.store');
+
 });
 
 

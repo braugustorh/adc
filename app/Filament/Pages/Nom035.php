@@ -1199,7 +1199,7 @@ class Nom035 extends Page
             ->send();
 
         $this->closeTestDialog();
-        $this->redirect('/dashboard/norma035');
+        $this->redirect('/dashboard/nom035');
     }
     public function activeRiskFactorTest()
     {
@@ -1219,7 +1219,7 @@ class Nom035 extends Page
             ->body('Se ha activado la Guia II correctamente')
             ->success()
             ->send();
-        $this->redirect('/dashboard/norma035');
+        $this->redirect('/dashboard/nom035');
 
     }
 
@@ -1274,7 +1274,7 @@ class Nom035 extends Page
                     ->sendToDatabase($collaboratorId);
             }
             $this->closeTypeTest();
-            $this->redirect('/dashboard/norma035');
+            $this->redirect('/dashboard/nom035');
             return;
 
         }

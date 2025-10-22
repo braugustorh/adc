@@ -367,6 +367,7 @@ class CreateUser extends CreateRecord
                         ->default(null),
                     TextInput::make('rfc')
                         ->label('RFC')
+                        ->minLength(12)
                         ->maxLength(13)
                         ->required()
                         ->unique('users', 'rfc', fn ($record) => $record ? $record->id : null)

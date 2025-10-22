@@ -24,6 +24,12 @@ class PsychometricDashboard extends Page
     public $typeFilter = '';
     public $evaluableTypeFilter = '';
 
+    //Poner función para que solo sea visible para RH Corp
+    public static function canView(): bool
+    {
+        return auth()->check() && auth()->user()->hasAnyRole(['RH Corp','Administrador']);
+    }
+
     public function getHeaderActions(): array
     {
         return [

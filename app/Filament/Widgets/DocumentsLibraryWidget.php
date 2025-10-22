@@ -47,6 +47,6 @@ class DocumentsLibraryWidget extends Widget
         }else{
             return response()->json(['error' => 'Documento no encontrado'], 404);
         }
-
     }
+
 }

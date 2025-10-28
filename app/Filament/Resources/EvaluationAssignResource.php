@@ -311,6 +311,12 @@ class EvaluationAssignResource extends Resource
         // Generar y descargar la plantilla
         return Excel::download(new TemplateEvaluatedNetwork($users), 'Red_de_Evaluados.xlsx');
     }
+    public function mount(){
+        //Mandar un erro 403 si no tiene el rol de RH Corp y Administrador
+        if (!\auth()->user()?->hasAnyRole('RH Corp','Administrador','Super Administrador')) {
+            abort(403, 'No tienes permiso para acceder a este recurso.');
+        }
+    }
 
 
 }

@@ -368,59 +368,58 @@
 
                 </x-filament::section>
 
+                @if($level===2)
+                    <x-filament::section class="mb-4"
+                                         collapsible
+                                         collapsed >
+                        <x-slot name="heading">
+                            <div class="flex items-center space-x-7">
+                            <span class="felx flex-col">Identificación y análisis de los factores de riesgo psicosocial </span>
+                            <x-filament::badge size="sm" color="warning" class="text-xs mx-3">
+                               C final: <span class="text-xs">{{$calificacion}}</span>
+                            </x-filament::badge>
+                            </div>
 
-                <x-filament::section class="mb-4"
-                                     collapsible
-                                     collapsed
-                >
-                    <x-slot name="heading">
-                        <div class="flex items-center space-x-7">
-                        <span class="felx flex-col">Identificación y análisis de los factores de riesgo psicosocial </span>
-                        <x-filament::badge size="sm" color="warning" class="text-xs mx-3">
-                           C final: <span class="text-xs">{{$calificacion}}</span>
-                        </x-filament::badge>
+                        </x-slot>
+                        <x-slot name="description">
+                            Solo los colaboradores identificados responderán la siguiente encuesta.
+                        </x-slot>
+
+                        <div>
+                            <p>
+                                Esta encuesta se aplica a todos los colaboradores del centro de trabajo, independientemente de si han sido identificados o no.
+                                La finalidad es evaluar los factores de riesgo psicosocial.
+                            </p>
+                            <br>
+                            <div class="flex items-center gap-2">
+                                @if(!$activeGuideII)
+                                <x-filament::button
+                                    color="primary"
+                                    wire:click="activeRiskFactorTest"
+                                    icon="fas-list-check">
+                                    Test
+                                </x-filament::button>
+
+                                @else
+                                    <x-filament::button
+                                        color="gray"
+                                        disabled
+                                        icon="fas-list-check">
+                                        Activar Test
+                                    </x-filament::button>
+                                @endif
+                                    <x-filament::button
+                                        class="mx-3"
+                                        color="success"
+                                        wire:click="openModalResults"
+                                        icon="fas-list-check">
+                                        Resultados
+                                    </x-filament::button>
+                            </div>
                         </div>
 
-                    </x-slot>
-                    <x-slot name="description">
-                        Solo los colaboradores identificados responderán la siguiente encuesta.
-                    </x-slot>
-
-                    <div>
-                        <p>
-                            Esta encuesta se aplica a todos los colaboradores del centro de trabajo, independientemente de si han sido identificados o no.
-                            La finalidad es evaluar los factores de riesgo psicosocial.
-                        </p>
-                        <br>
-                        <div class="flex items-center gap-2">
-                            @if(!$activeGuideII)
-                            <x-filament::button
-                                color="primary"
-                                wire:click="activeRiskFactorTest"
-                                icon="fas-list-check">
-                                Test
-                            </x-filament::button>
-
-                            @else
-                                <x-filament::button
-                                    color="gray"
-                                    disabled
-                                    icon="fas-list-check">
-                                    Activar Test
-                                </x-filament::button>
-                            @endif
-                                <x-filament::button
-                                    class="mx-3"
-                                    color="success"
-                                    wire:click="openModalResults"
-                                    icon="fas-list-check">
-                                    Resultados
-                                </x-filament::button>
-                        </div>
-                    </div>
-
-                </x-filament::section>
-                @if($level===3)
+                    </x-filament::section>
+                @elseif($level===3)
                     <x-filament::section class="mb-4"
                                          collapsible
                                          collapsed

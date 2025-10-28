@@ -92,7 +92,7 @@ class ControlPanel extends Page implements HasForms
     public function mount()
     {
         //Mandar un erro 403 si no tiene el rol de RH Corp y Administrador
-        if (!\auth()->user()?->hasAnyRole('RH Corp','Administrador','Super Administrador')) {
+        if (!\auth()->user()?->hasAnyRole('RH','Administrador','Super Administrador','RH Corp','Supervisor','Gerente')) {
             abort(403, 'No tienes permiso para acceder a este recurso.');
         }
 

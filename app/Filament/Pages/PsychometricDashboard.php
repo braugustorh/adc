@@ -27,7 +27,14 @@ class PsychometricDashboard extends Page
     //Poner función para que solo sea visible para RH Corp
     public static function canView(): bool
     {
-        return auth()->user()->hasAnyRole(['RH Corp','Administrador']);
+        return \auth()->user()->hasAnyRole(['Administrador','RH Corp','RH']);
+
+    }
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Esto controla la visibilidad en la navegación.
+        return static::canView();
+
     }
 
     public function getHeaderActions(): array

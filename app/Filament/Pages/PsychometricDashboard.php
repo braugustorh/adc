@@ -282,4 +282,10 @@ class PsychometricDashboard extends Page
         $this->typeFilter = '';
         $this->evaluableTypeFilter = '';
     }
+    public function mount(){
+        //Mandar un erro 403 si no tiene el rol de RH Corp y Administrador
+        if (!\auth()->user()?->hasAnyRole('RH Corp','Administrador','Super Administrador')) {
+            abort(403, 'No tienes permiso para acceder a este recurso.');
+        }
+    }
 }

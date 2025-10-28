@@ -91,6 +91,10 @@ class ControlPanel extends Page implements HasForms
     }
     public function mount()
     {
+        //Mandar un erro 403 si no tiene el rol de RH Corp y Administrador
+        if (!\auth()->user()?->hasAnyRole('RH Corp','Administrador','Super Administrador')) {
+            abort(403, 'No tienes permiso para acceder a este recurso.');
+        }
 
         $this->campaignId = Campaign::whereStatus('Activa')->first()->id ?? null;
         $supervisorId = auth()->user()->position_id;

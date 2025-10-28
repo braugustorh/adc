@@ -7,7 +7,7 @@
         <div class="flex items-center gap-x-3">
             @if($user->profile_photo)
                 <x-filament::avatar
-                    src="{{'storage/'.$user->profile_photo}}"
+                    src="{{ Storage::disk('sedyco_disk')->url($user->profile_photo) }}"
                     size="h-16"
                 />
             @else

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('processed_by')->constrained('users');
             //fecha efectiva de baja
             $table->date('termination_date');
-
+            /*
             // Tipo de Baja
             $table->enum('termination_type', [
                 'renuncia_voluntaria',
@@ -27,6 +27,9 @@ return new class extends Migration
                 'incapacidad',
                 'otro'
             ]);
+            */
+            $table->string('termination_type',255)->nullable()->default(null);
+
             $table->string('other_reason')->nullable();
             $table->boolean('prior_notice')->default(false);
             $table->integer('notice_days')->nullable();
@@ -66,7 +69,7 @@ return new class extends Migration
             // Reemplazo de posición
             $table->boolean('position_replaced')->default(false);
             // Urgencia del reemplazo
-            $table->enum('replacement_urgency', ['inmediato', '1_mes', '3_meses', '6_meses', '1_año']);
+            $table->string('replacement_urgency',255)->nullable()->default(null);
             // Impacto en el equipo
             $table->boolean('impacts_team')->default(false);
 

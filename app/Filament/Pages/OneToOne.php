@@ -628,7 +628,7 @@ class OneToOne extends Page implements HasForms
                 ->title('Evaluación finalizada correctamente para el usuario ' . $this->userToEvaluated->name)
                 ->send();
         } catch (QueryException $e) {
-            dd($e);
+
             DB::rollBack();
             // Mostrar una notificación de error
             Notification::make()

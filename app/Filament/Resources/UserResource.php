@@ -294,35 +294,40 @@ class UserResource extends Resource
                                 Forms\Components\DatePicker::make('termination_date')
                                     ->label('Fecha Efectiva de Baja')
                                     ->required()
-                                    ->default(now()),
+                                    ->default(fn ($record) => optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->termination_date ?? now()),
                                 Forms\Components\Select::make('termination_type')
                                     ->label('Motivo de Baja')
                                     ->options([
                                         'renuncia_voluntaria' => 'Renuncia Voluntaria',
                                         'despido' => 'Despido',
+                                        'abandono'=> 'Abandono',
                                         'terminacion_contrato' => 'Terminación de Contrato',
                                         'jubilacion' => 'Jubilación',
                                         'incapacidad' => 'Baja por Salud/Incapacidad',
                                         'otro' => 'Otro'
                                     ])
                                     ->reactive()
-                                    ->required(),
+                                    ->required()
+                                    ->default(fn ($record) => optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->termination_type),
                                 Forms\Components\TextInput::make('other_reason')
                                     ->label('Especificar Otro Motivo')
-                                    ->visible(fn ($get) => $get('termination_type') === 'otro'),
+                                    ->visible(fn ($get) => $get('termination_type') === 'otro')
+                                    ->default(fn ($record) => optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->other_reason),
 
                                 Forms\Components\Toggle::make('prior_notice')
                                     ->label('¿Dio previo aviso?')
-                                    ->default(false)
+                                    ->default(fn ($record) => (bool) optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->prior_notice)
                                     ->reactive(),
                                 Forms\Components\TextInput::make('notice_days')
                                     ->label('Días de anticipación')
                                     ->type('number')
-                                    ->visible(fn ($get) => $get('prior_notice')),
+                                    ->visible(fn ($get) => $get('prior_notice'))
+                                    ->default(fn ($record) => optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->notice_days),
                                 Forms\Components\Textarea::make('detailed_reason')
                                     ->label('Motivo Detallado de la Baja')
                                     ->required()
-                                ->columnSpanFull(),
+                                    ->columnSpanFull()
+                                    ->default(fn ($record) => optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->detailed_reason),
                             ])->columns(2),
                         Forms\Components\Fieldset::make('Desempeño')
                             ->schema([
@@ -333,13 +338,16 @@ class UserResource extends Resource
                                         'regular' => 'Regular',
                                         'deficiente' => 'Deficiente'
                                     ])
-                                    ->required(),
+                                    ->required()
+                                    ->default(fn ($record) => optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->performance),
                                 Forms\Components\Textarea::make('performance_comments')
                                     ->label('Comentarios sobre Desempeño')
-                                    ->required(),
+                                    ->required()
+                                    ->default(fn ($record) => optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->performance_comments),
                                 Forms\Components\Textarea::make('supervisor_feedback')
                                     ->label('Retroalimentación del Jefe Inmediato')
-                                    ->required(),
+                                    ->required()
+                                    ->default(fn ($record) => optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->supervisor_feedback),
                             ]),
 
                         Forms\Components\Fieldset::make('Proceso de entrega')
@@ -349,65 +357,118 @@ class UserResource extends Resource
                                     ->options([
                                         'carta_renuncia' => 'Carta de Renuncia',
                                         'finiquito' => 'Finiquito',
-                                        'otros' => 'Otros Documentos'
-                                    ]),
+                                        'otros' => 'Otros Documentos',
+                                    ])
+                                    ->default(fn ($record) => (function ($record) {
+                                        $term = \App\Models\UserTermination::where('user_id', $record->id)->latest()->first();
+                                        if (! $term) {
+                                            return [];
+                                        }
+                                        $docs = $term->documents_delivered;
+                                        if (is_string($docs)) {
+                                            $decoded = json_decode($docs, true);
+                                            return is_array($decoded) ? $decoded : [];
+                                        }
+                                        if (is_array($docs)) {
+                                            return $docs;
+                                        }
+                                        return [];
+                                    })($record)),
                                 Forms\Components\Toggle::make('settlement_completed')
-                                    ->label('¿Liquidación Completada?')
-                                ->reactive(),
+                                    ->label('¿Baja Completada?')
+                                    ->default(fn ($record) => (bool) optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->settlement_completed)
+                                    ->reactive(),
                                 Forms\Components\Textarea::make('settlement_details')
                                     ->label('Detalles de la Liquidación')
-                                    ->visible(fn ($get) => $get('settlement_completed')),
-                        ]),
+                                    ->visible(fn ($get) => $get('settlement_completed'))
+                                    ->default(fn ($record) => optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->settlement_details),
+                            ]),
                         Forms\Components\Fieldset::make('Puesto de Trabajo')
                             ->schema([
                                 Forms\Components\Toggle::make('impacts_team')
                                     ->label('¿Es una posición crítica para el equipo?')
-                                ->reactive(),
+                                    ->default(fn ($record) => (bool) optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->impacts_team)
+                                    ->reactive(),
                                 Forms\Components\Toggle::make('position_replaced')
                                     ->label('¿Requiere Reemplazo?')
+                                    ->default(fn ($record) => (bool) optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->position_replaced)
                                     ->reactive(),
                                 Forms\Components\Select::make('replacement_urgency')
                                     ->label('Urgencia del Reemplazo')
                                     ->options([
                                         'inmediato' => 'Inmediato',
                                         'proximos_dias' => 'Próximos Días',
-                                        'próximas_semanas' => 'Próximas Semanas',
-                                        '1_mes' => '1 Mes',
-                                        '3_meses' => '3 Meses',
+                                        'proximas_semanas' => 'Próximas Semanas',
+                                        'un_mes' => '1 Mes',
+                                        'tres_meses' => '3 Meses',
                                         '6_meses' => '6 Meses',
-                                        '1_año' => '1 Año'
+                                        'un_año' => '1 Año'
                                     ])
-                                    ->visible(fn ($get) => $get('position_replaced')),
-
-
+                                    ->visible(fn ($get) => $get('position_replaced'))
+                                    ->default(fn ($record) => optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->replacement_urgency),
                             ]),
                         Forms\Components\Fieldset::make('Información Adicional')
                             ->schema([
                                 Forms\Components\Textarea::make('additional_comments')
                                     ->label('Comentarios Adicionales')
                                     ->rows(4)
-                                    ->columnSpanFull(),
+                                    ->columnSpanFull()
+                                    ->default(fn ($record) => optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->additional_comments),
                                 Forms\Components\Toggle::make('access_deactivated')
-                                    ->label('¿Desactivar Acceso a Sistemas?'),
+                                    ->label('¿Desactivar Acceso a Sistemas?')
+                                    ->default(fn ($record) => (bool) optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->access_deactivated),
 
                                 Forms\Components\Toggle::make('exit_interview')
-                                    ->label('Enviar entrevista de salida'),
+                                    ->label('Enviar entrevista de salida')
+                                    ->default(fn ($record) => (bool) optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->exit_interview),
                                 Forms\Components\Toggle::make('re_hire')
-                                    ->label('¿El colaborador es Recontratable?'),
+                                    ->label('¿El colaborador es Recontratable?')
+                                    ->helperText('Cuando el indicador está en verde (Sí), el colaborador puede ser recontratado.')
+                                    ->onColor('success')
+                                    ->offColor('danger')
+                                    ->required()
+                                    ->default(fn ($record) => (bool) optional(\App\Models\UserTermination::where('user_id', $record->id)->latest()->first())->re_hire)
                             ]),
                     ])
                     ->action(function (array $data, User $record): void {
-                        // Crear registro de baja
-                        UserTermination::create([
-                            'user_id' => $record->id,
-                            'processed_by' => auth()->id(),
-                            ...$data
-                        ]);
+                        try {
+                            $payload = [
+                                'processed_by' => auth()->id(),
+                                'termination_date' => $data['termination_date'] ?? null,
+                                'termination_type' => $data['termination_type'] ?? null,
+                                'other_reason' => $data['other_reason'] ?? null,
+                                'prior_notice' => !empty($data['prior_notice']) ? 1 : 0,
+                                'notice_days' => $data['notice_days'] ?? null,
+                                'detailed_reason' => $data['detailed_reason'] ?? null,
+                                'performance' => $data['performance'] ?? null,
+                                'performance_comments' => $data['performance_comments'] ?? null,
+                                'supervisor_feedback' => $data['supervisor_feedback'] ?? null,
+                                'documents_delivered' => isset($data['documents_delivered']) ? json_encode($data['documents_delivered']) : null,
+                                'settlement_completed' => !empty($data['settlement_completed']) ? 1 : 0,
+                                'settlement_details' => $data['settlement_details'] ?? null,
+                                'impacts_team' => !empty($data['impacts_team']) ? 1 : 0,
+                                'position_replaced' => !empty($data['position_replaced']) ? 1 : 0,
+                                'replacement_urgency' => $data['replacement_urgency'] ?? null,
+                                'additional_comments' => $data['additional_comments'] ?? null,
+                                'access_deactivated' => !empty($data['access_deactivated']) ? 1 : 0,
+                                'exit_interview' => !empty($data['exit_interview']) ? 1 : 0,
+                                're_hire' => !empty($data['re_hire']) ? 1 : 0,
+                            ];
 
-                        // Actualizar estado del usuario
-                        $record->update([
-                            'status' => false
-                        ]);
+                            UserTermination::updateOrCreate(
+                                ['user_id' => $record->id],
+                                $payload
+                            );
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Error en la base de datos procesar la baja del usuario')
+                                ->body($e->getMessage())
+                                ->send();
+                            return;
+                        }
+
+                        $record->update(['status' => false]);
 
                         Notification::make()
                             ->success()

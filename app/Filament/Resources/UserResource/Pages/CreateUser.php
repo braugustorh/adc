@@ -43,6 +43,8 @@ class CreateUser extends CreateRecord
     public $token;
     public $estadosMexico=[];
     protected static ?string $title='Crear Usuarios';
+    public array $estadosIds;
+
     protected function authorizeAccess(): void
     {
         abort_unless(VisorRoleHelper::canEdit(), 403, __('Ups!, no estas autorizado para realizar esta acción.'));
@@ -178,22 +180,27 @@ class CreateUser extends CreateRecord
                             function(Get $get): array{
                                 $state= $get('state');
                                 if($state){
+                                    if (!empty($this->estadosIds) && is_array($this->estadosIds)) {
+                                        $flipped = array_flip($this->estadosIds); // ahora keys = nombre_estado, values = estado_id
+                                        $stateId = $flipped[$state] ?? null;
+                                        $stateId = $stateId+1;
+                                    }
                                     $citiesResponse = Http::withHeaders([
                                         "Accept"=> "application/json",
                                         "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
-                                    ])->get('https://api.tau.com.mx/dipomex/v1/municipios?id_estado='.$state);
+                                    ])->get('https://api.tau.com.mx/dipomex/v1/municipios?id_estado='.$stateId);
                                     $citiesArray = json_decode($citiesResponse->body(), true);
 
                                     if (is_array($citiesArray)) {
 
-                                        $cities = array_column($citiesArray['municipios'], 'MUNICIPIO', 'MUNICIPIO_ID');
+                                        $cities = array_column($citiesArray['municipios'], 'MUNICIPIO', 'MUNICIPIO');
                                     } else {
                                         Notification::make()
                                             ->title('Error')
                                             ->danger()
                                             ->icon('heroicon-o-x-circle')
                                             ->iconColor('danger')
-                                            ->body('No se pudo obtener la lista de ciudades')
+                                            ->body('No se pudo obtener la lista de ciudades'.' '.$citiesResponse)
                                             ->send();
                                         $cities = [];
                                     }
@@ -207,49 +214,9 @@ class CreateUser extends CreateRecord
                         ->loadingMessage('Cargando Municipios...')
                         ->searchingMessage('Buscando Municipios...')
                         ->default(null),
-                    Select::make('colony')
+                    TextInput::make('colony')
                         ->label('Colonia')
                         ->live()
-                        ->options(function(Get $get): array {
-                            $estado = $get('state');
-                            $ciudad = $get('city');
-                            $colonies = [];
-                            if ($ciudad && $estado) {
-                                $coloniesResponse = Http::withHeaders([
-                                    "Accept" => "application/json",
-                                    "APIKEY" => "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
-                                ])->get('https://api.tau.com.mx/dipomex/v1/colonias?id_estado='.$estado.'&id_mun='.$ciudad);
-                                $coloniesArray = json_decode($coloniesResponse->body(), true);
-                                if (is_array($coloniesArray)) {
-                                    $colonies = array_column($coloniesArray['colonias'], 'COLONIA', 'ASENTA_ID');
-                                } else {
-                                    Notification::make()
-                                        ->title('Error')
-                                        ->danger()
-                                        ->icon('heroicon-o-x-circle')
-                                        ->iconColor('danger')
-                                        ->body('No se logró obtener la lista de colonias')
-                                        ->send();
-                                }
-                            }
-                            return $colonies;
-                        }
-                        )
-                        ->searchable()
-                        ->loadingMessage('Cargando Colonias...')
-                        ->searchingMessage('Buscando Colonias...')
-                        /*->afterStateUpdated(function (Get $get, Set $set):string {
-                            $colonia = $get('colony');
-
-                            $postalCode = $colonia;
-                            if($colonia!==null){
-                                dd($colonia);
-                                return $set('cp', $postalCode);
-                            }else{
-                                return $set('cp', '');
-                            }
-
-                        })*/
                         ->default(null),
                     TextInput::make('cp')
                         ->label('Código Postal')
@@ -451,10 +418,12 @@ class CreateUser extends CreateRecord
             "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
         ])->get('https://api.tau.com.mx/dipomex/v1/estados');
 
+
         $colonyArray=json_decode($res->body(),true);
         if (is_array($colonyArray)) {
 
-            $this->estadosMexico = array_column($colonyArray['estados'], 'ESTADO', 'ESTADO_ID');
+            $this->estadosMexico = array_column($colonyArray['estados'], 'ESTADO', 'ESTADO');
+            $this->estadosIds= array_column($colonyArray['estados'], 'ESTADO', 'ESTADO_id');
         }else{
             Notification::make()
                 ->title('Error')
@@ -465,6 +434,7 @@ class CreateUser extends CreateRecord
                 ->send();
 
         }
+       // dd($this->estadosMexico);
 
         $this->countries= Country::all()
             ->pluck('name','id')

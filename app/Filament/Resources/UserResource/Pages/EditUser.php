@@ -41,6 +41,7 @@ class EditUser extends EditRecord
     public String $cp;
     public $countries=[];
     public $estadosMexico=[];
+    public array $estadosIds;
     protected function authorizeAccess(): void
     {
         abort_unless(VisorRoleHelper::canEdit(), 403, __('Ups!, no estas autorizado para realizar esta acción.'));
@@ -179,25 +180,32 @@ class EditUser extends EditRecord
                             function(Get $get): array{
                                 $state= $get('state');
                                 if($state){
+                                    if (!empty($this->estadosIds) && is_array($this->estadosIds)) {
+                                        $flipped = array_flip($this->estadosIds); // ahora keys = nombre_estado, values = estado_id
+                                        $stateId = $flipped[$state] ?? null;
+                                        $stateId = $stateId+1;
+                                    }
+
                                     $citiesResponse = Http::withHeaders([
                                         "Accept"=> "application/json",
                                         "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
-                                    ])->get('https://api.tau.com.mx/dipomex/v1/municipios?id_estado='.$state);
+                                    ])->get('https://api.tau.com.mx/dipomex/v1/municipios?id_estado='.$stateId);
                                     $citiesArray = json_decode($citiesResponse->body(), true);
 
                                     if (is_array($citiesArray)) {
 
-                                        $cities = array_column($citiesArray['municipios'], 'MUNICIPIO', 'MUNICIPIO_ID');
+                                        $cities = array_column($citiesArray['municipios'], 'MUNICIPIO', 'MUNICIPIO');
                                     } else {
                                         Notification::make()
                                             ->title('Error')
                                             ->danger()
                                             ->icon('heroicon-o-x-circle')
                                             ->iconColor('danger')
-                                            ->body('No se pudo obtener la lista de ciudades')
+                                            ->body('No se pudo obtener la lista de ciudades'.' '.$citiesResponse)
                                             ->send();
                                         $cities = [];
                                     }
+
                                 }else{
                                     $cities = [];
                                 }
@@ -421,7 +429,7 @@ class EditUser extends EditRecord
         if (is_array($colonyArray)) {
 
           $this->estadosMexico = array_column($colonyArray['estados'], 'ESTADO', 'ESTADO');
-
+          $this->estadosIds= array_column($colonyArray['estados'], 'ESTADO', 'ESTADO_id');
 
         }else{
             Notification::make()

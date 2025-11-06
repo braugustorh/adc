@@ -265,6 +265,7 @@ class EditUser extends EditRecord
                         ->label('Escolaridad')
                         ->live()
                         ->options([
+                            'Sin Estudios' => 'Sin Estudios',
                             'Primaria' => 'Primaria',
                             'Secundaria' => 'Secundaria',
                             'Técnico'=> 'Técnico',

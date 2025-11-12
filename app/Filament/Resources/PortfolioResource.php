@@ -453,7 +453,7 @@ class PortfolioResource extends Resource
 //                    $query->whereIn('user_id', $users);
 //
 //                }
-                elseif(auth()->user()->hasAnyRole('Colaborador','Supervisor','Operativo')){
+                elseif(auth()->user()->hasAnyRole('Colaborador','Supervisor','Operativo','Gerente')){
                     $query->where('user_id',\auth()->user()->id);
                 }
             });

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Exports\PortfolioExport;
 use App\Filament\Resources\PortfolioResource\Pages;
 use App\Filament\Resources\PortfolioResource\RelationManagers;
 use App\Helpers\VisorRoleHelper;
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
-
+use Maatwebsite\Excel\Facades\Excel;
 class PortfolioResource extends Resource
 {
     protected static ?string $model = Portfolio::class;
@@ -338,9 +339,11 @@ class PortfolioResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
+                Tables\Columns\TextColumn::make('fullName')
                     ->label('Nombre')
-                    ->numeric()
+                    ->getStateUsing(fn ($record) =>
+                    trim("{$record->user->name} {$record->user->first_name} {$record->user->last_name}")
+                    )
                     ->sortable(),
                 Tables\Columns\IconColumn::make('acta_url')
                     ->label('Acta de nacimiento')
@@ -429,11 +432,40 @@ class PortfolioResource extends Resource
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn()=>VisorRoleHelper::canEdit()),
-                ]),
-            ])->modifyQueryUsing(function (Builder $query) {
+                Tables\Actions\BulkAction::make('Delete')
+                    ->label('Eliminar')
+                    ->color('danger')
+                    ->icon('heroicon-m-trash')
+                    ->action(fn (Collection $records) => $records->each->delete())
+                    ->requiresConfirmation()
+                    ->modalHeading('Eliminar registros')
+                    ->modalDescription('¿Estás seguro de que deseas eliminar los registros seleccionados?')
+                    ->modalSubmitActionLabel('Eliminar'),
+                Tables\Actions\BulkAction::make('exportar')
+                    ->label('Exportar a Excel')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(function (Collection $records) {
+                        return Excel::download(
+                            new PortfolioExport($records->pluck('id')->toArray()),
+                            'portafolio_' . now()->format('Y-m-d_His') . '.xlsx'
+                        );
+                    })
+                    ->deselectRecordsAfterCompletion()
+                    ->requiresConfirmation()
+                    ->modalHeading('Exportar Portafolio')
+                    ->modalDescription('¿Deseas exportar los registros seleccionados a un archivo Excel?')
+                    ->modalSubmitActionLabel('Exportar'),
+            ])
+            ->headerActions([
+               /*
+                Tables\Actions\Action::make('downloadPortfolioReport')
+                    ->label('Descargar Reporte')
+                    ->icon('heroicon-m-arrow-down-tray')
+                    ->action(fn () => PortfolioResource::downloadPortfolioReport())
+                    ->visible(fn () => auth()->user()->hasAnyRole(['Administrador', 'RH Corp', 'RH'])),
+               */
+            ])
+            ->modifyQueryUsing(function (Builder $query) {
                 // Si el usuario tiene el rol "Jefe RH", filtrar por su sede_id
                 if (auth()->user()->hasRole('RH')) {
                     $users=User::where('sede_id',\auth()->user()->sede_id)->pluck('id');
@@ -473,5 +505,9 @@ class PortfolioResource extends Resource
             'create' => Pages\CreatePortfolio::route('/create'),
             'edit' => Pages\EditPortfolio::route('/{record}/edit'),
         ];
+    }
+    public static function downloadPortfolioReport()
+    {
+        return Excel::download(new PortfolioExport(), 'Portafolio_Documentos.xlsx');
     }
 }

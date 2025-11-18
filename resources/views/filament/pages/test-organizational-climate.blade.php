@@ -71,26 +71,26 @@
         </div>
     </div>
     @else
-    <div class="relative flex flex-col bg-white shadow-lg rounded-xl dark:bg-neutral-900">
-        <div class="p-4 sm:p-10 text-center overflow-y-auto">
-            <!-- Icon -->
-            <span class="mb-4 inline-flex justify-center items-center size-[62px] rounded-full border-4 border-yellow-50 bg-yellow-100 text-yellow-500 dark:bg-yellow-700 dark:border-yellow-600 dark:text-yellow-100">
-          <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="62" height="62" fill="currentColor" viewBox="-4.1 -2.2 24 24">
-            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
-          </svg>
-        </span>
-            <!-- End Icon -->
+        <div class="relative flex flex-col bg-white shadow-lg rounded-xl dark:bg-gray-900">
+            <div class="p-4 sm:p-10 text-center overflow-y-auto">
+                <!-- Icon -->
+                <span class="mb-4 inline-flex justify-center items-center size-[62px] rounded-full border-4 border-yellow-50 bg-yellow-100 text-yellow-500 dark:bg-yellow-700 dark:border-yellow-600 dark:text-yellow-100">
+      <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="62" height="62" fill="currentColor" viewBox="-4.1 -2.2 24 24">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
+      </svg>
+    </span>
+                <!-- End Icon -->
 
-            <h3 id="hs-sign-out-alert-label" class="mb-2 text-2xl font-bold text-gray-800 dark:text-neutral-200">
-                Ups!
-            </h3>
-            <p class="text-gray-500 dark:text-neutral-500">
-                <h3>La Evaluación de Clima Organizacional ya fue contestada o no existe una campaña activa para su Sede.</h3>
-            </p>
+                <h3 id="hs-sign-out-alert-label" class="mb-2 text-2xl font-bold text-gray-800 dark:text-dark-400">
+                    Ups!
+                </h3>
+                <p class="text-gray-500 dark:text-dark-400">
+                <h3 class="dark:text-dark-400">La Evaluación de Clima Organizacional ya fue contestada o no existe una campaña activa para su Sede.</h3>
+                </p>
 
 
+            </div>
         </div>
-    </div>
     @endif
 
 

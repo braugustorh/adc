@@ -47,7 +47,7 @@ class EvaluationAssignResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('campaign_id')
                             ->relationship('campaign', 'name', fn (Builder $query) =>
-                            $query->where('status', '!=', 'Concluida'))
+                                $query->where('status', '!=', 'Concluida'))
                             ->label('Campaña')
                             ->required(),
 
@@ -62,42 +62,43 @@ class EvaluationAssignResource extends Resource
                             ->label('Sede'),
 
                         Forms\Components\Select::make('user_id')
-                            ->relationship('user', 'full_name',
+                            ->relationship('user', 'name',
                                 function (Builder $query) {
-                                    return $query->select('*')
-                                        ->selectRaw("CONCAT(name, ' ', first_name, ' ', last_name) as full_name")
-                                        ->orderByRaw("CONCAT(name, ' ', first_name, ' ', last_name)")
-                                        ->where('id', '!=', 1)
-                                        ->where('status','=',1);
+                                    return $query->where('id', '!=', 1)
+                                        ->where('status', '=', 1)
+                                        ->orderByRaw("CONCAT(name, ' ', first_name, ' ', last_name)");
                                 }
                             )
-                            ->reactive()
-                            ->label('Evaluador')
-                            ->searchable()
+                            ->getOptionLabelFromRecordUsing(fn (Model $record) =>
+                            trim("{$record->name} {$record->first_name} {$record->last_name}")
+                            )
+                            ->searchable(['name', 'first_name', 'last_name'])
                             ->preload()
+                            ->label('Evaluador')
                             ->required(),
+
 
                         // Selector de evaluados temporales
                         Forms\Components\Grid::make(2)
                             ->schema([
                                 Forms\Components\Select::make('temp_user_to_evaluate_id')
-                                    ->relationship('userToEvaluate', 'full_name',
+                                    ->relationship('userToEvaluate', 'name',
                                         function (Builder $query, Forms\Get $get) {
-                                            $query->select('*')
-                                                ->selectRaw("CONCAT(name, ' ', first_name, ' ', last_name) as full_name")
-                                                ->orderByRaw("CONCAT(name, ' ', first_name, ' ', last_name)");
+                                            $query->where('id', '!=', 1);
 
                                             if ($get('sede')) {
-                                                return $query->where('sede_id', $get('sede'))
-                                                    ->where('id', '!=', 1);
-                                            } else {
-                                                return $query->where('id', '!=', 1);
+                                                $query->where('sede_id', $get('sede'));
                                             }
+
+                                            return $query->orderByRaw("CONCAT(name, ' ', first_name, ' ', last_name)");
                                         }
                                     )
+                                    ->getOptionLabelFromRecordUsing(fn (Model $record) =>
+                                    trim("{$record->name} {$record->first_name} {$record->last_name}")
+                                    )
+                                    ->searchable(['name', 'first_name', 'last_name'])
                                     ->label('Seleccionar evaluado')
-                                    ->preload()
-                                    ->searchable(),
+                                    ->preload(),
                                 Forms\Components\Select::make('type')
                                     ->label('Tipo de evaluado')
                                     ->required()
@@ -186,7 +187,7 @@ class EvaluationAssignResource extends Resource
                                         };
 
                                         $html .= '
-                                            <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                            <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg dark:bg-gray-900">
                                                 <span><strong>' . $tipoLabel . ':</strong> ' . $evaluado['name'] . '</span>
                                                 <button
                                                     type="button"

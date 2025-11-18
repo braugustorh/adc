@@ -56,10 +56,10 @@
     </x-filament::section>
     <div class="grid md:grid-cols-3 gap-4">
         <div>
-            <div class="flex flex-col gap-y-3 lg:gap-y-5 p-4 md:p-5 bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800 mb-2">
+            <div class="flex flex-col gap-y-3 lg:gap-y-5 p-4 md:p-5 bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-gray-900 dark:border-neutral-800 mb-2">
                 <div class="inline-flex justify-center items-center">
                     <span class="size-2 inline-block bg-red-500 rounded-full me-2"></span>
-                    <span class="text-xs font-semibold uppercase text-gray-600 dark:text-neutral-400">
+                    <span class="text-xs font-semibold uppercase text-gray-600 dark:text-white">
                        Score General
                     </span>
                 </div>
@@ -86,7 +86,7 @@
                     </dd>
                 </dl>
             </div>
-            <div class="flex flex-col gap-y-3 lg:gap-y-5 p-4 md:p-5 bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800 mb-2">
+            <div class="flex flex-col gap-y-3 lg:gap-y-5 p-4 md:p-5 bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-gray-900 dark:border-neutral-800 mb-2">
                 <div class="inline-flex justify-center items-center">
                     <span class="size-2 inline-block bg-gray-500 rounded-full me-2"></span>
                     <span class="text-xs font-semibold uppercase text-gray-600 dark:text-neutral-400">Audiencia</span>
@@ -116,7 +116,7 @@
                     </dd>
                 </dl>
             </div>
-            <div class="flex flex-col gap-y-3 lg:gap-y-5 p-4 md:p-5 bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
+            <div class="flex flex-col gap-y-3 lg:gap-y-5 p-4 md:p-5 bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-gray-900 dark:border-neutral-800">
                 <div class="inline-flex justify-center items-center">
                     <span class="size-2 inline-block bg-gray-500 rounded-full me-2">
                     </span>

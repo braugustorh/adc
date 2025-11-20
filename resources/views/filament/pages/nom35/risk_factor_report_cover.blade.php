@@ -191,8 +191,8 @@
 <!-- Encabezado -->
 <div class="header">
     <h1>Carátula General</h1>
-    <p>Guía de Referencia II - Norma Oficial Mexicana NOM-035-STPS-2018</p>
-    <p>Resumen de la aplicación de cuestionario II Para identificar factores de Riesgo Psicosocial</p>
+    <p>Guía de Referencia {{$guia}} - Norma Oficial Mexicana NOM-035-STPS-2018</p>
+    <p>Resumen de la aplicación de cuestionario {{$guia}} Para identificar factores de Riesgo Psicosocial {{$complement}}</p>
     <p>Entre 16 y 50 colaboradores</p>
 </div>
 

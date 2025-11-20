@@ -458,7 +458,7 @@
 
 
                     </x-filament::section>
-                @endif
+               @endif
 
             </div>
 
@@ -597,6 +597,31 @@
                     </x-slot>
 
                 </x-filament::section>
+                @if($level==1)
+
+                <x-filament::section class="mb-4">
+                    <x-slot name="heading">
+                        Resumen de los resultados
+                    </x-slot>
+                    <p>
+                        Descarga el listado de los resultados obtenidos en la
+                        aplicación del Guía II o III.
+                    </p>
+                    <br>
+                    <x-slot name="footerActions">
+                        <div class="flex items-center gap-2">
+                            <x-filament::button
+                                color="info"
+                                wire:click="sumaryResults"
+                                icon="fas-file-download">
+                                Descargar Listado
+                            </x-filament::button>
+
+                        </div>
+                    </x-slot>
+
+                </x-filament::section>
+                    @endif
 
             </div>
 
@@ -1055,6 +1080,24 @@
                 wire:click="closeTestResultsGuideIII"          color="gray"
             >
                 Cerrar
+            </x-filament::button>
+            <x-filament::button
+                color="primary"
+                wire:click="reporteGeneralGIIIDownload"
+            >
+                Descargar Reporte General
+            </x-filament::button>
+            <x-filament::button
+                color="primary"
+                wire:click="reportIndividualGIIIDownload"
+            >
+                Reporte Individual
+            </x-filament::button>
+            <x-filament::button
+                color="primary"
+                wire:click="reportCoverGIII"
+            >
+                Descargar Carátula
             </x-filament::button>
         </x-slot>
 

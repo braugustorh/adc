@@ -68,11 +68,11 @@ class Nom035 extends Page
     public $generalDomainResultsGuideIII= [];
     public $fechaInicioG2, $fechaFinG2;
     //Variables cover para categorias
-    public $coverAmbientResponses, $coverLeadershipResponses, $coverActivityResponses, $coverTimeResponses;
+    public $coverAmbientResponses, $coverLeadershipResponses, $coverActivityResponses, $coverTimeResponses,$coverEntornoResponses;
     //Variables cover para dominio
     public $coverWorkActivityResponses, $coverWorkControlResponses, $coverConditionResponses,
         $coverWorkJourneyResponses, $coverWordAndFamilyResponses, $coverWorkRelationsResponses,
-        $coverViolenceResponses,$coverDomainLeadershipResponses;
+        $coverViolenceResponses,$coverDomainLeadershipResponses,$coverInestableResponses,$coverPerformanceResponses;
 
 
 
@@ -155,13 +155,13 @@ class Nom035 extends Page
         // Calcular muestra según el número de colaboradores
         if ($this->colabs->count() >= 51) {
             $this->muestra = $this->calculateSampleSize($this->colabs->count());
-            $this->level=3;
+            $this->level=3; //Guía III
         }else if ($this->colabs->count()>=16 && $this->colabs->count()<=50) {
             $this->muestra =$this->colabs->count();
-            $this->level=2;
+            $this->level=2; //Guía II
         } else {
             $this->muestra = $this->colabs->count();
-            $this->level=1;
+            $this->level=1; //Guía I
         }
 
         $this->selectedCollaborator = null;
@@ -570,6 +570,7 @@ class Nom035 extends Page
         $this->dispatch('open-modal', id: 'modal-result');
     }
 
+    //Abre el Modal de Resultados de la GUIA III
     public function resultsGuideIII()
     {
         $queryResG3=RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
@@ -626,6 +627,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverAmbientResponses = $ambienteQuery;
         $actividadQuery= RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -636,6 +638,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverActivityResponses = $actividadQuery;
         $tiempoQuery= RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -646,6 +649,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverTimeResponses = $tiempoQuery;
         $liderazgoQuery= RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -656,6 +660,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverLeadershipResponses = $liderazgoQuery;
         $envirommentQuery= RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -666,6 +671,8 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverEntornoResponses = $envirommentQuery;
+
         $this->generalResultsGuideIIICategory = [
                 'ambiente' => [
                     'nombre' => 'Ambiente de trabajo',
@@ -704,7 +711,7 @@ class Nom035 extends Page
                     'very_high' => $liderazgoQuery->filter(fn($value) => $value >= 58)->count(),
                 ],
                 'enviromment' => [
-                    'nombre' => 'Condiciones del entorno de trabajo',
+                    'nombre' => 'Entorno Organizacional',
                     'total' => $envirommentQuery->count(),
                     'null' => $envirommentQuery->filter(fn($value) => $value < 10)->count(),
                     'low' => $envirommentQuery->filter(fn($value) => $value >= 10 && $value < 14)->count(),
@@ -716,6 +723,7 @@ class Nom035 extends Page
         /*
          * Asignación de los resultados generales por Dominio de la guía III
          */
+
         $this->generalDomainResultsGuideIII = [];
         $conditionResponses = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
@@ -727,6 +735,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverConditionResponses=$conditionResponses;
         $workActivityResponses = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -737,6 +746,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverWorkActivityResponses=$workActivityResponses;
         $workControlResponses = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -747,6 +757,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverWorkControlResponses=$workControlResponses;
         $workJourneyResponses = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -757,6 +768,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverWorkJourneyResponses=$workJourneyResponses;
         $wordAndFamilyResponses = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -767,6 +779,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverWordAndFamilyResponses=$wordAndFamilyResponses;
         $leadershipResponses= RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -777,6 +790,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverDomainLeadershipResponses=$leadershipResponses;
         $workRelationsResponses = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -787,6 +801,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverWorkRelationsResponses=$workRelationsResponses;
         $violenceResponses = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -797,6 +812,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverViolenceResponses=$violenceResponses;
         $performanceResponses = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -807,6 +823,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverPerformanceResponses=$performanceResponses;
         $inestableResponses = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', auth()->user()->sede_id)
             ->whereHas('question', function($q) {
@@ -817,6 +834,7 @@ class Nom035 extends Page
             ->map(function ($items) {
                 return $items->sum('equivalence_response');
             });
+        $this->coverInestableResponses=$inestableResponses;
         // Asignar los resultados de dominio en un array
         $this->generalDomainResultsGuideIII = [
             'conditions'=>[
@@ -901,7 +919,7 @@ class Nom035 extends Page
                 'very_high' => $performanceResponses->filter(fn($value) => $value >= 16)->count(),
             ],
             'inestable'=>[
-                'nombre' => 'Insuficiente sentido de pertenencia e, inestabilidad',
+                'nombre' => 'Insuficiente sentido de pertenencia e inestabilidad',
                 'total' => $inestableResponses->count(),
                 'null' => $inestableResponses->filter(fn($value) => $value < 4)->count(),
                 'low' => $inestableResponses->filter(fn($value) => $value >= 4 && $value < 6)->count(),
@@ -1511,12 +1529,89 @@ class Nom035 extends Page
         }
     }
 
+    public function reporteGeneralGIIIDownload(){
+        $recomendaciones=[
+            'Muy Alto' =>'Se requiere realizar el análisis de cada categoría y dominio para establecer las acciones de intervención apropiadas, mediante un Programa de intervención
+            que deberá incluir evaluaciones específicas, y contemplar campañas de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para
+            la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación
+            y difusión.',
+            'Alto' => 'Se requiere realizar un análisis de cada categoría y dominio, de manera que se puedan determinar las acciones de intervención apropiadas a través de un Programa
+             de intervención, que podrá incluir una evaluación específica y deberá incluir una campaña de sensibilización, revisar la política de prevención de riesgos psicosociales
+              y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como
+              reforzar su aplicación y difusión.',
+            'Medio' => 'Se requiere revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión, mediante un Programa de intervención.',
+            'Bajo' => 'Es necesario una mayor difusión de la política de prevención de riesgos psicosociales y programas para: la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral. ',
+            'Nulo' => 'El riesgo resulta despreciable por lo que no se requiere medidas adicionales.'
+        ];
+        //dd($this->generalResultsGuideIIICategory);
+        $html=view('filament.pages.nom35.risk_factor_report', [
+            'company' => auth()->user()->sede->name ?? 'No definido', //OK
+            'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+            'guia' => 'III',
+            'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+            'responsesTotalG2' => $this->totalResponsesG3,
+            'generalResults' => $this->generalResultsGuideIII,
+            'calificacionG2' =>  $this->calificacionG3,
+            'resultCuestionario' => $this->resultCuestionarioG3,
+            'categories'=>$this->generalResultsGuideIIICategory,
+            'dominios'=> $this->generalDomainResultsGuideIII,
+            'recommendations' =>$recomendaciones[$this->resultCuestionarioG3==='Despreciable'?'Nulo':$this->resultCuestionarioG3],
+        ])->render();
+
+        $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
+
+        $payload = [
+            'source'    => $html,
+            'landscape' => false,
+            'use_print' => false,
+            'margin'    => [
+                'top'    => 10,
+                'bottom' => 10,
+                'left'   => 10,
+                'right'  => 10,
+            ],
+        ];
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'X-API-Key'    => config('services.pdfshift.api_key'),
+        ])
+            ->withBody(json_encode($payload, JSON_UNESCAPED_UNICODE), 'application/json')
+            ->post('https://api.pdfshift.io/v3/convert/pdf');
+        if ($response->successful()) {
+
+            $pdfContent = $response->body();
+            // Forzar descarga en el navegador
+            return response()->streamDownload(function () use ($pdfContent) {
+                echo $pdfContent;
+            },'ReporteGeneralG3.pdf');
+
+
+        }else{
+            Notification::make()
+                ->title('Error al generar PDF')
+                ->body('No se pudo generar el PDF: ' . $response->body())
+                ->danger()
+                ->send();
+            //return abort(500, 'Error al generar el PDF');
+
+        }
+
+    }
+
+
     public function reportGeneralGIIDownload()
     {
 
         $recomendaciones=[
-            'Muy Alto' =>'Se requiere realizar el análisis de cada categoría y dominio para establecer las acciones de intervención apropiadas, mediante un Programa de intervención que deberá incluir evaluaciones específicas1, y contemplar campañas de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',
-            'Alto' => 'Se requiere realizar un análisis de cada categoría y dominio, de manera que se puedan determinar las acciones de intervención apropiadas a través de un Programa de intervención, que podrá incluir una evaluación específica y deberá incluir una campaña de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',
+            'Muy Alto' =>'Se requiere realizar el análisis de cada categoría y dominio para establecer las acciones de intervención apropiadas, mediante un Programa de intervención
+            que deberá incluir evaluaciones específicas, y contemplar campañas de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para
+            la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación
+            y difusión.',
+            'Alto' => 'Se requiere realizar un análisis de cada categoría y dominio, de manera que se puedan determinar las acciones de intervención apropiadas a través de un Programa
+             de intervención, que podrá incluir una evaluación específica y deberá incluir una campaña de sensibilización, revisar la política de prevención de riesgos psicosociales
+              y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como
+              reforzar su aplicación y difusión.',
             'Medio' => 'Se requiere revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión, mediante un Programa de intervención.',
             'Bajo' => 'Es necesario una mayor difusión de la política de prevención de riesgos psicosociales y programas para: la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral. ',
             'Nulo' => 'El riesgo resulta despreciable por lo que no se requiere medidas adicionales.'
@@ -1525,13 +1620,14 @@ class Nom035 extends Page
             'company' => auth()->user()->sede->name ?? 'No definido', //OK
             'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
-            'responsesTotalG2' => $this->responsesTotalG2,
+             'guia' => 'II',
+             'responsesTotalG2' => $this->responsesTotalG2,
             'generalResults' => $this->generalResults,
             'calificacionG2' => $this->calificacion,
             'resultCuestionario' => $this->resultCuestionario,
             'categories'=>$this->generalResultsCategory,
             'dominios'=> $this->domainResults,
-            'recommendations' =>$recomendaciones[$this->resultCuestionario==='Muy Alto'?'Muy-Alto':$this->resultCuestionario],
+            'recommendations' =>$recomendaciones[$this->resultCuestionario==='Despreciable'?'Nulo':$this->resultCuestionario],
             ])->render();
 
 
@@ -1670,11 +1766,11 @@ class Nom035 extends Page
             'conditions' => 'Condiciones del ambiente de trabajo',
             'work_activity' => 'Carga de Trabajo',
             'work_control' => 'Falta de control sobre el trabajo',
-            'work_journey' => 'Organización del tiempo de trabajo',
-            'work_family' => 'Interferencia trabajo-familia',
-            'leadership' => 'Liderazgo y relaciones en el trabajo',
+            'work_journey' => 'Jornada de trabajo',
+            'work_family' => 'Interferencia en la relación trabajo-familia',
+            'leadership' => 'Liderazgo',
             'work_relations' => 'Relaciones en el trabajo',
-            'violence' => 'Violencia en el trabajo',
+            'violence' => 'Violencia',
         ];
 
         $categoryNames = [
@@ -1692,18 +1788,18 @@ class Nom035 extends Page
             'ritmos_acelerados' => 'Ritmos de trabajo acelerado',
             'carga_mental' => 'Carga mental',
             'cargas_psicologicas' => 'Cargas psicológicas emocionales',
-            'alta_responsabilidad' => 'Alta responsabilidad',
+            'alta_responsabilidad' => 'Cargas de alta responsabilidad',
             'cargas_contradictorias' => 'Cargas contradictorias o inconsistentes',
             'falta_control' => 'Falta de control y autonomía sobre el trabajo',
-            'posibilidad_desarrollo' => 'Posibilidades de desarrollo',
-            'capacitacion' => 'Capacitación insuficiente',
-            'jornadas_extensas' => 'Jornadas de trabajo y rotación de turnos',
+            'posibilidad_desarrollo' => 'Limitada o nula posibilidad de desarrollo',
+            'capacitacion' => 'Limitada o inexistente capacitación',
+            'jornadas_extensas' => 'Jornadas de trabajo extensas',
             'influencia_fuera_trabajo' => 'Influencia del trabajo fuera del centro laboral',
-            'responsabilidades_familiares' => 'Responsabilidades familiares',
-            'claridad_funciones' => 'Claridad de funciones',
-            'liderazgo' => 'Liderazgo',
+            'responsabilidades_familiares' => 'Influencia de las responsabilidades familiares ',
+            'claridad_funciones' => 'Escasa claridad de funciones',
+            'liderazgo' => 'Características del liderazgo ',
             'relaciones_sociales' => 'Relaciones sociales en el trabajo',
-            'relacion_colaboradores' => 'Relación con los colaboradores',
+            'relacion_colaboradores' => 'Deficiente relación con los colaboradores que supervisa',
             'violencia_laboral' => 'Violencia laboral',
         ];
 
@@ -2017,6 +2113,8 @@ class Nom035 extends Page
 
         $html = view('filament.pages.nom35.risk_factor_individual_report', [
             'users' => $users,
+            'guia'=>'II',
+            'guiaName'=>'IDENTIFICACIÓN DE LOS FACTORES DE RIESGO PSICOSOCIAL EN LOS CENTROS DE TRABAJO'
         ])->render();
 
 
@@ -2056,6 +2154,463 @@ class Nom035 extends Page
         }
     }
 
+    public function reportIndividualGIIIDownload(){
+        $domainNames = [
+            'conditions' => 'Condiciones del ambiente de trabajo',
+            'work_activity' => 'Carga de Trabajo',
+            'work_control' => 'Falta de control sobre el trabajo',
+            'work_journey' => 'Jornada de trabajo',
+            'work_family' => 'Interferencia en la relación trabajo-familia',
+            'leadership' => 'Liderazgo',
+            'work_relations' => 'Relaciones en el trabajo',
+            'violence' => 'Violencia',
+            'reconocimiento' => 'Reconocimiento del desempeño',
+            'pertenencia'=>'Insuficiente sentido de pertenencia e, inestabilidad'
+        ];
+
+        $categoryNames = [
+            'ambiente' => 'Ambiente de trabajo',
+            'activity' => 'Factores propios de la actividad',
+            'time' => 'Organización del tiempo de trabajo',
+            'leadership' => 'Liderazgo y relaciones en el trabajo',
+            'entorno'=> 'Entorno organizacional ',
+        ];
+
+        $dimensionNames = [
+            'condiciones_peligrosas' => 'Condiciones peligrosas e inseguras',
+            'condiciones_deficientes' => 'Condiciones deficientes e insalubres',
+            'trabajos_peligrosos' => 'Trabajos peligrosos',
+            'cargas_cuantitativas' => 'Cargas cuantitativas',
+            'ritmos_acelerados' => 'Ritmos de trabajo acelerado',
+            'carga_mental' => 'Carga mental',
+            'cargas_psicologicas' => 'Cargas psicológicas emocionales',
+            'alta_responsabilidad' => 'Cargas de alta responsabilidad',
+            'cargas_contradictorias' => 'Cargas contradictorias o inconsistentes',
+            'falta_control' => 'Falta de control y autonomía sobre el trabajo',
+            'posibilidad_desarrollo' => 'Limitada o nula posibilidad de desarrollo',
+            'cambio'=>'Insuficiente participación y manejo del cambio',
+            'capacitacion' => 'Limitada o inexistente capacitación',
+            'jornadas_extensas' => 'Jornadas de trabajo extensas',
+            'influencia_fuera_trabajo' => 'Influencia del trabajo fuera del centro laboral',
+            'responsabilidades_familiares' => 'Influencia de las responsabilidades familiares ',
+            'claridad_funciones' => 'Escasa claridad de funciones',
+            'liderazgo' => 'Características del liderazgo ',
+            'relaciones_sociales' => 'Relaciones sociales en el trabajo',
+            'relacion_colaboradores' => 'Deficiente relación con los colaboradores que supervisa',
+            'violencia_laboral' => 'Violencia laboral',
+            'retroalimentacion' => 'Escasa o nula retroalimentación del desempeño ',
+            'compensacion' => 'Escaso o nulo reconocimiento y compensación',
+            'pertenencia' => 'Limitado sentido de pertenencia',
+            'inestabilidad' => 'Inestabilidad laboral',
+        ];
+
+        $recomendaciones=[
+            'Muy Alto' =>'Se requiere realizar el análisis de cada categoría y dominio para establecer las acciones de intervención apropiadas, mediante un Programa de intervención que deberá incluir evaluaciones específicas1, y contemplar campañas de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',
+            'Alto' => 'Se requiere realizar un análisis de cada categoría y dominio, de manera que se puedan determinar las acciones de intervención apropiadas a través de un Programa de intervención, que podrá incluir una evaluación específica y deberá incluir una campaña de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',
+            'Medio' => 'Se requiere revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión, mediante un Programa de intervención.',
+            'Bajo' => 'Es necesario una mayor difusión de la política de prevención de riesgos psicosociales y programas para: la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral. ',
+            'Nulo' => 'El riesgo resulta despreciable por lo que no se requiere medidas adicionales.'
+        ];
+
+        // Traer todos los usuarios que respondieron la encuesta de la guía II
+        $users = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
+            ->where('sede_id', auth()->user()->sede_id)
+            ->with('user')
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($items, $userId) use ($domainNames, $categoryNames, $dimensionNames,$recomendaciones) {
+                $user = $items->first()->user;
+                $responses = $items->mapWithKeys(function ($item) {
+                    return [$item->question->order => $item->equivalence_response];
+                })->toArray();
+
+                // Calcular las dimensiones
+                $dimensions = [
+                    'condiciones_peligrosas' => array_sum(array_intersect_key($responses, array_flip([1,3]))),
+                    'condiciones_deficientes' => array_sum(array_intersect_key($responses, array_flip([2,4]))),
+                    'trabajos_peligrosos' => array_sum(array_intersect_key($responses, array_flip([5]))),
+                    'cargas_cuantitativas' => array_sum(array_intersect_key($responses, array_flip([6,12]))),
+                    'ritmos_acelerados' => array_sum(array_intersect_key($responses, array_flip([7,8]))),
+                    'carga_mental' => array_sum(array_intersect_key($responses, array_flip([9,10,11]))),
+                    'cargas_psicologicas' => array_sum(array_intersect_key($responses, array_flip([66,67,68,69]))),
+                    'alta_responsabilidad' => array_sum(array_intersect_key($responses, array_flip([13,14]))),
+                    'cargas_contradictorias' => array_sum(array_intersect_key($responses, array_flip([15,16]))),
+                    'falta_control' => array_sum(array_intersect_key($responses, array_flip([25,26,27,28]))),
+                    'posibilidad_desarrollo' => array_sum(array_intersect_key($responses, array_flip([23,24]))),
+                    'cambio'=>array_sum(array_intersect_key($responses, array_flip([29,30]))),
+                    'capacitacion' => array_sum(array_intersect_key($responses, array_flip([35,36]))),
+                    'jornadas_extensas' => array_sum(array_intersect_key($responses, array_flip([17,18]))),
+                    'influencia_fuera_trabajo' => array_sum(array_intersect_key($responses, array_flip([19,20]))),
+                    'responsabilidades_familiares' => array_sum(array_intersect_key($responses, array_flip([21,22]))),
+                    'claridad_funciones' => array_sum(array_intersect_key($responses, array_flip([31,32,33,34]))),
+                    'liderazgo' => array_sum(array_intersect_key($responses, array_flip([37,38,39,40,41]))),
+                    'relaciones_sociales' => array_sum(array_intersect_key($responses, array_flip([42,43,44,45,46]))),
+                    'relacion_colaboradores' => array_sum(array_intersect_key($responses, array_flip([71,72,73,74]))),
+                    'violencia_laboral' => array_sum(array_intersect_key($responses, array_flip([57,58,59,60,61,62,63,64]))),
+                    'retroalimentacion' => array_sum(array_intersect_key($responses, array_flip([47,48]))),
+                    'compensacion' => array_sum(array_intersect_key($responses, array_flip([49,50,51,52]))),
+                    'pertenencia' => array_sum(array_intersect_key($responses, array_flip([55,56]))),
+                    'inestabilidad' => array_sum(array_intersect_key($responses, array_flip([53,54]))),
+                ];
+
+                // Calcular los dominios
+                $domains = [
+                    'conditions' => array_sum(array_intersect_key($responses, array_flip([1,2,3,4,5]))),
+                    'work_activity' => array_sum(array_intersect_key($responses, array_flip([6,12,7,8,9,10,11,66,67,68,69,13,14,15,16]))),
+                    'work_control' => array_sum(array_intersect_key($responses, array_flip([25,26,27,28,23,24,29,30,35,36]))),
+                    'work_journey' => array_sum(array_intersect_key($responses, array_flip([17,18]))),
+                    'work_family' => array_sum(array_intersect_key($responses, array_flip([19,20,21,22]))),
+                    'leadership' => array_sum(array_intersect_key($responses, array_flip([31,32,33,34,37,38,39,40,41]))),
+                    'work_relations' => array_sum(array_intersect_key($responses, array_flip([42,43,44,45,46,71,72,73,74]))),
+                    'violence' => array_sum(array_intersect_key($responses, array_flip([57,58,59,60,61,62,63,64]))),
+                    'reconocimiento' => array_sum(array_intersect_key($responses, array_flip([47,48,49,50,51,52]))),
+                    'pertenencia'=>array_sum(array_intersect_key($responses, array_flip([55,56,53,54]))),
+                ];
+
+                // Calcular categorías
+                $categories = [
+                    'ambiente' => array_sum(array_intersect_key($responses, array_flip([1,2,3,4,5]))),
+                    'activity' => $domains['work_activity']+$domains['work_control'],
+                    'time' => $domains['work_journey']+$domains['work_family'],
+                    'leadership' => $domains['leadership']+$domains['work_relations']+$domains['violence'],
+                    'entorno'=> $domains['reconocimiento']+$domains['pertenencia']
+                ];
+
+                // Función para determinar nivel de riesgo
+                $getRiskLevel = function($score, $thresholds) {
+                    if ($score < $thresholds[0]) return 'Nulo o despreciable';
+                    if ($score < $thresholds[1]) return 'Bajo';
+                    if ($score < $thresholds[2]) return 'Medio';
+                    if ($score < $thresholds[3]) return 'Alto';
+                    return 'Muy alto';
+                };
+
+                // Agregar niveles de riesgo para cada dimensión
+                $dimensionsWithLevels = [];
+                foreach ($dimensions as $key => $value) {
+                    $dimensionsWithLevels[$key] = [
+                        'score' => $value,
+                        'name' => $dimensionNames[$key],
+                        'level' => $this->getDimensionRiskLevelG3($key, $value)
+                    ];
+                }
+                $domainsWithLevels = [];
+                foreach ($domains as $key => $value) {
+                    $domainsWithLevels[$key] = [
+                        'score' => $value,
+                        'name' => $domainNames[$key],
+                        'level' => $this->getDomainRiskLevelG3($key, $value)
+                    ];
+                }
+                // Agregar niveles de riesgo para cada categoría
+                $categoriesWithLevels = [];
+                foreach ($categories as $key => $value) {
+                    $categoriesWithLevels[$key] = [
+                        'score' => $value,
+                        'name' => $categoryNames[$key],
+                        'level' => $this->getCategoryRiskLevelG3($key, $value)
+
+                    ];
+                }
+                // Estructura jerárquica: Categorías -> Dominios -> Dimensiones
+                $structure = [
+                    'ambiente' => [
+                        'name' => 'Ambiente de trabajo',
+                        'score' => $dimensions['condiciones_peligrosas'] + $dimensions['condiciones_deficientes'] + $dimensions['trabajos_peligrosos'],
+                        'level' => $this->getCategoryRiskLevelG3('ambiente', $dimensions['condiciones_peligrosas'] + $dimensions['condiciones_deficientes'] + $dimensions['trabajos_peligrosos']),
+                        'domains' => [
+                            'conditions' => [
+                                'name' => 'Condiciones en el ambiente de trabajo',
+                                'score' => $dimensions['condiciones_peligrosas'] + $dimensions['condiciones_deficientes'] + $dimensions['trabajos_peligrosos'],
+                                'level' => $this->getDomainRiskLevelG3('conditions', $dimensions['condiciones_peligrosas'] + $dimensions['condiciones_deficientes'] + $dimensions['trabajos_peligrosos']),
+                                'dimensions' => [
+                                    [
+                                        'name' => 'Condiciones peligrosas e inseguras',
+                                        'score' => $dimensions['condiciones_peligrosas'],
+                                        'level' => $this->getDimensionRiskLevelG3('condiciones_peligrosas', $dimensions['condiciones_peligrosas'])
+                                    ],
+                                    [
+                                        'name' => 'Condiciones deficientes e insalubres',
+                                        'score' => $dimensions['condiciones_deficientes'],
+                                        'level' => $this->getDimensionRiskLevelG3('condiciones_deficientes', $dimensions['condiciones_deficientes'])
+                                    ],
+                                    [
+                                        'name' => 'Trabajos peligrosos',
+                                        'score' => $dimensions['trabajos_peligrosos'],
+                                        'level' => $this->getDimensionRiskLevelG3('trabajos_peligrosos', $dimensions['trabajos_peligrosos'])
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'activity' => [
+                        'name' => 'Factores propios de la actividad',
+                        'score' => array_sum(array_slice($dimensions, 3, 9)), // Suma de todas las dimensiones de actividad
+                        'level' => $this->getCategoryRiskLevelG3('activity', array_sum(array_slice($dimensions, 3, 9))),
+                        'domains' => [
+                            'work_activity' => [
+                                'name' => 'Carga de trabajo',
+                                'score' => $dimensions['cargas_cuantitativas'] + $dimensions['ritmos_acelerados'] + $dimensions['carga_mental'] + $dimensions['cargas_psicologicas'] + $dimensions['alta_responsabilidad'] + $dimensions['cargas_contradictorias'],
+                                'level' => $this->getDomainRiskLevelG3('work_activity', $dimensions['cargas_cuantitativas'] + $dimensions['ritmos_acelerados'] + $dimensions['carga_mental'] + $dimensions['cargas_psicologicas'] + $dimensions['alta_responsabilidad'] + $dimensions['cargas_contradictorias']),
+                                'dimensions' => [
+                                    [
+                                        'name' => 'Cargas cuantitativas',
+                                        'score' => $dimensions['cargas_cuantitativas'],
+                                        'level' => $this->getDimensionRiskLevelG3('cargas_cuantitativas', $dimensions['cargas_cuantitativas'])
+                                    ],
+                                    [
+                                        'name' => 'Ritmos de trabajo acelerado',
+                                        'score' => $dimensions['ritmos_acelerados'],
+                                        'level' => $this->getDimensionRiskLevelG3('ritmos_acelerados', $dimensions['ritmos_acelerados'])
+                                    ],
+                                    [
+                                        'name' => 'Carga mental',
+                                        'score' => $dimensions['carga_mental'],
+                                        'level' => $this->getDimensionRiskLevelG3('carga_mental', $dimensions['carga_mental'])
+                                    ],
+                                    [
+                                        'name' => 'Cargas psicológicas emocionales',
+                                        'score' => $dimensions['cargas_psicologicas'],
+                                        'level' => $this->getDimensionRiskLevelG3('cargas_psicologicas', $dimensions['cargas_psicologicas'])
+                                    ],
+                                    [
+                                        'name' => 'Cargas de alta responsabilidad',
+                                        'score' => $dimensions['alta_responsabilidad'],
+                                        'level' => $this->getDimensionRiskLevelG3('alta_responsabilidad', $dimensions['alta_responsabilidad'])
+                                    ],
+                                    [
+                                        'name' => 'Cargas contradictorias o inconsistentes',
+                                        'score' => $dimensions['cargas_contradictorias'],
+                                        'level' => $this->getDimensionRiskLevelG3('cargas_contradictorias', $dimensions['cargas_contradictorias'])
+                                    ]
+                                ]
+                            ],
+                            'work_control' => [
+                                'name' => 'Falta de control sobre el trabajo',
+                                'score' => $dimensions['falta_control'] + $dimensions['posibilidad_desarrollo']+ $dimensions['cambio'] + $dimensions['capacitacion'],
+                                'level' => $this->getDomainRiskLevelG3('work_control', $dimensions['falta_control'] + $dimensions['posibilidad_desarrollo']+ $dimensions['cambio'] + $dimensions['capacitacion']),
+                                'dimensions' => [
+                                    [
+                                        'name' => 'Falta de control y autonomía sobre el trabajo',
+                                        'score' => $dimensions['falta_control'],
+                                        'level' => $this->getDimensionRiskLevelG3('falta_control', $dimensions['falta_control'])
+                                    ],
+                                    [
+                                        'name' => 'Limitada o nula posibilidad de desarrollo',
+                                        'score' => $dimensions['posibilidad_desarrollo'],
+                                        'level' => $this->getDimensionRiskLevelG3('posibilidad_desarrollo', $dimensions['posibilidad_desarrollo'])
+                                    ],
+                                    [
+                                        'name'=>'Insuficiente participación y manejo del cambio ',
+                                        'score' => $dimensions['cambio'],
+                                        'level' => $this->getDimensionRiskLevelG3('cambio', $dimensions['cambio'])
+                                    ],
+                                    [
+                                        'name' => 'Limitada o inexistente capacitación',
+                                        'score' => $dimensions['capacitacion'],
+                                        'level' => $this->getDimensionRiskLevelG3('capacitacion', $dimensions['capacitacion'])
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'time' => [
+                        'name' => 'Organización del tiempo de trabajo',
+                        'score' => $dimensions['jornadas_extensas'] + $dimensions['influencia_fuera_trabajo'] + $dimensions['responsabilidades_familiares'],
+                        'level' => $this->getCategoryRiskLevelG3('time', $dimensions['jornadas_extensas'] + $dimensions['influencia_fuera_trabajo'] + $dimensions['responsabilidades_familiares']),
+                        'domains' => [
+                            'work_journey' => [
+                                'name' => 'Jornada de trabajo',
+                                'score' => $dimensions['jornadas_extensas'],
+                                'level' => $this->getDomainRiskLevelG3('work_journey', $dimensions['jornadas_extensas']),
+                                'dimensions' => [
+                                    [
+                                        'name' => 'Jornadas de trabajo extensas',
+                                        'score' => $dimensions['jornadas_extensas'],
+                                        'level' => $this->getDimensionRiskLevelG3('jornadas_extensas', $dimensions['jornadas_extensas'])
+                                    ]
+                                ]
+                            ],
+                            'work_family' => [
+                                'name' => 'Interferencia en la relación trabajo-familia',
+                                'score' => $dimensions['influencia_fuera_trabajo'] + $dimensions['responsabilidades_familiares'],
+                                'level' => $this->getDomainRiskLevelG3('work_family', $dimensions['influencia_fuera_trabajo'] + $dimensions['responsabilidades_familiares']),
+                                'dimensions' => [
+                                    [
+                                        'name' => 'Influencia del trabajo fuera del centro laboral',
+                                        'score' => $dimensions['influencia_fuera_trabajo'],
+                                        'level' => $this->getDimensionRiskLevelG3('influencia_fuera_trabajo', $dimensions['influencia_fuera_trabajo'])
+                                    ],
+                                    [
+                                        'name' => 'Influencia de las responsabilidades familiares',
+                                        'score' => $dimensions['responsabilidades_familiares'],
+                                        'level' => $this->getDimensionRiskLevelG3('responsabilidades_familiares', $dimensions['responsabilidades_familiares'])
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'leadership' => [
+                        'name' => 'Liderazgo y relaciones en el trabajo',
+                        'score' => $dimensions['claridad_funciones'] + $dimensions['liderazgo'] + $dimensions['relaciones_sociales'] + $dimensions['relacion_colaboradores'] + $dimensions['violencia_laboral'],
+                        'level' => $this->getCategoryRiskLevelG3('leadership', $dimensions['claridad_funciones'] + $dimensions['liderazgo'] + $dimensions['relaciones_sociales'] + $dimensions['relacion_colaboradores'] + $dimensions['violencia_laboral']),
+                        'domains' => [
+                            'leadership' => [
+                                'name' => 'Liderazgo',
+                                'score' => $dimensions['claridad_funciones'] + $dimensions['liderazgo'],
+                                'level' => $this->getDomainRiskLevelG3('leadership', $dimensions['claridad_funciones'] + $dimensions['liderazgo']),
+                                'dimensions' => [
+                                    [
+                                        'name' => 'Escasa claridad de funciones',
+                                        'score' => $dimensions['claridad_funciones'],
+                                        'level' => $this->getDimensionRiskLevelG3('claridad_funciones', $dimensions['claridad_funciones'])
+                                    ],
+                                    [
+                                        'name' => 'Características del liderazgo',
+                                        'score' => $dimensions['liderazgo'],
+                                        'level' => $this->getDimensionRiskLevelG3('liderazgo', $dimensions['liderazgo'])
+                                    ]
+                                ]
+                            ],
+                            'work_relations' => [
+                                'name' => 'Relaciones en el trabajo',
+                                'score' => $dimensions['relaciones_sociales'] + $dimensions['relacion_colaboradores'],
+                                'level' => $this->getDomainRiskLevelG3('work_relations', $dimensions['relaciones_sociales'] + $dimensions['relacion_colaboradores']),
+                                'dimensions' => [
+                                    [
+                                        'name' => 'Relaciones sociales en el trabajo',
+                                        'score' => $dimensions['relaciones_sociales'],
+                                        'level' => $this->getDimensionRiskLevelG3('relaciones_sociales', $dimensions['relaciones_sociales'])
+                                    ],
+                                    [
+                                        'name' => 'Deficiente relación con los colaboradores que supervisa',
+                                        'score' => $dimensions['relacion_colaboradores'],
+                                        'level' => $this->getDimensionRiskLevelG3('relacion_colaboradores', $dimensions['relacion_colaboradores'])
+                                    ]
+                                ]
+                            ],
+                            'violence' => [
+                                'name' => 'Violencia',
+                                'score' => $dimensions['violencia_laboral'],
+                                'level' => $this->getDomainRiskLevelG3('violence', $dimensions['violencia_laboral']),
+                                'dimensions' => [
+                                    [
+                                        'name' => 'Violencia laboral',
+                                        'score' => $dimensions['violencia_laboral'],
+                                        'level' => $this->getDimensionRiskLevelG3('violencia_laboral', $dimensions['violencia_laboral'])
+                                    ]
+                                ]
+                            ]
+                        ],
+                    ],
+                    'entorno'=> [
+                        'name' => 'Entorno Organizacional',
+                        'score' => $dimensions['retroalimentacion']+ $dimensions['compensacion']+$dimensions['pertenencia']+ $dimensions['inestabilidad'],
+                        'level' => $this->getCategoryRiskLevelG3('entorno', $dimensions['retroalimentacion']+ $dimensions['compensacion']+$dimensions['pertenencia']+ $dimensions['inestabilidad']),
+                        'domains' => [
+                            'reconocimiento' => [
+                                'name' => 'Reconocimiento del desempeño',
+                                'score' => $dimensions['retroalimentacion']+ $dimensions['compensacion'],
+                                'level' => $this->getDomainRiskLevelG3('reconocimiento', $dimensions['retroalimentacion']+ $dimensions['compensacion']),
+                                'dimensions' => [
+                                    [
+                                        'name'=>'Escasa o nula retroalimentación del desempeño ',
+                                        'score' => $dimensions['retroalimentacion'],
+                                        'level' => $this->getDimensionRiskLevelG3('retroalimentacion', $dimensions['retroalimentacion'])
+                                    ],
+                                    [
+                                        'name'=>'Escaso o nulo reconocimiento y compensación',
+                                        'score' => $dimensions['compensacion'],
+                                        'level' => $this->getDimensionRiskLevelG3('compensacion', $dimensions['compensacion'])
+                                    ]
+                                ],
+                            ],
+                            'pertenencia'=>[
+                                'name' => 'Insuficiente sentido de pertenencia e, inestabilidad',
+                                'score' => $dimensions['pertenencia']+ $dimensions['inestabilidad'],
+                                'level' => $this->getDomainRiskLevelG3('pertenencia', $dimensions['pertenencia']+ $dimensions['inestabilidad']),
+                                'dimensions' => [
+                                    [
+                                        'name'=>'Limitado sentido de pertenencia',
+                                        'score' => $dimensions['pertenencia'],
+                                        'level' => $this->getDimensionRiskLevelG3('pertenencia', $dimensions['pertenencia'])
+                                    ],
+                                    [
+                                        'name'=>'Inestabilidad laboral',
+                                        'score' => $dimensions['inestabilidad'],
+                                        'level' => $this->getDimensionRiskLevelG3('inestabilidad', $dimensions['inestabilidad'])
+                                    ]
+                                ]
+                            ]
+                        ]
+                   ]
+                ];
+
+                return [
+                    'users' => $user,
+                    'user_id' => $userId,
+                    'empresa' => auth()->user()->sede->name,
+                    'nombre' => $user->name . ' ' . $user->first_name . ' ' . $user->last_name,
+                    'fecha' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+                    'fecha_aplicacion' => $items->first()->created_at->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+                    'puesto' => $user->position->name ?? 'No definido',
+                    'responses' => $responses,
+                    'categories' => $categoriesWithLevels,
+                    'domains' => $domainsWithLevels,
+                    'dimensions' => $dimensionsWithLevels,
+                    'total_score' => array_sum($responses),
+                    'risk_level' => $this->getTotalRiskLevelG3(array_sum($responses)), // Placeholder, puedes calcularlo si es necesario
+                    'recommendation' => $recomendaciones[$this->getTotalRiskLevelG3(array_sum($responses))] ?? 'No se encontró recomendación para este nivel de riesgo.',
+                    'structure' => $structure,
+                ];
+
+            })->toArray();
+
+        // Renderizar la vista con los datos
+
+        $html = view('filament.pages.nom35.risk_factor_individual_report', [
+            'users' => $users,
+            'guia'=>'III',
+            'guiaName'=>'IDENTIFICACIÓN Y ANÁLISIS DE LOS FACTORES DE RIESGO PSICOSOCIAL Y EVALUACIÓN DEL ENTORNO ORGANIZACIONAL EN LOS CENTROS DE TRABAJO'
+        ])->render();
+
+
+        // Forzar codificación UTF-8
+        $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
+
+        $payload = [
+            'source'    => $html,
+            'landscape' => false,
+            'use_print' => false,
+            'margin'    => [
+                'top'    => 10,
+                'bottom' => 10,
+                'left'   => 10,
+                'right'  => 10,
+            ],
+        ];
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'X-API-Key'    => config('services.pdfshift.api_key'),
+        ])
+            ->withBody(json_encode($payload, JSON_UNESCAPED_UNICODE), 'application/json')
+            ->post('https://api.pdfshift.io/v3/convert/pdf');
+
+        if ($response->successful()) {
+            $pdfContent = $response->body();
+            return response()->streamDownload(function () use ($pdfContent) {
+                echo $pdfContent;
+            },'ReporteIndividualG3.pdf');
+        } else {
+            Notification::make()
+                ->title('Error al generar PDF')
+                ->body('No se pudo generar el PDF: ' . $response->body())
+                ->danger()
+                ->send();
+        }
+    }
+
 // Método auxiliar para determinar el nivel de riesgo de las dimensiones
     private function getDimensionRiskLevel($dimension, $score)
     {
@@ -2086,12 +2641,55 @@ class Nom035 extends Page
         $dimensionThresholds = $thresholds[$dimension] ?? [0, 1, 2, 3];
 
         // Verificar cada nivel en orden
-        if ($score < $dimensionThresholds[1]) return $levels[0];
-        if ($score < $dimensionThresholds[2]) return $levels[1];
-        if ($score < $dimensionThresholds[3]) return $levels[2];
-        if ($score >= $dimensionThresholds[3]) return $levels[4]; // Muy alto
+        if ($score < $dimensionThresholds[0]) return $levels[0];  //Nulo
+        if ($score >= $dimensionThresholds[0] && $score < $dimensionThresholds[1]) return $levels[1]; //Bajo
+        if ($score >= $dimensionThresholds[1] && $score < $dimensionThresholds[2]) return $levels[2]; //Medio
+        if ($score >= $dimensionThresholds[2] && $score < $dimensionThresholds[3]) return $levels[3]; //Alto
 
-        return $levels[3]; // Alto como fallback
+        return $levels[4]; //Muy Alto
+    }
+    private function getDimensionRiskLevelG3 ($dimension, $score)
+    {
+  // [0, 3, 6, 9] 3 items
+  //[0, 1, 2, 3] 1 item
+        $thresholds = [
+            'condiciones_peligrosas' => [0, 2, 4, 6],
+            'condiciones_deficientes' => [0, 2, 4, 6],
+            'trabajos_peligrosos' => [0, 1, 2, 3],
+            'cargas_cuantitativas' => [0, 2, 4, 6],
+            'ritmos_acelerados' => [0, 2, 4, 6],
+            'carga_mental' => [0, 3, 6, 9],
+            'cargas_psicologicas' => [0, 4, 8, 12], //4 items max 16 *.25 *.50 *.75
+            'alta_responsabilidad' => [0, 2, 4, 6],
+            'cargas_contradictorias' => [0, 2, 4, 6],
+            'falta_control' => [0, 4, 8, 12],
+            'posibilidad_desarrollo' => [0, 2, 4, 6],
+            'cambio' => [0, 2, 4, 6],
+            'capacitacion' => [0, 2, 4, 6],
+            'jornadas_extensas' => [0, 2, 4, 6],
+            'influencia_fuera_trabajo' => [0, 2, 4, 6],
+            'responsabilidades_familiares' => [0, 2, 4, 6],
+            'claridad_funciones' => [0, 4, 8, 12],
+            'liderazgo' => [0,5,10,15],
+            'relaciones_sociales' => [0,5,10,15],
+            'relacion_colaboradores' => [0, 4, 8, 12],
+            'violencia_laboral' => [0, 8, 16, 24],
+            'retroalimentacion' => [0, 2, 4, 6],
+            'compensacion' => [0, 4, 8, 12],
+            'pertenencia' => [0, 2, 4, 6],
+            'inestabilidad' => [0, 2, 4, 6]
+        ];
+
+        $levels = ['Nulo', 'Bajo', 'Medio', 'Alto', 'Muy alto'];
+        $dimensionThresholds = $thresholds[$dimension] ?? [0, 1, 2, 3];
+
+        // Verificar cada nivel en orden
+        if ($score < $dimensionThresholds[0]) return $levels[0];  //Nulo
+        if ($score >= $dimensionThresholds[0] && $score <$dimensionThresholds[1]) return $levels[1]; //Bajo
+        if ($score >= $dimensionThresholds[1] && $score < $dimensionThresholds[2]) return $levels[2]; //Medio
+        if ($score >= $dimensionThresholds[2] && $score < $dimensionThresholds[3]) return $levels[3]; //Alto
+
+        return $levels[4]; //Muy Alto
     }
     private function getDomainRiskLevel($domain, $score)
     {
@@ -2117,6 +2715,31 @@ class Nom035 extends Page
         return $levels[4];
     }
 
+    private function getDomainRiskLevelG3($domain, $score)
+    {
+        $thresholds = [
+            'conditions' => [5, 9, 11, 14],
+            'work_activity' => [15, 21, 27, 37],
+            'work_control' => [11, 16, 21, 25],
+            'work_journey' => [1, 2, 4, 6],
+            'work_family' => [4, 6, 8, 10],
+            'leadership' => [9, 12, 16, 20],
+            'work_relations' => [10, 13, 17, 21],
+            'violence' => [7, 10, 13, 16],
+            'reconocimiento'=>[6,10,14,18],
+            'pertenencia'=>[4,6,8,10]
+        ];
+
+        $levels = ['Nulo', 'Bajo', 'Medio', 'Alto', 'Muy alto'];
+        $domainThresholds = $thresholds[$domain] ?? [1, 2, 3, 4];
+
+        if ($score < $domainThresholds[0]) return $levels[0];
+        if ($score >= $domainThresholds[0] && $score < $domainThresholds[1]) return $levels[1];
+        if ($score >= $domainThresholds[1] && $score < $domainThresholds[2]) return $levels[2];
+        if ($score >= $domainThresholds[2] && $score < $domainThresholds[3]) return $levels[3];
+
+        return $levels[4];
+    }
     private function getCategoryRiskLevel($category, $score)
     {
 
@@ -2125,6 +2748,27 @@ class Nom035 extends Page
             'activity' => [10, 20, 30, 40],
             'time' => [4, 6, 9, 12],
             'leadership' => [10, 18, 28, 38],
+        ];
+
+        $levels = ['Nulo o despreciable', 'Bajo', 'Medio', 'Alto', 'Muy alto'];
+        $categoryThresholds = $thresholds[$category] ?? [1, 2, 3, 4];
+
+        if ($score < $categoryThresholds[0]) return $levels[0];
+        if ($score >= $categoryThresholds[0] && $score < $categoryThresholds[1]) return $levels[1];
+        if ($score >= $categoryThresholds[1] && $score < $categoryThresholds[2]) return $levels[2];
+        if ($score >= $categoryThresholds[2] && $score < $categoryThresholds[3]) return $levels[3];
+
+        return $levels[4];
+    }
+    private function getCategoryRiskLevelG3($category, $score)
+    {
+
+        $thresholds = [
+            'ambiente' => [5,9,11,14],
+            'activity' => [15,30,45,60],
+            'time' => [5,7,10,13],
+            'leadership' => [14,29,42,58],
+            'entorno'=>[10,14,18,23]
         ];
 
         $levels = ['Nulo o despreciable', 'Bajo', 'Medio', 'Alto', 'Muy alto'];
@@ -2148,7 +2792,23 @@ class Nom035 extends Page
         } elseif ($score >= 70 && $score < 90) {
             return 'Alto';
         } elseif ($score >= 90) {
-            return 'Muy alto';
+            return 'Muy Alto';
+        }
+
+        return 'N/A';
+    }
+    private function getTotalRiskLevelG3($score)
+    {
+        if ($score < 50) {
+            return 'Nulo';
+        } elseif ($score >= 50 && $score < 75) {
+            return 'Bajo';
+        } elseif ($score >= 75 && $score < 99) {
+            return 'Medio';
+        } elseif ($score >= 99 && $score < 140) {
+            return 'Alto';
+        } elseif ($score >= 140) {
+            return 'Muy Alto';
         }
 
         return 'N/A';
@@ -2242,6 +2902,8 @@ class Nom035 extends Page
             'resultCuestionario' => $this->resultCuestionario,
             'categories'=>$categories,
             'domains'=> $domains,
+            'guia'=>'III',
+            'complement' => ''
             //'recommendations' =>$recomendaciones[$this->resultCuestionario==='Muy Alto'?'Muy-Alto':$this->resultCuestionario],
         ])->render();
         // Forzar codificación UTF-8
@@ -2276,11 +2938,279 @@ class Nom035 extends Page
                 ->send();
         }
     }
+
+    public function reportCoverGIII()
+    {
+        $recomendaciones = [
+            'Muy Alto' =>'Se requiere realizar el análisis de cada categoría y dominio para establecer las acciones de intervención apropiadas, mediante un Programa de intervención que deberá incluir evaluaciones específicas1, y contemplar campañas de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',
+            'Alto' => 'Se requiere realizar un análisis de cada categoría y dominio, de manera que se puedan determinar las acciones de intervención apropiadas a través de un Programa de intervención, que podrá incluir una evaluación específica y deberá incluir una campaña de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',
+            'Medio' => 'Se requiere revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión, mediante un Programa de intervención.',
+            'Bajo' => 'Es necesario una mayor difusión de la política de prevención de riesgos psicosociales y programas para: la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral. ',
+            'Nulo' => 'El riesgo resulta despreciable por lo que no se requiere medidas adicionales.'
+        ];
+
+        //Quiero obtener el promedio de las respuestas de la guía II por categoría
+        $categories = [
+            'ambiente' => [
+                'name' => 'Ambiente de trabajo',
+                'result' => $this->coverAmbientResponses->avg(),
+                'risk_level' => $this->getCategoryRiskLevelG3('ambiente', $this->coverAmbientResponses->avg()),
+            ],
+            'activity' => [
+                'name' => 'Factores propios de la actividad',
+                'result' => $this->coverActivityResponses->avg(),
+                'risk_level' => $this->getCategoryRiskLevelG3('activity', $this->coverActivityResponses->avg()),
+            ],
+            'time' => [
+                'name' => 'Organización del tiempo de trabajo',
+                'result' => $this->coverTimeResponses->avg(),
+                'risk_level' => $this->getCategoryRiskLevelG3('time', $this->coverTimeResponses->avg()),
+            ],
+            'leadership' => [
+                'name' => 'Liderazgo y relaciones en el trabajo',
+                'result' => $this->coverLeadershipResponses->avg(),
+                'risk_level' => $this->getCategoryRiskLevelG3('leadership', $this->coverLeadershipResponses->avg()),
+            ],
+            'entorno'=>[
+                'name' => 'Entorno organizacional',
+                'result'=>$this->coverEntornoResponses->avg(),
+                'risk_level'=>$this->getCategoryRiskLevelG3('entorno',$this->coverEntornoResponses->avg()),
+            ]
+        ];
+        $domains = [
+            'conditions' => [
+                'name' => 'Condiciones en el ambiente de trabajo',
+                'result' => $this->coverConditionResponses->avg(),
+                'risk_level' => $this->getDomainRiskLevelG3('conditions', $this->coverConditionResponses->avg()),
+            ],
+            'work_activity' => [
+                'name' => 'Carga de trabajo',
+                'result' => $this->coverWorkActivityResponses->avg(),
+                'risk_level' => $this->getDomainRiskLevelG3('work_activity', $this->coverWorkActivityResponses->avg()),
+            ],
+            'work_control' => [
+                'name' => 'Falta de control sobre el trabajo',
+                'result' => $this->coverWorkControlResponses->avg(),
+                'risk_level' => $this->getDomainRiskLevelG3('work_control', $this->coverWorkControlResponses->avg()),
+            ],
+            'work_journey' => [
+                'name' => 'Jornada de trabajo',
+                'result' => $this->coverWorkJourneyResponses->avg(),
+                'risk_level' => $this->getDomainRiskLevelG3('work_journey', $this->coverWorkJourneyResponses->avg()),
+            ],
+            'work_family' => [
+                'name' => 'Interferencia en la relación trabajo-familia',
+                'result' => $this->coverWordAndFamilyResponses->avg(),
+                'risk_level' => $this->getDomainRiskLevelG3('work_family', $this->coverWordAndFamilyResponses->avg()),
+            ],
+            'leadership' => [
+                'name' => 'Liderazgo',
+                'result' => $this->coverDomainLeadershipResponses->avg(),
+                'risk_level' => $this->getDomainRiskLevelG3('leadership', $this->coverDomainLeadershipResponses->avg()),
+            ],
+            'work_relations' => [
+                'name' => 'Relaciones en el trabajo',
+                'result' => $this->coverWorkRelationsResponses->avg(),
+                'risk_level' => $this->getDomainRiskLevelG3('work_relations', $this->coverWorkRelationsResponses->avg()),
+            ],
+            'violence' => [
+                'name' => 'Violencia laboral',
+                'result' => $this->coverViolenceResponses->avg(),
+                'risk_level' => $this->getDomainRiskLevelG3('violence', $this->coverViolenceResponses->avg()),
+            ],
+            'performance' =>[
+                'name' => 'Reconocimiento del Desempeño',
+                'result'=>$this->coverPerformanceResponses->avg(),
+                'risk_level'=>$this->getDomainRiskLevelG3('reconocimiento',$this->coverPerformanceResponses->avg()),
+            ],
+            'inestable'=> [
+                'name' => 'Insuficiente sentido de pertenencia e, inestabilidad ',
+                'result'=>$this->coverInestableResponses->avg(),
+                'risk_level'=>$this->getDomainRiskLevelG3('pertenencia',$this->coverInestableResponses->avg()),
+            ]
+        ];
+
+
+        $html=view('filament.pages.nom35.risk_factor_report_cover', [
+            'company' => auth()->user()->sede->name ?? 'No definido', //OK
+            'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+            'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+            'responsesTotalG2' => $this->totalResponsesG3,
+            'generalResults' => $this->generalResultsGuideIII,
+            'calificacionG2' => $this->calificacionG3,
+            'resultCuestionario' => $this->resultCuestionarioG3,
+            'categories'=>$categories,
+            'domains'=> $domains,
+            'guia'=>'III',
+            'complement' => 'y Entorno Organizacional'
+            //'recommendations' =>$recomendaciones[$this->resultCuestionario==='Muy Alto'?'Muy-Alto':$this->resultCuestionario],
+        ])->render();
+        // Forzar codificación UTF-8
+        $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
+        $payload = [
+            'source'    => $html,
+            'landscape' => false,
+            'use_print' => false,
+            'margin'    => [
+                'top'    => 10,
+                'bottom' => 10,
+                'left'   => 10,
+                'right'  => 10,
+            ],
+        ];
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'X-API-Key'    => config('services.pdfshift.api_key'),
+        ])
+            ->withBody(json_encode($payload, JSON_UNESCAPED_UNICODE), 'application/json')
+            ->post('https://api.pdfshift.io/v3/convert/pdf');
+        if ($response->successful()) {
+            $pdfContent = $response->body();
+            return response()->streamDownload(function () use ($pdfContent) {
+                echo $pdfContent;
+            },'CaratulaGuiaIII.pdf');
+        } else {
+            Notification::make()
+                ->title('Error al generar PDF')
+                ->body('No se pudo generar el PDF: ' . $response->body())
+                ->danger()
+                ->send();
+        }
+    }
     public function downloadNorma(){
         return response()->download(storage_path('app/documents/NORMA_Oficial_Mexicana_NOM-035-STPS-2018.pdf'),'NORMA_Oficial_Mexicana_NOM-035-STPS-2018.pdf');
     }
     public function downloadGuia(){
         return response()->download(storage_path('app/documents/Guia_NOM035_STPS_2018.pdf'),'Guia_NOM035_STPS_2018.pdf');
+    }
+
+    public function sumaryResults(){
+        try {
+            $normaId = $this->norma->id;
+            $sedeId = auth()->user()->sede_id;
+
+
+            if ($this->level === 2) {
+                $userIds = RiskFactorSurvey::where('norma_id', $normaId)
+                    ->where('sede_id', $sedeId)
+                    ->with('user')
+                    ->distinct()
+                    ->pluck('user_id');
+
+                $colaboradores = \App\Models\User::whereIn('id', $userIds)->get();
+            } elseif ($this->level === 3) {
+                $userIds = RiskFactorSurveyOrganizational::where('norma_id', $normaId)
+                    ->where('sede_id', $sedeId)
+                    ->distinct()
+                    ->pluck('user_id');
+
+                $colaboradores = \App\Models\User::whereIn('id', $userIds)->get();
+            }
+
+
+            // Construir datos para el Excel
+            $data = [];
+            foreach ($colaboradores as $colab) {
+                $score = 0;
+                $determinacion = '';
+
+                // Según el nivel, sumar respuestas
+                if ($this->level === 2) { //Guía II
+                    $riskSurvey = RiskFactorSurvey::where('norma_id', $normaId)
+                        ->where('user_id', $colab->id)
+                        ->sum('equivalence_response');
+
+                    if ($riskSurvey) {
+                        $score = $riskSurvey;
+                        $determinacion = $this->getTotalRiskLevel($score);
+                    }
+                } elseif ($this->level === 3) { //Guía III
+                    // Sumar ambas encuestas
+                    $riskSurvey = RiskFactorSurveyOrganizational::where('norma_id', $normaId)
+                        ->where('user_id', $colab->id)
+                        ->sum('equivalence_response');
+
+                    $score = $riskSurvey;
+                    $determinacion = $this->getTotalRiskLevelG3($score);
+                }
+
+                $data[] = [
+                    'nombre' => $colab->name . ' ' . $colab->first_name . ' ' . $colab->last_name,
+                    'score' => $score,
+                    'determinacion' => $determinacion
+                ];
+            }
+
+            // Crear Excel
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Headers
+            $sheet->setCellValue('A1', 'Nombre');
+            $sheet->setCellValue('B1', 'Score');
+            $sheet->setCellValue('C1', 'Determinación');
+
+            // Estilos para header
+            $headerStyle = [
+                'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+                'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '4472C4']],
+                'alignment' => ['horizontal' => 'center', 'vertical' => 'center']
+            ];
+            $sheet->getStyle('A1:C1')->applyFromArray($headerStyle);
+            // Mapa de colores según determinación
+            $colorMap = [
+                'Muy Alto' => 'dc2626',          // Rojo
+                'Alto' => 'ea580c',              // Naranja
+                'Medio' => 'facc15',             // Amarillo
+                'Bajo' => '22c55e',              // Verde
+                'Nulo' => '3b82f6' // Azul
+            ];
+
+            // Datos
+            $row = 2;
+            foreach ($data as $item) {
+                $sheet->setCellValue('A' . $row, $item['nombre']);
+                $sheet->setCellValue('B' . $row, $item['score']);
+                $sheet->setCellValue('C' . $row, $item['determinacion']);
+
+                // Aplicar color a la celda de determinación
+                $determinacion = $item['determinacion'];
+                $color = $colorMap[$determinacion] ?? '3b82f6';
+                $textColor = in_array($determinacion, ['Medio']) ? '000000' : 'FFFFFF';
+                $cellStyle = [
+                    'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => $color]],
+                    'font' => ['bold' => true, 'color' => ['rgb' => $textColor]],
+                    'alignment' => ['horizontal' => 'center', 'vertical' => 'center']
+                ];
+                $sheet->getStyle('C' . $row)->applyFromArray($cellStyle);
+                $row++;
+            }
+
+            // Ajustar ancho de columnas
+            $sheet->getColumnDimension('A')->setWidth(30);
+            $sheet->getColumnDimension('B')->setWidth(15);
+            $sheet->getColumnDimension('C')->setWidth(20);
+
+            // Guardar archivo
+            $fileName = 'Resumen_Resultados_' . date('Y-m-d_His') . '.xlsx';
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $path = storage_path('app/exports/' . $fileName);
+
+            if (!is_dir(storage_path('app/exports'))) {
+                mkdir(storage_path('app/exports'), 0755, true);
+            }
+
+            $writer->save($path);
+
+            return response()->download($path)->deleteFileAfterSend();
+
+        } catch (\Exception $e) {
+            Notification::make()
+                ->title('Error')
+                ->body('No se pudo generar el Excel: ' . $e->getMessage())
+                ->danger()
+                ->send();
+        }
     }
 
 

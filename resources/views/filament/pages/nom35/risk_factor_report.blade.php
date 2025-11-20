@@ -127,7 +127,7 @@
 <!-- Encabezado -->
 <div class="header">
     <h1>Resultado General</h1>
-    <p>Guía de Referencia II - Norma Oficial Mexicana NOM-035-STPS-2018</p>
+    <p>Guía de Referencia {{$guia}} - Norma Oficial Mexicana NOM-035-STPS-2018</p>
     <p>Empresa: {{ $company??'' }}</p>
 </div>
 
@@ -159,11 +159,11 @@
         @foreach ($categories as $categoria)
             <tr>
                 <td>{{ $categoria['nombre'] }}</td>
-                <td>{{ $categoria['very_high'] }}</td>
-                <td>{{ $categoria['high'] }}</td>
-                <td>{{ $categoria['medium'] }}</td>
-                <td>{{ $categoria['low'] }}</td>
-                <td>{{ $categoria['null'] }}</td>
+                <td>{{ $categoria['very_high']??null }}</td>
+                <td>{{ $categoria['high']??null }}</td>
+                <td>{{ $categoria['medium']??null }}</td>
+                <td>{{ $categoria['low']??null }}</td>
+                <td>{{ $categoria['null']??null }}</td>
             </tr>
         @endforeach
         </tbody>
@@ -188,11 +188,11 @@
         @foreach ($dominios as $dominio)
             <tr>
                 <td>{{ $dominio['nombre'] }}</td>
-                <td>{{ $dominio['very_high'] }}</td>
-                <td>{{ $dominio['high'] }}</td>
-                <td>{{ $dominio['medium'] }}</td>
-                <td>{{ $dominio['low'] }}</td>
-                <td>{{ $dominio['null'] }}</td>
+                <td>{{ $dominio['very_high']??null }}</td>
+                <td>{{ $dominio['high']??null }}</td>
+                <td>{{ $dominio['medium']??null }}</td>
+                <td>{{ $dominio['low']??null }}</td>
+                <td>{{ $dominio['null']??null }}</td>
             </tr>
         @endforeach
         </tbody>
@@ -204,35 +204,35 @@
     <h2>Calificación Final</h2>
     <div class="chart-container">
         @php
-            $generalResults=[];
-            $total =$generalResults['very_high'] + $generalResults['high'] +
-                     $generalResults['medium'] + $generalResults['low'] +
-                     $generalResults['null'];
+           // $generalResults=[];
+            $total =$generalResults['very_high']??0 + $generalResults['high']??0 +
+                     $generalResults['medium']??0 + $generalResults['low']??0 +
+                     $generalResults['null']??0;
             $maxHeight = 200; // Altura máxima en px para la barra más alta
-            $maxValue = max($generalResults['very_high'], $generalResults['high'],
-                     $generalResults['medium'], $generalResults['low'],
-                     $generalResults['null']);
+            $maxValue = max($generalResults['very_high']??0, $generalResults['high']??0,
+                     $generalResults['medium']??0, $generalResults['low']??0,
+                     $generalResults['null']??0);
         @endphp
         <div class="chart-container">
             <div class="chart-bar">
                 <div class="chart-item Muy-Alto" style="height: {{ $total > 0 ? ((($generalResults['very_high']/ $maxValue) * $maxHeight)+40) : 0 }}px;">
-                    <span>{{$generalResults['very_high']}}</span>
+                    <span>{{$generalResults['very_high']??null}}</span>
                     <span>Muy Alto</span>
                 </div>
                 <div class="chart-item Alto" style="height: {{ $total > 0 ? ((($generalResults['high'] / $maxValue) * $maxHeight)+40) : 0 }}px;">
-                    <span>{{$generalResults['high']}}</span>
+                    <span>{{$generalResults['high']??null}}</span>
                     <span>Alto</span>
                 </div>
                 <div class="chart-item Medio" style="height: {{ $total > 0 ? ((($generalResults['medium'] / $maxValue) * $maxHeight)+40) : 0 }}px;">
-                    <span>{{$generalResults['medium']}}</span>
+                    <span>{{$generalResults['medium']??null}}</span>
                     <span>Medio</span>
                 </div>
                 <div class="chart-item Bajo" style="height: {{ $total > 0 ? ((($generalResults['low'] / $maxValue) * $maxHeight)+40) : 0 }}px;">
-                    <span>{{$generalResults['low']}}</span>
+                    <span>{{$generalResults['low']??null}}</span>
                     <span>Bajo</span>
                 </div>
                 <div class="chart-item Nulo" style="height: {{ $total > 0 ? ((($generalResults['null'] / $maxValue) * $maxHeight)+40) : 20 }}px;">
-                    <span>{{$generalResults['null']}}</span>
+                    <span>{{$generalResults['null']??null}}</span>
                     <span>Nulo</span>
                 </div>
             </div>

@@ -138,8 +138,8 @@
 <!-- Encabezado -->
 <div class="header">
     <h1>Resultado Individual</h1>
-    <p>Guía de Referencia II - Norma Oficial Mexicana NOM-035-STPS-2018</p>
-    <p>Factores de riesgo psicosocial en el trabajo - Identificación, análisis y prevención</p>
+    <p>Guía de Referencia {{$guia}} - Norma Oficial Mexicana NOM-035-STPS-2018</p>
+    <p>{{$guiaName}}</p>
 </div>
 
 <!-- Información del Empleado -->

@@ -419,7 +419,7 @@
                         </div>
 
                     </x-filament::section>
-                @elseif($level===3)
+                @elseif($level===1)
                     <x-filament::section class="mb-4"
                                          collapsible
                                          collapsed
@@ -940,8 +940,7 @@
                 </x-filament::button>
                 <x-filament::button
                     color="info"
-                    disabled="{{$activeGuideIII}}"
-                    :disabled="$activeGuideIII"
+                    :disabled="true"
                     wire:click="activeGuiaIII(1)"
                     icon="fas-list-check">
                     Aplicar a {{$muestraGuideIII}} colaboradores.

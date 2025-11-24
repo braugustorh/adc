@@ -161,6 +161,15 @@ class EditUser extends EditRecord
                             'Múltiple' => 'Múltiple',
                             'Otra' => 'Otra',
                         ]),
+                    Select::make('marital_status')
+                        ->label('Estado Civil')
+                        ->options([
+                            'Soltero' => 'Soltero(a)',
+                            'Casado' => 'Casado(a)',
+                            'Divorciado' => 'Divorciado(a)',
+                            'Viudo' => 'Viudo(a)',
+                            'Union Libre' => 'Union Libre',
+                        ])
                 ])->columns(2),
             Step::make('Información de Contacto')
                 // ->description('This is the second step of the wizard.')
@@ -268,18 +277,18 @@ class EditUser extends EditRecord
                             'Sin Estudios' => 'Sin Estudios',
                             'Primaria' => 'Primaria',
                             'Secundaria' => 'Secundaria',
-                            'Técnico'=> 'Técnico',
-                            'Preparatoria' => 'Preparatoria',
-                            'TSU' => 'TSU',
+                            'Preparatoria' => 'Preparatoria o bachillerato',
+                            'TSU' => 'Técnico Superior',
                             'Licenciatura' => 'Licenciatura',
                             'Maestría' => 'Maestría',
                             'Doctorado' => 'Doctorado',
-                            'otro' => 'otro',
+                            'otro' => 'Sin información',
                         ])
                         ->default(null),
                     Select::make('career')
                         ->label('Área de Estudio')
                         ->disabled(fn (Get $get): bool =>
+                            $get('scholarship') === 'Sin Estudios' ||
                             $get('scholarship') === 'Primaria' ||
                             $get('scholarship') === 'Secundaria' ||
                             $get('scholarship') === 'Técnico' ||
@@ -302,7 +311,10 @@ class EditUser extends EditRecord
             Step::make('Información Laboral')
                 // ->description('This is the fourth step of the wizard.')
                 ->schema([
-
+                    TextInput::make('employee_code')
+                        ->label('Número de Empleado')
+                        ->maxLength(14)
+                        ->default(null),
                     Select::make('sede_id')
                         ->label('Sede')
                         ->live()
@@ -324,23 +336,62 @@ class EditUser extends EditRecord
                                 ->where('department_id', $get('department_id'))
                                 ->pluck('name', 'id'))
                             ->default(null),
+                        Select::make('time_in_position')
+                            ->label('Tiempo en el Puesto actual')
+                            ->options([
+                                'lt_6m' => 'Menos de 6 meses',    // menos de 6 meses
+                                '6m_1y' => 'Entre 6 meses y 1 año' ,    // entre 6 meses y 1 año
+                                '1_4y' => 'Entre 1 a 4 años',     // entre 1 a 4 años
+                                '5_9y'=> 'Entre 5 a 9 años',     // entre 5 a 9 años
+                                '10_14y' => 'Entre 10 a 14 años',   // 10 a 14
+                                '15_19y'=> 'Entre 15 a 19 años',   // 15 a 19
+                                '20_24y'=> 'Entre 20 a 24 años',   // 20 a 24
+                                '25_plus'=> '25 años o más',  // 25 años o más
+                            ]),
                         Toggle::make('mi')
                             ->label('Pertenece a Marcas Internas?')
+                            ->onColor('success')
+                            ->offColor('danger')
                             ->default(false),
                     ])->columnSpan(2),
 
-                    Select::make('contract_type')
-                        ->label('Tipo de Contrato')
+                    select::make('staff_type')
+                        ->label('Tipo de Contratación')
                         ->options([
-                            'Temporal' => 'Temporal',
-                            'De Confianza' => 'De Confianza',
-                            'Sindicalizado' => 'Sindicalizado',
+                            'Proyecto' => 'Por Obra o Proyecto',
+                            'Indeterminado' => 'Tiempo Indeterminado',
+                            'Temporal' => 'Por Tiempo Determinado (temporal)',
+                            'Honorarios' => 'Honorarios'
                         ])
                         ->default(null),
-                    TextInput::make('employee_code')
-                        ->label('Número de Empleado')
-                        ->maxLength(10)
+                    Select::make('contract_type')
+                        ->label('Tipo de Personal')
+                        ->options([
+                            'Confianza' => 'De Confianza',
+                            'Sindicalizado' => 'Sindicalizado',
+                            'Ninguno' => 'Ninguno',
+                        ])
                         ->default(null),
+                    Toggle::make('rotates_shifts')
+                        ->label('Rota Turnos?')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->default(false),
+                    Select::make('work_shift')
+                        ->label('Turno de Trabajo')
+                        ->options([
+                            'Diurno' => 'Fijo Diurno entre las 6 y las 20 hs.',
+                            'Nocturno' => 'Fijo Nocturno entre las 20 y las 6 hs.',
+                            'Mixto' => 'Mixto',
+                        ])
+                        ->default(null),
+                    TextInput::make('experience_years')
+                        ->label('Años de Experiencia Laboral')
+                        ->integer()
+                        ->step(1)
+                        ->minValue(0),
+
+
                     TextInput::make('rfc')
                         ->label('RFC')
                         ->autocapitalize('characters')

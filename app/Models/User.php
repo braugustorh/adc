@@ -15,6 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Storage;
 
 
 class User extends Authenticatable implements FilamentUser
@@ -68,6 +69,12 @@ class User extends Authenticatable implements FilamentUser
         'employee_code',
         'employee_number',
         'imss',
+        'marital_status',
+        'staff_type',
+        'work_shift',
+        'rotates_shifts',
+        'time_in_position',
+        'experience_years'
     ];
 
     /**
@@ -139,6 +146,14 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(TraumaticEventSurvey::class, 'user_id');
     }
 
+    public function riskFactorSurveys(): hasMany{
+        return $this->hasMany(RiskFactorSurvey::class, 'user_id');
+    }
+    public function riskFactorSurveyOrganizations(): hasMany
+    {
+        return $this->hasMany(RiskFactorSurveyOrganizational::class, 'user_id');
+    }
+
 
 
 // Nueva relación para el módulo de psicometrías
@@ -151,6 +166,27 @@ class User extends Authenticatable implements FilamentUser
     public function assignedPsychometricEvaluations(): HasMany
     {
         return $this->hasMany(PsychometricEvaluation::class, 'assigned_by');
+    }
+
+
+
+    public function getProfilePhotoUrlAttribute(): string
+    {
+        if (! $this->profile_photo) {
+            return asset('images/default-avatar.png');
+        }
+
+        $path = $this->profile_photo;
+
+        if (str_starts_with($path, 'http')) {
+            return $path; // Ya es URL completa almacenada
+        }
+
+        // Público:
+        return Storage::disk('sedyco_disk')->url($path);
+
+        // Privado (alternativa):
+        // return Storage::disk('sedyco_disk')->temporaryUrl($path, now()->addMinutes(10));
     }
 
 

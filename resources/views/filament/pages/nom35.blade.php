@@ -927,7 +927,7 @@
                 color="primary"
                 icon="fas-download"
                 :disabled="true"
-                wire:click="resultadosInforme"
+                wire:click="resultadosInformeG2"
             >
                 Informe de Resultados
             </x-filament::button>
@@ -1111,6 +1111,14 @@
                 wire:click="reportCoverGIII"
             >
                 Carátula
+            </x-filament::button>
+            <x-filament::button
+                color="primary"
+                icon="fas-download"
+                :disabled="true"
+                wire:click="resultadosInformeG3"
+            >
+                Informe de Resultados
             </x-filament::button>
         </x-slot>
 

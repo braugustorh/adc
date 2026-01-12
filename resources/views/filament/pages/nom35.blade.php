@@ -419,7 +419,7 @@
                         </div>
 
                     </x-filament::section>
-                @elseif($level===2)
+                @elseif($level===3)
                     <x-filament::section class="mb-4"
                                          collapsible
                                          collapsed
@@ -597,7 +597,7 @@
                     </x-slot>
 
                 </x-filament::section>
-                @if($level==1)
+                @if($level==2 || $level==3)
 
                 <x-filament::section class="mb-4">
                     <x-slot name="heading">
@@ -802,11 +802,11 @@
         </x-filament::modal.heading>
 
         <h3><strong>Resultados del Cuestionario</strong></h3>
-        <div style="background: #f8f9fa;
+        <div style="
             border: 1px solid #dee2e6;
             border-radius: 8px;
             padding: 15px;
-            margin-bottom: 20px;">
+            margin-bottom: 20px;" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md p-4 mb-5">
             <p>Puntos Obtenidos:<strong>{{$calificacion}}</strong> </p>
             <p>Calificación Final: <strong>{{$resultCuestionario}} </strong> </p>
             <p>Tests Realizados: <strong>{{$responsesTotalG2}}</strong></p>
@@ -815,7 +815,7 @@
             <table class="table-auto border-collapse border border-gray-400 w-full text-center">
                 <thead>
                 <tr>
-                    <th class="bg-gray-200 font-bold border border-gray-400 p-2">Calificación Final</th>
+                    <th class="bg-gray-200 font-bold border border-gray-400 p-2 dark:bg-gray-800 ">Calificación Final</th>
                     <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
                     <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
                     <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
@@ -842,7 +842,7 @@
             <table class="table-auto border-collapse border border-gray-400 w-full text-center">
                 <thead>
                 <tr>
-                    <th class="bg-gray-200 font-bold border border-gray-400 p-2">Calificación Categoria</th>
+                    <th class="bg-gray-200 font-bold border border-gray-400 p-2 dark:bg-gray-800">Calificación Categoria</th>
                     <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
                     <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
                     <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
@@ -870,7 +870,7 @@
             <table class="table-auto border-collapse border border-gray-400 w-full text-center">
                 <thead>
                 <tr>
-                    <th class="bg-gray-200 font-bold border border-gray-400 p-2">Calificación de Dominio</th>
+                    <th class="bg-gray-200 font-bold border border-gray-400 p-2 dark:bg-gray-800">Calificación de Dominio</th>
                     <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
                     <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
                     <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
@@ -904,21 +904,32 @@
 
             <x-filament::button
                 color="primary"
+                icon="fas-download"
                 wire:click="reportGeneralGIIDownload"
             >
-                Descargar Reporte General
+                Reporte General
             </x-filament::button>
             <x-filament::button
                 color="primary"
+                icon="fas-download"
                wire:click="reportIndividualGIIDownload"
             >
-                Descargar Reporte Individual
+                Reporte Individual
             </x-filament::button>
             <x-filament::button
                 color="primary"
+                icon="fas-download"
                 wire:click="reportCoverGII"
             >
-                Descargar Carátula
+                Carátula
+            </x-filament::button>
+            <x-filament::button
+                color="primary"
+                icon="fas-download"
+                :disabled="true"
+                wire:click="resultadosInforme"
+            >
+                Informe de Resultados
             </x-filament::button>
         </x-slot>
     </x-filament::modal>
@@ -995,7 +1006,7 @@
                     <table class="table-auto border-collapse border border-gray-400 w-full text-center">
                         <thead>
                         <tr>
-                            <th class="bg-gray-200 font-bold border border-gray-400 p-2">Calificación Final</th>
+                            <th class="bg-gray-200 font-bold border border-gray-400 p-2 dark:bg-gray-800">Calificación Final</th>
                             <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
                             <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
                             <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
@@ -1024,7 +1035,7 @@
             <table class="table-auto border-collapse border border-gray-400 w-full text-center">
                 <thead>
                 <tr>
-                    <th class="bg-gray-200 font-bold border border-gray-400 p-2">Calificación Categoria</th>
+                    <th class="bg-gray-200 font-bold border border-gray-400 p-2 dark:bg-gray-800">Calificación Categoria</th>
                     <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
                     <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
                     <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
@@ -1051,7 +1062,7 @@
             <table class="table-auto border-collapse border border-gray-400 w-full text-center">
                 <thead>
                 <tr>
-                    <th class="bg-gray-200 font-bold border border-gray-400 p-2">Calificación Categoria</th>
+                    <th class="bg-gray-200 font-bold border border-gray-400 p-2 dark:bg-gray-800">Calificación Categoria</th>
                     <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
                     <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
                     <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
@@ -1076,27 +1087,30 @@
 
         <x-slot name="footerActions">
             <x-filament::button
-                wire:click="closeTestResultsGuideIII"          color="gray"
+                wire:click="closeTestResultsGuideIII" color="gray"
             >
                 Cerrar
             </x-filament::button>
             <x-filament::button
                 color="primary"
+                icon="fas-download"
                 wire:click="reporteGeneralGIIIDownload"
             >
-                Descargar Reporte General
+                Reporte General
             </x-filament::button>
             <x-filament::button
                 color="primary"
+                icon="fas-download"
                 wire:click="reportIndividualGIIIDownload"
             >
                 Reporte Individual
             </x-filament::button>
             <x-filament::button
                 color="primary"
+                icon="fas-download"
                 wire:click="reportCoverGIII"
             >
-                Descargar Carátula
+                Carátula
             </x-filament::button>
         </x-slot>
 

@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Response;
 use PhpOffice\PhpPresentation\IOFactory;
 use PhpOffice\PhpPresentation\PhpPresentation;
+use Ilovepdf\Ilovepdf;
 
 
 class Nom035 extends Page
@@ -1311,7 +1312,79 @@ class Nom035 extends Page
     // Metodo para descargar la plantilla de Word personalizada
     public function descargarWord()
     {
-        $templatePath = storage_path('app/plantillas/Política_de_riesgos.docx'); // Mueve el archivo ahí
+        $templatePath = storage_path('app/plantillas/Politica_de_riesgos_template.docx'); // Mueve el archivo ahí
+        $sede = auth()->user()->sede->name;
+        $nombreArchivoSalida = 'Politica_Riesgos_' . str_replace(' ', '_', $sede) . '.docx';
+        //$sede = auth()->user()->sede->name;
+        $rutaTemporal = storage_path('app/livewire-tmp/' . $nombreArchivoSalida);
+        $name=auth()->user()->name . ' ' . auth()->user()->first_mame . ' ' . auth()->user()->last_name;
+        try {
+            // 2. Cargar la plantilla usando TemplateProcessor
+            // Esta clase es mágica: abre el zip del docx, cambia XML y lo cierra sin romper estilos.
+            $templateProcessor = new TemplateProcessor($templatePath);
+
+            // 3. Reemplazar las variables
+            // La librería busca automáticamente el patrón ${variable}
+
+            // Reemplaza ${sede} en encabezados, títulos y párrafos [cite: 148, 181]
+            $templateProcessor->setValue('sede', $sede);
+
+            // Reemplaza ${name} en la tabla de firmas [cite: 166]
+            $templateProcessor->setValue('name', $name);
+
+            // Reemplaza ${fecha} en la sección de datos [cite: 151]
+            $templateProcessor->setValue('fecha', now()->format('d/m/Y'));
+
+            // 4. Guardar el documento modificado en una ruta temporal
+            $templateProcessor->saveAs($rutaTemporal);
+
+            //********    Se implementa la conversión a PDF con IlovePDF
+            $api = new Ilovepdf('project_public_e77e6c5a886b8b19b9e83808f514bf44_uChwi13485de38f75fad79190646cb3fbacfe',
+                'secret_key_5ad6baf9deee4bbf2dee704afa6502d5_Lau4ia401a9d22bc6a6715f4c39ec19fd6dd1');
+            $task = $api->newTask('officepdf');
+            $file = $task->addFile($rutaTemporal);
+            $task->execute();
+
+            // 1. Definimos explícitamente la carpeta de destino usando storage_path
+            $outputDir = storage_path('app/livewire-tmp');
+
+            // 2. Le decimos a IlovePDF que descargue el archivo en esa carpeta
+            $task->download($outputDir);
+
+            // 3. Construimos la ruta completa del nuevo PDF
+            // IlovePDF guarda el archivo con el mismo nombre pero extensión .pdf
+            $nombrePdf = str_replace('.docx', '.pdf', $nombreArchivoSalida);
+            $rutaPdf = $outputDir . '/' . $nombrePdf;
+
+            // 4. Verificamos y descargamos
+            if (file_exists($rutaPdf)) {
+                // Opcional: Borrar el DOCX temporal para no llenar el servidor
+                if(file_exists($rutaTemporal)) { unlink($rutaTemporal); }
+
+                return response()->download($rutaPdf)->deleteFileAfterSend(true);
+            } else {
+                throw new \Exception("El archivo PDF no se generó correctamente.");
+            }
+            //++++++++++++++++++++++++++++ Si no funciona o se terminan tokens quitar
+
+            //*+++++++++++++  Esta Parte descarga el word   ++++++++++++++++*//
+            /*
+            // 5. Retornar la descarga al navegador
+            // deleteFileAfterSend(true) es vital para no llenar tu servidor de basura
+            return response()->download($rutaTemporal)->deleteFileAfterSend(true);
+            //*+++++++++++++  Esta Parte descarga el word   ++++++++++++++++*/
+
+        } catch (\Exception $e) {
+            // Manejo de errores
+            // Log::error($e->getMessage());
+            Notification::make()
+                ->title('Error al generar PDF')
+                ->body('No se pudo generar el PDF: ' . $e->getMessage())
+                ->danger()
+                ->send();
+        }
+
+        /*
         //$templatePath = storage_path('app/plantillas/politica_adc.pptx'); // Mueve el archivo ahí
         $sede = auth()->user()->sede->name;
         $name=auth()->user()->name . ' ' . auth()->user()->first_mame . ' ' . auth()->user()->last_name;
@@ -1324,6 +1397,7 @@ class Nom035 extends Page
         $template->saveAs($outputPath);
 
         return response()->download($outputPath)->deleteFileAfterSend();
+        */
     }
     public function descargarExcel()
     {
@@ -3105,6 +3179,8 @@ class Nom035 extends Page
                     ->pluck('user_id');
 
                 $colaboradores = \App\Models\User::whereIn('id', $userIds)->get();
+            }else{
+                $colaboradores = collect();
             }
 
 
@@ -3212,6 +3288,15 @@ class Nom035 extends Page
                 ->send();
         }
     }
+    public function resultadosInformeG2(){
+        //Consumir la plantilla de word informeResultadosG2 y llenarla con los datos de la evaluación
+    }
+    public function resultadosInformeG3(){
+        //Consumir la plantilla de word informeResultadosG2 y llenarla con los datos de la evaluación
+    }
+
+
+
 
 
 

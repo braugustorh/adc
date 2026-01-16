@@ -205,9 +205,7 @@ class EditUser extends EditRecord
                                         "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
                                     ])->get('https://api.tau.com.mx/dipomex/v1/municipios?id_estado='.$stateId);
                                     $citiesArray = json_decode($citiesResponse->body(), true);
-
-                                    if (is_array($citiesArray)) {
-
+                                    if (is_array($citiesArray) && isset($citiesArray['municipios']) && is_array($citiesArray['municipios']) && count($citiesArray['municipios']) > 0) {
                                         $cities = array_column($citiesArray['municipios'], 'MUNICIPIO', 'MUNICIPIO');
                                     } else {
                                         Notification::make()
@@ -215,7 +213,7 @@ class EditUser extends EditRecord
                                             ->danger()
                                             ->icon('heroicon-o-x-circle')
                                             ->iconColor('danger')
-                                            ->body('No se pudo obtener la lista de ciudades'.' '.$citiesResponse)
+                                            ->body('No se pudieron obtener los municipios para el estado seleccionado')
                                             ->send();
                                         $cities = [];
                                     }

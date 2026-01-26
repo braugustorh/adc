@@ -162,6 +162,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->morphMany(PsychometricEvaluation::class, 'evaluable');
     }
 
+    public function termination(): HasOne
+    {
+        return $this->hasOne(UserTermination::class);
+    }
+
     // Evaluaciones psicométricas asignadas por este usuario (como RH o supervisor)
     public function assignedPsychometricEvaluations(): HasMany
     {

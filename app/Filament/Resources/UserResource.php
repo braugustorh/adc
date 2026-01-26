@@ -17,8 +17,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Log;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Filament\Pages\Actions\CreateAction;
+use App\Notifications\UserReactivated;
 use App\Models\UserTermination;
 use Filament\Notifications\Notification;
 
@@ -474,6 +476,87 @@ class UserResource extends Resource
                             ->success()
                             ->title('Usuario dado de baja correctamente')
                             ->send();
+                    }),
+                Tables\Actions\Action::make('reactivarUsuario')
+                    ->visible(fn (User $record) => !$record->status && \Auth::user()->hasAnyRole('RH','RH Corp','Administrador'))
+                    ->label('Reactivar')
+                    ->color('success')
+                    ->icon('heroicon-s-arrow-path')
+                    ->requiresConfirmation()
+                    ->modalHeading('Reactivar Usuario')
+                    ->modalDescription(function (User $record) {
+                        $termination = UserTermination::where('user_id', $record->id)->latest()->first();
+
+                        if ($termination && $termination->re_hire == 0) {
+                            return '⚠️ ADVERTENCIA: Este usuario fue dado de baja y NO es recontratable. ¿Está seguro de que desea reactivarlo?';
+                        }
+
+                        return '¿Está seguro de que desea reactivar este usuario?';
+                    })
+                    ->modalIcon(function (User $record) {
+                        $termination = UserTermination::where('user_id', $record->id)->latest()->first();
+                        return ($termination && $termination->re_hire == 0) ? 'heroicon-o-exclamation-triangle' : 'heroicon-o-arrow-path';
+                    })
+                    ->modalIconColor(function (User $record) {
+                        $termination = UserTermination::where('user_id', $record->id)->latest()->first();
+                        return ($termination && $termination->re_hire == 0) ? 'warning' : 'success';
+                    })
+                    ->action(function (User $record): void {
+                        try {
+                            // Obtener el registro de terminación
+                            $termination = UserTermination::where('user_id', $record->id)->latest()->first();
+                            $isRehireable = $termination ? ($termination->re_hire == 1) : true;
+
+                            // Reactivar el usuario
+                            $record->update(['status' => true]);
+
+                            // Obtener usuarios con el rol 'RH Corp'
+                            $rhCorpUsers = User::whereHas('roles', function ($query) {
+                                $query->where('name', 'RH Corp');
+                            })->where('status', 1)->get();
+
+                            // Enviar notificación a cada usuario con rol RH Corp
+                                $userName=$record->name.' '.$record->first_name.' '.$record->last_name;
+                                $statusText = $isRehireable ? 'Recontratable' : 'No recontratable';
+                                $editBy=auth()->user();
+                                $reactivated_by =$editBy->name . ' ' . $editBy->first_name . ' ' . $editBy->last_name;
+                                $body ="El usuario '{$userName}' fue reactivado por {$reactivated_by }. Y el colaborador reintegrado tiene el estatus: {$statusText}";
+
+
+                            foreach ($rhCorpUsers as $rhUser) {
+
+                                try {
+                                    Notification::make()
+                                        ->title('Usuario Reactivado')
+                                        ->warning()
+                                        ->body($body)
+                                        ->sendToDatabase($rhUser);
+
+                                } catch (\Exception $e) {
+                                    Notification::make()
+                                        ->danger()
+                                        ->title('error al enviar notificación')
+                                        ->body('Se daha deyecyadp un error'.$e->getMessage())
+                                        ->send();
+                                    Log::error('Error al enviar notificación: ' . $e->getMessage());
+                                }
+                                Log::info('Notificación enviada correctamente');
+
+                            }
+
+                            Notification::make()
+                                ->success()
+                                ->title('Usuario reactivado correctamente')
+                                ->body('Se ha notificado al personal de RH Corp sobre la reactivación.')
+                                ->send();
+
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Error al reactivar el usuario')
+                                ->body($e->getMessage())
+                                ->send();
+                        }
                     }),
             ])
             ->bulkActions([

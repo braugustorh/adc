@@ -3221,7 +3221,7 @@ class Nom035 extends Page
         return response()->download(storage_path('app/documents/NORMA_Oficial_Mexicana_NOM-035-STPS-2018.pdf'),'NORMA_Oficial_Mexicana_NOM-035-STPS-2018.pdf');
     }
     public function downloadGuia(){
-        return response()->download(storage_path('app/documents/Guia_NOM035_STPS_2018.pdf'),'Guia_NOM035_STPS_2018.pdf');
+        return response()->download(storage_path('app/documents/Guia-NOM035.v2026.pdf'),'Guia_NOM035_STPS_2018.pdf');
     }
 
     public function sumaryResults(){

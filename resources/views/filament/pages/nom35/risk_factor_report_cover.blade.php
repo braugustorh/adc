@@ -14,8 +14,8 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 20px;
-            padding: 20px;
+            margin-bottom: 10px;
+            padding: 10px;
             background: #f8f9fa;
             border-radius: 12px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -30,48 +30,65 @@
             color: #555;
             margin: 5px 0;
         }
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 15px;
+        /* --- INFO GRID Y SCORE (Layout híbrido para ahorrar espacio) --- */
+        .top-section {
+            display: table; /* Usamos table para compatibilidad PDF */
+            width: 100%;
+            margin-bottom: 10px;
+            border-spacing: 10px 0; /* Espacio horizontal */
         }
+        .info-col {
+            display: table-cell;
+            vertical-align: middle;
+            width: 60%;
+        }
+        .score-col {
+            display: table-cell;
+            vertical-align: middle;
+            width: 40%;
+        }
+
         .info-item {
             background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            padding: 8px;
+            margin-bottom: 5px; /* Espacio entre items */
+            border-radius: 6px;
+            text-align: left;
+            border: 1px solid #eee;
         }
         .info-item strong {
-            display: block;
             color: #007bff;
+            margin-right: 5px;
         }
+
         .final-score {
             text-align: center;
-            margin: 10px 0;
-            padding: 20px;
+            padding: 10px;
             background: #e9ecef;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            height: 100%; /* Para que ocupe la altura disponible */
         }
         .final-score h2 {
-            font-size: 20px;
-            margin-bottom: 10px;
+            font-size: 14px;
+            margin: 0 0 5px 0;
         }
         .final-score .score {
-            font-size: 48px;
+            font-size: 32px; /* Reducido de 48px */
             font-weight: bold;
             color: #007bff;
+            line-height: 1;
+            margin-bottom: 5px;
         }
+
+        /* --- ETIQUETAS DE RIESGO --- */
         .risk-level {
             display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 4px 8px;
+            border-radius: 12px;
             color: white;
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 14px;
+            font-size: 10px;
         }
         .muy-alto { background: #dc3545; }
         .alto { background: #ff9800; }
@@ -182,7 +199,7 @@
             color: #666;
         }
         @page {
-            margin: 40px;
+            margin: 20px;
         }
     </style>
 </head>
@@ -195,8 +212,28 @@
     <p>Resumen de la aplicación de cuestionario {{$guia}} Para identificar factores de Riesgo Psicosocial {{$complement}}</p>
     <p>Entre 16 y 50 colaboradores</p>
 </div>
+<div class="top-section">
+    <div class="info-col">
+        <div class="info-item">
+            <strong>Empresa:</strong> {{ $company }}
+        </div>
+        <div class="info-item">
+            <strong>Aplicación:</strong> {{ $period }}
+        </div>
+        <div class="info-item">
+            <strong>Colaboradores:</strong> Entre 16 y 50
+        </div>
+    </div>
 
-<!-- Información General -->
+    <div class="score-col">
+        <div class="final-score">
+            <h2>Calificación Final</h2>
+            <div class="score">{{$calificacionG2}}</div>
+            <span class="risk-level {{ strtolower(str_replace(' ', '-', $resultCuestionario)) }}">{{ $resultCuestionario }}</span>
+        </div>
+    </div>
+</div>
+<!-- Información General
 <div class="info-grid">
     <div class="info-item">
         <strong>Nombre de la empresa:</strong>
@@ -209,13 +246,13 @@
 
 </div>
 
-<!-- Calificación Final -->
+
 <div class="final-score">
     <h2>Calificación Final</h2>
     <div class="score">{{$calificacionG2}}</div>
     <span class="risk-level {{ strtolower(str_replace(' ', '-', $resultCuestionario)) }}">{{ $resultCuestionario }}</span>
 </div>
-
+ -->
 <!-- Tablas de Categorías y Dominios -->
 <div class="tables-container">
     <div class="table-section">

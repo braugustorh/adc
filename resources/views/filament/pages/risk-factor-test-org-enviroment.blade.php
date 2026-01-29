@@ -184,7 +184,8 @@
                 </p>
                 <br>
                 <p>
-                    {{ $finishMessage }}
+                    Agradecemos profundamente tu tiempo y sinceridad al completar la Guía de Referencia III - Cuestionario para identificar los factores de riesgo psicosocial y evaluación del entorno organizacional.
+                    Para ADC tu colaboración es esencial para promover un entorno laboral seguro y saludable.
                 </p>
                 <br>
                 <p>

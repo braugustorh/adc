@@ -16,6 +16,7 @@ use Barryvdh\DomPDF\PDF;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpWord\TemplateProcessor;
 use PhpOffice\PhpWord\Writer\PDF\DomPDF;
 use Illuminate\Support\Facades\Http;
@@ -75,7 +76,7 @@ class Nom035 extends Page
         $coverWorkJourneyResponses, $coverWordAndFamilyResponses, $coverWorkRelationsResponses,
         $coverViolenceResponses,$coverDomainLeadershipResponses,$coverInestableResponses,$coverPerformanceResponses;
 
-
+    public $dataGeneral;
 
     public $categories=[
       'Ambiente de trabajo'=> [2,1,3],
@@ -427,6 +428,8 @@ class Nom035 extends Page
             'conditions'=>[
                 'nombre' => 'Condiciones del entorno de trabajo',
                 'total' => $conditionResponses->count(),
+                'total_cali'=>$conditionResponses->avg(),
+                'riesgo'=> $this->getDomainRiskLevel('conditions',$conditionResponses->avg()),
                 'null' => $conditionResponses->filter(fn($value) => $value < 3)->count(),
                 'low' => $conditionResponses->filter(fn($value) => $value >= 3 && $value < 5)->count(),
                 'medium' => $conditionResponses->filter(fn($value) => $value >= 5 && $value < 7)->count(),
@@ -436,6 +439,8 @@ class Nom035 extends Page
             'work_activity'=>[
                 'nombre' => 'Carga de Trabajo',
                 'total' => $workActivityResponses->count(),
+                'total_cali'=>$workActivityResponses->avg(),
+                'riesgo'=> $this->getDomainRiskLevel('work_activity',$workActivityResponses->avg()),
                 'null' => $workActivityResponses->filter(fn($value) => $value < 12)->count(),
                 'low' => $workActivityResponses->filter(fn($value) => $value >= 12 && $value < 16)->count(),
                 'medium' => $workActivityResponses->filter(fn($value) => $value >= 16 && $value < 20)->count(),
@@ -445,6 +450,8 @@ class Nom035 extends Page
             'work_control'=>[
                 'nombre' => 'Control del trabajo',
                 'total' => $workControlResponses->count(),
+                'total_cali'=>$workControlResponses->avg(),
+                'riesgo'=> $this->getDomainRiskLevel('work_control',$workControlResponses->avg()),
                 'null' => $workControlResponses->filter(fn($value) => $value < 5)->count(),
                 'low' => $workControlResponses->filter(fn($value) => $value >= 5 && $value < 8)->count(),
                 'medium' => $workControlResponses->filter(fn($value) => $value >= 8 && $value < 11)->count(),
@@ -454,6 +461,8 @@ class Nom035 extends Page
             'work_journey'=>[
                 'nombre' => 'Organización del tiempo de trabajo',
                 'total' => $workJourneyResponses->count(),
+                'total_cali'=>$workJourneyResponses->avg(),
+                'riesgo'=> $this->getDomainRiskLevel('work_journey',$workJourneyResponses->avg()),
                 'null' => $workJourneyResponses->filter(fn($value) => $value < 1)->count(),
                 'low' => $workJourneyResponses->filter(fn($value) => $value >= 1 && $value < 2)->count(),
                 'medium' => $workJourneyResponses->filter(fn($value) => $value >= 2 && $value < 4)->count(),
@@ -463,6 +472,8 @@ class Nom035 extends Page
             'work_family'=>[
                 'nombre' => 'Interferencia trabajo-familia',
                 'total' => $wordAndFamilyResponses->count(),
+                'total_cali'=>$wordAndFamilyResponses->avg(),
+                'riesgo'=> $this->getDomainRiskLevel('work_family',$wordAndFamilyResponses->avg()),
                 'null' => $wordAndFamilyResponses->filter(fn($value) => $value < 1)->count(),
                 'low' => $wordAndFamilyResponses->filter(fn($value) => $value >= 1 && $value < 2)->count(),
                 'medium' => $wordAndFamilyResponses->filter(fn($value) => $value >= 2 && $value < 4)->count(),
@@ -472,6 +483,8 @@ class Nom035 extends Page
             'leadership'=>[
                 'nombre' => 'Liderazgo y relaciones en el trabajo',
                 'total' => $leadershipResponses->count(),
+                'total_cali'=>$leadershipResponses->avg(),
+                'riesgo'=> $this->getDomainRiskLevel('leadership',$leadershipResponses->avg()),
                 'null' => $leadershipResponses->filter(fn($value) => $value < 3)->count(),
                 'low' => $leadershipResponses->filter(fn($value) => $value >= 3 && $value < 5)->count(),
                 'medium' => $leadershipResponses->filter(fn($value) => $value >= 5 && $value < 8)->count(),
@@ -481,6 +494,8 @@ class Nom035 extends Page
             'work_relations'=>[
                 'nombre' => 'Relaciones en el trabajo',
                 'total' => $workRelationsResponses->count(),
+                'total_cali'=>$workRelationsResponses->avg(),
+                'riesgo'=> $this->getDomainRiskLevel('work_relations',$workRelationsResponses->avg()),
                 'null' => $workRelationsResponses->filter(fn($value) => $value < 5)->count(),
                 'low' => $workRelationsResponses->filter(fn($value) => $value >= 5 && $value < 8)->count(),
                 'medium' => $workRelationsResponses->filter(fn($value) => $value >= 8 && $value < 11)->count(),
@@ -490,6 +505,8 @@ class Nom035 extends Page
             'violence'=>[
                 'nombre' => 'Violencia en el trabajo',
                 'total' => $violenceResponses->count(),
+                'total_cali'=>$violenceResponses->avg(),
+                'riesgo'=> $this->getDomainRiskLevel('violence',$violenceResponses->avg()),
                 'null' => $violenceResponses->filter(fn($value) => $value < 7)->count(),
                 'low' => $violenceResponses->filter(fn($value) => $value >= 7 && $value < 10)->count(),
                 'medium' => $violenceResponses->filter(fn($value) => $value >= 10 && $value < 13)->count(),
@@ -497,6 +514,7 @@ class Nom035 extends Page
                 'very_high' => $violenceResponses->filter(fn($value) => $value >= 16)->count(),
             ]
         ];
+
 
 
         // Ahora calculamos los resultados generales por categoría
@@ -576,7 +594,6 @@ class Nom035 extends Page
     {
         $queryResG3=RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
             ->where('sede_id', $this->norma->sede_id);
-
 
         $calificacion=$queryResG3->sum('equivalence_response');
         $countCollabs=$queryResG3->distinct('user_id')->count('user_id');
@@ -678,6 +695,8 @@ class Nom035 extends Page
                 'ambiente' => [
                     'nombre' => 'Ambiente de trabajo',
                     'total' => $ambienteQuery->count(),
+                    'total_cali'=>$ambienteQuery->avg(),
+                    'riesgo'=> $this->getCategoryRiskLevelG3('ambiente',$ambienteQuery->avg()),
                     'null' => $ambienteQuery->filter(fn($value) => $value < 5)->count(),
                     'low' => $ambienteQuery->filter(fn($value) => $value >= 5 && $value < 9)->count(),
                     'medium' => $ambienteQuery->filter(fn($value) => $value >= 9 && $value < 11)->count(),
@@ -687,6 +706,8 @@ class Nom035 extends Page
                 'actividad' => [
                     'nombre' => 'Factores propios de la actividad',
                     'total' => $actividadQuery->count(),
+                    'total_cali'=>$actividadQuery->avg(),
+                    'riesgo'=> $this->getCategoryRiskLevelG3('activity',$actividadQuery->avg()),
                     'null' => $actividadQuery->filter(fn($value) => $value < 15)->count(),
                     'low' => $actividadQuery->filter(fn($value) => $value >= 15 && $value < 30)->count(),
                     'medium' => $actividadQuery->filter(fn($value) => $value >= 30 && $value < 45)->count(),
@@ -696,6 +717,8 @@ class Nom035 extends Page
                 'tiempo' => [
                     'nombre' => 'Organización del tiempo de trabajo',
                     'total' => $tiempoQuery->count(),
+                    'total_cali'=>$tiempoQuery->avg(),
+                    'riesgo'=> $this->getCategoryRiskLevelG3('time',$tiempoQuery->avg()),
                     'null' => $tiempoQuery->filter(fn($value) => $value < 5)->count(),
                     'low' => $tiempoQuery->filter(fn($value) => $value >= 5 && $value < 7)->count(),
                     'medium' => $tiempoQuery->filter(fn($value) => $value >= 7 && $value < 10)->count(),
@@ -705,6 +728,8 @@ class Nom035 extends Page
                 'liderazgo' => [
                     'nombre' => 'Liderazgo y relaciones en el trabajo',
                     'total' => $liderazgoQuery->count(),
+                    'total_cali'=>$liderazgoQuery->avg(),
+                    'riesgo'=> $this->getCategoryRiskLevelG3('leadership',$liderazgoQuery->avg()),
                     'null' => $liderazgoQuery->filter(fn($value) => $value < 14)->count(),
                     'low' => $liderazgoQuery->filter(fn($value) => $value >= 14 && $value < 29)->count(),
                     'medium' => $liderazgoQuery->filter(fn($value) => $value >= 29 && $value < 42)->count(),
@@ -714,6 +739,8 @@ class Nom035 extends Page
                 'enviromment' => [
                     'nombre' => 'Entorno Organizacional',
                     'total' => $envirommentQuery->count(),
+                    'total_cali'=>$envirommentQuery->avg(),
+                    'riesgo'=> $this->getCategoryRiskLevelG3('entorno',$envirommentQuery->avg()),
                     'null' => $envirommentQuery->filter(fn($value) => $value < 10)->count(),
                     'low' => $envirommentQuery->filter(fn($value) => $value >= 10 && $value < 14)->count(),
                     'medium' => $envirommentQuery->filter(fn($value) => $value >= 14 && $value < 18)->count(),
@@ -841,6 +868,8 @@ class Nom035 extends Page
             'conditions'=>[
                 'nombre' => 'Condiciones en el ambiente de trabajo',
                 'total' => $conditionResponses->count(),
+                'total_cali'=>$conditionResponses->avg(),
+                'riesgo'=>$this->getDomainRiskLevelG3('conditions',$conditionResponses->avg()),
                 'null' => $conditionResponses->filter(fn($value) => $value < 5)->count(),
                 'low' => $conditionResponses->filter(fn($value) => $value >= 5 && $value < 9)->count(),
                 'medium' => $conditionResponses->filter(fn($value) => $value >= 9 && $value < 11)->count(),
@@ -850,6 +879,8 @@ class Nom035 extends Page
             'work_activity'=>[
                 'nombre' => 'Carga de Trabajo',
                 'total' => $workActivityResponses->count(),
+                'total_cali'=>$workActivityResponses->avg(),
+                'riesgo'=>$this->getDomainRiskLevelG3('work_activity',$workActivityResponses->avg()),
                 'null' => $workActivityResponses->filter(fn($value) => $value < 15)->count(),
                 'low' => $workActivityResponses->filter(fn($value) => $value >= 15 && $value < 21)->count(),
                 'medium' => $workActivityResponses->filter(fn($value) => $value >= 21 && $value < 27)->count(),
@@ -859,6 +890,8 @@ class Nom035 extends Page
             'work_control'=>[
                 'nombre' => 'Falta de control sobre el trabajo',
                 'total' => $workControlResponses->count(),
+                'total_cali'=>$workControlResponses->avg(),
+                'riesgo'=>$this->getDomainRiskLevelG3('work_control',$workControlResponses->avg()),
                 'null' => $workControlResponses->filter(fn($value) => $value < 11)->count(),
                 'low' => $workControlResponses->filter(fn($value) => $value >= 11 && $value < 16)->count(),
                 'medium' => $workControlResponses->filter(fn($value) => $value >= 16 && $value < 21)->count(),
@@ -868,6 +901,8 @@ class Nom035 extends Page
             'work_journey'=>[
                 'nombre' => 'Jornada de trabajo',
                 'total' => $workJourneyResponses->count(),
+                'total_cali'=>$workJourneyResponses->avg(),
+                'riesgo'=>$this->getDomainRiskLevelG3('work_journey',$workJourneyResponses->avg()),
                 'null' => $workJourneyResponses->filter(fn($value) => $value < 1)->count(),
                 'low' => $workJourneyResponses->filter(fn($value) => $value >= 1 && $value < 2)->count(),
                 'medium' => $workJourneyResponses->filter(fn($value) => $value >= 2 && $value < 4)->count(),
@@ -877,6 +912,8 @@ class Nom035 extends Page
             'work_family'=>[
                 'nombre' => 'Interferencia en la relación trabajo-familia',
                 'total' => $wordAndFamilyResponses->count(),
+                'total_cali'=>$wordAndFamilyResponses->avg(),
+                'riesgo'=>$this->getDomainRiskLevelG3('work_family',$wordAndFamilyResponses->avg()),
                 'null' => $wordAndFamilyResponses->filter(fn($value) => $value < 4)->count(),
                 'low' => $wordAndFamilyResponses->filter(fn($value) => $value >= 4 && $value < 6)->count(),
                 'medium' => $wordAndFamilyResponses->filter(fn($value) => $value >= 6 && $value < 8)->count(),
@@ -886,6 +923,8 @@ class Nom035 extends Page
             'leadership'=>[
                 'nombre' => 'Liderazgo',
                 'total' => $leadershipResponses->count(),
+                'total_cali'=>$leadershipResponses->avg(),
+                'riesgo'=>$this->getDomainRiskLevelG3('leadership',$leadershipResponses->avg()),
                 'null' => $leadershipResponses->filter(fn($value) => $value < 9)->count(),
                 'low' => $leadershipResponses->filter(fn($value) => $value >= 9 && $value < 12)->count(),
                 'medium' => $leadershipResponses->filter(fn($value) => $value >= 12 && $value < 16)->count(),
@@ -895,6 +934,8 @@ class Nom035 extends Page
             'work_relations'=>[
                 'nombre' => 'Relaciones en el trabajo',
                 'total' => $workRelationsResponses->count(),
+                'total_cali'=>$workRelationsResponses->avg(),
+                'riesgo'=>$this->getDomainRiskLevelG3('work_relations',$workRelationsResponses->avg()),
                 'null' => $workRelationsResponses->filter(fn($value) => $value < 10)->count(),
                 'low' => $workRelationsResponses->filter(fn($value) => $value >= 10 && $value < 13)->count(),
                 'medium' => $workRelationsResponses->filter(fn($value) => $value >= 13 && $value < 17)->count(),
@@ -904,6 +945,8 @@ class Nom035 extends Page
             'violence'=>[
                 'nombre' => 'Violencia',
                 'total' => $violenceResponses->count(),
+                'total_cali'=>$violenceResponses->avg(),
+                'riesgo'=>$this->getDomainRiskLevelG3('violence',$violenceResponses->avg()),
                 'null' => $violenceResponses->filter(fn($value) => $value < 7)->count(),
                 'low' => $violenceResponses->filter(fn($value) => $value >= 7 && $value < 10)->count(),
                 'medium' => $violenceResponses->filter(fn($value) => $value >= 10 && $value < 13)->count(),
@@ -913,6 +956,8 @@ class Nom035 extends Page
             'performance'=>[
                 'nombre' => 'Reconocimiento del desempeño',
                 'total' => $performanceResponses->count(),
+                'total_cali'=>$performanceResponses->avg(),
+                'riesgo'=>$this->getDomainRiskLevelG3('reconocimiento',$performanceResponses->avg()),
                 'null' => $performanceResponses->filter(fn($value) => $value < 6)->count(),
                 'low' => $performanceResponses->filter(fn($value) => $value >=6 && $value < 10)->count(),
                 'medium' => $performanceResponses->filter(fn($value) => $value >= 10 && $value < 14)->count(),
@@ -922,6 +967,8 @@ class Nom035 extends Page
             'inestable'=>[
                 'nombre' => 'Insuficiente sentido de pertenencia e inestabilidad',
                 'total' => $inestableResponses->count(),
+                'total_cali'=>$inestableResponses->avg(),
+                'riesgo'=>$this->getDomainRiskLevelG3('pertenencia',$inestableResponses->avg()),
                 'null' => $inestableResponses->filter(fn($value) => $value < 4)->count(),
                 'low' => $inestableResponses->filter(fn($value) => $value >= 4 && $value < 6)->count(),
                 'medium' => $inestableResponses->filter(fn($value) => $value >= 6 && $value < 8)->count(),
@@ -1316,6 +1363,9 @@ class Nom035 extends Page
         $sede = auth()->user()->sede->name;
         $nombreArchivoSalida = 'Politica_Riesgos_' . str_replace(' ', '_', $sede) . '.docx';
         //$sede = auth()->user()->sede->name;
+        $sede = auth()->user()->sede?->company_name ?? 'Sin Razón Social';
+        $mes = strtoupper(\Carbon\Carbon::now()->locale('es')->isoFormat('MMMM')); // mes en mayúsculas
+        $anio = now()->format('Y'); // año a 4 dígitos
         $rutaTemporal = storage_path('app/livewire-tmp/' . $nombreArchivoSalida);
         $name=auth()->user()->name . ' ' . auth()->user()->first_mame . ' ' . auth()->user()->last_name;
         try {
@@ -1331,6 +1381,8 @@ class Nom035 extends Page
 
             // Reemplaza ${name} en la tabla de firmas [cite: 166]
             $templateProcessor->setValue('name', $name);
+            $templateProcessor->setValue('month', $mes);
+            $templateProcessor->setValue('year', $anio);
 
             // Reemplaza ${fecha} en la sección de datos [cite: 151]
             $templateProcessor->setValue('fecha', now()->format('d/m/Y'));
@@ -2814,15 +2866,24 @@ class Nom035 extends Page
 
         return $levels[4];
     }
-    private function getCategoryRiskLevel($category, $score)
+    private function getCategoryRiskLevel($category, $score, bool $inFlag=false)
     {
 
-        $thresholds = [
-            'ambiente' => [3, 5, 7, 9],
-            'activity' => [10, 20, 30, 40],
-            'time' => [4, 6, 9, 12],
-            'leadership' => [10, 18, 28, 38],
-        ];
+        if ($inFlag){
+            $thresholds = [
+                'ambiente' => [3, 5, 7, 9],
+                'actividad' => [10, 20, 30, 40],
+                'tiempo' => [4, 6, 9, 12],
+                'liderazgo' => [10, 18, 28, 38],
+            ];
+        }else{
+            $thresholds = [
+                'ambiente' => [3, 5, 7, 9],
+                'activity' => [10, 20, 30, 40],
+                'time' => [4, 6, 9, 12],
+                'leadership' => [10, 18, 28, 38],
+            ];
+        }
 
         $levels = ['Nulo o despreciable', 'Bajo', 'Medio', 'Alto', 'Muy alto'];
         $categoryThresholds = $thresholds[$category] ?? [1, 2, 3, 4];
@@ -3288,18 +3349,1171 @@ class Nom035 extends Page
                 ->send();
         }
     }
-    public function resultadosInformeG2(){
-        //Consumir la plantilla de word informeResultadosG2 y llenarla con los datos de la evaluación
+    public function generarInformeGuiaII()
+    {
+        try {
+            // Cargar datos si no están disponibles
+            if (empty($this->generalResults)) {
+                $this->openModalResults();
+            }
+
+            $templatePath = storage_path('app/plantillas/informe_resultados_guia2.docx');
+
+            if (!file_exists($templatePath)) {
+                throw new \Exception('No se encontró la plantilla de Guía II');
+            }
+
+            $templateProcessor = new TemplateProcessor($templatePath);
+
+            // 1. Variables simples
+            $this->fillSimpleVariablesG2($templateProcessor);
+
+            // 2. Contadores de riesgo general
+            $this->fillRiskCountersG2($templateProcessor);
+
+            // 3. Tablas dinámicas (categorías, dominios, colaboradores)
+            $this->fillDynamicTablesG2($templateProcessor);
+
+            // 4. Gráficas
+            $this->fillChartsG2($templateProcessor);
+
+            // 5. Top 3 dominios
+            $this->fillTop3DomainsG2($templateProcessor);
+
+            // Guardar Word temporal
+            $nombreArchivoSalida='informe_G2_' . time() . '.docx';
+            $tempWordPath = storage_path('app/livewire-tmp/'.$nombreArchivoSalida);
+            $templateProcessor->saveAs($tempWordPath);
+
+            // Convertir a PDF
+            $pdfPath = $this->convertToPdf($tempWordPath,$nombreArchivoSalida);
+
+            // Limpiar temporales
+            //$this->cleanTempFiles($tempWordPath);
+
+            return response()->download($pdfPath)->deleteFileAfterSend();
+
+        } catch (\Exception $e) {
+            Notification::make()
+                ->title('Error al generar informe')
+                ->body($e->getMessage())
+                ->danger()
+                ->send();
+            Log::error($e);
+        }
     }
-    public function resultadosInformeG3(){
-        //Consumir la plantilla de word informeResultadosG2 y llenarla con los datos de la evaluación
+    private function fillSimpleVariablesG2(TemplateProcessor $template)
+    {
+        $user = auth()->user();
+        // 1. Obtener todos los IDs (incluyendo el del usuario actual si es necesario)
+        $ids_a_consultar = $this->getSedesHijas($user->sede_id);
+
+        // Asegurarnos que el ID del usuario también esté incluido si la lógica lo requiere
+        // Si tu arreglo $centrales ya incluye al padre, omite esta línea:
+        if (!in_array($user->sede_id, $ids_a_consultar)) {
+            array_unshift($ids_a_consultar, $user->sede_id);
+        }
+        // 2. Consulta a la BD (Una sola consulta optimizada)
+        $sedes = \App\Models\Sede::whereIn('id', $ids_a_consultar)->get();
+                // 3. Preparamos los datos para el "cloneBlock"
+        $replacements = [];
+
+        // Texto fijo de actividad
+        $texto_actividad = 'Servicios de administración de centrales camioneras, comercio de alimentos básicos con alta densidad calórica.';
+
+        foreach ($sedes as $sede) {
+            $direccion_completa = ($sede->address ?? 'N/A') . ', ' .
+                ($sede->cp ?? 'N/A') . ', ' .
+                ($sede->city ?? 'N/A') . ', ' .
+                ($sede->state ?? 'N/A');
+
+            $replacements[] = [
+                'company_name' => $sede->company_name ?? 'N/A',
+                'direccion'    => $direccion_completa,
+                'actividad'    => $texto_actividad
+            ];
+        }
+
+        // 4. EJECUTAMOS EL CLONADO DE BLOQUE
+        // 'bloque_sedes' debe coincidir con las etiquetas en tu Word
+        $template->cloneBlock('bloque_sedes', 0, true, false, $replacements);
+
+
+        $colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)->count();
+        $recomendaciones = [
+            'Muy Alto' =>'Se requiere realizar el análisis de cada categoría y dominio para establecer las acciones de intervención apropiadas, mediante un Programa de intervención que deberá incluir evaluaciones específicas1, y contemplar campañas de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',
+            'Alto' => 'Se requiere realizar un análisis de cada categoría y dominio, de manera que se puedan determinar las acciones de intervención apropiadas a través de un Programa de intervención, que podrá incluir una evaluación específica y deberá incluir una campaña de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',
+            'Medio' => 'Se requiere revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión, mediante un Programa de intervención.',
+            'Bajo' => 'Es necesario una mayor difusión de la política de prevención de riesgos psicosociales y programas para: la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral. ',
+            'Despreciable' => 'El riesgo resulta despreciable por lo que no se requiere medidas adicionales.'
+        ];
+        $template->setValue('no_guia', 'II');
+        $template->setValue('guia_name', 'Identificación y análisis de factores de riesgo psicosocial');
+        $template->setValue('guia_numeral', 'II.3');
+        $template->setValue('fecha', now()->locale('es')->isoFormat('D [de] MMMM [de] YYYY'));
+        $template->setValue('sede_name', $user->sede?->name ?? 'N/A');
+
+        $template->setValue('count_colab', $colaboradores??'N/A');
+        $template->setValue('count_eva', $this->responsesTotalG2);
+        $template->setValue('cali', number_format($this->calificacion, 2));
+        $template->setValue('riesgo', $this->resultCuestionario);
+        $template->setValue('determinacion', $recomendaciones[$this->resultCuestionario]);
+
+    }
+    private function fillRiskCountersG2(TemplateProcessor $template)
+    {
+        $counters = [
+            'very_high' => 0,
+            'high' => 0,
+            'medium' => 0,
+            'down' => 0,
+            'so_down' => 0
+        ];
+
+        // Obtener todas las calificaciones individuales
+        $userScores = RiskFactorSurvey::where('norma_id', $this->norma->id)
+            ->where('sede_id', auth()->user()->sede_id)
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($items) {
+                return $items->sum('equivalence_response');
+            });
+
+        foreach ($userScores as $score) {
+            $level = $this->getTotalRiskLevel($score);
+
+            match($level) {
+                'Muy alto' => $counters['very_high']++,
+                'Alto' => $counters['high']++,
+                'Medio' => $counters['medium']++,
+                'Bajo' => $counters['down']++,
+                'Nulo' => $counters['so_down']++,
+                default => null
+            };
+        }
+        //Quiero añadir $counters + calificacion=>number_format($this->calificacion, 2) a dataGeneral
+
+        $this->dataGeneral = array_merge($counters, [
+            'calificacion' => number_format($this->calificacion, 2)
+        ]);
+
+        $template->setValue('cal_very_high', $counters['very_high']);
+        $template->setValue('cal_high', $counters['high']);
+        $template->setValue('cal_medium', $counters['medium']);
+        $template->setValue('cal_down', $counters['down']);
+        $template->setValue('cal_so_down', $counters['so_down']);
+    }
+//Cambio para obtener la calificación por categoría
+    private function fillDynamicTablesG2(TemplateProcessor $template)
+    {
+        // Mapeo de categorías a sus question_ids
+        $categoryQuestions = [
+            'ambiente' => $this->getCategoryQuestionIds('ambiente'),
+            'actividad' => $this->getCategoryQuestionIds('activity'),
+            'tiempo' => $this->getCategoryQuestionIds('time'),
+            'liderazgo' => $this->getCategoryQuestionIds('leadership')
+        ];
+        $evaluationId=EvaluationsTypes::where('name','like','%Guía II')->get()->first()->id;
+
+        // Calcular calificaciones por categoría
+        $categoryScores = [];
+        foreach ($categoryQuestions as $categoryKey => $questionIds) {
+            // Obtener los IDs reales de las preguntas basándose en el order
+            $realQuestionIds = \App\Models\Question::whereIn('order', $questionIds)
+                ->where('evaluations_type_id',$evaluationId)
+                ->pluck('id')->toArray();
+
+
+            $totalScore = RiskFactorSurvey::where('norma_id', $this->norma->id)
+                ->where('sede_id', auth()->user()->sede_id)
+                ->whereIn('question_id', $realQuestionIds)
+                ->get()
+                ->groupBy('user_id')
+                ->map(function ($items) {
+                    return $items->sum('equivalence_response');
+                })
+                ->avg();
+
+            $userCount = RiskFactorSurvey::where('norma_id', $this->norma->id)
+                ->where('sede_id', auth()->user()->sede_id)
+                ->whereIn('question_id', $realQuestionIds)
+                ->distinct('user_id')
+                ->count('user_id');
+
+            $categoryScores[$categoryKey] = $totalScore ?? 0;
+        }
+
+        // --- INICIALIZAR VARIABLES DE RASTREO (para determinar Cat mayor) ---
+        $maxScore = -1; // Iniciamos en -1 para que cualquier calificación lo supere
+        $catMasAltaNombre = 'No identificada';
+        $catMasAltaNivel = '';
+
+        // CATEGORÍAS - Clonar filas
+        $template->cloneRow('cat_name', count($this->generalResultsCategory));
+        $iflag=true;
+        $i = 1;
+        foreach ($this->generalResultsCategory as $key => $category) {
+            // Usar la calificación calculada
+
+            $score = $categoryScores[$key] ?? $category['score'];
+            $level = $this->getCategoryRiskLevel($key, $score,$iflag);
+
+            // --- 2. COMPARATIVA "REY DE LA COLINA" (NUEVO) ---
+            // Si el score actual es mayor al máximo registrado hasta ahora...
+            if ($score > $maxScore) {
+                $maxScore = $score; // Actualizamos el récord
+                $catMasAltaNombre = $category['nombre'];
+                $catMasAltaNivel = $level;
+            }
+
+            $template->setValue("cat_name#$i", $category['nombre']);
+            $template->setValue("cat_cal#$i", number_format($score, 2));
+            $template->setValue("cat_nivel#$i", $level);
+        /*
+            //Ahora por insertar valores al template por cantidad de colaboradores
+            $template->setValue("cat_list_name#$i",$category['nombre']);
+            dd($category);
+            $template->setValue("count_colab_cat_vh#$i",$category['very_high']);
+            $template->setValue("count_colab_cat_h#$i",$category['high']);
+        */
+            // Contadores por nivel en esta categoría
+            $this->fillCategoryCounters($template, $key, $i);
+            $i++;
+        }
+        // --- 3. INSERTAR EL GANADOR FUERA DEL CICLO (NUEVO) ---
+        // Aquí construyes el string final. Puedes poner solo el nombre o nombre + nivel.
+        // Ejemplo: "Ambiente de Trabajo - Muy Alto"
+        $textoFinal = $catMasAltaNombre;
+
+
+        // O si en tu Word la variable espera solo el nombre:
+        // $template->setValue('det_cat_mas_alta', $catMasAltaNombre);
+
+        $template->setValue('det_cat_mas_alta', $textoFinal);
+        $template->setValue('level_cat_mas_alta', $catMasAltaNivel);
+
+        $template->cloneRow('cat_list_name', count($this->generalResultsCategory));
+        $i = 1;
+        foreach ($this->generalResultsCategory as $key => $category) {
+            //Ahora por insertar valores al template por cantidad de colaboradores
+            $template->setValue("cat_list_name#$i",$category['nombre']);
+            $template->setValue("count_colab_cat_vh#$i",$category['very_high']);
+            $template->setValue("count_colab_cat_h#$i",$category['high']);
+            $template->setValue("count_colab_cat_m#$i",$category['medium']);
+            $template->setValue("count_colab_cat_l#$i",$category['low']);
+            $template->setValue("count_colab_cat_vl#$i",$category['null']);
+            $i++;
+        }
+
+        $iflag=false;
+
+
+
+        // DOMINIOS
+
+        $template->cloneRow('dom_name', count($this->domainResults));
+
+        $i = 1;
+        foreach ($this->domainResults as $key => $domain) {
+            $template->setValue("dom_name#$i", $domain['nombre']);
+            $template->setValue("dom_cal#$i", number_format($domain['total_cali'], 2));
+            $template->setValue("dom_nivel#$i", $domain['riesgo']);
+
+           // $this->fillDomainCounters($template, $key, $i);
+            $i++;
+        }
+
+        $template->cloneRow('dom_list_name', count($this->domainResults));
+        $i=1;
+        foreach ($this->domainResults as $key => $domain) {
+            $template->setValue("dom_list_name#$i",$domain['nombre']);
+            $template->setValue("count_colab_dom_vh#$i",$domain['very_high']);
+            $template->setValue("count_colab_dom_h#$i",$domain['high']);
+            $template->setValue("count_colab_dom_m#$i",$domain['medium']);
+            $template->setValue("count_colab_dom_l#$i",$domain['low']);
+            $template->setValue("count_colab_dom_vl#$i",$domain['null']);
+            $i++;
+        }
+
+        // COLABORADORES
+
+        $this->fillCollaboratorsList($template);
     }
 
 
+    private function fillCategoryCounters(TemplateProcessor $template, string $categoryKey, int $index)
+    {
+        $questionIds = $this->getCategoryQuestionIds($categoryKey);
+
+        $counters = ['vh' => 0, 'h' => 0, 'm' => 0, 'b' => 0, 'n' => 0];
+
+        $userScores = RiskFactorSurvey::where('norma_id', $this->norma->id)
+            ->whereIn('question_id', $questionIds)
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($items) {
+                return $items->sum('equivalence_response');
+            });
+
+        foreach ($userScores as $score) {
+            $level = $this->getCategoryRiskLevel($categoryKey, $score);
+
+            match($level) {
+                'Muy alto' => $counters['vh']++,
+                'Alto' => $counters['h']++,
+                'Medio' => $counters['m']++,
+                'Bajo' => $counters['b']++,
+                default => $counters['n']++
+            };
+        }
+
+        $template->setValue("cat_vh#$index", $counters['vh']);
+        $template->setValue("cat_h#$index", $counters['h']);
+        $template->setValue("cat_m#$index", $counters['m']);
+        $template->setValue("cat_b#$index", $counters['b']);
+        $template->setValue("cat_n#$index", $counters['n']);
+    }
+
+    private function getCategoryQuestionIds(string $category): array
+    {
+        $map = [
+            'ambiente' => [2, 1, 3],
+            'activity' => [4, 9, 5, 6, 7, 8, 41, 42, 43, 10, 11, 12, 13, 20, 21, 22, 18, 19, 26, 27],
+            'time' => [14, 15, 16, 17],
+            'leadership' => [23, 24, 25, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 44, 45, 46]
+        ];
+
+        return $map[$category] ?? [];
+    }
+
+    private function fillCollaboratorsList(TemplateProcessor $template)
+    {
+        $userScores = RiskFactorSurvey::where('norma_id', $this->norma->id)
+            ->where('sede_id', auth()->user()->sede_id)
+            ->with('user')
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($items, $userId) {
+                $user = $items->first()->user;
+                $score = $items->sum('equivalence_response');
+
+                return [
+                    'name' => trim("{$user->name} {$user->first_name} {$user->last_name}"),
+                    'score' => $score,
+                    'level' => $this->getTotalRiskLevel($score)
+                ];
+            })
+            ->sortBy('name')
+            ->values();
 
 
+        $template->cloneRow('colab_name', $userScores->count());
 
+        foreach ($userScores as $index => $colab) {
+            $i = $index + 1;
+            $template->setValue("colab_name#$i", $colab['name']);
+            $template->setValue("colab_score#$i", number_format($colab['score'], 2));
+            $template->setValue("colab_level#$i", $colab['level']);
+
+        }
+
+    }
+    private function fillChartsG2(TemplateProcessor $template)
+    {
+        //Grafica General de puntuación por nivel de riesgo
+        $generalChart= $this->generateGeneralChart();
+        $generalImagePath = storage_path('app/livewire-tmp/chart_gen_' . time() . '.png');
+        file_put_contents($generalImagePath, file_get_contents($generalChart));
+        $template->setImageValue('chart_gen',[
+            'path' => $generalImagePath,
+            'width' => 650,
+            'height' => 400
+            ]
+        );
+
+
+        // Gráfica de Categorías
+        $categoryChart = $this->generateCategoryChart();
+        $categoryImagePath = storage_path('app/livewire-tmp/chart_cat_' . time() . '.png');
+        file_put_contents($categoryImagePath, file_get_contents($categoryChart));
+
+        $template->setImageValue('grafica_categorias', [
+            'path' => $categoryImagePath,
+            'width' => 400,
+            'height' => 300
+        ]);
+
+        // Gráfica de Dominios
+        $domainChart = $this->generateDomainChart();
+        $domainImagePath = storage_path('app/livewire-tmp/chart_dom_' . time() . '.png');
+        file_put_contents($domainImagePath, file_get_contents($domainChart));
+
+        $template->setImageValue('grafica_dominios', [
+            'path' => $domainImagePath,
+            'width' => 400,
+            'height' => 300
+        ]);
+
+    }
+    private function generateGeneralChart(): string
+    {
+        $labels = ['Clasificación'];
+        $dataVH = [];
+        $dataH = [];
+        $dataM = [];
+        $dataB = [];
+        $dataN = [];
+
+        // Aquí debes calcular los contadores por categoría
+
+            $dataVH[] = $this->dataGeneral['very_high'];
+            $dataH[] = $this->dataGeneral['high'];
+            $dataM[] = $this->dataGeneral['medium'];
+            $dataB[] = $this->dataGeneral['down'];
+            $dataN[] = $this->dataGeneral['so_down'];
+
+
+        $config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $labels,
+                'datasets' => [
+                    ['label' => 'Muy Alto', 'data' => $dataVH, 'backgroundColor' => '#dc2626'],
+                    ['label' => 'Alto', 'data' => $dataH, 'backgroundColor' => '#e69d10'],
+                    ['label' => 'Medio', 'data' => $dataM, 'backgroundColor' => '#facc15'],
+                    ['label' => 'Bajo', 'data' => $dataB, 'backgroundColor' => '#22c55e'],
+                    ['label' => 'Nulo', 'data' => $dataN, 'backgroundColor' => '#3b82f6']
+                ]
+            ],
+            'options' => [
+                'plugins' => ['title' => ['display' => true, 'text' => 'Resultados por Categoría']],
+                'scales' => ['y' => ['beginAtZero' => true]]
+            ]
+        ];
+
+        return 'https://quickchart.io/chart?c=' . urlencode(json_encode($config));
+    }
+
+    private function generateCategoryChart(): string
+    {
+        $labels = [];
+        $dataVH = [];
+        $dataH = [];
+        $dataM = [];
+        $dataB = [];
+        $dataN = [];
+
+        foreach ($this->generalResultsCategory as $category) {
+            $labels[] = $category['nombre'];
+
+            // Aquí debes calcular los contadores por categoría
+            $dataVH[] = $category['very_high'];
+            $dataH[] = $category['high'];
+            $dataM[] = $category['medium'];
+            $dataB[] = $category['low'];
+            $dataN[] = $category['null'];
+        }
+
+        $config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $labels,
+                'datasets' => [
+                    ['label' => 'Muy Alto', 'data' => $dataVH, 'backgroundColor' => '#dc2626'],
+                    ['label' => 'Alto', 'data' => $dataH, 'backgroundColor' => '#e69d10'],
+                    ['label' => 'Medio', 'data' => $dataM, 'backgroundColor' => '#facc15'],
+                    ['label' => 'Bajo', 'data' => $dataB, 'backgroundColor' => '#22c55e'],
+                    ['label' => 'Nulo', 'data' => $dataN, 'backgroundColor' => '#3b82f6']
+                ]
+            ],
+            'options' => [
+                'plugins' => ['title' => ['display' => true, 'text' => 'Resultados por Categoría']],
+                'scales' => ['y' => ['beginAtZero' => true]]
+            ]
+        ];
+
+        return 'https://quickchart.io/chart?c=' . urlencode(json_encode($config));
+    }
+
+    private function generateDomainChart(): string{
+        $labels = [];
+        $dataVH = [];
+        $dataH = [];
+        $dataM = [];
+        $dataB = [];
+        $dataN = [];
+
+        foreach ($this->domainResults as $domain) {
+            $labels[] = $domain['nombre'];
+            $dataVH[] = $domain['very_high'];
+            $dataH[] = $domain['high'];
+            $dataM[] = $domain['medium'];
+            $dataB[] = $domain['low'];
+            $dataN[] = $domain['null'];
+        }
+        $config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $labels,
+                'datasets' => [
+                    ['label' => 'Muy Alto', 'data' => $dataVH, 'backgroundColor' => '#dc2626'],
+                    ['label' => 'Alto', 'data' => $dataH, 'backgroundColor' => '#e69d10'],
+                    ['label' => 'Medio', 'data' => $dataM, 'backgroundColor' => '#facc15'],
+                    ['label' => 'Bajo', 'data' => $dataB, 'backgroundColor' => '#22c55e'],
+                    ['label' => 'Nulo', 'data' => $dataN, 'backgroundColor' => '#3b82f6']
+                ]
+            ],
+            'options' => [
+                'plugins' => ['title' => ['display' => true, 'text' => 'Resultados por Categoría']],
+                'scales' => ['y' => ['beginAtZero' => true]]
+            ]
+        ];
+        return 'https://quickchart.io/chart?c=' . urlencode(json_encode($config));
+    }
+    private function fillTop3DomainsG2(TemplateProcessor $template)
+    {
+        // 1. Orden de riesgo (texto → valor numérico)
+        $riesgoOrden = [
+            'Muy Alto' => 5,
+            'Alto' => 4,
+            'Medio' => 3,
+            'Bajo' => 2,
+            'Nulo' => 1,
+            'Despreciable' => 0,
+        ];
+
+        // 2. Ordenar el arreglo principal (conserva las keys)
+        uasort($this->domainResults, function ($a, $b) use ($riesgoOrden) {
+
+            $riesgoA = $riesgoOrden[$a['riesgo']] ?? 0;
+            $riesgoB = $riesgoOrden[$b['riesgo']] ?? 0;
+
+            if ($riesgoA !== $riesgoB) {
+                return $riesgoB <=> $riesgoA;
+            }
+
+            return $b['total_cali'] <=> $a['total_cali'];
+        });
+
+        // 3. Obtener Top 3 dominios (CON keys)
+        $top3Domains = array_slice($this->domainResults, 0, 3, true);
+
+        // 4. Descripciones NOM-035
+        $descriptions = [
+            'conditions' => 'Se refieren a las condiciones peligrosas e inseguras o deficientes e insalubres; es decir, a las condiciones del lugar de trabajo que bajo ciertas circunstancias exigen del trabajador un esfuerzo adicional de adaptación.',
+            'work_activity' => 'Se refieren a las exigencias que el trabajo impone al trabajador y que exceden su capacidad, pueden ser de diversa naturaleza, como cuantitativas, cognitivas o mentales, emocionales, de responsabilidad, así como cargas contradictorias o inconsistentes.',
+            'work_control' => 'El control sobre el trabajo es la posibilidad que tiene el trabajador para influir y tomar decisiones en la realización de sus actividades. La iniciativa y autonomía, el uso y desarrollo de habilidades y conocimientos, la participación y manejo del cambio, así como la capacitación son aspectos que dan al trabajador la posibilidad de influir sobre su trabajo.',
+            'work_journey' => 'Representan una exigencia de tiempo laboral que se hace al trabajador en términos de la duración y el horario de la jornada, se convierten en factor de riesgo psicosocial cuando se trabaja con extensas jornadas, con frecuente rotación de turnos o turnos nocturnos, sin pausas y descansos periódicos claramente establecidos y ni medidas de prevención y protección del trabajador para detectar afectación de salud, de manera temprana.',
+            'work_family' => 'Surge cuando existe conflicto entre las actividades familiares o personales y las responsabilidades laborales; es decir, cuando de manera constante se tienen que atender responsabilidades laborales durante el tiempo dedicado a la vida familiar y personal, o se tiene que laborar fuera del horario de trabajo.',
+            'leadership' => 'El liderazgo negativo en el trabajo hace referencia al tipo de relación que se establece entre el patrón o sus representantes y los trabajadores, cuyas características influyen en la forma de trabajar.',
+            'work_relations' => 'Se refiere a la interacción que se establece en el contexto laboral y abarca aspectos como la imposibilidad de interactuar con los compañeros de trabajo para la solución de problemas relacionados con el trabajo, y características desfavorables de estas interacciones en aspectos funcionales como deficiente o nulo trabajo en equipo y apoyo social.',
+            'violence' => 'Aquellos actos de hostigamiento, acoso o malos tratos en contra del trabajador, que pueden dañar su integridad o salud, atentando contra su dignidad y creando un entorno intimidatorio, degradante, humillante u ofensivo.',
+            'reconocimiento' => 'Se refiere a la escasa o nula retroalimentación sobre el desempeño, la ausencia de recompensas y la falta de valoración del esfuerzo realizado por el trabajador, lo cual impide el sentido de logro y desarrollo personal.',
+            'pertenencia' => 'Se refiere a la falta de sentimiento de orgullo y compromiso con el trabajo y la organización, así como a la incertidumbre sobre la continuidad laboral o inestabilidad en la contratación.'
+        ];
+
+        // 5. Insertar en el template
+        $i = 1;
+
+        foreach ($top3Domains as $key => $domain) {
+
+            $template->setValue("domain{$i}_name", $domain['nombre']);
+            $template->setValue("domain{$i}_level", $domain['riesgo']);
+            $template->setValue(
+                "domain{$i}_description",
+                $descriptions[$key] ?? 'Descripción no disponible'
+            );
+
+            $i++;
+        }
+
+        // 6. Rellenar vacíos si hay menos de 3
+        for (; $i <= 3; $i++) {
+            $template->setValue("domain{$i}_name", 'N/A');
+            $template->setValue("domain{$i}_level", 'N/A');
+            $template->setValue("domain{$i}_description", 'N/A');
+        }
+
+    }
+    private function convertToPdf(string $wordPath,string $nombreArchivoSalida): string
+    {
+
+        $ilovepdf = new Ilovepdf('project_public_e77e6c5a886b8b19b9e83808f514bf44_uChwi13485de38f75fad79190646cb3fbacfe',
+            'secret_key_5ad6baf9deee4bbf2dee704afa6502d5_Lau4ia401a9d22bc6a6715f4c39ec19fd6dd1');
+
+        $task = $ilovepdf->newTask('officepdf');
+        $file = $task->addFile($wordPath);
+        $task->execute();
+
+
+        // 1. Definimos explícitamente la carpeta de destino usando storage_path
+        $outputDir = storage_path('app/livewire-tmp');
+
+        // 2. Le decimos a IlovePDF que descargue el archivo en esa carpeta
+        $task->download($outputDir);
+
+        // 3. Construimos la ruta completa del nuevo PDF
+        // IlovePDF guarda el archivo con el mismo nombre pero extensión .pdf
+        $nombrePdf = str_replace('.docx', '.pdf', $nombreArchivoSalida);
+        $rutaPdf = $outputDir . '/' . $nombrePdf;
+        // Limpiar el DOCX temporal
+        if (file_exists($wordPath)) {
+            @unlink($wordPath);
+        }
+
+        // Verificar que el PDF existe
+        if (!file_exists($rutaPdf)) {
+            throw new \Exception("El archivo PDF no se generó correctamente.");
+        }
+
+        return $rutaPdf; // ✅ Solo devuelve la ruta
+
+    }
+
+    // INFORME DE RESULTADOS PARA
+    //DOMINIOS
+    // Enero 2026
+
+    public function generarInformeGuiaIII()
+    {
+        try {
+            $templatePath = storage_path('app/plantillas/informe_guiaIII_template.docx');
+
+            if (!file_exists($templatePath)) {
+                throw new \Exception('Plantilla no encontrada');
+            }
+
+            $template = new TemplateProcessor($templatePath);
+
+            // Llenar secciones del documento
+            $this->fillSimpleVariablesG3($template);
+            $this->fillRiskCountersG3($template);
+            $this->fillDynamicTablesG3($template);
+            $this->fillChartsG3($template);
+            $this->fillTop3DomainsG3($template);
+
+            // Guardar Word temporal
+            $nombreArchivoSalida = 'informe_G3_' . time() . '.docx';
+            $rutaTemporal = storage_path('app/livewire-tmp/' . $nombreArchivoSalida);
+
+            if (!is_dir(storage_path('app/livewire-tmp'))) {
+                mkdir(storage_path('app/livewire-tmp'), 0755, true);
+            }
+
+            $template->saveAs($rutaTemporal);
+
+            // Convertir a PDF
+            $pdfPath = $this->convertToPdf($rutaTemporal, $nombreArchivoSalida);
+
+            // Descargar y limpiar
+            return response()->download($pdfPath)->deleteFileAfterSend();
+
+        } catch (\Exception $e) {
+            \Log::error('Error generando informe GIII: ' . $e->getMessage());
+            Notification::make()
+                ->title('Error al generar informe')
+                ->body($e->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
+
+    private function fillSimpleVariablesG3(TemplateProcessor $template)
+    {
+        $activeSurvey = ActiveSurvey::where('norma_id', $this->norma->id)
+            ->whereHas('evaluationType', function($q) {
+                $q->where('name', 'like', '%Guía III%');
+            })
+            ->first();
+
+        $template->setValue('sede', auth()->user()->sede->name ?? 'N/A');
+        $template->setValue('fecha_inicio', $activeSurvey?->start_date?->format('d/m/Y') ?? 'N/A');
+        $template->setValue('fecha_fin', $activeSurvey?->end_date?->format('d/m/Y') ?? 'N/A');
+        $template->setValue('total_colaboradores', $this->colabs->count());
+        $template->setValue('total_respuestas', $this->totalResponsesG3);
+        $template->setValue('calificacion_general', number_format($this->calificacionG3, 2));
+        $template->setValue('nivel_riesgo_general', $this->resultCuestionarioG3);
+    }
+    private function fillRiskCountersG3(TemplateProcessor $template)
+    {
+        $template->setValue('total_vh', $this->generalResultsGuideIII['very_high'] ?? 0);
+        $template->setValue('total_h', $this->generalResultsGuideIII['high'] ?? 0);
+        $template->setValue('total_m', $this->generalResultsGuideIII['medium'] ?? 0);
+        $template->setValue('total_b', $this->generalResultsGuideIII['low'] ?? 0);
+        $template->setValue('total_n', $this->generalResultsGuideIII['null'] ?? 0);
+
+        // Porcentajes
+        $total = $this->generalResultsGuideIII['total'] ?? 1;
+
+        $template->setValue('porc_vh', number_format(($this->generalResultsGuideIII['very_high'] / $total) * 100, 1));
+        $template->setValue('porc_h', number_format(($this->generalResultsGuideIII['high'] / $total) * 100, 1));
+        $template->setValue('porc_m', number_format(($this->generalResultsGuideIII['medium'] / $total) * 100, 1));
+        $template->setValue('porc_b', number_format(($this->generalResultsGuideIII['low'] / $total) * 100, 1));
+        $template->setValue('porc_n', number_format(($this->generalResultsGuideIII['null'] / $total) * 100, 1));
+    }
+    private function fillDynamicTablesG3(TemplateProcessor $template)
+    {
+        // Calcular calificaciones por categoría
+        $categoryQuestions = [
+            'ambiente' => [1, 2, 3],
+            'actividad' => [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 48, 49, 50],
+            'tiempo' => [26, 27, 28, 29],
+            'liderazgo' => [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 51, 52, 53, 54, 55, 56, 57, 58],
+            'entorno' => [46, 47, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72]
+        ];
+
+        $categoryScores = [];
+        foreach ($categoryQuestions as $categoryKey => $questionIds) {
+            $totalScore = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
+                ->where('sede_id', auth()->user()->sede_id)
+                ->whereIn('question_id', $questionIds)
+                ->sum('equivalence_response');
+
+            $userCount = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
+                ->where('sede_id', auth()->user()->sede_id)
+                ->whereIn('question_id', $questionIds)
+                ->distinct('user_id')
+                ->count('user_id');
+
+            $categoryScores[$categoryKey] = $userCount > 0 ? $totalScore / $userCount : 0;
+        }
+
+        // Variables de rastreo para categoría más alta
+        $maxScore = -1;
+        $catMasAltaNombre = 'No identificada';
+        $catMasAltaNivel = '';
+
+        // CATEGORÍAS
+        $template->cloneRow('cat_name', count($this->generalResultsGuideIIICategory));
+
+        $i = 1;
+        foreach ($this->generalResultsGuideIIICategory as $key => $category) {
+            $score = $categoryScores[$key] ?? 0;
+            $level = $this->getCategoryRiskLevelG3($key, $score);
+
+            $template->setValue("cat_name#$i", $category['nombre']);
+            $template->setValue("cat_cal#$i", number_format($score, 2));
+            $template->setValue("cat_nivel#$i", $level);
+
+            // Rastrear la más alta
+            if ($score > $maxScore) {
+                $maxScore = $score;
+                $catMasAltaNombre = $category['nombre'];
+                $catMasAltaNivel = $level;
+            }
+
+            $this->fillCategoryCountersG3($template, $key, $i);
+            $i++;
+        }
+
+        // Insertar categoría más alta
+        $template->setValue('det_cat_mas_alta', $catMasAltaNombre);
+        $template->setValue('level_cat_mas_alta', $catMasAltaNivel);
+
+        // Lista de categorías
+        $template->cloneRow('cat_list_name', count($this->generalResultsGuideIIICategory));
+        $i = 1;
+        foreach ($this->generalResultsGuideIIICategory as $key => $category) {
+            $template->setValue("cat_list_name#$i", $category['nombre']);
+            $i++;
+        }
+
+        // DOMINIOS
+        $template->cloneRow('dom_name', count($this->generalDomainResultsGuideIII));
+
+        $i = 1;
+        foreach ($this->generalDomainResultsGuideIII as $key => $domain) {
+            $template->setValue("dom_name#$i", $domain['nombre']);
+            $template->setValue("dom_cal#$i", number_format($domain['total_cali'] ?? 0, 2));
+            $template->setValue("dom_nivel#$i", $domain['riesgo'] ?? 'N/A');
+
+            $this->fillDomainCountersG3($template, $key, $i);
+            $i++;
+        }
+
+        // Lista de dominios
+        $template->cloneRow('dom_list_name', count($this->generalDomainResultsGuideIII));
+        $i = 1;
+        foreach ($this->generalDomainResultsGuideIII as $domain) {
+            $template->setValue("dom_list_name#$i", $domain['nombre']);
+            $i++;
+        }
+
+        // COLABORADORES
+        $this->fillCollaboratorsListG3($template);
+    }
+    private function fillCategoryCountersG3(TemplateProcessor $template, string $categoryKey, int $index)
+    {
+        $questionIds = $this->getCategoryQuestionIdsG3($categoryKey);
+
+        $counters = ['vh' => 0, 'h' => 0, 'm' => 0, 'b' => 0, 'n' => 0];
+
+        $userScores = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
+            ->where('sede_id', auth()->user()->sede_id)
+            ->whereIn('question_id', $questionIds)
+            ->get()
+            ->groupBy('user_id')
+            ->map(fn($items) => $items->sum('equivalence_response'));
+
+        foreach ($userScores as $score) {
+            $level = $this->getCategoryRiskLevelG3($categoryKey, $score);
+
+            match($level) {
+                'Muy alto' => $counters['vh']++,
+                'Alto' => $counters['h']++,
+                'Medio' => $counters['m']++,
+                'Bajo' => $counters['b']++,
+                default => $counters['n']++
+            };
+        }
+
+        $template->setValue("cat_vh#$index", $counters['vh']);
+        $template->setValue("cat_h#$index", $counters['h']);
+        $template->setValue("cat_m#$index", $counters['m']);
+        $template->setValue("cat_b#$index", $counters['b']);
+        $template->setValue("cat_n#$index", $counters['n']);
+    }
+
+    private function getCategoryQuestionIdsG3(string $category): array
+    {
+        $map = [
+            'ambiente' => [1, 2, 3],
+            'actividad' => [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 48, 49, 50],
+            'tiempo' => [26, 27, 28, 29],
+            'liderazgo' => [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 51, 52, 53, 54, 55, 56, 57, 58],
+            'entorno' => [46, 47, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72]
+        ];
+
+        return $map[$category] ?? [];
+    }
+    private function fillDomainCountersG3(TemplateProcessor $template, string $domainKey, int $index)
+    {
+        $questionIds = $this->getDomainQuestionIdsG3($domainKey);
+
+        $counters = ['vh' => 0, 'h' => 0, 'm' => 0, 'b' => 0, 'n' => 0];
+
+        $userScores = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
+            ->where('sede_id', auth()->user()->sede_id)
+            ->whereIn('question_id', $questionIds)
+            ->get()
+            ->groupBy('user_id')
+            ->map(fn($items) => $items->sum('equivalence_response'));
+
+        foreach ($userScores as $score) {
+            $level = $this->getDomainRiskLevelG3($domainKey, $score);
+
+            match($level) {
+                'Muy alto' => $counters['vh']++,
+                'Alto' => $counters['h']++,
+                'Medio' => $counters['m']++,
+                'Bajo' => $counters['b']++,
+                default => $counters['n']++
+            };
+        }
+
+        $template->setValue("dom_vh#$index", $counters['vh']);
+        $template->setValue("dom_h#$index", $counters['h']);
+        $template->setValue("dom_m#$index", $counters['m']);
+        $template->setValue("dom_b#$index", $counters['b']);
+        $template->setValue("dom_n#$index", $counters['n']);
+    }
+
+    private function getDomainQuestionIdsG3(string $domain): array
+    {
+        $map = [
+            'conditions' => [1, 2, 3],
+            'work_activity' => [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 48, 49, 50],
+            'work_control' => [16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
+            'work_journey' => [26, 27],
+            'work_family' => [28, 29],
+            'leadership' => [30, 31, 32, 33, 34],
+            'work_relations' => [35, 36, 37, 51, 52, 53, 54, 55, 56],
+            'violence' => [38, 39, 40, 41, 42, 43, 44, 45],
+            'performance' => [46, 47, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69],
+            'inestable' => [70, 71, 72]
+        ];
+
+        return $map[$domain] ?? [];
+    }
+    private function fillCollaboratorsListG3(TemplateProcessor $template)
+    {
+        $userScores = RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)
+            ->where('sede_id', auth()->user()->sede_id)
+            ->select('user_id')
+            ->selectRaw('SUM(equivalence_response) as total_score')
+            ->groupBy('user_id')
+            ->with('user')
+            ->get();
+
+        $template->cloneRow('colab_name', $userScores->count());
+
+        foreach ($userScores as $index => $colab) {
+            $i = $index + 1;
+            $score = $colab->total_score ?? 0;
+            $level = $this->getTotalRiskLevelG3($score);
+
+            $template->setValue("colab_name#$i", $colab->user->name ?? 'N/A');
+            $template->setValue("colab_score#$i", number_format($score, 2));
+            $template->setValue("colab_level#$i", $level);
+        }
+    }
+    private function fillChartsG3(TemplateProcessor $template)
+    {
+        // Gráfica General
+        $generalChart = $this->generateGeneralChartG3();
+        $generalImagePath = storage_path('app/livewire-tmp/chart_gen_g3_' . time() . '.png');
+        file_put_contents($generalImagePath, file_get_contents($generalChart));
+
+        $template->setImageValue('chart_gen', [
+            'path' => $generalImagePath,
+            'width' => 400,
+            'height' => 300,
+            'ratio' => false
+        ]);
+
+        // Gráfica de Categorías
+        $categoryChart = $this->generateCategoryChartG3();
+        $categoryImagePath = storage_path('app/livewire-tmp/chart_cat_g3_' . time() . '.png');
+        file_put_contents($categoryImagePath, file_get_contents($categoryChart));
+
+        $template->setImageValue('grafica_categorias', [
+            'path' => $categoryImagePath,
+            'width' => 500,
+            'height' => 350,
+            'ratio' => false
+        ]);
+
+        // Gráfica de Dominios
+        $domainChart = $this->generateDomainChartG3();
+        $domainImagePath = storage_path('app/livewire-tmp/chart_dom_g3_' . time() . '.png');
+        file_put_contents($domainImagePath, file_get_contents($domainChart));
+
+        $template->setImageValue('grafica_dominios', [
+            'path' => $domainImagePath,
+            'width' => 500,
+            'height' => 350,
+            'ratio' => false
+        ]);
+    }
+
+    private function generateGeneralChartG3(): string
+    {
+        $data = $this->generalResultsGuideIII;
+
+        $config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => ['Clasificación General'],
+                'datasets' => [
+                    [
+                        'label' => 'Muy Alto',
+                        'data' => [$data['very_high'] ?? 0],
+                        'backgroundColor' => '#DC2626'
+                    ],
+                    [
+                        'label' => 'Alto',
+                        'data' => [$data['high'] ?? 0],
+                        'backgroundColor' => '#F59E0B'
+                    ],
+                    [
+                        'label' => 'Medio',
+                        'data' => [$data['medium'] ?? 0],
+                        'backgroundColor' => '#FCD34D'
+                    ],
+                    [
+                        'label' => 'Bajo',
+                        'data' => [$data['low'] ?? 0],
+                        'backgroundColor' => '#10B981'
+                    ],
+                    [
+                        'label' => 'Nulo',
+                        'data' => [$data['null'] ?? 0],
+                        'backgroundColor' => '#6B7280'
+                    ]
+                ]
+            ],
+            'options' => [
+                'scales' => [
+                    'y' => ['beginAtZero' => true]
+                ]
+            ]
+        ];
+
+        return 'https://quickchart.io/chart?c=' . urlencode(json_encode($config));
+    }
+
+    private function generateCategoryChartG3(): string
+    {
+        $labels = [];
+        $dataVH = [];
+        $dataH = [];
+        $dataM = [];
+        $dataB = [];
+        $dataN = [];
+
+        foreach ($this->generalResultsGuideIIICategory as $category) {
+            $labels[] = $category['nombre'];
+            $dataVH[] = $category['very_high'] ?? 0;
+            $dataH[] = $category['high'] ?? 0;
+            $dataM[] = $category['medium'] ?? 0;
+            $dataB[] = $category['low'] ?? 0;
+            $dataN[] = $category['null'] ?? 0;
+        }
+
+        $config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $labels,
+                'datasets' => [
+                    ['label' => 'Muy Alto', 'data' => $dataVH, 'backgroundColor' => '#DC2626'],
+                    ['label' => 'Alto', 'data' => $dataH, 'backgroundColor' => '#F59E0B'],
+                    ['label' => 'Medio', 'data' => $dataM, 'backgroundColor' => '#FCD34D'],
+                    ['label' => 'Bajo', 'data' => $dataB, 'backgroundColor' => '#10B981'],
+                    ['label' => 'Nulo', 'data' => $dataN, 'backgroundColor' => '#6B7280']
+                ]
+            ]
+        ];
+
+        return 'https://quickchart.io/chart?c=' . urlencode(json_encode($config));
+    }
+
+    private function generateDomainChartG3(): string
+    {
+        $labels = [];
+        $dataVH = [];
+        $dataH = [];
+        $dataM = [];
+        $dataB = [];
+        $dataN = [];
+
+        foreach ($this->generalDomainResultsGuideIII as $domain) {
+            $labels[] = $domain['nombre'];
+            $dataVH[] = $domain['very_high'] ?? 0;
+            $dataH[] = $domain['high'] ?? 0;
+            $dataM[] = $domain['medium'] ?? 0;
+            $dataB[] = $domain['low'] ?? 0;
+            $dataN[] = $domain['null'] ?? 0;
+        }
+
+        $config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $labels,
+                'datasets' => [
+                    ['label' => 'Muy Alto', 'data' => $dataVH, 'backgroundColor' => '#DC2626'],
+                    ['label' => 'Alto', 'data' => $dataH, 'backgroundColor' => '#F59E0B'],
+                    ['label' => 'Medio', 'data' => $dataM, 'backgroundColor' => '#FCD34D'],
+                    ['label' => 'Bajo', 'data' => $dataB, 'backgroundColor' => '#10B981'],
+                    ['label' => 'Nulo', 'data' => $dataN, 'backgroundColor' => '#6B7280']
+                ]
+            ]
+        ];
+
+        return 'https://quickchart.io/chart?c=' . urlencode(json_encode($config));
+    }
+    private function fillTop3DomainsG3(TemplateProcessor $template)
+    {
+        $riesgoOrden = [
+            'Nulo' => 0,
+            'Bajo' => 1,
+            'Medio' => 2,
+            'Alto' => 3,
+            'Muy alto' => 4
+        ];
+
+        uasort($this->generalDomainResultsGuideIII, function ($a, $b) use ($riesgoOrden) {
+            $valorA = $riesgoOrden[$a['riesgo'] ?? 'Nulo'] ?? 0;
+            $valorB = $riesgoOrden[$b['riesgo'] ?? 'Nulo'] ?? 0;
+
+            if ($valorA === $valorB) {
+                return ($b['total_cali'] ?? 0) <=> ($a['total_cali'] ?? 0);
+            }
+
+            return $valorB <=> $valorA;
+        });
+
+        $top3Domains = array_slice($this->generalDomainResultsGuideIII, 0, 3, true);
+
+        $descriptions = [
+            'conditions' => 'Factores del ambiente físico laboral que pueden afectar la salud.',
+            'work_activity' => 'Esfuerzo mental requerido para realizar las tareas.',
+            'work_control' => 'Nivel de autonomía y toma de decisiones en el trabajo.',
+            'work_journey' => 'Distribución del tiempo laboral y períodos de descanso.',
+            'work_family' => 'Conflicto entre las demandas laborales y personales.',
+            'leadership' => 'Tipo de gestión y apoyo del supervisor inmediato.',
+            'work_relations' => 'Calidad de las interacciones con compañeros y clientes.',
+            'violence' => 'Actos de hostigamiento o maltrato en el entorno laboral.',
+            'performance' => 'Reconocimiento del esfuerzo y resultados alcanzados.',
+            'inestable' => 'Percepción de continuidad laboral y estabilidad contractual.'
+        ];
+
+        $i = 1;
+        foreach ($top3Domains as $key => $domain) {
+            $template->setValue("top_dom_name#$i", $domain['nombre']);
+            $template->setValue("top_dom_nivel#$i", $domain['riesgo'] ?? 'N/A');
+            $template->setValue("top_dom_desc#$i", $descriptions[$key] ?? '');
+            $i++;
+        }
+
+        for (; $i <= 3; $i++) {
+            $template->setValue("top_dom_name#$i", 'N/A');
+            $template->setValue("top_dom_nivel#$i", 'N/A');
+            $template->setValue("top_dom_desc#$i", '');
+        }
+    }
+
+
+    private function cleanTempFiles(string $wordPath)
+    {
+        $directory = storage_path('app/livewire-tmp');
+        $files = glob($directory . '/*');
+
+        foreach ($files as $file) {
+            if (is_file($file) && str_contains($file, 'chart_') || str_contains($file, 'informe_')) {
+                @unlink($file);
+            }
+        }
+    }
+
+    function getSedesHijas($sede_id) {
+        // 'static' evita que el arreglo se recree en cada llamada. ¡Súper rápido!
+        static $centrales = [
+            3  => [7, 13, 5, 1, 2, 4, 6],
+            7  => [7, 13],
+            1  => [1, 13],
+            5  => [5, 13],
+            2  => [2, 13],
+            4  => [4, 13],
+            6  => [6, 13],
+            11 => [11],
+            10 => [10],
+            8  => [8, 13],
+            9  => [9],
+            24 => [24],
+            12 => [12],
+            27 => [27],
+            28 => [28],
+            13 => [13],
+            20 => [20],
+            31 => [31],
+            25 => [25],
+            16 => [16],
+            14 => [14],
+            29 => [29],
+            17 => [17],
+            15 => [15],
+            18 => [18, 6],
+            19 => [19],
+            22 => [22],
+            21 => [21],
+            23 => [23],
+            26 => [26],
+            30 => [30, 11]
+        ];
+
+        // Retorna los hijos si existen, o un array vacío si no (seguridad)
+        return $centrales[$sede_id] ?? [$sede_id];
+    }
 
 
 }
-

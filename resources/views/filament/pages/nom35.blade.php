@@ -368,7 +368,7 @@
 
                 </x-filament::section>
 
-                @if($level===2)
+                @if($level===1)
                     <x-filament::section class="mb-4"
                                          collapsible
                                          collapsed >
@@ -926,8 +926,7 @@
             <x-filament::button
                 color="primary"
                 icon="fas-download"
-                :disabled="true"
-                wire:click="resultadosInformeG2"
+                wire:click="generarInformeGuiaII"
             >
                 Informe de Resultados
             </x-filament::button>

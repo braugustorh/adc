@@ -229,7 +229,7 @@
     @endforeach
     </tbody>
 </table>
-
+<div class="page-break">
 <!-- Nivel de Riesgo Final -->
 <div class="final-risk">
     <h2>Nivel de Riesgo</h2>
@@ -239,6 +239,7 @@
 <div class="conclusion">
     <h2>Necesidad de Acción</h2>
     <p>{{ $empleado['recommendation'] }}</p>
+</div>
 </div>
     <div class="page-break"></div>
 

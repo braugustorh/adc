@@ -180,11 +180,11 @@
         <x-filament::section>
             <div class="mb-4">
                 <p class="text-xl font-bold text-gray-900 dark:text-white">
-                    ¡Gracias por completar la encuesta!
+                    ¡Gracias por completar el cuestionario!
                 </p>
                 <br>
                 <p>
-                    {{ $finishMessage }}
+                    Agradecemos profundamente tu tiempo y sinceridad al completar la Guía de Referencia II - Cuestionario para identificar los factores de riesgo psicosocial. Para ADC tu colaboración es esencial para promover un entorno laboral seguro y saludable.
                 </p>
                 <br>
                 <p>

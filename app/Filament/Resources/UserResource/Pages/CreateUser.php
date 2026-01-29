@@ -282,6 +282,7 @@ class CreateUser extends CreateRecord
                     Select::make('career')
                         ->label('Área de Estudio')
                         ->disabled(fn (Get $get): bool =>
+                            $get('scholarship') === 'Sin Estudios' ||
                             $get('scholarship') === 'Primaria' ||
                             $get('scholarship') === 'Secundaria' ||
                             $get('scholarship') === 'Técnico' ||

@@ -79,8 +79,12 @@ class ViolenceProtocolWidget extends Widget
             // 1. Generar las 3 variables
             $mes = strtoupper(\Carbon\Carbon::now()->locale('es')->isoFormat('MMMM')); // mes en mayúsculas
             $anio = now()->format('Y'); // año a 4 dígitos
+            $user = auth()->user();
+            if ($user->sede_id==="1"){
+                $sede= "ADMINISTRADORA DE CENTRALES Y TERMINALES";
+            }else{
             $sede = auth()->user()->sede?->company_name ?? 'Sin Razón Social';
-
+            }
             // 2. Cargar la plantilla
             $templatePath = storage_path('app/plantillas/Protocolo.docx');
 

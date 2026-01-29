@@ -1363,7 +1363,12 @@ class Nom035 extends Page
         $sede = auth()->user()->sede->name;
         $nombreArchivoSalida = 'Politica_Riesgos_' . str_replace(' ', '_', $sede) . '.docx';
         //$sede = auth()->user()->sede->name;
-        $sede = auth()->user()->sede?->company_name ?? 'Sin Razón Social';
+        if (auth()->user()->sede_id===3) {
+            $sede = 'ADMINISTRADORA DE CENTRALES Y TERMINALES';
+        }else{
+            $sede = auth()->user()->sede?->company_name ?? 'Sin Razón Social';
+        }
+
         $mes = strtoupper(\Carbon\Carbon::now()->locale('es')->isoFormat('MMMM')); // mes en mayúsculas
         $anio = now()->format('Y'); // año a 4 dígitos
         $rutaTemporal = storage_path('app/livewire-tmp/' . $nombreArchivoSalida);
@@ -3410,9 +3415,10 @@ class Nom035 extends Page
 
         // Asegurarnos que el ID del usuario también esté incluido si la lógica lo requiere
         // Si tu arreglo $centrales ya incluye al padre, omite esta línea:
-        if (!in_array($user->sede_id, $ids_a_consultar)) {
+        if (!in_array($user->sede_id, $ids_a_consultar) && $user->sede_id!==3) { //En el caso de ADC no se debe incluir en las Razones
             array_unshift($ids_a_consultar, $user->sede_id);
         }
+
         // 2. Consulta a la BD (Una sola consulta optimizada)
         $sedes = \App\Models\Sede::whereIn('id', $ids_a_consultar)->get();
                 // 3. Preparamos los datos para el "cloneBlock"

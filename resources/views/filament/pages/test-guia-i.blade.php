@@ -6,10 +6,11 @@
             </x-slot>
             <div class="mb-4">
                 <p class="text-xl font-bold text-gray-900 dark:text-white">
-                    Ya has completado el Cuestionario de Identificación de Acontecimientos Traumáticos Severos.
+                    Ya has completado la Guía de Referencia I - Cuestionario para identificar a los trabajadores que fueron sujetos a acontecimientos traumáticos severos.
                 </p>
                 <br>
-                <p>
+                <p>Gracias por tu participación!</p>
+               <!-- <p>
                     Tu bienestar es importante para nosotros. Si tienes alguna pregunta o necesitas apoyo adicional, no dudes en contactar al equipo de Recursos Humanos o llamar a la línea de atención en crisis al
                     <a href="tel:8002900024" class="text-primary-600 hover:underline">
                         <strong>800-290-0024</strong>
@@ -18,7 +19,7 @@
                     <a href="tel:8009112000" class="text-primary-600 hover:underline">
                         <strong>800-911-2000</strong>
                     </a>.
-                </p>
+                </p> -->
             </div>
         </x-filament::section>
     @elseif($page==='welcome')
@@ -587,19 +588,21 @@
         <x-filament::section>
             <div class="mb-4">
                 <p class="text-xl font-bold text-gray-900 dark:text-white">
-                    Gracias por completar el Cuestionario.
+                    Gracias por completar el cuestionario.
                 </p>
                 <br>
                 <p>
-                    Agradecemos profundamente tu tiempo y sinceridad al completar el Cuestionario para Identificar Acontecimientos Traumáticos Severos, conforme a la NOM-035-STPS-2018, en adc Administradora de Centrales. Tu colaboración es esencial para promover un entorno laboral seguro y saludable.
+                    Agradecemos profundamente tu tiempo y sinceridad al completar la Guía de Referencia I - Cuestionario para identificar a los trabajadores que fueron sujetos a acontecimientos traumáticos severos. Para ADC tu colaboración es esencial para promover un entorno laboral seguro y saludable.
                 </p>
 
                 <br>
+                <!--
                 <p>
-                    {!!$finalMessage!!}
+                    {--!!$finalMessage!!--}
                 </p>
-                <br>
+                <br> -->
                 <p>
+                    {{--
                     @if($reqAtt)
                     Si tienes alguna pregunta o necesitas apoyo inmediato, no dudes en contactar al equipo de Recursos Humanos o llamar a la linea de atención en crisis al
                         <a href="tel:8002900024" class="text-primary-600 hover:underline">
@@ -610,10 +613,11 @@
                             <strong>800-911-2000</strong>
                         </a>. Estamos aquí para ayudarte.
                     @endif
+                    --}}
                 </p>
                 <br>
                 <p>
-                    Gracias nuevamente por tu compromiso con este proceso. Tu bienestar es nuestra prioridad.
+                    Gracias por tu compromiso, tu bienestar es nuestra prioridad.
                 </p>
             </div>
             <div class="flex justify-end">

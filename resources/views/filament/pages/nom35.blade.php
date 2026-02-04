@@ -368,7 +368,7 @@
 
                 </x-filament::section>
 
-                @if($level===1 || $level===2)
+                @if($level===2)
                     <x-filament::section class="mb-4"
                                          collapsible
                                          collapsed >
@@ -382,7 +382,7 @@
 
                         </x-slot>
                         <x-slot name="description">
-                            Solo los colaboradores identificados responderán la siguiente encuesta.
+                            Todos los colaboradores identificados responderán la siguiente encuesta.
                         </x-slot>
 
                         <div>
@@ -510,6 +510,7 @@
                         />
                         <span>Plantilla Plan de Acción NOM 035</span>
                     </div>
+                    {{--
                     <div class="flex items-center gap-2 mt-2">
                         <x-filament::icon-button
                             icon="heroicon-s-cloud-arrow-down"
@@ -520,6 +521,7 @@
                         />
                         <span>Informe de Resultados</span>
                     </div>
+                    --}}
 
                 </x-filament::section>
 
@@ -1061,7 +1063,7 @@
             <table class="table-auto border-collapse border border-gray-400 w-full text-center">
                 <thead>
                 <tr>
-                    <th class="bg-gray-200 font-bold border border-gray-400 p-2 dark:bg-gray-800">Calificación Categoria</th>
+                    <th class="bg-gray-200 font-bold border border-gray-400 p-2 dark:bg-gray-800">Calificación Dominio</th>
                     <th style="background-color: #dc2626; color: white;" class="font-bold border border-gray-400 p-2">Muy alto</th>
                     <th style="background-color: #ea580c; color: white;" class="font-bold border border-gray-400 p-2">Alto</th>
                     <th style="background-color: #facc15; color: black;" class="font-bold border border-gray-400 p-2">Medio</th>
@@ -1114,8 +1116,7 @@
             <x-filament::button
                 color="primary"
                 icon="fas-download"
-                :disabled="true"
-                wire:click="resultadosInformeG3"
+                wire:click="generarInformeGuiaIII"
             >
                 Informe de Resultados
             </x-filament::button>

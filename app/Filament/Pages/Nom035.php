@@ -1372,7 +1372,11 @@ class Nom035 extends Page
         $mes = strtoupper(\Carbon\Carbon::now()->locale('es')->isoFormat('MMMM')); // mes en mayúsculas
         $anio = now()->format('Y'); // año a 4 dígitos
         $rutaTemporal = storage_path('app/livewire-tmp/' . $nombreArchivoSalida);
-        $name=auth()->user()->name . ' ' . auth()->user()->first_mame . ' ' . auth()->user()->last_name;
+        $name=auth()->user()->name . ' ' . auth()->user()->first_name . ' ' . auth()->user()->last_name;
+        //Traer el puesto de la persona que descarga el archivo
+        $puesto = auth()->user()->position?->name ?? 'Sin Puesto';
+
+
         try {
             // 2. Cargar la plantilla usando TemplateProcessor
             // Esta clase es mágica: abre el zip del docx, cambia XML y lo cierra sin romper estilos.
@@ -1386,6 +1390,7 @@ class Nom035 extends Page
 
             // Reemplaza ${name} en la tabla de firmas [cite: 166]
             $templateProcessor->setValue('name', $name);
+            $templateProcessor->setValue('position', $puesto);
             $templateProcessor->setValue('month', $mes);
             $templateProcessor->setValue('year', $anio);
 

@@ -1146,7 +1146,7 @@
             </x-slot>
             <div>
                 <p>
-                    Se han identificado <strong>{{--$norma->identifiedCollaborators()->where('type_identification','encuesta')->count()??0--}}</strong> colaboradores que han sido expuestos a eventos traumáticos severos.
+                    Se han identificado <strong>{{$norma->first()?->identifiedCollaborators()->where('type_identification','encuesta')->count()??0}}</strong> colaboradores que han sido expuestos a eventos traumáticos severos.
                     Descarga el resumen y la canalización de los colaboradores identificados para su atención.
                 </p>
             </div>
@@ -1160,7 +1160,7 @@
             <x-filament::button
                 color="primary"
                 icon="fas-download"
-                :disabled="true"
+                :disabled="$norma->first()?->identifiedCollaborators()->where('type_identification','encuesta')->count() === 0"
                 wire:click="downloadPdfShift">
                 Descargar Canalización
             </x-filament::button>

@@ -103,8 +103,8 @@
         }
         /* Colores por nivel */
         .Muy-Alto { background-color: #c0392b; }
-        .Alto { background-color: #e74c3c; }
-        .Medio { background-color: #f39c12; }
+        .Alto { background-color: #ff7502; }
+        .Medio { background-color: #f3c612; }
         .Bajo { background-color: #27ae60; }
         .Nulo { background-color: #95a5a6; }
 
@@ -204,37 +204,38 @@
     <h2>Calificación Final</h2>
     <div class="chart-container">
         @php
-           // $generalResults=[];
-            $total =$generalResults['very_high']??0 + $generalResults['high']??0 +
-                     $generalResults['medium']??0 + $generalResults['low']??0 +
-                     $generalResults['null']??0;
-            $maxHeight = 200; // Altura máxima en px para la barra más alta
-            $maxValue = max($generalResults['very_high']??0, $generalResults['high']??0,
-                     $generalResults['medium']??0, $generalResults['low']??0,
-                     $generalResults['null']??0);
+            $veryHigh = $generalResults['very_high'] ?? 0;
+            $high = $generalResults['high'] ?? 0;
+            $medium = $generalResults['medium'] ?? 0;
+            $low = $generalResults['low'] ?? 0;
+            $null = $generalResults['null'] ?? 0;
+
+            $total = $veryHigh + $high + $medium + $low + $null;
+            $maxHeight = 200;
+            $maxValue = max($veryHigh, $high, $medium, $low, $null);
+            $maxValue = $maxValue > 0 ? $maxValue : 1; // Evitar división por cero
         @endphp
-        <div class="chart-container">
-            <div class="chart-bar">
-                <div class="chart-item Muy-Alto" style="height: {{ $total > 0 ? ((($generalResults['very_high']/ $maxValue) * $maxHeight)+40) : 0 }}px;">
-                    <span>{{$generalResults['very_high']??null}}</span>
-                    <span>Muy Alto</span>
-                </div>
-                <div class="chart-item Alto" style="height: {{ $total > 0 ? ((($generalResults['high'] / $maxValue) * $maxHeight)+40) : 0 }}px;">
-                    <span>{{$generalResults['high']??null}}</span>
-                    <span>Alto</span>
-                </div>
-                <div class="chart-item Medio" style="height: {{ $total > 0 ? ((($generalResults['medium'] / $maxValue) * $maxHeight)+40) : 0 }}px;">
-                    <span>{{$generalResults['medium']??null}}</span>
-                    <span>Medio</span>
-                </div>
-                <div class="chart-item Bajo" style="height: {{ $total > 0 ? ((($generalResults['low'] / $maxValue) * $maxHeight)+40) : 0 }}px;">
-                    <span>{{$generalResults['low']??null}}</span>
-                    <span>Bajo</span>
-                </div>
-                <div class="chart-item Nulo" style="height: {{ $total > 0 ? ((($generalResults['null'] / $maxValue) * $maxHeight)+40) : 20 }}px;">
-                    <span>{{$generalResults['null']??null}}</span>
-                    <span>Nulo</span>
-                </div>
+
+        <div class="chart-bar">
+            <div class="chart-item Muy-Alto" style="height: {{ $total > 0 ? (($veryHigh / $maxValue) * $maxHeight) + 40 : 40 }}px;">
+                <span>{{ $veryHigh }}</span>
+                <span>Muy Alto</span>
+            </div>
+            <div class="chart-item Alto" style="height: {{ $total > 0 ? (($high / $maxValue) * $maxHeight) + 40 : 40 }}px;">
+                <span>{{ $high }}</span>
+                <span>Alto</span>
+            </div>
+            <div class="chart-item Medio" style="height: {{ $total > 0 ? (($medium / $maxValue) * $maxHeight) + 40 : 40 }}px;">
+                <span>{{ $medium }}</span>
+                <span>Medio</span>
+            </div>
+            <div class="chart-item Bajo" style="height: {{ $total > 0 ? (($low / $maxValue) * $maxHeight) + 40 : 40 }}px;">
+                <span>{{ $low }}</span>
+                <span>Bajo</span>
+            </div>
+            <div class="chart-item Nulo" style="height: {{ $total > 0 ? (($null / $maxValue) * $maxHeight) + 40 : 40 }}px;">
+                <span>{{ $null }}</span>
+                <span>Nulo</span>
             </div>
         </div>
     </div>

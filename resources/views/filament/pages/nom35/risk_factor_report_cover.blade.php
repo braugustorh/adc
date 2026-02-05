@@ -95,6 +95,7 @@
         .medio { background: #ffc107; color: #333; }
         .bajo { background: #28a745; }
         .nulo { background: #6c757d; }
+        .nulo-o-despreciable { background: #6c757d; }
         .tables-container {
             display: flex;
             justify-content: space-between;

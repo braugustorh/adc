@@ -364,11 +364,18 @@
                             :disabled="$activeGuideI">
                             Activar Cuestionario
                         </x-filament::button>
+                            <x-filament::button
+                                class="mx-3"
+                                color="success"
+                                icon="fas-list-check"
+                                wire:click="openIdentificacion">
+                                Resuldatos
+                            </x-filament::button>
                     </x-slot>
 
                 </x-filament::section>
 
-                @if($level===2)
+                @if($level===2 || $level===1)
                     <x-filament::section class="mb-4"
                                          collapsible
                                          collapsed >
@@ -574,31 +581,33 @@
 
 
                 </x-filament::section>
+
                 <x-filament::section class="mb-4"
                                      collapsible
                                      collapsed
                 >
                     <x-slot name="heading">
-                        Canalización para usuarios identificados.
+                        Perfil Sociodemográfico
                     </x-slot>
                     <p>
-                        Se han identificado <strong>{{$norma->identifiedCollaborators()->where('type_identification','encuesta')->count()}}</strong> colaboradores que han sido expuestos a eventos traumáticos severos.
-                        Descarga el resumen y la canalización de los colaboradores identificados para su atención.
+                        Este apartado presenta un panorama general y agregada de la composición de los empleados de {{auth()->user()->sede->name}}, basada en los datos recolectados de manera voluntaria a
+                        través de la <strong> Guía V de la NOM-035</strong> (como edad, género, nivel educativo, antigüedad, tipo de contrato, etc.).
+                        No incluiría datos personales identificables para respetar la privacidad, sino resúmenes estadísticos y visuales que ayuden a entender la diversidad y estructura de la plantilla.
                     </p>
                     <br>
                     <x-slot name="footerActions">
                         <div class="flex items-center gap-2">
                             <x-filament::button
                                 color="info"
-                                wire:click="downloadPdfShift"
                                 icon="fas-file-download">
-                                Descargar
+                                Descargar Perfil
                             </x-filament::button>
 
                         </div>
                     </x-slot>
 
                 </x-filament::section>
+
                 @if($level==2 || $level==3)
 
                 <x-filament::section class="mb-4">
@@ -1124,5 +1133,35 @@
 
 
     </x-filament::modal>
+    <x-filament::modal :close-by-clicking-away="false"
+                       id="modalIden"
+                       width="lg">
+        <x-filament::modal.heading>
+            Identificación de Colaboradores
+        </x-filament::modal.heading>
 
-</x-filament-panels::page>
+        <div class="overflow-x-auto">
+            <x-slot name="heading">
+                Canalización para usuarios identificados.
+            </x-slot>
+            <div>
+                <p>
+                    Se han identificado <strong>{{$norma->identifiedCollaborators()->where('type_identification','encuesta')->count()}}</strong> colaboradores que han sido expuestos a eventos traumáticos severos.
+                    Descarga el resumen y la canalización de los colaboradores identificados para su atención.
+                </p>
+            </div>
+        </div>
+        <x-slot name="footerActions">
+            <x-filament::button
+                wire:click="closeIdentificacion" color="gray">
+                Cerrar
+            </x-filament::button>
+            <x-filament::button
+                color="primary"
+                icon="fas-download"
+                wire:click="downloadPdfShift">
+                Descargar Canalización
+            </x-filament::button>
+        </x-slot>
+    </x-filament::modal>
+    </x-filament-panels::page>

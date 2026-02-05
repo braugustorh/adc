@@ -1646,7 +1646,7 @@ class Nom035 extends Page
             // Forzar descarga en el navegador
             return response()->streamDownload(function () use ($pdfContent) {
                 echo $pdfContent;
-            },'documento.pdf');
+            },'Canalizaciones.pdf');
 
 
         }else{
@@ -1747,6 +1747,7 @@ class Nom035 extends Page
             'Bajo' => 'Es necesario una mayor difusión de la política de prevención de riesgos psicosociales y programas para: la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral. ',
             'Nulo' => 'El riesgo resulta despreciable por lo que no se requiere medidas adicionales.'
         ];
+
          $html=view('filament.pages.nom35.risk_factor_report', [
             'company' => auth()->user()->sede->name ?? 'No definido', //OK
             'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
@@ -2987,6 +2988,7 @@ class Nom035 extends Page
                 'risk_level' => $this->getCategoryRiskLevel('leadership', $this->coverLeadershipResponses->avg()),
             ],
         ];
+
         $domains = [
             'conditions' => [
                 'name' => 'Condiciones en el ambiente de trabajo',
@@ -3042,7 +3044,7 @@ class Nom035 extends Page
             'resultCuestionario' => $this->resultCuestionario,
             'categories'=>$categories,
             'domains'=> $domains,
-            'guia'=>'III',
+            'guia'=>'II',
             'complement' => ''
             //'recommendations' =>$recomendaciones[$this->resultCuestionario==='Muy Alto'?'Muy-Alto':$this->resultCuestionario],
         ])->render();
@@ -4544,7 +4546,7 @@ class Nom035 extends Page
         $files = glob($directory . '/*');
 
         foreach ($files as $file) {
-            if (is_file($file) && str_contains($file, 'chart_') || str_contains($file, 'informe_')) {
+            if ((is_file($file) && str_contains($file, 'chart_')) || str_contains($file, 'informe_')) {
                 @unlink($file);
             }
         }
@@ -4588,6 +4590,14 @@ class Nom035 extends Page
 
         // Retorna los hijos si existen, o un array vacío si no (seguridad)
         return $centrales[$sede_id] ?? [$sede_id];
+    }
+
+    public function openIdentificacion()
+    {
+        $this->dispatch('open-modal', id: 'modalIden');
+    }
+    public function closeIdentificacion(){
+        $this->dispatch('close-modal', id: 'modalIden');
     }
 
 

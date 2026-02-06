@@ -1376,7 +1376,6 @@ class Nom035 extends Page
         //Traer el puesto de la persona que descarga el archivo
         $puesto = auth()->user()->position?->name ?? 'Sin Puesto';
 
-
         try {
             // 2. Cargar la plantilla usando TemplateProcessor
             // Esta clase es mágica: abre el zip del docx, cambia XML y lo cierra sin romper estilos.

@@ -375,7 +375,7 @@
 
                 </x-filament::section>
 
-                @if($level===2 || $level===1)
+                @if($level===2)
                     <x-filament::section class="mb-4"
                                          collapsible
                                          collapsed >
@@ -1165,7 +1165,6 @@
                 Descargar Canalización
             </x-filament::button>
 
-        @dump($norma->id)
         </x-slot>
     </x-filament::modal>
     </x-filament-panels::page>

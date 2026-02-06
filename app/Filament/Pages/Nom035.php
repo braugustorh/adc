@@ -101,6 +101,9 @@ class Nom035 extends Page
     public function mount()
     {
         $this->norma=Nom035Process::findActiveProcess(auth()->user()->sede_id);
+        Log::info('Mounting NOM-035 page for user ID: ' . auth()->id() . ' with sede ID: ' . auth()->user()->sede_id);
+        Log::info($this->norma);
+        Log::info('Norma Count'.$this->norma->identifiedCollaboratorsCount());
         // Cargar colaboradores de la sede actual
         if($this->norma !== null){
             // Si ya existe un proceso activo, redirigir al panel
@@ -170,9 +173,6 @@ class Nom035 extends Page
         $this->selectedEventType = null;
         $this->eventDate = now()->format('Y-m-d');
         $this->eventTypesByCategory = \App\Enums\TraumaticEventType::getByCategory();
-
-
-
     }
 
     // Metodo para crear registro (existente)
@@ -200,6 +200,7 @@ class Nom035 extends Page
     // Metodo para abrir el modal de identificación
     public function openIdentificationModal()
     {
+
         $this->resetIdentificationModal();
         $this->dispatch('open-modal', id: 'identify-modal');
     }

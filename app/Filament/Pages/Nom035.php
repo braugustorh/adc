@@ -103,7 +103,7 @@ class Nom035 extends Page
         $this->norma=Nom035Process::findActiveProcess(auth()->user()->sede_id);
         Log::info('Mounting NOM-035 page for user ID: ' . auth()->id() . ' with sede ID: ' . auth()->user()->sede_id);
         Log::info($this->norma);
-        Log::info('Norma Count'.$this->norma->identifiedCollaboratorsCount());
+        Log::info('Norma Count'.$this->norma->identifiedCollaboratorsCount()??0);
         // Cargar colaboradores de la sede actual
         if($this->norma !== null){
             // Si ya existe un proceso activo, redirigir al panel

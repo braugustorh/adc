@@ -251,15 +251,198 @@ class PsychometricScoringService
             21 => 3, 22 => 5, 23 => 2, 24 => 1, 25 => 4,
             26 => 3, 27 => 3, 28 => 5, 29 => 2, 30 => 1
         ];
-
-        // Definición de las Dimensiones y cuántas preguntas tiene cada una (para sacar %)
         $dimensions = [
-            1 => ['name' => 'Habilidad de Supervisión', 'total_questions' => 6, 'score' => 0],
-            2 => ['name' => 'Capacidad de Decisión', 'total_questions' => 5, 'score' => 0],
-            3 => ['name' => 'Capacidad de Evaluación', 'total_questions' => 8, 'score' => 0],
-            4 => ['name' => 'Habilidad de Relacionarse', 'total_questions' => 5, 'score' => 0],
-            5 => ['name' => 'Sentido Común y Tacto', 'total_questions' => 6, 'score' => 0],
+            1 => [
+                'name' => 'Habilidad de Supervisión',
+                'completeName' => 'Habilidad de Supervisión',
+                'description' => 'Es la eficacia con que propicia que el personal a su cargo cumpla con las actividades encomendadas.',
+                'total_questions' => 6,
+                'score' => 0
+            ],
+            2 => [
+                'name' => 'Capacidad de Decisión',
+                'completeName' => 'Capacidad de decisión en las Relaciones Humanas', // (Capacidad de decisión en las Relaciones Humanas)
+                'description' => 'Es el criterio y toma de decisiones con respecto a la forma de interactuar con los demás.',
+                'total_questions' => 5,
+                'score' => 0
+            ],
+            3 => [
+                'name' => 'Capacidad de Evaluación',
+                'completeName' => 'Capacidad para Evaluar Problemas Interpersonales', // (Capacidad para Evaluar Problemas Interpersonales)
+                'description' => 'Criterio y juicio con respecto a situaciones sociales que presentan conflicto con cierta problemática.',
+                'total_questions' => 8,
+                'score' => 0
+            ],
+            4 => [
+                'name' => 'Habilidad de Relacionarse',
+                'completeName' => 'Capacidad para Establecer Relaciones Interpersonales', // (Capacidad para Establecer Relaciones Interpersonales)
+                'description' => 'Es la facultad con que cuenta para establecer contacto con los demás de manera adaptativa y eficiente.',
+                'total_questions' => 5,
+                'score' => 0
+            ],
+            5 => [
+                'name' => 'Sentido Común y Tacto',
+                'completeName' => 'Sentido común y tacto en las Relaciones Interpersonales', // (Sentido común y tacto en las Relaciones Interpersonales)
+                'description' => 'Capacidad de llevarse bien con los demás manteniendo una conducta basada en el buen juicio y la lógica ante dificultades o conflictos.',
+                'total_questions' => 6,
+                'score' => 0
+            ],
         ];
+
+        $feedbackMatrix = [
+            'Habilidad de Supervisión' => [
+                'Excelente' => [
+                    'interpretation' => 'Liderazgo excepcional, delegación precisa y monitoreo constante.',
+                    'recommendation' => 'Asignar proyectos estratégicos y fomentar su mentoría a otros supervisores.'
+                ],
+                'Superior' => [
+                    'interpretation' => 'Sobresale en supervisión, aunque puede perfeccionar aspectos menores de liderazgo.',
+                    'recommendation' => 'Ofrecer oportunidades de liderazgo en proyectos clave.'
+                ],
+                'Superior al Término Medio' => [
+                    'interpretation' => 'Buen desempeño en supervisión, con áreas específicas para mejorar en eficiencia o seguimiento.',
+                    'recommendation' => 'Capacitación en habilidades avanzadas de supervisión y liderazgo.'
+                ],
+                'Término Medio' => [
+                    'interpretation' => 'Supervisión adecuada pero inconsistente en situaciones críticas.',
+                    'recommendation' => 'Reforzar habilidades con talleres de supervisión y seguimiento estructurado.'
+                ],
+                'Inferior al Término Medio' => [
+                    'interpretation' => 'Falta de claridad en liderazgo y supervisión, impactando la productividad del equipo.',
+                    'recommendation' => 'Capacitación en fundamentos de supervisión y asignación de tareas guiadas.'
+                ],
+                'Inferior' => [
+                    'interpretation' => 'Deficiencias significativas en supervisión, dificultando la ejecución eficiente del trabajo.',
+                    'recommendation' => 'Coaching intensivo y supervisión directa por un líder experimentado.'
+                ],
+                'Deficiente' => [
+                    'interpretation' => 'Incapacidad para supervisar adecuadamente, afectando el logro de objetivos organizacionales.',
+                    'recommendation' => 'Implementar un plan de desarrollo intensivo y reevaluar su ajuste al rol de supervisión.'
+                ],
+            ],
+
+            'Capacidad de Decisión' => [
+                'Excelente' => [
+                    'interpretation' => 'Habilidad excepcional para crear conexiones y mantener relaciones laborales positivas.',
+                    'recommendation' => 'Asignar tareas que requieran mediación o manejo de conflictos sensibles.'
+                ],
+                'Superior' => [
+                    'interpretation' => 'Relaciones humanas destacadas, con capacidad de comunicación efectiva y empatía.',
+                    'recommendation' => 'Delegar roles donde la interacción interpersonal sea clave, como recursos humanos o ventas.'
+                ],
+                'Superior al Término Medio' => [
+                    'interpretation' => 'Buenas habilidades interpersonales, con margen de mejora en empatía o resolución de conflictos.',
+                    'recommendation' => 'Fomentar actividades de desarrollo de inteligencia emocional.'
+                ],
+                'Término Medio' => [
+                    'interpretation' => 'Relaciones humanas aceptables, pero limitadas en contextos más exigentes.',
+                    'recommendation' => 'Ofrecer talleres sobre habilidades interpersonales y manejo de conflictos.'
+                ],
+                'Inferior al Término Medio' => [
+                    'interpretation' => 'Dificultades para establecer relaciones positivas o mantenerlas en el tiempo.',
+                    'recommendation' => 'Entrenamiento en habilidades sociales y comunicación efectiva.'
+                ],
+                'Inferior' => [
+                    'interpretation' => 'Problemas evidentes en relaciones interpersonales que afectan la dinámica de equipo.',
+                    'recommendation' => 'Asignar un mentor y monitorear su progreso en ambientes colaborativos.'
+                ],
+                'Deficiente' => [
+                    'interpretation' => 'Relaciones humanas deficientes, con riesgo de afectar el clima laboral de manera crítica.',
+                    'recommendation' => 'Intervención inmediata con coaching especializado en inteligencia emocional y relaciones.'
+                ],
+            ],
+            'Capacidad de Evaluación' => [
+                'Excelente' => [
+                    'interpretation' => 'Gran precisión al analizar y evaluar situaciones, con criterio confiable y decisiones efectivas.',
+                    'recommendation' => 'Asignar roles de evaluación estratégica en proyectos críticos.'
+                ],
+                'Superior' => [
+                    'interpretation' => 'Capacidad destacada para evaluar, aunque con posibles mejoras en ciertos matices de análisis.',
+                    'recommendation' => 'Fomentar su participación en evaluaciones grupales o auditorías.'
+                ],
+                'Superior al Término Medio' => [
+                    'interpretation' => 'Evaluación adecuada, aunque podría mejorar en detalle y profundidad en situaciones específicas.',
+                    'recommendation' => 'Proveer herramientas y capacitación avanzada en análisis y evaluación crítica.'
+                ],
+                'Término Medio' => [
+                    'interpretation' => 'Evaluaciones consistentes, pero faltan aspectos clave de detalle en contextos más complejos.',
+                    'recommendation' => 'Promover el uso de metodologías estructuradas de análisis.'
+                ],
+                'Inferior al Término Medio' => [
+                    'interpretation' => 'Dificultades para realizar evaluaciones precisas y confiables.',
+                    'recommendation' => 'Entrenamiento en métodos básicos de evaluación con prácticas supervisadas.'
+                ],
+                'Inferior' => [
+                    'interpretation' => 'Evaluaciones inconsistentes y poco precisas, afectando la toma de decisiones.',
+                    'recommendation' => 'Capacitación intensiva en procesos de evaluación y análisis crítico.'
+                ],
+                'Deficiente' => [
+                    'interpretation' => 'Incapacidad para evaluar, lo que puede generar errores graves en decisiones organizacionales.',
+                    'recommendation' => 'Reevaluar las responsabilidades asignadas y realizar un plan de desarrollo intensivo.'
+                ],
+            ],
+            'Habilidad de Relacionarse' => [
+                'Excelente' => [
+                    'interpretation' => 'Habilidad sobresaliente para interactuar con otros, establecer conexiones sólidas y resolver conflictos de manera efectiva.',
+                    'recommendation' => 'Asignar tareas que requieran mediación, liderazgo en equipo, o gestión de relaciones clave con clientes.'
+                ],
+                'Superior' => [
+                    'interpretation' => 'Relaciones interpersonales destacadas, aunque puede haber pequeñas áreas de mejora en situaciones de alta complejidad.',
+                    'recommendation' => 'Proveer oportunidades para representar a la organización en eventos clave o liderar proyectos colaborativos.'
+                ],
+                'Superior al Término Medio' => [
+                    'interpretation' => 'Competente en interacciones sociales, pero puede mostrar inconsistencias en contextos de alta presión o incertidumbre.',
+                    'recommendation' => 'Implementar capacitaciones avanzadas en empatía, manejo de conflictos y comunicación asertiva.'
+                ],
+                'Término Medio' => [
+                    'interpretation' => 'Capacidad básica para mantener relaciones, pero limitada en contextos desafiantes o dinámicas complejas.',
+                    'recommendation' => 'Ofrecer talleres sobre habilidades interpersonales, con un enfoque en empatía y escucha activa.'
+                ],
+                'Inferior al Término Medio' => [
+                    'interpretation' => 'Dificultad para establecer relaciones positivas o resolver conflictos, lo que afecta la colaboración en equipo.',
+                    'recommendation' => 'Entrenamiento en habilidades sociales y sesiones de coaching en manejo de relaciones.'
+                ],
+                'Inferior' => [
+                    'interpretation' => 'Relaciones interpersonales deficientes, con impacto negativo en la dinámica del equipo y la comunicación.',
+                    'recommendation' => 'Supervisión cercana, mentoría directa y asignación de roles con interacción limitada inicialmente.'
+                ],
+                'Deficiente' => [
+                    'interpretation' => 'Incapacidad para relacionarse adecuadamente con otros, generando conflictos o aislamiento.',
+                    'recommendation' => 'Plan de intervención intensiva con coaching especializado y actividades prácticas de integración.'
+                ],
+            ],
+            'Sentido Común y Tacto' => [
+                'Excelente' => [
+                    'interpretation' => 'Capacidad sobresaliente para aplicar juicio práctico y manejar situaciones delicadas con sensibilidad.',
+                    'recommendation' => 'Asignar roles que requieran resolución de conflictos o toma de decisiones críticas con impacto humano.'
+                ],
+                'Superior' => [
+                    'interpretation' => 'Maneja situaciones con tacto y sentido común en la mayoría de los contextos.',
+                    'recommendation' => 'Delegar tareas donde la diplomacia y la empatía sean esenciales, como atención a clientes o mediación.'
+                ],
+                'Superior al Término Medio' => [
+                    'interpretation' => 'Buen juicio práctico y tacto en general, pero puede carecer de refinamiento en circunstancias excepcionales.',
+                    'recommendation' => 'Brindar oportunidades para practicar toma de decisiones en entornos desafiantes.'
+                ],
+                'Término Medio' => [
+                    'interpretation' => 'Sentido común adecuado, pero con falta de consistencia en situaciones complejas.',
+                    'recommendation' => 'Ofrecer capacitación en habilidades de resolución de problemas y toma de decisiones práctica.'
+                ],
+                'Inferior al Término Medio' => [
+                    'interpretation' => 'Dificultad para aplicar juicio práctico en situaciones cotidianas y resolver problemas con tacto.',
+                    'recommendation' => 'Implementar talleres de desarrollo de juicio crítico y empatía.'
+                ],
+                'Inferior' => [
+                    'interpretation' => 'Frecuentes errores de juicio práctico y falta de tacto en sus interacciones.',
+                    'recommendation' => 'Reforzar habilidades de juicio a través de simulaciones y ejercicios guiados.'
+                ],
+                'Deficiente' => [
+                    'interpretation' => 'Incapacidad para manejar situaciones con sentido común, lo que puede afectar relaciones y decisiones.',
+                    'recommendation' => 'Requiere intervención inmediata con coaching intensivo y seguimiento cercano.'
+                ],
+            ],
+        ];
+
 
         // 2. OBTENER ACIERTOS DEL USUARIO
         // Necesitamos unir con 'questions' para saber el número de pregunta ('order')
@@ -269,7 +452,7 @@ class PsychometricScoringService
             ->where('answers.weight', '>', 0) // Solo traemos las correctas (Aciertos)
             ->select('questions.order', 'answers.weight')
             ->get();
-        dd($userAnswers);
+
         $totalRawScore = 0;
 
         // 3. PROCESAMIENTO
@@ -292,7 +475,43 @@ class PsychometricScoringService
                 ? round(($data['score'] / $data['total_questions']) * 100)
                 : 0;
 
-            $dimensionScores[$data['name']] = $percentage;
+            // Determinación del rango basado en el porcentaje de la dimensión
+            $dimensionRange = '';
+            $dimensionPercentile = 0;
+
+            if ($percentage <= 20) {
+                $dimensionPercentile = 5;
+                $dimensionRange = 'Deficiente';
+            } elseif ($percentage <= 40) {
+                $dimensionPercentile = 10;
+                $dimensionRange = 'Inferior';
+            } elseif ($percentage <= 50) {
+                $dimensionPercentile = 20;
+                $dimensionRange = 'Inferior al Término Medio';
+            } elseif ($percentage <= 60) {
+                $dimensionPercentile = 30;
+                $dimensionRange = 'Término Medio';
+            } elseif ($percentage <= 75) {
+                $dimensionPercentile = 40;
+                $dimensionRange = 'Superior al Término Medio';
+            } elseif ($percentage <= 90) {
+                $dimensionPercentile = 50;
+                $dimensionRange = 'Superior';
+            } else {
+                $dimensionPercentile = 60;
+                $dimensionRange = 'Excelente';
+            }
+
+            $dimensionScores[$data['name']] = [
+                'completeName' => $data['completeName'],
+                'description' => $data['description'],
+                'percentage' => $percentage,
+                'range' => $dimensionRange,
+                'interpretation' => $feedbackMatrix[$data['name']][$dimensionRange]['interpretation'],
+                'recommendation' => $feedbackMatrix[$data['name']][$dimensionRange]['recommendation'],
+                'percentile' => $dimensionPercentile,
+                'raw_score' => $data['score']
+            ];
         }
 
         // 5. RANGO GLOBAL (Percentil General)

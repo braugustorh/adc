@@ -16,7 +16,7 @@ class MossAnswersSeeder extends Seeder
     public function run()
     {
         // Rango de IDs de tus preguntas Moss (WES)
-        $startId = 295;
+        $startId = 293;
         $endId = 382;
 
         $answers = [];

@@ -26,9 +26,9 @@
         <!-- Main Content Grid -->
         <div class="grid gap-2 grid-cols-1 sm:grid-cols-3 xl:grid-cols-3">
             <!-- Evaluations Table -->
-            <div class="sm:col-span-2">
+            <div class="sm:col-span-2"1>
 
-            <x-filament::section>
+            {{-- <x-filament::section>
                     <x-slot name="heading">
                         <div class="flex justify-between items-center">
                             <span>Evaluaciones en Curso</span>
@@ -130,6 +130,11 @@
                         </table>
                     </div>
                 </x-filament::section>
+                --}}
+                <div class="sm:col-span-2">
+                    {{ $this->table }}
+                </div>
+
             </div>
 
             <!-- Sidebar -->

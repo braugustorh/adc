@@ -7,6 +7,8 @@ use App\Filament\Pages\Panel9Box;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Livewire;
 use App\Filament\Pages\ExitSurveyPage;
+use App\Http\Controllers\PublicEvaluationController;
+use App\Livewire\TakePsychometricTest;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -49,4 +51,14 @@ Route::group(['middleware' => 'auth'], function () {
 
 });
 
+// Ruta de entrada (Landing Page)
+Route::get('/evaluacion/{token}', [PublicEvaluationController::class, 'landing'])
+    ->name('evaluation.landing');
 
+// 2. EL EXAMEN (Motor Livewire)
+// Esta es la ruta donde vive el componente que acabamos de crear.
+Route::get('/evaluacion/{token}/realizar', TakePsychometricTest::class)
+    ->name('evaluation.take');
+
+Route::view('/evaluation/finished', 'evaluations.process-finished')
+    ->name('evaluation.finished');

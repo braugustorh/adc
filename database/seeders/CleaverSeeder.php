@@ -18,7 +18,7 @@ class CleaverSeeder extends Seeder
 
         // Tipo de respuesta para Cleaver (Según tu código anterior es el 6)
         $answerTypeId = 5;
-        $competenceId = 53; // Se Generó una competencia generar para agrupar ahí las preguntas del cleaver
+        $competenceId = 51; // Se Generó una competencia general para agrupar ahí las preguntas del cleaver
 
         // Listado completo de las 24 Series del Cleaver Clásico
         $series = [

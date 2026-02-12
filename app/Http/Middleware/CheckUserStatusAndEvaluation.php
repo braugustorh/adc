@@ -25,7 +25,7 @@ class CheckUserStatusAndEvaluation
         if (auth()->check()) {
             $user = filament()->auth()->user();
             //Verificamos que el usuario este desactivado
-            if ($user->status===0) {
+            if ($user->status===0 || !$user->status) {
                 //Aqui ya esta desactivado el usuario
                 $pendingSurvey = UserTermination::where('user_id', $user->id)
                     ->first();

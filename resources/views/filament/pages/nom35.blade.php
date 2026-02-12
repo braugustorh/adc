@@ -1160,7 +1160,8 @@
             <x-filament::button
                 color="primary"
                 icon="fas-download"
-                :disabled="$norma->first()?->identifiedCollaborators()->where('type_identification','encuesta')->count() === 0"
+                {{--:disabled="$norma->first()?->identifiedCollaborators()->where('type_identification','encuesta')->count() === 0"}
+                --}}
                 wire:click="downloadPdfShift">
                 Descargar Canalización
             </x-filament::button>

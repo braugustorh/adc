@@ -25,138 +25,154 @@ class PsychometricScoringService
     }
 
     /**
-     * LÓGICA DE MOSS WESS (Clima Social / Work Environment Scale)
+     * LÓGICA DE MOSS WESS (Clima Social / Work Environment Scale)  COMPLETO SIN INTERPRETACIÓN
      * Estructura: Preguntas -> Subescalas (10) -> Dimensiones (3) -> Baremos
      */
     private function calculateMossWess($evaluation)
     {
         // =========================================================================
-        // PASO 1: ARRAYS DE CONFIGURACIÓN (Aquí debes completar con tus imágenes)
+        // PASO 0: TEXTOS DESCRIPTIVOS (INFO DE TU SOLICITUD)
+        // =========================================================================
+
+        // A. Descripciones de Dimensiones
+        // (Ajusté las llaves para que coincidan con $dimensionsMap de abajo)
+        $dimensionesInfo = [
+            'Relaciones' => 'Relaciones es una dimensión integrada por las subescalas implicación cohesión y apoyo, que evalúan el grado en los empleados están interesados y comprometidos en su trabajo y el grado en que la dirección apoya a los empleados y les anima a apoyarse unos a otros.',
+            'Auto-realización' => 'La dimensión autorrealización u orientación hacia unos objetivos se aprecian por medio de sus escalas autonomía, organización y presión, que evalúan el grado en que se estimula a los empleados a ser autosuficientes y a tomar sus propias decisiones; de importancia que se da a la buena planificación, eficiencia y terminación de las tareas y el grado en que la presión en el trabajo o la urgencia dominan el ambiente laboral.',
+            'Estabilidad/Cambio' => 'Estabilidad/ cambio es la dimensión apreciada por las subescuelas claridad, control innovación y comodidad. Estas subescalas evalúan el grado en que los empleados conocen lo que esperan de su tarea diaria y como se les explican las normas y planes de trabajo; el grado en que la dirección utiliza las normas y la presión para controlar a los empleados; la importancia que se da a la variedad, al cambio de las nuevas propuestas y, por ultimo, el grado entorno físico contribuye a crear un ambiente de trabajo agradable.'
+        ];
+
+        // B. Información de Subescalas (Nombre y Descripción)
+        $subescalasInfo = [
+            'IM' => ['nombre' => 'IMPLICACION', 'descripcion' => 'Grado en que los empleados se preocupan por su actividad y se entregan a ella.'],
+            'CO' => ['nombre' => 'COHESION', 'descripcion' => 'Grado en que los empleados se ayudan entra si y se muestran amables con los compañeros.'],
+            'AP' => ['nombre' => 'APOYO', 'descripcion' => 'Grado en que los jefes ayudan y animan al personal para crear un buen clima social.'],
+            'AU' => ['nombre' => 'AUTONOMIA', 'descripcion' => 'Grado en que se anima a los empleados a ser autosuficientes y a tomar iniciativas propias.'],
+            'OR' => ['nombre' => 'ORGANIZACIÓN', 'descripcion' => 'Grado en que se subraya una buena planificación, eficiencia y terminación de la tarea.'],
+            'PR' => ['nombre' => 'PRESION', 'descripcion' => 'Grado en que la urgencia o la presión en el trabajo domina el ambiente laboral.'],
+            'CL' => ['nombre' => 'CLARIDAD', 'descripcion' => 'Grado en que se conocen las expectativas de las tareas diarias y se explican las reglas y planes para el trabajo.'],
+            'CN' => ['nombre' => 'CONTROL', 'descripcion' => 'Grado en que los jefes utilizan las reglas y las presiones para tener controlados a los empleados.'],
+            'IN' => ['nombre' => 'INNOVACION', 'descripcion' => 'Grado en que se subraya la variedad, el cambio y los nuevos enfoques.'],
+            'CF' => ['nombre' => 'COMODIDAD', 'descripcion' => 'Grado en que el ambiente físico contribuyo a crear un ambiente laboral agradable.']
+        ];
+
+        // =========================================================================
+        // PASO 1: ARRAYS DE CONFIGURACIÓN TÉCNICA
         // =========================================================================
 
         // 1.1 CLAVE DE RESPUESTAS (CORRECTION KEY)
-        // Define si la respuesta correcta es 'V' o 'F' para cada una de las 90 preguntas.
-        // HE LLENADO LA SUBESCALA IM (1, 11, 21...) SEGÚN TU EJEMPLO.
-        // ¡DEBES LLENAR EL RESTO!
         $correctionKey = [
-            // Subescala 1: Implicación (IM) - COMPLETA
-            1 => 'V', 11 => 'F', 21 => 'F', 31 => 'V', 41 => 'V',
-            51 => 'F', 61 => 'V', 71 => 'F', 81 => 'V',
-            // Subescala 2: Cohesión (CO) - COMPLETA
-            2 => 'V', 12 => 'F', 22 => 'V', 32 => 'F', 42 => 'V',
-            52 => 'V', 62 => 'F', 72 => 'V', 82 => 'F',
-            // Subescala 3: Apoyo (AP) - COMPLETA
-            3 => 'F', 13 => 'V', 23 => 'F', 33 => 'V', 43 => 'F',
-            53 => 'V', 63 => 'F', 73 => 'V', 83 => 'V',
-            // Subescala 4: Autonomía (AU) - COMPLETA
-            4 => 'F', 14 => 'V', 24 => 'V', 34 => 'V', 44 => 'V',
-            54 => 'F', 64 => 'V', 74 => 'V', 84 => 'V',
-            // Subescala 5: Organización (OR) - COMPLETA
-            5 => 'V', 15 => 'F', 25 => 'V', 35 => 'V', 45 => 'V',
-            55 => 'V', 65 => 'V', 75 => 'F', 85 => 'F',
-            // Subescala 6: Presión (PR) - COMPLETA
-            6 => 'V', 16 => 'V', 26 => 'V', 36 => 'F', 46 => 'F',
-            56 => 'V', 66 => 'F', 76 => 'V', 86 => 'V',
-            // Subescala 7: Claridad (CL) - COMPLETA
-            7 => 'F', 17 => 'V', 27 => 'F', 37 => 'V', 47 => 'F',
-            57 => 'F', 67 => 'V', 77 => 'F', 87 => 'V',
-            // Subescala 8: Control (CN) - COMPLETA
-            8 => 'V', 18 => 'F', 28 => 'V', 38 => 'V', 48 => 'V',
-            58 => 'V', 68 => 'V', 78 => 'V', 88 => 'F',
-            // Subescala 9: Innovación (IN) - COMPLETA
-            9 => 'V', 19 => 'V', 29 => 'V', 39 => 'F', 49 => 'F',
-            59 => 'F', 69 => 'F', 79 => 'V', 89 => 'V',
-            // Subescala 10: Comodidad Física (CF) - COMPLETA
-            10 => 'F', 20 => 'V', 30 => 'F', 40 => 'V', 50 => 'F',
-            60 => 'V', 70 => 'F', 80 => 'V', 90 => 'V',
+            // Subescala 1: Implicación (IM)
+            1 => 'V', 11 => 'F', 21 => 'F', 31 => 'V', 41 => 'V', 51 => 'F', 61 => 'V', 71 => 'F', 81 => 'V',
+            // Subescala 2: Cohesión (CO)
+            2 => 'V', 12 => 'F', 22 => 'V', 32 => 'F', 42 => 'V', 52 => 'V', 62 => 'F', 72 => 'V', 82 => 'F',
+            // Subescala 3: Apoyo (AP)
+            3 => 'F', 13 => 'V', 23 => 'F', 33 => 'V', 43 => 'F', 53 => 'V', 63 => 'F', 73 => 'V', 83 => 'V',
+            // Subescala 4: Autonomía (AU)
+            4 => 'F', 14 => 'V', 24 => 'V', 34 => 'V', 44 => 'V', 54 => 'F', 64 => 'V', 74 => 'V', 84 => 'V',
+            // Subescala 5: Organización (OR)
+            5 => 'V', 15 => 'F', 25 => 'V', 35 => 'V', 45 => 'V', 55 => 'V', 65 => 'V', 75 => 'F', 85 => 'F',
+            // Subescala 6: Presión (PR)
+            6 => 'V', 16 => 'V', 26 => 'V', 36 => 'F', 46 => 'F', 56 => 'V', 66 => 'F', 76 => 'V', 86 => 'V',
+            // Subescala 7: Claridad (CL)
+            7 => 'F', 17 => 'V', 27 => 'F', 37 => 'V', 47 => 'F', 57 => 'F', 67 => 'V', 77 => 'F', 87 => 'V',
+            // Subescala 8: Control (CN)
+            8 => 'V', 18 => 'F', 28 => 'V', 38 => 'V', 48 => 'V', 58 => 'V', 68 => 'V', 78 => 'V', 88 => 'F',
+            // Subescala 9: Innovación (IN)
+            9 => 'V', 19 => 'V', 29 => 'V', 39 => 'F', 49 => 'F', 59 => 'F', 69 => 'F', 79 => 'V', 89 => 'V',
+            // Subescala 10: Comodidad Física (CF)
+            10 => 'F', 20 => 'V', 30 => 'F', 40 => 'V', 50 => 'F', 60 => 'V', 70 => 'F', 80 => 'V', 90 => 'V',
         ];
 
-        // 1.2 MAPA DE SUBESCALAS
-        // Agrupa qué preguntas pertenecen a qué sigla. (Esto es estándar del WES)
+        // 1.2 MAPA DE SUBESCALAS (Preguntas)
         $subscalesMap = [
-            'IM' => [1, 11, 21, 31, 41, 51, 61, 71, 81], // Implicación
-            'CO' => [2, 12, 22, 32, 42, 52, 62, 72, 82], // Cohesión
-            'AP' => [3, 13, 23, 33, 43, 53, 63, 73, 83], // Apoyo
-            'AU' => [4, 14, 24, 34, 44, 54, 64, 74, 84], // Autonomía
-            'OR' => [5, 15, 25, 35, 45, 55, 65, 75, 85], // Organización
-            'PR' => [6, 16, 26, 36, 46, 56, 66, 76, 86], // Presión
-            'CL' => [7, 17, 27, 37, 47, 57, 67, 77, 87], // Claridad
-            'CN' => [8, 18, 28, 38, 48, 58, 68, 78, 88], // Control
-            'IN' => [9, 19, 29, 39, 49, 59, 69, 79, 89], // Innovación
-            'CF' => [10, 20, 30, 40, 50, 60, 70, 80, 90] // Comodidad Física
+            'IM' => [1, 11, 21, 31, 41, 51, 61, 71, 81],
+            'CO' => [2, 12, 22, 32, 42, 52, 62, 72, 82],
+            'AP' => [3, 13, 23, 33, 43, 53, 63, 73, 83],
+            'AU' => [4, 14, 24, 34, 44, 54, 64, 74, 84],
+            'OR' => [5, 15, 25, 35, 45, 55, 65, 75, 85],
+            'PR' => [6, 16, 26, 36, 46, 56, 66, 76, 86],
+            'CL' => [7, 17, 27, 37, 47, 57, 67, 77, 87],
+            'CN' => [8, 18, 28, 38, 48, 58, 68, 78, 88],
+            'IN' => [9, 19, 29, 39, 49, 59, 69, 79, 89],
+            'CF' => [10, 20, 30, 40, 50, 60, 70, 80, 90]
         ];
 
-        // 1.3 MAPA DE DIMENSIONES (Imagen 4)
-        // Agrupa las subescalas en las 3 grandes áreas
+        // 1.3 MAPA DE DIMENSIONES
         $dimensionsMap = [
             'Relaciones' => ['IM', 'CO', 'AP'],
-            'Auto-realización' => ['AU', 'OR', 'PR'], // A veces llamada "Desarrollo Personal"
-            'Estabilidad/Cambio' => ['CL', 'CN', 'IN', 'CF'] // A veces llamada "Mantenimiento del Sistema"
+            'Auto-realización' => ['AU', 'OR', 'PR'],
+            'Estabilidad/Cambio' => ['CL', 'CN', 'IN', 'CF']
         ];
 
-        // 1.4 TABLA DE BAREMOS POR DIMENSIÓN (Imagen 3)
-        // Define los rangos para asignar categoría a la SUMA de la dimensión.
-        // He puesto el ejemplo de Relaciones que me diste (16-20 = Promedio).
-        // DEBES AJUSTAR LOS NÚMEROS EXACTOS DE TUS TABLAS.
-        $baremos = [
+        // 1.4 TABLA DE BAREMOS SUBESCALAS (Acierto Raw -> Valor Transformado + Categoría)
+        $baremosSubescalas = [
+            0 => ['IM' => 30, 'CO' => 18, 'AP' => 28, 'AU' => 29, 'OR' => 21, 'PR' => 13, 'CL' => 18, 'CN' => 13, 'IN' => 35, 'CF' => 20, 'CATEGORIA' => 'Deficitaria'],
+            1 => ['IM' => 36, 'CO' => 26, 'AP' => 34, 'AU' => 36, 'OR' => 29, 'PR' => 23, 'CL' => 27, 'CN' => 21, 'IN' => 43, 'CF' => 27, 'CATEGORIA' => 'Deficitaria'],
+            2 => ['IM' => 42, 'CO' => 34, 'AP' => 40, 'AU' => 43, 'OR' => 36, 'PR' => 32, 'CL' => 37, 'CN' => 30, 'IN' => 50, 'CF' => 34, 'CATEGORIA' => 'Deficitaria'],
+            3 => ['IM' => 48, 'CO' => 41, 'AP' => 46, 'AU' => 50, 'OR' => 44, 'PR' => 41, 'CL' => 47, 'CN' => 38, 'IN' => 58, 'CF' => 41, 'CATEGORIA' => 'Deficitaria'],
+            4 => ['IM' => 53, 'CO' => 49, 'AP' => 52, 'AU' => 57, 'OR' => 51, 'PR' => 51, 'CL' => 56, 'CN' => 46, 'IN' => 65, 'CF' => 48, 'CATEGORIA' => 'Mala'],
+            5 => ['IM' => 59, 'CO' => 57, 'AP' => 58, 'AU' => 64, 'OR' => 59, 'PR' => 60, 'CL' => 66, 'CN' => 54, 'IN' => 73, 'CF' => 55, 'CATEGORIA' => 'Promedio'],
+            6 => ['IM' => 65, 'CO' => 64, 'AP' => 64, 'AU' => 71, 'OR' => 66, 'PR' => 69, 'CL' => 76, 'CN' => 62, 'IN' => 80, 'CF' => 62, 'CATEGORIA' => 'Promedio'],
+            7 => ['IM' => 71, 'CO' => 72, 'AP' => 70, 'AU' => 77, 'OR' => 73, 'PR' => 79, 'CL' => 85, 'CN' => 70, 'IN' => 88, 'CF' => 69, 'CATEGORIA' => 'Tiende a Buena'],
+            8 => ['IM' => 76, 'CO' => 80, 'AP' => 76, 'AU' => 84, 'OR' => 81, 'PR' => 88, 'CL' => 95, 'CN' => 78, 'IN' => 96, 'CF' => 76, 'CATEGORIA' => 'Buena'],
+            9 => ['IM' => 82, 'CO' => 87, 'AP' => 82, 'AU' => 91, 'OR' => 88, 'PR' => 97, 'CL' => null, 'CN' => 86, 'IN' => null, 'CF' => 83, 'CATEGORIA' => 'Excelente']
+        ];
+
+        // 1.5 BAREMOS DIMENSIONES (Acumulado)
+        $baremosDimensions = [
             'Relaciones' => [
                 ['max' => 5, 'label' => 'Excelente', 'color' => 'green'],
                 ['max' => 10, 'label' => 'Buena', 'color' => 'green'],
-                ['max' => 15, 'label' => 'Promedio', 'color' => 'blue'], // Tu ejemplo: 17 cae aquí
-                ['max' => 20, 'label' => 'Tiende a Buena', 'color' => 'gray'],
+                ['max' => 15, 'label' => 'Tiende a Buena', 'color' => 'blue'],
+                ['max' => 20, 'label' => 'Promedio', 'color' => 'gray'],
                 ['max' => 24, 'label' => 'Mala', 'color' => 'orange'],
-                ['max' => 90, 'label' => 'Deficiente', 'color' => 'red'],
+                ['max' => 99, 'label' => 'Deficiente', 'color' => 'red'],
             ],
             'Auto-realización' => [
                 ['max' => 4, 'label' => 'Excelente', 'color' => 'green'],
                 ['max' => 9, 'label' => 'Buena', 'color' => 'green'],
-                ['max' => 14, 'label' => 'Promedio', 'color' => 'blue'], // Tu ejemplo: 17 cae aquí
-                ['max' => 18, 'label' => 'Tiende a Buena', 'color' => 'gray'],
+                ['max' => 14, 'label' => 'Tiende a Buena', 'color' => 'blue'],
+                ['max' => 18, 'label' => 'Promedio', 'color' => 'gray'],
                 ['max' => 23, 'label' => 'Mala', 'color' => 'orange'],
-                ['max' => 90, 'label' => 'Deficiente', 'color' => 'red'],
+                ['max' => 99, 'label' => 'Deficiente', 'color' => 'red'],
             ],
             'Estabilidad/Cambio' => [
                 ['max' => 6, 'label' => 'Excelente', 'color' => 'green'],
                 ['max' => 13, 'label' => 'Buena', 'color' => 'green'],
-                ['max' => 15, 'label' => 'Promedio', 'color' => 'blue'], // Tu ejemplo: 17 cae aquí
-                ['max' => 19, 'label' => 'Tiende a Buena', 'color' => 'gray'],
+                ['max' => 15, 'label' => 'Tiende a Buena', 'color' => 'blue'],
+                ['max' => 19, 'label' => 'Promedio', 'color' => 'gray'],
                 ['max' => 24, 'label' => 'Mala', 'color' => 'orange'],
-                ['max' => 90, 'label' => 'Deficiente', 'color' => 'red'],
+                ['max' => 99, 'label' => 'Deficiente', 'color' => 'red'],
             ],
         ];
 
         // =========================================================================
-        // PASO 2: CÁLCULO DE PUNTOS (MOTOR)
+        // PASO 2: CÁLCULO DE PUNTOS
         // =========================================================================
 
-        // 2.1 Obtener respuestas del usuario
+        // 2.1 Obtener respuestas
         $userAnswers = EvaluationUserAnswer::where('psychometric_evaluation_id', $evaluation->id)
             ->join('answers', 'evaluation_user_answers.answer_id', '=', 'answers.id')
             ->join('questions', 'answers.question_id', '=', 'questions.id')
             ->select('questions.order', 'answers.text')
             ->get();
 
-        // 2.2 Calcular Puntuación Directa (PD) por Subescala
-        $subscaleScores = array_fill_keys(array_keys($subscalesMap), 0);
+        // 2.2 Calcular RAW SCORE por Subescala
+        $rawScores = array_fill_keys(array_keys($subscalesMap), 0);
 
         foreach ($userAnswers as $ans) {
             $qNum = $ans->order;
-
-            // Si tenemos la clave para esa pregunta
             if (isset($correctionKey[$qNum])) {
                 $expected = $correctionKey[$qNum];
-
-                // Normalizamos respuesta del usuario (Busca 'V' o 'F' en el texto)
                 $userVal = '';
                 if (stripos($ans->text, 'V') !== false) $userVal = 'V';
                 elseif (stripos($ans->text, 'F') !== false) $userVal = 'F';
 
-                // Si coincide, suma 1 punto
                 if ($userVal === $expected) {
-                    // Buscamos a qué subescala pertenece esta pregunta
                     foreach ($subscalesMap as $subKey => $qList) {
                         if (in_array($qNum, $qList)) {
-                            $subscaleScores[$subKey]++;
+                            $rawScores[$subKey]++;
                             break;
                         }
                     }
@@ -164,24 +180,62 @@ class PsychometricScoringService
             }
         }
 
-        // 2.3 Calcular Puntuación por Dimensión y Asignar Categoría
+        // =========================================================================
+        // PASO 2.3: PROCESAR SUBESCALAS (AGREGAMOS NOMBRE Y DESCRIPCIÓN)
+        // =========================================================================
+        $detailedSubscales = [];
+
+        foreach ($rawScores as $code => $score) {
+            // Aseguramos que el score no pase de 9
+            $safeScore = min($score, 9);
+            $baremosData = $baremosSubescalas[$safeScore] ?? null;
+
+            $category = 'N/A';
+            $standardValue = 0;
+            $color = 'gray';
+
+            if ($baremosData) {
+                $category = $baremosData['CATEGORIA'];
+                $standardValue = $baremosData[$code] ?? 0;
+
+                if (str_contains($category, 'Excelente') || str_contains($category, 'Buena')) $color = 'green';
+                elseif (str_contains($category, 'Tiende a Buena')) $color = 'blue';
+                elseif (str_contains($category, 'Promedio')) $color = 'gray';
+                elseif (str_contains($category, 'Mala')) $color = 'orange';
+                else $color = 'red';
+            }
+
+            // >>> AQUÍ INYECTAMOS TU DATA DE SUBESCALAS <<<
+            $info = $subescalasInfo[$code] ?? ['nombre' => $code, 'descripcion' => ''];
+
+            $detailedSubscales[$code] = [
+                'name' => $info['nombre'],         // <-- Nombre completo (IMPLICACION)
+                'description' => $info['descripcion'], // <-- Descripción
+                'raw_score' => $score,
+                'standard_score' => $standardValue,
+                'category' => $category,
+                'color' => $color
+            ];
+        }
+
+        // =========================================================================
+        // PASO 2.4: PROCESAR DIMENSIONES (AGREGAMOS DESCRIPCIÓN)
+        // =========================================================================
         $dimensionResults = [];
 
         foreach ($dimensionsMap as $dimName => $subKeys) {
             $dimTotal = 0;
-            // Sumar los puntajes de las subescalas de esta dimensión
             foreach ($subKeys as $sub) {
-                if (isset($subscaleScores[$sub])) {
-                    $dimTotal += $subscaleScores[$sub];
+                if (isset($rawScores[$sub])) {
+                    $dimTotal += $rawScores[$sub];
                 }
             }
 
-            // Buscar en Baremos
             $categoryLabel = 'N/A';
             $categoryColor = 'gray';
 
-            if (isset($baremos[$dimName])) {
-                foreach ($baremos[$dimName] as $rango) {
+            if (isset($baremosDimensions[$dimName])) {
+                foreach ($baremosDimensions[$dimName] as $rango) {
                     if ($dimTotal <= $rango['max']) {
                         $categoryLabel = $rango['label'];
                         $categoryColor = $rango['color'];
@@ -190,7 +244,12 @@ class PsychometricScoringService
                 }
             }
 
+            // >>> AQUÍ INYECTAMOS TU DATA DE DIMENSIONES <<<
+            $dimDesc = $dimensionesInfo[$dimName] ?? '';
+
             $dimensionResults[$dimName] = [
+                'completeName' => $dimName, // Mantenemos compatibilidad con el blade
+                'description' => $dimDesc,  // <-- Descripción rica
                 'score' => $dimTotal,
                 'category' => $categoryLabel,
                 'color' => $categoryColor
@@ -198,14 +257,14 @@ class PsychometricScoringService
         }
 
         // =========================================================================
-        // PASO 3: RETORNO DE DATOS
+        // PASO 3: RETORNO
         // =========================================================================
 
         return [
             'test_name' => 'Moss Wess (Clima Social)',
-            'chart_type' => 'bar_grouped', // Gráfica de barras agrupadas por dimensión
-            'dimensions' => $dimensionResults, // Resultado final (Relaciones: 17 - Promedio)
-            'subscales' => $subscaleScores,   // Detalle (IM: 5, CO: 4...)
+            'chart_type' => 'bar_grouped',
+            'dimensions' => $dimensionResults,
+            'subscales' => $detailedSubscales,
             'summary' => "Perfil de Clima Social basado en " . count($dimensionResults) . " dimensiones."
         ];
     }
@@ -239,6 +298,7 @@ class PsychometricScoringService
         ];
     }
 
+    //Interpretación de Moss COMPLETA y FUNCIONANDO
     private function calculateMoss($evaluation)
     {
         // 1. MAPEO: ¿A qué dimensión pertenece cada pregunta? (Estándar Moss)

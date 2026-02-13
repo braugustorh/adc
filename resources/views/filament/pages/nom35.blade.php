@@ -375,7 +375,7 @@
 
                 </x-filament::section>
 
-                @if($level===2)
+                @if($level===2 || auth()->user()->sede_id===21 || auth()->user()->sede_id===23 || auth()->user()->sede_id===17)
                     <x-filament::section class="mb-4"
                                          collapsible
                                          collapsed >

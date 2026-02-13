@@ -608,7 +608,7 @@
 
                 </x-filament::section>
 
-                @if($level==2 || $level==3)
+                @if($level==2 || $level==3 || auth()->user()->sede_id===21 || auth()->user()->sede_id===23 || auth()->user()->sede_id===17)
 
                 <x-filament::section class="mb-4">
                     <x-slot name="heading">

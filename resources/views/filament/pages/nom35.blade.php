@@ -599,6 +599,7 @@
                         <div class="flex items-center gap-2">
                             <x-filament::button
                                 color="info"
+                                wire:click="openModalProfile"
                                 icon="fas-file-download">
                                 Descargar Perfil
                             </x-filament::button>
@@ -1166,6 +1167,68 @@
                 Descargar Canalización
             </x-filament::button>
 
+        </x-slot>
+    </x-filament::modal>
+
+    {{-- Modal para Perfil Sociodemográfico --}}
+    <x-filament::modal :close-by-clicking-away="false"
+                       id="modalProfile"
+                       width="2xl">
+        <x-filament::modal.heading>
+            Perfil Sociodemográfico - Guía V NOM-035
+        </x-filament::modal.heading>
+
+        <div class="space-y-4">
+            <div class="text-sm text-gray-600 dark:text-gray-400">
+                <p class="mb-3">
+                    El perfil sociodemográfico permite analizar la composición de la plantilla laboral según la <strong>Guía V de la NOM-035-STPS-2018</strong>.
+                </p>
+                <p class="mb-3">
+                    Este reporte incluye datos agregados y segmentados de:
+                </p>
+                <ul class="list-disc list-inside space-y-1 ml-4">
+                    <li><strong>Datos personales:</strong> Sexo, edad (rangos), estado civil, nivel de estudios</li>
+                    <li><strong>Datos laborales:</strong> Puesto, departamento, tipo de puesto, tipo de contratación, tipo de personal</li>
+                    <li><strong>Condiciones laborales:</strong> Tipo de jornada, rotación de turnos</li>
+                    <li><strong>Experiencia:</strong> Tiempo en el puesto actual, experiencia laboral total</li>
+                </ul>
+                <p class="mt-3 text-xs text-gray-500">
+                    <strong>Nota:</strong> El reporte respeta la privacidad de los colaboradores presentando únicamente datos estadísticos agregados, sin información personal identificable.
+                </p>
+            </div>
+
+            @if($level === 2 || $level === 3)
+                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div class="flex-1">
+                            <h4 class="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-1">
+                                Análisis Segmentado Disponible
+                            </h4>
+                            <p class="text-xs text-blue-700 dark:text-blue-400">
+                                Para las Guías II y III, el reporte incluirá análisis de los resultados de riesgo psicosocial segmentados por cada categoría sociodemográfica, permitiendo identificar grupos de mayor vulnerabilidad.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <x-slot name="footerActions">
+            <x-filament::button
+                wire:click="closeModalProfile"
+                color="gray">
+                Cerrar
+            </x-filament::button>
+
+            <x-filament::button
+                color="primary"
+                icon="fas-download"
+                wire:click="downloadProfileReport">
+                Generar Reporte
+            </x-filament::button>
         </x-slot>
     </x-filament::modal>
     </x-filament-panels::page>

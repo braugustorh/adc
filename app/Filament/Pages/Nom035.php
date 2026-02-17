@@ -4606,5 +4606,940 @@ class Nom035 extends Page
         $this->dispatch('close-modal', id: 'modalIden');
     }
 
+    public function openModalProfile (){
+        $this->dispatch('open-modal', id: 'modalProfile');
+    }
+    public function closeModalProfile (){
+        $this->dispatch('close-modal', id: 'modalProfile');
+    }
+
+    /**
+     * Generar reporte de Perfil Sociodemográfico según Guía V NOM-035
+     * Incluye análisis segmentado de resultados de riesgo psicosocial para niveles 2 y 3
+     */
+    public function downloadProfileReport()
+    {
+        try {
+            $sedeId = auth()->user()->sede_id;
+            $normaId = $this->norma->id ?? null;
+
+            // Obtener todos los colaboradores activos de la sede
+            $colaboradores = User::where('sede_id', $sedeId)
+                ->where('status', true)
+                ->whereNotNull('department_id')
+                ->whereNotNull('position_id')
+                ->with(['department', 'position', 'sede'])
+                ->get();
+
+            if ($colaboradores->isEmpty()) {
+                Notification::make()
+                    ->title('Sin datos disponibles')
+                    ->body('No hay colaboradores registrados para generar el reporte.')
+                    ->warning()
+                    ->send();
+                return;
+            }
+
+            // Datos sociodemográficos agregados
+            $profileData = $this->generateSociodemographicProfile($colaboradores);
+
+            // Si es nivel 2 o 3, incluir análisis de riesgo psicosocial segmentado
+            $riskAnalysis = null;
+            $categoryAnalysis = null;
+            $chartPaths = [];
+
+            if (($this->level === 2 || $this->level === 3) && $normaId) {
+                $riskAnalysis = $this->generateSegmentedRiskAnalysis($colaboradores, $normaId, $sedeId);
+                $categoryAnalysis = $this->generateCategoryRiskAnalysis($colaboradores, $normaId, $sedeId);
+
+                // Generar gráficas como imágenes usando QuickChart
+                if ($categoryAnalysis) {
+                    // Asegurar que el directorio existe
+                    $tmpDir = storage_path('app/livewire-tmp');
+                    if (!is_dir($tmpDir)) {
+                        mkdir($tmpDir, 0755, true);
+                    }
+
+                    $timestamp = time();
+
+                    // Gráfica por Sexo
+                    if (isset($categoryAnalysis['by_sex']) && !empty($categoryAnalysis['by_sex'])) {
+                        $sexChartUrl = $this->generateCategoryBySexChart($categoryAnalysis);
+                        if ($sexChartUrl) {
+                            $sexChartPath = $tmpDir . '/chart_sex_' . $timestamp . '.png';
+                            $imageContent = @file_get_contents($sexChartUrl);
+                            if ($imageContent) {
+                                file_put_contents($sexChartPath, $imageContent);
+                                $chartPaths['sex'] = $sexChartPath;
+                            }
+                        }
+                    }
+
+                    // Gráfica por Edad
+                    if (isset($categoryAnalysis['by_age']) && !empty($categoryAnalysis['by_age'])) {
+                        $ageChartUrl = $this->generateCategoryByAgeChart($categoryAnalysis);
+                        if ($ageChartUrl) {
+                            $ageChartPath = $tmpDir . '/chart_age_' . $timestamp . '.png';
+                            $imageContent = @file_get_contents($ageChartUrl);
+                            if ($imageContent) {
+                                file_put_contents($ageChartPath, $imageContent);
+                                $chartPaths['age'] = $ageChartPath;
+                            }
+                        }
+                    }
+
+                    // Gráfica por Contratación
+                    if (isset($categoryAnalysis['by_contract']) && !empty($categoryAnalysis['by_contract'])) {
+                        $contractChartUrl = $this->generateCategoryByContractChart($categoryAnalysis);
+                        if ($contractChartUrl) {
+                            $contractChartPath = $tmpDir . '/chart_contract_' . $timestamp . '.png';
+                            $imageContent = @file_get_contents($contractChartUrl);
+                            if ($imageContent) {
+                                file_put_contents($contractChartPath, $imageContent);
+                                $chartPaths['contract'] = $contractChartPath;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Generar HTML para el PDF
+            $guiaType = 'I';
+            if ($this->level === 3) {
+                $guiaType = 'III';
+            } elseif ($this->level === 2) {
+                $guiaType = 'II';
+            }
+
+            $html = view('filament.pages.nom35.sociodemographic_profile', [
+                'company' => auth()->user()->sede->name ?? 'No definido',
+                'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+                'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+                'totalCollaborators' => $colaboradores->count(),
+                'profileData' => $profileData,
+                'level' => $this->level,
+                'riskAnalysis' => $riskAnalysis,
+                'categoryAnalysis' => $categoryAnalysis,
+                'chartPaths' => $chartPaths,
+                'guiaType' => $guiaType,
+            ])->render();
+
+            // Configurar payload para PDFShift
+            $payload = [
+                'source' => $html,
+                'landscape' => false,
+                'use_print' => false,
+                'margin' => [
+                    'top' => 15,
+                    'bottom' => 15,
+                    'left' => 15,
+                    'right' => 15,
+                ],
+            ];
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'X-API-Key' => config('services.pdfshift.api_key'),
+            ])
+                ->withBody(json_encode($payload, JSON_UNESCAPED_UNICODE), 'application/json')
+                ->post('https://api.pdfshift.io/v3/convert/pdf');
+
+            if ($response->successful()) {
+                $pdfContent = $response->body();
+
+                // Limpiar imágenes temporales
+                foreach ($chartPaths as $path) {
+                    if (file_exists($path)) {
+                        @unlink($path);
+                    }
+                }
+
+                return response()->streamDownload(function () use ($pdfContent) {
+                    echo $pdfContent;
+                }, 'Perfil_Sociodemografico_' . date('Y-m-d') . '.pdf');
+            } else {
+                // Limpiar imágenes temporales incluso en caso de error
+                foreach ($chartPaths as $path) {
+                    if (file_exists($path)) {
+                        @unlink($path);
+                    }
+                }
+
+                Notification::make()
+                    ->title('Error al generar PDF')
+                    ->body('No se pudo generar el PDF: ' . $response->body())
+                    ->danger()
+                    ->send();
+            }
+        } catch (\Exception $e) {
+            Log::error('Error generating sociodemographic profile: ' . $e->getMessage());
+            Notification::make()
+                ->title('Error')
+                ->body('Ocurrió un error al generar el reporte: ' . $e->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
+
+    /**
+     * Generar perfil sociodemográfico agregado
+     */
+    private function generateSociodemographicProfile($colaboradores)
+    {
+        $data = [];
+
+        // 1. SEXO (el más importante según requisitos)
+        $data['sex'] = [
+            'Masculino' => $colaboradores->where('sex', 'Masculino')->count(),
+            'Femenino' => $colaboradores->where('sex', 'Femenino')->count(),
+            'Otro' => $colaboradores->whereNotIn('sex', ['Masculino', 'Femenino'])->count(),
+        ];
+
+        // 2. EDAD (rangos)
+        $ageRanges = [
+            '18-25' => 0,
+            '26-35' => 0,
+            '36-45' => 0,
+            '46-55' => 0,
+            '56-65' => 0,
+            '65+' => 0,
+        ];
+
+        foreach ($colaboradores as $colab) {
+            if ($colab->birthdate) {
+                $age = \Carbon\Carbon::parse($colab->birthdate)->age;
+                if ($age >= 18 && $age <= 25) $ageRanges['18-25']++;
+                elseif ($age >= 26 && $age <= 35) $ageRanges['26-35']++;
+                elseif ($age >= 36 && $age <= 45) $ageRanges['36-45']++;
+                elseif ($age >= 46 && $age <= 55) $ageRanges['46-55']++;
+                elseif ($age >= 56 && $age <= 65) $ageRanges['56-65']++;
+                elseif ($age > 65) $ageRanges['65+']++;
+            }
+        }
+        $data['age'] = $ageRanges;
+
+        // 3. ESTADO CIVIL
+        $data['marital_status'] = $colaboradores->groupBy('marital_status')
+            ->map(fn($group) => $group->count())
+            ->toArray();
+
+        // 4. NIVEL DE ESTUDIOS
+        $data['scholarship'] = $colaboradores->groupBy('scholarship')
+            ->map(fn($group) => $group->count())
+            ->toArray();
+
+        // 5. DEPARTAMENTO/ÁREA
+        $data['department'] = $colaboradores->groupBy('department.name')
+            ->map(fn($group) => $group->count())
+            ->toArray();
+
+        // 6. PUESTO
+        $data['position'] = $colaboradores->groupBy('position.name')
+            ->map(fn($group) => $group->count())
+            ->toArray();
+
+        // 7. TIPO DE CONTRATACIÓN
+        $data['contract_type'] = $colaboradores->groupBy('contract_type')
+            ->map(fn($group) => $group->count())
+            ->toArray();
+
+        // 8. TIPO DE PERSONAL (sindicalizado/confianza)
+        $data['staff_type'] = $colaboradores->groupBy('staff_type')
+            ->map(fn($group) => $group->count())
+            ->toArray();
+
+        // 9. TIPO DE JORNADA
+        $data['work_shift'] = $colaboradores->groupBy('work_shift')
+            ->map(fn($group) => $group->count())
+            ->toArray();
+
+        // 10. ROTACIÓN DE TURNOS
+        $data['rotates_shifts'] = [
+            'Sí' => $colaboradores->where('rotates_shifts', true)->count(),
+            'No' => $colaboradores->where('rotates_shifts', false)->count(),
+        ];
+
+        // 11. TIEMPO EN EL PUESTO (rangos en meses)
+        $timeRanges = [
+            '0-6 meses' => 0,
+            '6-12 meses' => 0,
+            '1-2 años' => 0,
+            '2-5 años' => 0,
+            '5-10 años' => 0,
+            '10+ años' => 0,
+        ];
+
+        foreach ($colaboradores as $colab) {
+            if ($colab->time_in_position) {
+                $months = $colab->time_in_position;
+                if ($months <= 6) $timeRanges['0-6 meses']++;
+                elseif ($months <= 12) $timeRanges['6-12 meses']++;
+                elseif ($months <= 24) $timeRanges['1-2 años']++;
+                elseif ($months <= 60) $timeRanges['2-5 años']++;
+                elseif ($months <= 120) $timeRanges['5-10 años']++;
+                else $timeRanges['10+ años']++;
+            }
+        }
+        $data['time_in_position'] = $timeRanges;
+
+        // 12. EXPERIENCIA LABORAL TOTAL (rangos en años)
+        $expRanges = [
+            '0-2 años' => 0,
+            '3-5 años' => 0,
+            '6-10 años' => 0,
+            '11-15 años' => 0,
+            '16-20 años' => 0,
+            '20+ años' => 0,
+        ];
+
+        foreach ($colaboradores as $colab) {
+            if ($colab->experience_years) {
+                $years = $colab->experience_years;
+                if ($years <= 2) $expRanges['0-2 años']++;
+                elseif ($years <= 5) $expRanges['3-5 años']++;
+                elseif ($years <= 10) $expRanges['6-10 años']++;
+                elseif ($years <= 15) $expRanges['11-15 años']++;
+                elseif ($years <= 20) $expRanges['16-20 años']++;
+                else $expRanges['20+ años']++;
+            }
+        }
+        $data['experience_years'] = $expRanges;
+
+        return $data;
+    }
+
+    /**
+     * Generar análisis de riesgo psicosocial segmentado por variables sociodemográficas
+     * Solo para niveles 2 y 3
+     */
+    private function generateSegmentedRiskAnalysis($colaboradores, $normaId, $sedeId)
+    {
+        $analysis = [];
+
+        // Determinar qué tabla usar según el nivel
+        $surveyModel = $this->level === 3 ? RiskFactorSurveyOrganizational::class : RiskFactorSurvey::class;
+
+        // Obtener usuarios que respondieron la encuesta
+        $respondents = $surveyModel::where('norma_id', $normaId)
+            ->where('sede_id', $sedeId)
+            ->pluck('user_id')
+            ->unique();
+
+        $respondingUsers = $colaboradores->whereIn('id', $respondents);
+
+        if ($respondingUsers->isEmpty()) {
+            return null;
+        }
+
+        // 1. ANÁLISIS POR SEXO (el más importante)
+        $analysis['by_sex'] = $this->calculateRiskBySegment($respondingUsers, 'sex', $normaId, $sedeId, $surveyModel);
+
+        // 2. ANÁLISIS POR RANGO DE EDAD
+        $analysis['by_age'] = $this->calculateRiskByAgeRange($respondingUsers, $normaId, $sedeId, $surveyModel);
+
+        // 3. ANÁLISIS POR DEPARTAMENTO
+        $analysis['by_department'] = $this->calculateRiskByRelation($respondingUsers, 'department', $normaId, $sedeId, $surveyModel);
+
+        // 4. ANÁLISIS POR TIPO DE CONTRATACIÓN
+        $analysis['by_contract'] = $this->calculateRiskBySegment($respondingUsers, 'contract_type', $normaId, $sedeId, $surveyModel);
+
+        // 5. ANÁLISIS POR TIPO DE JORNADA
+        $analysis['by_shift'] = $this->calculateRiskBySegment($respondingUsers, 'work_shift', $normaId, $sedeId, $surveyModel);
+
+        // 6. ANÁLISIS POR ROTACIÓN DE TURNOS
+        $analysis['by_rotation'] = $this->calculateRiskByBoolean($respondingUsers, 'rotates_shifts', $normaId, $sedeId, $surveyModel);
+
+        return $analysis;
+    }
+
+    /**
+     * Calcular nivel de riesgo por segmento simple
+     */
+    private function calculateRiskBySegment($users, $field, $normaId, $sedeId, $surveyModel)
+    {
+        $results = [];
+        $segments = $users->groupBy($field);
+
+        foreach ($segments as $segment => $segmentUsers) {
+            if (empty($segment)) continue;
+
+            $userIds = $segmentUsers->pluck('id');
+            $totalScore = $surveyModel::where('norma_id', $normaId)
+                ->where('sede_id', $sedeId)
+                ->whereIn('user_id', $userIds)
+                ->sum('equivalence_response');
+
+            $count = $segmentUsers->count();
+            $avgScore = $count > 0 ? $totalScore / $count : 0;
+            $riskLevel = $this->getRiskLevelFromScore($avgScore);
+
+            $results[$segment] = [
+                'count' => $count,
+                'avg_score' => round($avgScore, 2),
+                'risk_level' => $riskLevel,
+            ];
+        }
+
+        return $results;
+    }
+
+    /**
+     * Calcular nivel de riesgo por rango de edad
+     */
+    private function calculateRiskByAgeRange($users, $normaId, $sedeId, $surveyModel)
+    {
+        $ageRanges = [
+            '18-25' => [],
+            '26-35' => [],
+            '36-45' => [],
+            '46-55' => [],
+            '56-65' => [],
+            '65+' => [],
+        ];
+
+        foreach ($users as $user) {
+            if ($user->birthdate) {
+                $age = \Carbon\Carbon::parse($user->birthdate)->age;
+                if ($age >= 18 && $age <= 25) $ageRanges['18-25'][] = $user->id;
+                elseif ($age >= 26 && $age <= 35) $ageRanges['26-35'][] = $user->id;
+                elseif ($age >= 36 && $age <= 45) $ageRanges['36-45'][] = $user->id;
+                elseif ($age >= 46 && $age <= 55) $ageRanges['46-55'][] = $user->id;
+                elseif ($age >= 56 && $age <= 65) $ageRanges['56-65'][] = $user->id;
+                elseif ($age > 65) $ageRanges['65+'][] = $user->id;
+            }
+        }
+
+        $results = [];
+        foreach ($ageRanges as $range => $userIds) {
+            if (empty($userIds)) continue;
+
+            $totalScore = $surveyModel::where('norma_id', $normaId)
+                ->where('sede_id', $sedeId)
+                ->whereIn('user_id', $userIds)
+                ->sum('equivalence_response');
+
+            $count = count($userIds);
+            $avgScore = $count > 0 ? $totalScore / $count : 0;
+            $riskLevel = $this->getRiskLevelFromScore($avgScore);
+
+            $results[$range] = [
+                'count' => $count,
+                'avg_score' => round($avgScore, 2),
+                'risk_level' => $riskLevel,
+            ];
+        }
+
+        return $results;
+    }
+
+    /**
+     * Calcular nivel de riesgo por relación (departamento, posición)
+     */
+    private function calculateRiskByRelation($users, $relation, $normaId, $sedeId, $surveyModel)
+    {
+        $results = [];
+        $segments = $users->groupBy($relation . '.name');
+
+        foreach ($segments as $segment => $segmentUsers) {
+            if (empty($segment)) continue;
+
+            $userIds = $segmentUsers->pluck('id');
+            $totalScore = $surveyModel::where('norma_id', $normaId)
+                ->where('sede_id', $sedeId)
+                ->whereIn('user_id', $userIds)
+                ->sum('equivalence_response');
+
+            $count = $segmentUsers->count();
+            $avgScore = $count > 0 ? $totalScore / $count : 0;
+            $riskLevel = $this->getRiskLevelFromScore($avgScore);
+
+            $results[$segment] = [
+                'count' => $count,
+                'avg_score' => round($avgScore, 2),
+                'risk_level' => $riskLevel,
+            ];
+        }
+
+        return $results;
+    }
+
+    /**
+     * Calcular nivel de riesgo por campo booleano
+     */
+    private function calculateRiskByBoolean($users, $field, $normaId, $sedeId, $surveyModel)
+    {
+        $results = [];
+
+        foreach ([true => 'Sí', false => 'No'] as $value => $label) {
+            $segmentUsers = $users->where($field, $value);
+            $userIds = $segmentUsers->pluck('id');
+
+            if ($userIds->isEmpty()) continue;
+
+            $totalScore = $surveyModel::where('norma_id', $normaId)
+                ->where('sede_id', $sedeId)
+                ->whereIn('user_id', $userIds)
+                ->sum('equivalence_response');
+
+            $count = $segmentUsers->count();
+            $avgScore = $count > 0 ? $totalScore / $count : 0;
+            $riskLevel = $this->getRiskLevelFromScore($avgScore);
+
+            $results[$label] = [
+                'count' => $count,
+                'avg_score' => round($avgScore, 2),
+                'risk_level' => $riskLevel,
+            ];
+        }
+
+        return $results;
+    }
+
+    /**
+     * Determinar nivel de riesgo a partir de puntuación
+     */
+    private function getRiskLevelFromScore($score)
+    {
+        if ($this->level === 2) {
+            // Umbrales para Guía II
+            if ($score < 50) return 'Nulo';
+            if ($score < 75) return 'Bajo';
+            if ($score < 99) return 'Medio';
+            if ($score < 140) return 'Alto';
+            return 'Muy Alto';
+        } else {
+            // Umbrales para Guía III
+            if ($score < 50) return 'Nulo';
+            if ($score < 75) return 'Bajo';
+            if ($score < 99) return 'Medio';
+            if ($score < 140) return 'Alto';
+            return 'Muy Alto';
+        }
+    }
+
+    /**
+     * Generar análisis de riesgo por categorías/dominios segmentado por variables sociodemográficas
+     */
+    private function generateCategoryRiskAnalysis($colaboradores, $normaId, $sedeId)
+    {
+        $surveyModel = $this->level === 3 ? RiskFactorSurveyOrganizational::class : RiskFactorSurvey::class;
+
+        // Definir categorías y dominios según el nivel
+        if ($this->level === 2) {
+            $categories = [
+                'ambiente' => 'Ambiente de trabajo',
+                'activity' => 'Factores propios de la actividad',
+                'time' => 'Organización del tiempo de trabajo',
+                'leadership' => 'Liderazgo y relaciones en el trabajo',
+            ];
+        } else {
+            $categories = [
+                'ambiente' => 'Ambiente de trabajo',
+                'activity' => 'Factores propios de la actividad',
+                'time' => 'Organización del tiempo de trabajo',
+                'leadership' => 'Liderazgo y relaciones en el trabajo',
+                'entorno' => 'Entorno organizacional',
+            ];
+        }
+
+        $analysis = [];
+
+        // Análisis por SEXO
+        $analysis['by_sex'] = $this->analyzeCategoryByDemographic($colaboradores, 'sex', $categories, $normaId, $sedeId, $surveyModel);
+
+        // Análisis por EDAD
+        $analysis['by_age'] = $this->analyzeCategoryByAge($colaboradores, $categories, $normaId, $sedeId, $surveyModel);
+
+        // Análisis por TIPO DE CONTRATACIÓN
+        $analysis['by_contract'] = $this->analyzeCategoryByDemographic($colaboradores, 'contract_type', $categories, $normaId, $sedeId, $surveyModel);
+
+        // Identificar grupos de mayor riesgo
+        $analysis['top_risks'] = $this->identifyTopRiskGroups($analysis);
+
+        return $analysis;
+    }
+
+    /**
+     * Analizar categorías por segmento demográfico
+     */
+    private function analyzeCategoryByDemographic($users, $field, $categories, $normaId, $sedeId, $surveyModel)
+    {
+        $results = [];
+        $segments = $users->groupBy($field);
+
+        foreach ($segments as $segment => $segmentUsers) {
+            if (empty($segment)) continue;
+
+            $userIds = $segmentUsers->pluck('id');
+            $results[$segment] = [];
+
+            foreach ($categories as $categoryKey => $categoryName) {
+                $categoryScores = $this->getCategoryScoresForUsers($userIds, $categoryKey, $normaId, $sedeId, $surveyModel);
+
+                if (!empty($categoryScores)) {
+                    $avgScore = array_sum($categoryScores) / count($categoryScores);
+                    // Usar el método existente: si es level 3, usar getCategoryRiskLevelG3
+                    if ($this->level === 3) {
+                        $riskLevel = $this->getCategoryRiskLevelG3($categoryKey, $avgScore);
+                    } else {
+                        $riskLevel = $this->getCategoryRiskLevel($categoryKey, $avgScore);
+                    }
+
+                    $results[$segment][$categoryKey] = [
+                        'name' => $categoryName,
+                        'avg_score' => round($avgScore, 2),
+                        'risk_level' => $riskLevel,
+                        'count' => count($categoryScores),
+                    ];
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Analizar categorías por rangos de edad
+     */
+    private function analyzeCategoryByAge($users, $categories, $normaId, $sedeId, $surveyModel)
+    {
+        $ageRanges = [
+            '18-25' => [],
+            '26-35' => [],
+            '36-45' => [],
+            '46-55' => [],
+            '56-65' => [],
+            '65+' => [],
+        ];
+
+        foreach ($users as $user) {
+            if ($user->birthdate) {
+                $age = \Carbon\Carbon::parse($user->birthdate)->age;
+                if ($age >= 18 && $age <= 25) $ageRanges['18-25'][] = $user->id;
+                elseif ($age >= 26 && $age <= 35) $ageRanges['26-35'][] = $user->id;
+                elseif ($age >= 36 && $age <= 45) $ageRanges['36-45'][] = $user->id;
+                elseif ($age >= 46 && $age <= 55) $ageRanges['46-55'][] = $user->id;
+                elseif ($age >= 56 && $age <= 65) $ageRanges['56-65'][] = $user->id;
+                elseif ($age > 65) $ageRanges['65+'][] = $user->id;
+            }
+        }
+
+        $results = [];
+        foreach ($ageRanges as $range => $userIds) {
+            if (empty($userIds)) continue;
+
+            $results[$range] = [];
+            foreach ($categories as $categoryKey => $categoryName) {
+                $categoryScores = $this->getCategoryScoresForUsers($userIds, $categoryKey, $normaId, $sedeId, $surveyModel);
+
+                if (!empty($categoryScores)) {
+                    $avgScore = array_sum($categoryScores) / count($categoryScores);
+                    // Usar el método existente: si es level 3, usar getCategoryRiskLevelG3
+                    if ($this->level === 3) {
+                        $riskLevel = $this->getCategoryRiskLevelG3($categoryKey, $avgScore);
+                    } else {
+                        $riskLevel = $this->getCategoryRiskLevel($categoryKey, $avgScore);
+                    }
+
+                    $results[$range][$categoryKey] = [
+                        'name' => $categoryName,
+                        'avg_score' => round($avgScore, 2),
+                        'risk_level' => $riskLevel,
+                        'count' => count($categoryScores),
+                    ];
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Obtener puntuaciones de categoría para usuarios específicos
+     */
+    private function getCategoryScoresForUsers($userIds, $categoryKey, $normaId, $sedeId, $surveyModel)
+    {
+        // Mapeo de preguntas por categoría para Guía II
+        $categoryQuestionsG2 = [
+            'ambiente' => [1, 2, 3],
+            'activity' => [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 18, 19, 20, 21, 22, 26, 27, 41, 42, 43],
+            'time' => [14, 15, 16, 17, 23, 24, 25],
+            'leadership' => [28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 44, 45, 46],
+        ];
+
+        // Mapeo de preguntas por categoría para Guía III
+        $categoryQuestionsG3 = [
+            'ambiente' => [1, 2, 3],
+            'activity' => [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 31, 32, 33],
+            'time' => [17, 18, 19, 20, 21, 22, 27, 28, 29, 30],
+            'leadership' => [34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69],
+            'entorno' => [70, 71, 72],
+        ];
+
+        $categoryQuestions = $this->level === 3 ? $categoryQuestionsG3 : $categoryQuestionsG2;
+
+        if (!isset($categoryQuestions[$categoryKey])) {
+            return [];
+        }
+
+        $questionIds = $categoryQuestions[$categoryKey];
+
+        // Obtener puntuaciones por usuario
+        $scores = [];
+        foreach ($userIds as $userId) {
+            $userScore = $surveyModel::where('norma_id', $normaId)
+                ->where('sede_id', $sedeId)
+                ->where('user_id', $userId)
+                ->whereIn('question_id', $questionIds)
+                ->sum('equivalence_response');
+
+            if ($userScore > 0) {
+                $scores[] = $userScore;
+            }
+        }
+
+        return $scores;
+    }
+
+    /**
+     * Identificar los grupos con mayor riesgo
+     */
+    private function identifyTopRiskGroups($analysis)
+    {
+        $topRisks = [];
+        $riskWeight = ['Muy Alto' => 5, 'Alto' => 4, 'Medio' => 3, 'Bajo' => 2, 'Nulo' => 1];
+
+        // Analizar por sexo
+        foreach (['by_sex', 'by_age', 'by_contract'] as $dimension) {
+            if (!isset($analysis[$dimension])) continue;
+
+            foreach ($analysis[$dimension] as $segment => $categories) {
+                foreach ($categories as $categoryKey => $data) {
+                    $weight = $riskWeight[$data['risk_level']] ?? 0;
+
+                    if ($weight >= 4) { // Alto o Muy Alto
+                        $topRisks[] = [
+                            'dimension' => $this->getDimensionLabel($dimension),
+                            'segment' => $segment,
+                            'category' => $data['name'],
+                            'risk_level' => $data['risk_level'],
+                            'avg_score' => $data['avg_score'],
+                            'count' => $data['count'],
+                        ];
+                    }
+                }
+            }
+        }
+
+        // Ordenar por nivel de riesgo (descendente)
+        usort($topRisks, function($a, $b) use ($riskWeight) {
+            return ($riskWeight[$b['risk_level']] ?? 0) <=> ($riskWeight[$a['risk_level']] ?? 0);
+        });
+
+        return array_slice($topRisks, 0, 10); // Top 10
+    }
+
+    /**
+     * Obtener etiqueta de dimensión
+     */
+    private function getDimensionLabel($dimension)
+    {
+        $labels = [
+            'by_sex' => 'Sexo',
+            'by_age' => 'Edad',
+            'by_contract' => 'Tipo de Contratación',
+        ];
+
+        return $labels[$dimension] ?? $dimension;
+    }
+
+    /**
+     * Generar gráfica de comparación por Sexo usando QuickChart
+     */
+    private function generateCategoryBySexChart($categoryAnalysis): string
+    {
+        if (!isset($categoryAnalysis['by_sex']) || empty($categoryAnalysis['by_sex'])) {
+            return '';
+        }
+
+        $sexes = array_keys($categoryAnalysis['by_sex']);
+        $categories = array_keys($categoryAnalysis['by_sex'][$sexes[0]] ?? []);
+
+        $datasets = [];
+        $colors = [
+            'Masculino' => '#3b82f6',
+            'Femenino' => '#ec4899',
+            'Otro' => '#8b5cf6'
+        ];
+
+        foreach ($sexes as $sex) {
+            $data = [];
+            foreach ($categories as $catKey) {
+                $data[] = $categoryAnalysis['by_sex'][$sex][$catKey]['avg_score'] ?? 0;
+            }
+
+            $datasets[] = [
+                'label' => $sex,
+                'data' => $data,
+                'backgroundColor' => $colors[$sex] ?? '#999',
+            ];
+        }
+
+        $labels = array_map(function($catKey) use ($categoryAnalysis, $sexes) {
+            $name = $categoryAnalysis['by_sex'][$sexes[0]][$catKey]['name'] ?? $catKey;
+            return strlen($name) > 20 ? substr($name, 0, 20) . '...' : $name;
+        }, $categories);
+
+        $config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $labels,
+                'datasets' => $datasets
+            ],
+            'options' => [
+                'plugins' => [
+                    'title' => [
+                        'display' => true,
+                        'text' => 'Riesgo por Categoría según Sexo',
+                        'font' => ['size' => 16]
+                    ],
+                    'legend' => ['display' => true, 'position' => 'top']
+                ],
+                'scales' => [
+                    'y' => [
+                        'beginAtZero' => true,
+                        'title' => ['display' => true, 'text' => 'Puntuación Promedio']
+                    ]
+                ]
+            ]
+        ];
+
+        return 'https://quickchart.io/chart?c=' . urlencode(json_encode($config));
+    }
+
+    /**
+     * Generar gráfica de comparación por Edad usando QuickChart
+     */
+    private function generateCategoryByAgeChart($categoryAnalysis): string
+    {
+        if (!isset($categoryAnalysis['by_age']) || empty($categoryAnalysis['by_age'])) {
+            return '';
+        }
+
+        $ages = array_keys($categoryAnalysis['by_age']);
+        $categories = array_keys($categoryAnalysis['by_age'][$ages[0]] ?? []);
+
+        $datasets = [];
+        $colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6'];
+        $colorIndex = 0;
+
+        foreach ($ages as $age) {
+            $data = [];
+            foreach ($categories as $catKey) {
+                $data[] = $categoryAnalysis['by_age'][$age][$catKey]['avg_score'] ?? 0;
+            }
+
+            $datasets[] = [
+                'label' => $age . ' años',
+                'data' => $data,
+                'backgroundColor' => $colors[$colorIndex % count($colors)],
+            ];
+            $colorIndex++;
+        }
+
+        $labels = array_map(function($catKey) use ($categoryAnalysis, $ages) {
+            $name = $categoryAnalysis['by_age'][$ages[0]][$catKey]['name'] ?? $catKey;
+            return strlen($name) > 20 ? substr($name, 0, 20) . '...' : $name;
+        }, $categories);
+
+        $config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $labels,
+                'datasets' => $datasets
+            ],
+            'options' => [
+                'plugins' => [
+                    'title' => [
+                        'display' => true,
+                        'text' => 'Riesgo por Categoría según Edad',
+                        'font' => ['size' => 16]
+                    ],
+                    'legend' => ['display' => true, 'position' => 'top']
+                ],
+                'scales' => [
+                    'y' => [
+                        'beginAtZero' => true,
+                        'title' => ['display' => true, 'text' => 'Puntuación Promedio']
+                    ]
+                ]
+            ]
+        ];
+
+        return 'https://quickchart.io/chart?c=' . urlencode(json_encode($config));
+    }
+
+    /**
+     * Generar gráfica de comparación por Tipo de Contratación usando QuickChart
+     */
+    private function generateCategoryByContractChart($categoryAnalysis): string
+    {
+        if (!isset($categoryAnalysis['by_contract']) || empty($categoryAnalysis['by_contract'])) {
+            return '';
+        }
+
+        $contracts = array_keys($categoryAnalysis['by_contract']);
+        $categories = array_keys($categoryAnalysis['by_contract'][$contracts[0]] ?? []);
+
+        $datasets = [];
+        $colors = ['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+        $colorIndex = 0;
+
+        foreach ($contracts as $contract) {
+            $data = [];
+            foreach ($categories as $catKey) {
+                $data[] = $categoryAnalysis['by_contract'][$contract][$catKey]['avg_score'] ?? 0;
+            }
+
+            $datasets[] = [
+                'label' => $contract,
+                'data' => $data,
+                'backgroundColor' => $colors[$colorIndex % count($colors)],
+            ];
+            $colorIndex++;
+        }
+
+        $labels = array_map(function($catKey) use ($categoryAnalysis, $contracts) {
+            $name = $categoryAnalysis['by_contract'][$contracts[0]][$catKey]['name'] ?? $catKey;
+            return strlen($name) > 20 ? substr($name, 0, 20) . '...' : $name;
+        }, $categories);
+
+        $config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $labels,
+                'datasets' => $datasets
+            ],
+            'options' => [
+                'plugins' => [
+                    'title' => [
+                        'display' => true,
+                        'text' => 'Riesgo por Categoría según Tipo de Contratación',
+                        'font' => ['size' => 16]
+                    ],
+                    'legend' => ['display' => true, 'position' => 'top']
+                ],
+                'scales' => [
+                    'y' => [
+                        'beginAtZero' => true,
+                        'title' => ['display' => true, 'text' => 'Puntuación Promedio']
+                    ]
+                ]
+            ]
+        ];
+
+        return 'https://quickchart.io/chart?c=' . urlencode(json_encode($config));
+    }
+
 
 }

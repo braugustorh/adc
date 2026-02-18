@@ -716,9 +716,49 @@
         @if(isset($categoryAnalysis['by_sex']) && count($categoryAnalysis['by_sex']) > 0)
         <h3 style="margin-top: 30px;">5.2 Riesgo por Categoría según Sexo</h3>
 
-        @if(isset($chartPaths['sex']) && file_exists($chartPaths['sex']))
+        {{-- Debug: Información de la gráfica --}}
+        @php
+            if (isset($chartImages['sex'])) {
+                \Log::info('🖼️ BLADE: Verificando imagen de Sexo (base64)', [
+                    'hasBase64' => !empty($chartImages['sex']),
+                    'base64Length' => strlen($chartImages['sex']),
+                    'prefix' => substr($chartImages['sex'], 0, 30)
+                ]);
+            } elseif (isset($chartPaths['sex'])) {
+                \Log::info('🖼️ BLADE: Verificando imagen de Sexo (ruta)', [
+                    'path' => $chartPaths['sex'],
+                    'exists' => file_exists($chartPaths['sex']),
+                    'size' => file_exists($chartPaths['sex']) ? filesize($chartPaths['sex']) : 0,
+                    'readable' => file_exists($chartPaths['sex']) && is_readable($chartPaths['sex'])
+                ]);
+            } else {
+                \Log::warning('⚠️ BLADE: Ni chartImages[sex] ni chartPaths[sex] están definidos');
+            }
+        @endphp
+
+        @if(isset($chartImages['sex']) && !empty($chartImages['sex']))
+        <div style="text-align: center; margin: 20px 0;">
+            <img src="{{ $chartImages['sex'] }}" alt="Gráfica por Sexo" style="max-width: 100%; height: auto;">
+        </div>
+        @elseif(isset($chartPaths['sex']) && file_exists($chartPaths['sex']))
         <div style="text-align: center; margin: 20px 0;">
             <img src="{{ $chartPaths['sex'] }}" alt="Gráfica por Sexo" style="max-width: 100%; height: auto;">
+            <p style="font-size: 10px; color: #999; margin-top: 5px;">
+                Imagen: {{ basename($chartPaths['sex']) }} ({{ number_format(filesize($chartPaths['sex']) / 1024, 2) }} KB)
+            </p>
+        </div>
+        @else
+        <div style="text-align: center; margin: 20px 0; padding: 20px; background: #ffe5e5; border: 1px solid #ff0000;">
+            <p style="color: #ff0000; font-weight: bold;">⚠️ Gráfica no disponible</p>
+            <p style="font-size: 11px; color: #666;">
+                @if(!isset($chartImages['sex']) && !isset($chartPaths['sex']))
+                    chartImages['sex'] y chartPaths['sex'] no definidos
+                @elseif(!isset($chartImages['sex']))
+                    chartImages['sex'] no definido
+                @elseif(!file_exists($chartPaths['sex']))
+                    Archivo no existe: {{ $chartPaths['sex'] }}
+                @endif
+            </p>
         </div>
         @endif
 
@@ -755,9 +795,38 @@
         @if(isset($categoryAnalysis['by_age']) && count($categoryAnalysis['by_age']) > 0)
         <h3 style="margin-top: 30px;">5.3 Riesgo por Categoría según Rango de Edad</h3>
 
-        @if(isset($chartPaths['age']) && file_exists($chartPaths['age']))
+        {{-- Debug: Información de la gráfica --}}
+        @php
+            if (isset($chartImages['age'])) {
+                \Log::info('🖼️ BLADE: Verificando imagen de Edad (base64)', [
+                    'hasBase64' => !empty($chartImages['age']),
+                    'base64Length' => strlen($chartImages['age'])
+                ]);
+            } elseif (isset($chartPaths['age'])) {
+                \Log::info('🖼️ BLADE: Verificando imagen de Edad', [
+                    'path' => $chartPaths['age'],
+                    'exists' => file_exists($chartPaths['age']),
+                    'size' => file_exists($chartPaths['age']) ? filesize($chartPaths['age']) : 0
+                ]);
+            } else {
+                \Log::warning('⚠️ BLADE: chartImages[age] NO está definido');
+            }
+        @endphp
+
+        @if(isset($chartImages['age']) && !empty($chartImages['age']))
+        <div style="text-align: center; margin: 20px 0;">
+            <img src="{{ $chartImages['age'] }}" alt="Gráfica por Edad" style="max-width: 100%; height: auto;">
+        </div>
+        @elseif(isset($chartPaths['age']) && file_exists($chartPaths['age']))
         <div style="text-align: center; margin: 20px 0;">
             <img src="{{ $chartPaths['age'] }}" alt="Gráfica por Edad" style="max-width: 100%; height: auto;">
+            <p style="font-size: 10px; color: #999; margin-top: 5px;">
+                Imagen: {{ basename($chartPaths['age']) }} ({{ number_format(filesize($chartPaths['age']) / 1024, 2) }} KB)
+            </p>
+        </div>
+        @else
+        <div style="text-align: center; margin: 20px 0; padding: 20px; background: #ffe5e5; border: 1px solid #ff0000;">
+            <p style="color: #ff0000; font-weight: bold;">⚠️ Gráfica no disponible</p>
         </div>
         @endif
 
@@ -794,9 +863,38 @@
         @if(isset($categoryAnalysis['by_contract']) && count($categoryAnalysis['by_contract']) > 0)
         <h3 style="margin-top: 30px;">5.4 Riesgo por Categoría según Tipo de Contratación</h3>
 
-        @if(isset($chartPaths['contract']) && file_exists($chartPaths['contract']))
+        {{-- Debug: Información de la gráfica --}}
+        @php
+            if (isset($chartImages['contract'])) {
+                \Log::info('🖼️ BLADE: Verificando imagen de Contratación (base64)', [
+                    'hasBase64' => !empty($chartImages['contract']),
+                    'base64Length' => strlen($chartImages['contract'])
+                ]);
+            } elseif (isset($chartPaths['contract'])) {
+                \Log::info('🖼️ BLADE: Verificando imagen de Contratación', [
+                    'path' => $chartPaths['contract'],
+                    'exists' => file_exists($chartPaths['contract']),
+                    'size' => file_exists($chartPaths['contract']) ? filesize($chartPaths['contract']) : 0
+                ]);
+            } else {
+                \Log::warning('⚠️ BLADE: chartImages[contract] NO está definido');
+            }
+        @endphp
+
+        @if(isset($chartImages['contract']) && !empty($chartImages['contract']))
+        <div style="text-align: center; margin: 20px 0;">
+            <img src="{{ $chartImages['contract'] }}" alt="Gráfica por Contratación" style="max-width: 100%; height: auto;">
+        </div>
+        @elseif(isset($chartPaths['contract']) && file_exists($chartPaths['contract']))
         <div style="text-align: center; margin: 20px 0;">
             <img src="{{ $chartPaths['contract'] }}" alt="Gráfica por Contratación" style="max-width: 100%; height: auto;">
+            <p style="font-size: 10px; color: #999; margin-top: 5px;">
+                Imagen: {{ basename($chartPaths['contract']) }} ({{ number_format(filesize($chartPaths['contract']) / 1024, 2) }} KB)
+            </p>
+        </div>
+        @else
+        <div style="text-align: center; margin: 20px 0; padding: 20px; background: #ffe5e5; border: 1px solid #ff0000;">
+            <p style="color: #ff0000; font-weight: bold;">⚠️ Gráfica no disponible</p>
         </div>
         @endif
 

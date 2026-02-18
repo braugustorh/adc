@@ -4647,6 +4647,8 @@ class Nom035 extends Page
             $riskAnalysis = null;
             $categoryAnalysis = null;
             $chartPaths = [];
+            $chartImages = []; // Almacenar imágenes en base64 para PDF
+
 
             if (($this->level === 2 || $this->level === 3) && $normaId) {
                 $riskAnalysis = $this->generateSegmentedRiskAnalysis($colaboradores, $normaId, $sedeId);
@@ -4661,45 +4663,147 @@ class Nom035 extends Page
                     }
 
                     $timestamp = time();
+                    Log::info('📊 Iniciando generación de gráficas', [
+                        'tmpDir' => $tmpDir,
+                        'timestamp' => $timestamp
+                    ]);
 
                     // Gráfica por Sexo
                     if (isset($categoryAnalysis['by_sex']) && !empty($categoryAnalysis['by_sex'])) {
+                        Log::info('🔄 Generando gráfica por Sexo...', [
+                            'data' => $categoryAnalysis['by_sex']
+                        ]);
+
                         $sexChartUrl = $this->generateCategoryBySexChart($categoryAnalysis);
+                        Log::info('📍 URL de gráfica Sexo generada', [
+                            'url' => $sexChartUrl,
+                            'length' => strlen($sexChartUrl)
+                        ]);
+
                         if ($sexChartUrl) {
                             $sexChartPath = $tmpDir . '/chart_sex_' . $timestamp . '.png';
                             $imageContent = @file_get_contents($sexChartUrl);
+
+                            Log::info('🖼️ Descargando imagen Sexo', [
+                                'path' => $sexChartPath,
+                                'contentSize' => $imageContent ? strlen($imageContent) : 0
+                            ]);
+
                             if ($imageContent) {
                                 file_put_contents($sexChartPath, $imageContent);
                                 $chartPaths['sex'] = $sexChartPath;
+
+                                // Convertir a base64 para mejor compatibilidad con PDFShift
+                                $base64Image = base64_encode($imageContent);
+                                $chartImages['sex'] = 'data:image/png;base64,' . $base64Image;
+
+                                Log::info('✅ Imagen Sexo guardada correctamente', [
+                                    'path' => $sexChartPath,
+                                    'exists' => file_exists($sexChartPath),
+                                    'size' => file_exists($sexChartPath) ? filesize($sexChartPath) : 0,
+                                    'base64Length' => strlen($base64Image)
+                                ]);
+                            } else {
+                                Log::warning('⚠️ No se pudo descargar la imagen de Sexo');
                             }
                         }
+                    } else {
+                        Log::warning('⚠️ No hay datos de categoryAnalysis[by_sex]');
                     }
 
                     // Gráfica por Edad
                     if (isset($categoryAnalysis['by_age']) && !empty($categoryAnalysis['by_age'])) {
+                        Log::info('🔄 Generando gráfica por Edad...', [
+                            'data' => $categoryAnalysis['by_age']
+                        ]);
+
                         $ageChartUrl = $this->generateCategoryByAgeChart($categoryAnalysis);
+                        Log::info('📍 URL de gráfica Edad generada', [
+                            'url' => $ageChartUrl,
+                            'length' => strlen($ageChartUrl)
+                        ]);
+
                         if ($ageChartUrl) {
                             $ageChartPath = $tmpDir . '/chart_age_' . $timestamp . '.png';
                             $imageContent = @file_get_contents($ageChartUrl);
+
+                            Log::info('🖼️ Descargando imagen Edad', [
+                                'path' => $ageChartPath,
+                                'contentSize' => $imageContent ? strlen($imageContent) : 0
+                            ]);
+
                             if ($imageContent) {
                                 file_put_contents($ageChartPath, $imageContent);
                                 $chartPaths['age'] = $ageChartPath;
+
+                                // Convertir a base64 para mejor compatibilidad con PDFShift
+                                $base64Image = base64_encode($imageContent);
+                                $chartImages['age'] = 'data:image/png;base64,' . $base64Image;
+
+                                Log::info('✅ Imagen Edad guardada correctamente', [
+                                    'path' => $ageChartPath,
+                                    'exists' => file_exists($ageChartPath),
+                                    'size' => file_exists($ageChartPath) ? filesize($ageChartPath) : 0,
+                                    'base64Length' => strlen($base64Image)
+                                ]);
+                            } else {
+                                Log::warning('⚠️ No se pudo descargar la imagen de Edad');
                             }
                         }
+                    } else {
+                        Log::warning('⚠️ No hay datos de categoryAnalysis[by_age]');
                     }
 
                     // Gráfica por Contratación
                     if (isset($categoryAnalysis['by_contract']) && !empty($categoryAnalysis['by_contract'])) {
+                        Log::info('🔄 Generando gráfica por Contratación...', [
+                            'data' => $categoryAnalysis['by_contract']
+                        ]);
+
                         $contractChartUrl = $this->generateCategoryByContractChart($categoryAnalysis);
+                        Log::info('📍 URL de gráfica Contratación generada', [
+                            'url' => $contractChartUrl,
+                            'length' => strlen($contractChartUrl)
+                        ]);
+
                         if ($contractChartUrl) {
                             $contractChartPath = $tmpDir . '/chart_contract_' . $timestamp . '.png';
                             $imageContent = @file_get_contents($contractChartUrl);
+
+                            Log::info('🖼️ Descargando imagen Contratación', [
+                                'path' => $contractChartPath,
+                                'contentSize' => $imageContent ? strlen($imageContent) : 0
+                            ]);
+
                             if ($imageContent) {
                                 file_put_contents($contractChartPath, $imageContent);
                                 $chartPaths['contract'] = $contractChartPath;
+
+                                // Convertir a base64 para mejor compatibilidad con PDFShift
+                                $base64Image = base64_encode($imageContent);
+                                $chartImages['contract'] = 'data:image/png;base64,' . $base64Image;
+
+                                Log::info('✅ Imagen Contratación guardada correctamente', [
+                                    'path' => $contractChartPath,
+                                    'exists' => file_exists($contractChartPath),
+                                    'size' => file_exists($contractChartPath) ? filesize($contractChartPath) : 0,
+                                    'base64Length' => strlen($base64Image)
+                                ]);
+                            } else {
+                                Log::warning('⚠️ No se pudo descargar la imagen de Contratación');
                             }
                         }
+                    } else {
+                        Log::warning('⚠️ No hay datos de categoryAnalysis[by_contract]');
                     }
+
+                    Log::info('📊 Resumen de gráficas generadas', [
+                        'chartPaths' => $chartPaths,
+                        'chartImagesCount' => count($chartImages),
+                        'chartImagesKeys' => array_keys($chartImages)
+                    ]);
+                } else {
+                    Log::warning('⚠️ categoryAnalysis está vacío o es null');
                 }
             }
 
@@ -4711,6 +4815,17 @@ class Nom035 extends Page
                 $guiaType = 'II';
             }
 
+            Log::info('🎨 Preparando datos para la vista', [
+                'level' => $this->level,
+                'guiaType' => $guiaType,
+                'totalCollaborators' => $colaboradores->count(),
+                'hasRiskAnalysis' => !empty($riskAnalysis),
+                'hasCategoryAnalysis' => !empty($categoryAnalysis),
+                'chartPathsCount' => count($chartPaths),
+                'chartImagesCount' => count($chartImages),
+                'chartPaths' => $chartPaths
+            ]);
+
             $html = view('filament.pages.nom35.sociodemographic_profile', [
                 'company' => auth()->user()->sede->name ?? 'No definido',
                 'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
@@ -4720,9 +4835,12 @@ class Nom035 extends Page
                 'level' => $this->level,
                 'riskAnalysis' => $riskAnalysis,
                 'categoryAnalysis' => $categoryAnalysis,
-                'chartPaths' => $chartPaths,
+                'chartPaths' => $chartPaths, // Mantener para compatibilidad
+                'chartImages' => $chartImages, // Usar base64 para el PDF
                 'guiaType' => $guiaType,
             ])->render();
+
+            Log::info('✅ HTML generado, longitud: ' . strlen($html) . ' caracteres');
 
             // Configurar payload para PDFShift
             $payload = [

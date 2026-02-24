@@ -1438,13 +1438,49 @@ class Nom035 extends Page
             //*+++++++++++++  Esta Parte descarga el word   ++++++++++++++++*/
 
         } catch (\Exception $e) {
-            // Manejo de errores
-            // Log::error($e->getMessage());
-            Notification::make()
-                ->title('Error al generar PDF')
-                ->body('No se pudo generar el PDF: ' . $e->getMessage())
-                ->danger()
-                ->send();
+            /*
+                * En caso de error, por el vencimiento de tokens se hace un intento con otra apikey
+                * Aqui la ejecución:
+            */
+            //********    Se implementa la conversión a PDF con IlovePDF
+            try{
+                $api = new Ilovepdf('project_public_42a3dc90117b0b0c878bf5dadef062ab_uETqR23adecde4907cf9f9b4c0e38b9ce8a01',
+                    'secret_key_5e9597987ed39e06abf3239cef99f619_0A7IXb2567f52af9f60625139c59875993d28');
+                $task = $api->newTask('officepdf');
+                $file = $task->addFile($rutaTemporal);
+                $task->execute();
+
+                // 1. Definimos explícitamente la carpeta de destino usando storage_path
+                $outputDir = storage_path('app/livewire-tmp');
+
+                // 2. Le decimos a IlovePDF que descargue el archivo en esa carpeta
+                $task->download($outputDir);
+
+                // 3. Construimos la ruta completa del nuevo PDF
+                // IlovePDF guarda el archivo con el mismo nombre pero extensión .pdf
+                $nombrePdf = str_replace('.docx', '.pdf', $nombreArchivoSalida);
+                $rutaPdf = $outputDir . '/' . $nombrePdf;
+
+                // 4. Verificamos y descargamos
+                if (file_exists($rutaPdf)) {
+                    // Opcional: Borrar el DOCX temporal para no llenar el servidor
+                    if(file_exists($rutaTemporal)) { unlink($rutaTemporal); }
+
+                    return response()->download($rutaPdf)->deleteFileAfterSend(true);
+                } else {
+                    throw new \Exception("El archivo PDF no se generó correctamente.");
+                }
+            }catch (\Exception $e) {
+                // Manejo de errores
+                // Log::error($e->getMessage());
+                Notification::make()
+                    ->title('Error al generar PDF')
+                    ->body('No se pudo generar el PDF: ' . $e->getMessage())
+                    ->danger()
+                    ->send();
+            }
+
+
         }
 
         /*

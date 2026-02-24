@@ -3395,7 +3395,7 @@ class Nom035 extends Page
             $this->fillTop3DomainsG2($templateProcessor);
 
             // Guardar Word temporal
-            $nombreArchivoSalida='informe_G2_' . time() . '.docx';
+            $nombreArchivoSalida='informe_GII_' . time() . '.docx';
             $tempWordPath = storage_path('app/livewire-tmp/'.$nombreArchivoSalida);
             $templateProcessor->saveAs($tempWordPath);
 
@@ -3408,6 +3408,19 @@ class Nom035 extends Page
             return response()->download($pdfPath)->deleteFileAfterSend();
 
         } catch (\Exception $e) {
+            try {
+                // Intentar con la segunda cuenta de IlovePDF
+                $pdfPath = $this->convertToPdfV2($tempWordPath, $nombreArchivoSalida);
+                return response()->download($pdfPath)->deleteFileAfterSend();
+
+            } catch (\Exception $e2) {
+                \Log::error('Error generando informe GII: ' . $e2->getMessage());
+                Notification::make()
+                    ->title('Error al generar informe')
+                    ->body($e->getMessage())
+                    ->danger()
+                    ->send();
+            }
             Notification::make()
                 ->title('Error al generar informe')
                 ->body($e->getMessage())
@@ -3498,7 +3511,7 @@ class Nom035 extends Page
             $level = $this->getTotalRiskLevel($score);
 
             match($level) {
-                'Muy alto' => $counters['very_high']++,
+                'Muy Alto' => $counters['very_high']++,
                 'Alto' => $counters['high']++,
                 'Medio' => $counters['medium']++,
                 'Bajo' => $counters['down']++,
@@ -3984,7 +3997,40 @@ class Nom035 extends Page
         return $rutaPdf; // ✅ Solo devuelve la ruta
 
     }
+    private function convertToPdfV2(string $wordPath,string $nombreArchivoSalida): string
+    {
 
+        $ilovepdf = new Ilovepdf('project_public_42a3dc90117b0b0c878bf5dadef062ab_uETqR23adecde4907cf9f9b4c0e38b9ce8a01',
+            'secret_key_5e9597987ed39e06abf3239cef99f619_0A7IXb2567f52af9f60625139c59875993d28');
+
+        $task = $ilovepdf->newTask('officepdf');
+        $file = $task->addFile($wordPath);
+        $task->execute();
+
+
+        // 1. Definimos explícitamente la carpeta de destino usando storage_path
+        $outputDir = storage_path('app/livewire-tmp');
+
+        // 2. Le decimos a IlovePDF que descargue el archivo en esa carpeta
+        $task->download($outputDir);
+
+        // 3. Construimos la ruta completa del nuevo PDF
+        // IlovePDF guarda el archivo con el mismo nombre pero extensión .pdf
+        $nombrePdf = str_replace('.docx', '.pdf', $nombreArchivoSalida);
+        $rutaPdf = $outputDir . '/' . $nombrePdf;
+        // Limpiar el DOCX temporal
+        if (file_exists($wordPath)) {
+            @unlink($wordPath);
+        }
+
+        // Verificar que el PDF existe
+        if (!file_exists($rutaPdf)) {
+            throw new \Exception("El archivo PDF no se generó correctamente.");
+        }
+
+        return $rutaPdf; // ✅ Solo devuelve la ruta
+
+    }
     // INFORME DE RESULTADOS PARA
     //DOMINIOS
     // Enero 2026
@@ -4024,6 +4070,21 @@ class Nom035 extends Page
             return response()->download($pdfPath)->deleteFileAfterSend();
 
         } catch (\Exception $e) {
+
+            try {
+                // Intentar con la segunda cuenta de IlovePDF
+                $pdfPath = $this->convertToPdfV2($rutaTemporal, $nombreArchivoSalida);
+                return response()->download($pdfPath)->deleteFileAfterSend();
+
+            } catch (\Exception $e2) {
+                \Log::error('Error generando informe GIII: ' . $e2->getMessage());
+                Notification::make()
+                    ->title('Error al generar informe')
+                    ->body($e->getMessage())
+                    ->danger()
+                    ->send();
+            }
+
             \Log::error('Error generando informe GIII: ' . $e->getMessage());
             Notification::make()
                 ->title('Error al generar informe')

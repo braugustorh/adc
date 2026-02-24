@@ -1531,6 +1531,7 @@ class Nom035 extends Page
 
         // Verificar si hay empleados identificados
         $generalResults = [];
+        $individualEmployees = [];
         $currentUserId = null;
         $section1 = 'No';
         $section2 = 0;

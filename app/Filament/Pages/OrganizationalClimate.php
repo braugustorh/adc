@@ -32,28 +32,42 @@ class OrganizationalClimate extends Page
     public $disabledArea=false;
     public function mount()
     {
-        if(Campaign::whereStatus('Activa')->exists()){
-            //Puede haber dos campañas activas al mismo tiempo
-            //Agregar código para evitar hallar la campaña que tenga el clima organizacional como evaluación, si hay dos, entonces seleccionar la mas reciente
-            //$campaigns= Campaign::whereStatus('Activa')->first();
-            $this->campaigns= Campaign::whereStatus('Activa')->first();
-            //AQUI CÓDIGO PARA REVISAR SI YA ESTA CONTESTADA LA EVALUACION DE ESA CAMPAÑA
-            $this->user=auth()->user()?->id;
-            //Vamos a verificar que el usuario no haya contestado la evaluación de clima organizacional
+        $user = auth()->user();
+        $this->user = $user->id;
 
-            if (ClimateOrganizationalResponses::where('campaign_id',$this->campaigns->id)->where('user_id',$this->user)->exists()) {
+        // Buscar campaña activa, filtrando por la sede del usuario y el tipo de evaluación
+        $campaign = Campaign::where('status', 'Activa')
+            ->whereHas('sedes', function ($query) use ($user) {
+                $query->where('sede_id', $user->sede_id);
+            })
+            ->whereHas('evaluations', function ($query) {
+                // Verificamos que exista el tipo de evaluación en la tabla pivot campaign_evaluation
+                $query->where('name', 'Clima Organizacional');
+            })
+            ->latest() // Seleccionar la más reciente si hay duplicados
+            ->first();
+
+        if ($campaign) {
+            $this->campaigns = $campaign;
+
+            // Verificar si el usuario ya contestó la evaluación de esta campaña
+            $hasResponse = ClimateOrganizationalResponses::where('campaign_id', $this->campaigns->id)
+                ->where('user_id', $this->user)
+                ->exists();
+
+            if ($hasResponse) {
+                // Si ya contestó, deshabilitamos el área
                 $this->disabledArea = false;
-            }else{
+            } else {
+                // Si no ha contestado, habilitamos el área
                 $this->disabledArea = true;
             }
 
-
-
-        }else{
-            $this->disabledArea =false;
-            $this->campaigns=collect();
+        } else {
+            // No hay campaña activa válida para este usuario/sede/tipo
+            $this->campaigns = collect();
+            $this->disabledArea = false; // Deshabilitar área por defecto
         }
-
     }
 
 }

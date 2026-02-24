@@ -1147,7 +1147,7 @@
             </x-slot>
             <div>
                 <p>
-                    Se han identificado <strong>{{$norma->first()?->identifiedCollaborators()->where('type_identification','encuesta')->count()??0}}</strong> colaboradores que han sido expuestos a eventos traumáticos severos.
+                    Se han identificado <strong>{{$norma->first()?->identifiedCollaborators()->where('type_identification','encuesta')->where('sede_id',auth()->user()->sede_id)->count()??0}}</strong> colaboradores que han sido expuestos a eventos traumáticos severos.
                     Descarga el resumen y la canalización de los colaboradores identificados para su atención.
                 </p>
             </div>

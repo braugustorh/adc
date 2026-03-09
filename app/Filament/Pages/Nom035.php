@@ -1719,7 +1719,7 @@ class Nom035 extends Page
         ];
         //dd($this->generalResultsGuideIIICategory);
         $html=view('filament.pages.nom35.risk_factor_report', [
-            'company' => auth()->user()->sede->name ?? 'No definido', //OK
+            'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
             'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'guia' => 'III',
             'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
@@ -1792,7 +1792,7 @@ class Nom035 extends Page
         ];
 
          $html=view('filament.pages.nom35.risk_factor_report', [
-            'company' => auth()->user()->sede->name ?? 'No definido', //OK
+            'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
             'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
              'guia' => 'II',
@@ -3078,7 +3078,7 @@ class Nom035 extends Page
 
 
         $html=view('filament.pages.nom35.risk_factor_report_cover', [
-            'company' => auth()->user()->sede->name ?? 'No definido', //OK
+            'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
             'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'responsesTotalG2' => $this->responsesTotalG2,
@@ -3217,7 +3217,7 @@ class Nom035 extends Page
 
 
         $html=view('filament.pages.nom35.risk_factor_report_cover', [
-            'company' => auth()->user()->sede->name ?? 'No definido', //OK
+            'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
             'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'responsesTotalG2' => $this->totalResponsesG3,

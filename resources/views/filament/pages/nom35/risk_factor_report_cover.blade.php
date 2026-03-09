@@ -211,7 +211,7 @@
     <h1>Carátula General</h1>
     <p>Guía de Referencia {{$guia}} - Norma Oficial Mexicana NOM-035-STPS-2018</p>
     <p>Resumen de la aplicación de cuestionario {{$guia}} Para identificar factores de Riesgo Psicosocial {{$complement}}</p>
-    <p>Entre 16 y 50 colaboradores</p>
+    <p>{{$guia==='III'?'Más de 50 colaboradores':'Entre 16 y 50 colaboradores'}}</p>
 </div>
 <div class="top-section">
     <div class="info-col">
@@ -222,7 +222,7 @@
             <strong>Aplicación:</strong> {{ $period }}
         </div>
         <div class="info-item">
-            <strong>Colaboradores:</strong> Entre 16 y 50
+            <strong>Colaboradores:</strong>{{$guia==='III'?'Más de 50':'Entre 16 y 50'}}
         </div>
     </div>
 

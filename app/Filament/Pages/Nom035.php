@@ -4166,7 +4166,12 @@ class Nom035 extends Page
         // 4. EJECUTAMOS EL CLONADO DE BLOQUE
         // 'bloque_sedes' debe coincidir con las etiquetas en tu Word
         $template->cloneBlock('bloque_sedes', 0, true, false, $replacements);
-        $colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)->count();
+        $periodo=Nom035Process::where('norma_id',$this->norma->id)->where('sede_id',$user->sede_id)->first()->start_date??'N/A';
+        $colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)->where('created_at','<=',$periodo)->count();
+        $total_colab=Nom035Process::where('norma_id',$this->norma->id)->where('sede_id',$user->sede_id)->first()->total_employees??0;
+        $hombres=$colaboradores>0?User::where('sede_id', $user->sede_id)->where('status','=',1)->where('gender','=','Masculino')->count():0;
+        $mujeres=$colaboradores>0?User::where('sede_id', $user->sede_id)->where('status','=',1)->where('gender','=','Femenino')->count():0;
+
 
         $recomendaciones = [
             'Muy Alto' =>'Se requiere realizar el análisis de cada categoría y dominio para establecer las acciones de intervención apropiadas, mediante un Programa de intervención que deberá incluir evaluaciones específicas1, y contemplar campañas de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',
@@ -4180,8 +4185,11 @@ class Nom035 extends Page
         $template->setValue('guia_name', 'Identificación y Análisis de los Factores de Riesgo Psicosocial y Evaluación del Entorno Organizacional en Centros de Trabajo');
         $template->setValue('guia_numeral', 'III.3');
         $template->setValue('fecha', now()->locale('es')->isoFormat('D [de] MMMM [de] YYYY'));
-        $template->setValue('sede_name', $user->sede?->name ?? 'N/A');
-
+        $template->setValue('sede_name', $user->sede?->company_name ?? 'N/A');
+        $template->setValue('periodo', $periodo);
+        $template->setValue('total_colab', $total_colab);
+        $template->setValue('hombres', $hombres);
+        $template->setValue('mujeres', $mujeres);
         $template->setValue('count_colab', $colaboradores??'N/A');
         $template->setValue('count_eva', $this->totalResponsesG3);
         $template->setValue('cali', number_format($this->calificacionG3, 2));

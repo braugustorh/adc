@@ -4168,7 +4168,7 @@ class Nom035 extends Page
         $template->cloneBlock('bloque_sedes', 0, true, false, $replacements);
         $periodo=Nom035Process::where('id',$this->norma->id)->where('sede_id',$user->sede_id)->first()->start_date??'N/A';
         $colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)->where('created_at','<=',$periodo)->count();
-        $total_colab=Nom035Process::where('norma_id',$this->norma->id)->where('sede_id',$user->sede_id)->first()->total_employees??0;
+        $total_colab=Nom035Process::where('id',$this->norma->id)->where('sede_id',$user->sede_id)->first()->total_employees??0;
         $hombres=$colaboradores>0?User::where('sede_id', $user->sede_id)->where('status','=',1)->where('gender','=','Masculino')->count():0;
         $mujeres=$colaboradores>0?User::where('sede_id', $user->sede_id)->where('status','=',1)->where('gender','=','Femenino')->count():0;
 

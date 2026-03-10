@@ -4166,6 +4166,7 @@ class Nom035 extends Page
         // 4. EJECUTAMOS EL CLONADO DE BLOQUE
         // 'bloque_sedes' debe coincidir con las etiquetas en tu Word
         $template->cloneBlock('bloque_sedes', 0, true, false, $replacements);
+
         $periodo=Nom035Process::where('id',$this->norma->id)->where('sede_id',$user->sede_id)->first()->start_date??'N/A';
         $colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)->where('created_at','<=',$periodo)->count();
         $total_colab=Nom035Process::where('id',$this->norma->id)->where('sede_id',$user->sede_id)->first()->total_employees??0;
@@ -4190,7 +4191,7 @@ class Nom035 extends Page
         $template->setValue('total_colab', $total_colab);
         $template->setValue('hombres', $hombres);
         $template->setValue('mujeres', $mujeres);
-        $template->setValue('count_colab', $colaboradores??'N/A');
+       // $template->setValue('count_colab', $colaboradores??'N/A');
         $template->setValue('count_eva', $this->totalResponsesG3);
         $template->setValue('cali', number_format($this->calificacionG3, 2));
         $template->setValue('riesgo', $this->resultCuestionarioG3);

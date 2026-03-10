@@ -4162,8 +4162,6 @@ class Nom035 extends Page
                 'actividad'    => $texto_actividad
             ];
         }
-        Log::info('Replacements: ' . print_r($replacements, true));
-
         // 4. EJECUTAMOS EL CLONADO DE BLOQUE
         // 'bloque_sedes' debe coincidir con las etiquetas en tu Word
         $template->cloneBlock('bloque_sedes', 0, true, false, $replacements);

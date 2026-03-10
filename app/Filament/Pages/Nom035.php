@@ -4162,6 +4162,7 @@ class Nom035 extends Page
                 'actividad'    => $texto_actividad
             ];
         }
+        Log::info('Replacements: ' . print_r($replacements, true));
 
         // 4. EJECUTAMOS EL CLONADO DE BLOQUE
         // 'bloque_sedes' debe coincidir con las etiquetas en tu Word
@@ -4187,7 +4188,8 @@ class Nom035 extends Page
         $template->setValue('guia_numeral', 'III.3');
         $template->setValue('fecha', now()->locale('es')->isoFormat('D [de] MMMM [de] YYYY'));
         $template->setValue('sede_name', $user->sede?->company_name ?? 'N/A');
-        $template->setValue('periodo', $periodo);
+
+        $template->setValue('periodo', $periodo instanceof \Carbon\Carbon ? $periodo->locale('es')->isoFormat('D [de] MMMM [de] YYYY') : $periodo);
         $template->setValue('total_colab', $total_colab);
         $template->setValue('hombres', $hombres);
         $template->setValue('mujeres', $mujeres);

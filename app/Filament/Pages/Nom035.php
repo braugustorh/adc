@@ -4162,9 +4162,55 @@ class Nom035 extends Page
                 'actividad'    => $texto_actividad
             ];
         }
+        if (empty($replacements)) {
+           \Log::warning('Nom035 G3 bloque_sedes sin replacements', [
+                'user_id' => $user->id ?? null,
+                'sede_id' => $user->sede_id ?? null,
+                'norma_id' => $this->norma->id ?? null,
+                'ids_a_consultar' => $ids_a_consultar,
+                'sedes_count' => $sedes->count(),
+            ]);
+
+        }
+        /*
+        \Log::info('Nom035 G3 bloque_sedes antes de cloneBlock', [
+            'user_id' => $user->id ?? null,
+            'sede_id' => $user->sede_id ?? null,
+            'norma_id' => $this->norma->id ?? null,
+            'ids_a_consultar' => $ids_a_consultar,
+            'sedes_count' => $sedes->count(),
+            'replacements_count' => count($replacements),
+            'first_replacement' => $replacements[0] ?? null,
+        ]);
+        */
         // 4. EJECUTAMOS EL CLONADO DE BLOQUE
         // 'bloque_sedes' debe coincidir con las etiquetas en tu Word
-        $template->cloneBlock('bloque_sedes', 0, true, false, $replacements);
+
+        try {
+            $template->cloneRowAndSetValues('company_name', $replacements);
+            /*
+            \Log::info('Nom035 G3 bloque_sedes despues de cloneBlock', [
+                'user_id' => $user->id ?? null,
+                'sede_id' => $user->sede_id ?? null,
+                'norma_id' => $this->norma->id ?? null,
+                'replacements_count' => count($replacements),
+                'replacement_keys' => array_keys($replacements[0] ?? []),
+                'company_names' => array_column($replacements, 'company_name'),
+            ]); */
+        } catch (\Throwable $e) {
+          /*  \Log::error('Nom035 G3 error en cloneBlock bloque_sedes', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'user_id' => $user->id ?? null,
+                'sede_id' => $user->sede_id ?? null,
+                'norma_id' => $this->norma->id ?? null,
+                'replacements_count' => count($replacements),
+                'first_replacement' => $replacements[0] ?? null,
+            ]);
+            */
+            throw $e;
+        }
 
         $periodo=Nom035Process::where('id',$this->norma->id)->where('sede_id',$user->sede_id)->first()->start_date??'N/A';
         $colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)->where('created_at','<=',$periodo)->count();

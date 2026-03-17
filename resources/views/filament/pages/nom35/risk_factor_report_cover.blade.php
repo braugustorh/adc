@@ -229,7 +229,7 @@
     <div class="score-col">
         <div class="final-score">
             <h2>Calificación Final</h2>
-            <div class="score">{{$calificacionG2}}</div>
+            <div class="score">{{number_format($calificacionG2,2)}}</div>
             <span class="risk-level {{ strtolower(str_replace(' ', '-', $resultCuestionario)) }}">{{ $resultCuestionario }}</span>
         </div>
     </div>
@@ -270,7 +270,7 @@
             @foreach ($categories as $categoria)
                 <tr>
                     <td>{{ $categoria['name'] }}</td>
-                    <td>{{ $categoria['result'] }}</td>
+                    <td>{{ number_format($categoria['result'],2) }}</td>
                     <td><span class="risk-level {{ strtolower(str_replace(' ', '-', $categoria['risk_level'])) }}">{{ $categoria['risk_level'] }}</span></td>
                 </tr>
             @endforeach
@@ -291,7 +291,7 @@
             @foreach ($domains as $dominio)
                 <tr>
                     <td>{{ $dominio['name'] }}</td>
-                    <td>{{ $dominio['result'] }}</td>
+                    <td>{{ number_format($dominio['result'],2) }}</td>
                     <td><span class="risk-level {{ strtolower(str_replace(' ', '-', $dominio['risk_level'])) }}">{{ $dominio['risk_level'] }}</span></td>
                 </tr>
             @endforeach

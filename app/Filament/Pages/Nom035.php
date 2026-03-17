@@ -601,7 +601,8 @@ class Nom035 extends Page
         $countCollabs=$queryResG3->distinct('user_id')->count('user_id');
         $this->totalResponsesG3=$countCollabs;
         $this->calificacionG3 = $this->totalResponsesG3 > 0 ? $calificacion / $this->totalResponsesG3 : 0;
-
+        $this->resultCuestionarioG3 = $this->getTotalRiskLevelG3($this->calificacionG3);
+        /*
 
         if($calificacion>=140){
             $this->resultCuestionarioG3='Muy Alto';
@@ -614,6 +615,7 @@ class Nom035 extends Page
         }elseif ($calificacion<50) {
             $this->resultCuestionarioG3='Despreciable';
         }
+        */
         //Se trabaja con los resultados generales de la guía III
         $this->generalResultsGuideIII = [];
         $responses= RiskFactorSurveyOrganizational::where('norma_id', $this->norma->id)

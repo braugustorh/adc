@@ -162,7 +162,7 @@
         .bar-label {
             width: 250px;
             text-align: right;
-            font-size: 11px;
+            font-size: 12px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -189,7 +189,7 @@
             right: 10px;
             top: 0;
             color: #333;
-            font-size: 11px;
+            font-size: 12px;
             line-height: 20px;
             z-index: 1; /* Asegura que el valor esté sobre el fill */
         }
@@ -299,7 +299,8 @@
         </table>
     </div>
 </div>
-
+<!-- Gráficos -->
+<div style="page-break-before: always;"></div>
 <!-- Gráficos -->
 <div class="charts-container">
     <div class="chart-section">

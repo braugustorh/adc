@@ -819,7 +819,7 @@
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 20px;" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md p-4 mb-5">
-            <p>Puntos Obtenidos:<strong>{{$calificacion}}</strong> </p>
+            <p>Puntos Obtenidos:<strong>{{number_format($calificacion,2)}}</strong> </p>
             <p>Calificación Final: <strong>{{$resultCuestionario}} </strong> </p>
             <p>Tests Realizados: <strong>{{$responsesTotalG2}}</strong></p>
         </div>

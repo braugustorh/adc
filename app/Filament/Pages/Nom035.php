@@ -1643,7 +1643,7 @@ class Nom035 extends Page
 
         // Pasar las variables directamente, no como arreglo
         $html = view('filament.pages.nom35.identification_report', [
-            'company' => auth()->user()->sede->name ?? 'No definido', //OK
+            'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
             'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'totalSurveys' => $this->colabResponsesG1,

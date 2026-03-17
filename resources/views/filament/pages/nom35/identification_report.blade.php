@@ -374,7 +374,7 @@
             <div class="pie-legend">
                 <div class="legend-item">
                     <div class="legend-color no-clinical"></div>
-                   <span>No Requiere Valoración ({{$percent}}%)</span>
+                   <span>No Requiere Valoración ({{ isset($noClinicalPercent) && $noClinicalPercent !== null ?$noClinicalPercent :'0' }}%)</span>
                 </div>
                 <div class="legend-item">
                     <div class="legend-color clinical"></div>

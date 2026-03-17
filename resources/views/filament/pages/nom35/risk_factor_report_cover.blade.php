@@ -162,7 +162,7 @@
         .bar-label {
             width: 250px;
             text-align: right;
-            font-size: 12px;
+            font-size: 11px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -189,14 +189,14 @@
             right: 10px;
             top: 0;
             color: #333;
-            font-size: 12px;
+            font-size: 11px;
             line-height: 20px;
             z-index: 1; /* Asegura que el valor esté sobre el fill */
         }
         .footer {
             text-align: center;
             margin-top: 40px;
-            font-size: 14px;
+            font-size: 12px;
             color: #666;
         }
         @page {
@@ -313,7 +313,7 @@
                     <div class="bar-label">{{ $categoria['name'] }}</div>
                     <div class="bar"> <!-- Ancho fijo para el contenedor -->
                         <div class="bar-fill" style="width: {{ ($categoria['result'] / $maxCategoria) * 90 }}%;"></div>
-                        <div class="bar-value">{{ $categoria['result'] }}</div>
+                        <div class="bar-value">{{ number_format($categoria['result'],2) }}</div>
                     </div>
                 </div>
             @endforeach
@@ -330,7 +330,7 @@
                     <div class="bar-label">{{ $dominio['name'] }}</div>
                     <div class="bar">
                         <div class="bar-fill" style="width: {{ ($dominio['result'] / $maxDominio) * 90 }}%;"></div>
-                        <div class="bar-value">{{ $dominio['result'] }}</div>
+                        <div class="bar-value">{{number_format($dominio['result'],2) }}</div>
                     </div>
                 </div>
             @endforeach

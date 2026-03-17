@@ -300,7 +300,7 @@
     </div>
 </div>
 <!-- Gráficos -->
-@if($guia!=='III')
+@if($guia==='III')
     <div style="page-break-before: always;"></div>
 @endif
 

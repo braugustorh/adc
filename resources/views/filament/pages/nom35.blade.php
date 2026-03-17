@@ -997,7 +997,7 @@
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 20px;">
-            <p>Puntos Obtenidos: <strong>{{$calificacionG3}}</strong></p>
+            <p>Puntos Obtenidos: <strong>{{number_format($calificacionG3,2)}}</strong></p>
             <p>Determinación: <strong>{{$resultCuestionarioG3}}</strong></p>
             <p>Tests Realizados: <strong>{{$totalResponsesG3}}</strong>
             <p>Tests Restantes: <strong>{{$colabs->count() - $totalResponsesG3}}</strong></p>

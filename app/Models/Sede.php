@@ -20,6 +20,8 @@ class Sede extends Model
         'cp',
         'status',
         'open_positions',
+        'responsible',
+        'card_id',
     ];
 
     public function user()

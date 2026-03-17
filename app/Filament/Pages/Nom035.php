@@ -3518,6 +3518,8 @@ class Nom035 extends Page
         $template->setValue('guia_numeral', 'II.3');
         $template->setValue('fecha', now()->locale('es')->isoFormat('D [de] MMMM [de] YYYY'));
         $template->setValue('sede_name', $user->sede?->name ?? 'N/A');
+        $template->setValue('responsable',$user->sede?->responsible ?? 'Claudia Leticia Esparza Araujo');
+        $template->setValue('cedula', $user->sede?->card_id ?? '8128209');
 
         $template->setValue('count_colab', $colaboradores??'N/A');
         $template->setValue('count_eva', $this->responsesTotalG2);
@@ -4164,6 +4166,7 @@ class Nom035 extends Page
                 'actividad'    => $texto_actividad
             ];
         }
+        /*
         if (empty($replacements)) {
            \Log::warning('Nom035 G3 bloque_sedes sin replacements', [
                 'user_id' => $user->id ?? null,
@@ -4174,6 +4177,7 @@ class Nom035 extends Page
             ]);
 
         }
+        */
         /*
         \Log::info('Nom035 G3 bloque_sedes antes de cloneBlock', [
             'user_id' => $user->id ?? null,
@@ -4234,6 +4238,8 @@ class Nom035 extends Page
         $template->setValue('guia_numeral', 'III.3');
         $template->setValue('fecha', now()->locale('es')->isoFormat('D [de] MMMM [de] YYYY'));
         $template->setValue('sede_name', $user->sede?->company_name ?? 'N/A');
+        $template->setValue('responsable',$user->sede?->responsible ?? 'Claudia Leticia Esparza Araujo');
+        $template->setValue('cedula', $user->sede?->card_id ?? '8128209');
 
         $template->setValue('periodo', $periodo instanceof \Carbon\Carbon ? $periodo->locale('es')->isoFormat('D [de] MMMM [de] YYYY') : $periodo);
         $template->setValue('total_colab', $total_colab);

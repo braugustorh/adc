@@ -1640,9 +1640,6 @@ class Nom035 extends Page
                 'requires_clinical' => $section2 >= 1 || $section3 >= 3 || $section4 >= 2,
             ];
         }
-
-
-
         // Pasar las variables directamente, no como arreglo
         $html = view('filament.pages.nom35.identification_report', [
             'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
@@ -1651,9 +1648,9 @@ class Nom035 extends Page
             'totalSurveys' => $this->colabResponsesG1,
             'noClinical' => $this->colabResponsesG1 - $identifiedEmployees->count(),
             'clinical' => $identifiedEmployees->count(),
-            'noClinicalPercent' => $identifiedEmployees->count() > 0 ?
+            'noClinicalPercent' => $this->colabResponsesG1 > 0 ?
                 number_format((($this->colabResponsesG1 - $identifiedEmployees->count()) / $this->colabResponsesG1 ) * 100, 1) : '0',
-            'clinicalPercent' => $identifiedEmployees->count() > 0 ?
+            'clinicalPercent' => $this->colabResponsesG1 > 0 ?
                 number_format(($identifiedEmployees->count() / $this->colabResponsesG1 ) * 100, 1) : '0',
             'employees' => $employees,
             'individualEmployees' => $individualEmployees,

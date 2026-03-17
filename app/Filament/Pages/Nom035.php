@@ -2314,6 +2314,7 @@ class Nom035 extends Page
             'Content-Type' => 'application/json',
             'X-API-Key'    => config('services.pdfshift.api_key'),
         ])
+            ->timeout(90)
             ->withBody(json_encode($payload, JSON_UNESCAPED_UNICODE), 'application/json')
             ->post('https://api.pdfshift.io/v3/convert/pdf');
 

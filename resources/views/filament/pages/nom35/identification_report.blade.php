@@ -147,8 +147,8 @@
             height: 200px;
             border-radius: 50%;
             background: conic-gradient(
-                #38a169 0% {{$noClinicalPercent}}%,
-                #e53e3e {{$noClinicalPercent}}% 100%
+                #38a169 0% {{ isset($noClinicalPercent) && $noClinicalPercent !== null ? ($noClinicalPercent == 0 ? '100' : $noClinicalPercent) : '0' }}%,
+                #e53e3e {{ isset($noClinicalPercent) && $noClinicalPercent !== null ? ($noClinicalPercent == 0 ? '100' : $noClinicalPercent) : '0' }}% 100%
             );
             position: relative;
             margin: 0 auto 20px;
@@ -335,7 +335,7 @@
     <div class="company-info">
         <div class="info-item">
             <span class="info-label">Nombre de la empresa</span>
-            <span class="info-value">{{ $company ?? 'ADC Administadora de Centrales' }}</span>
+            <span class="info-value">{{ $company ?? 'ADC Administradora de Centrales' }}</span>
         </div>
         <div class="info-item">
             <span class="info-label">Fecha de reporte</span>
@@ -374,11 +374,11 @@
             <div class="pie-legend">
                 <div class="legend-item">
                     <div class="legend-color no-clinical"></div>
-                    <span>No Requiere Valoración ({{ $noClinicalPercent ?? '81.8' }}%)</span>
+                   <span>No Requiere Valoración ({{ isset($noClinicalPercent) && $noClinicalPercent !== null ? ($noClinicalPercent == 0 ? '100' : $noClinicalPercent) : '0' }}%)</span>
                 </div>
                 <div class="legend-item">
                     <div class="legend-color clinical"></div>
-                    <span>Requiere Valoración ({{ $clinicalPercent ?? '18.2' }}%)</span>
+                    <span>Requiere Valoración ({{ isset($clinicalPercent) && $clinicalPercent !== null ?($clinicalPercent==0?0:$clinicalPercent) :'0' }}%)</span>
                 </div>
             </div>
         </div>

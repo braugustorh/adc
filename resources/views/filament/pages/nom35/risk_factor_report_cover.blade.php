@@ -300,7 +300,10 @@
     </div>
 </div>
 <!-- Gráficos -->
-<div style="page-break-before: always;"></div>
+@if($guia!=='III')
+    <div style="page-break-before: always;"></div>
+@endif
+
 <!-- Gráficos -->
 <div class="charts-container">
     <div class="chart-section">

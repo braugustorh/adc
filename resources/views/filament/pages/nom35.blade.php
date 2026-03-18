@@ -426,7 +426,7 @@
                         </div>
 
                     </x-filament::section>
-                @elseif($level===3 || $level===1)
+                @elseif($level===3)
                     <x-filament::section class="mb-4"
                                          collapsible
                                          collapsed

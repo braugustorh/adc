@@ -3938,33 +3938,7 @@ class Nom035 extends Page
     }
     private function fillTop3DomainsG2(TemplateProcessor $template)
     {
-        // 1. Orden de riesgo (texto → valor numérico)
-        $riesgoOrden = [
-            'Muy Alto' => 5,
-            'Alto' => 4,
-            'Medio' => 3,
-            'Bajo' => 2,
-            'Nulo' => 1,
-            'Despreciable' => 0,
-        ];
-
-        // 2. Ordenar el arreglo principal (conserva las keys)
-        uasort($this->domainResults, function ($a, $b) use ($riesgoOrden) {
-
-            $riesgoA = $riesgoOrden[$a['riesgo']] ?? 0;
-            $riesgoB = $riesgoOrden[$b['riesgo']] ?? 0;
-
-            if ($riesgoA !== $riesgoB) {
-                return $riesgoB <=> $riesgoA;
-            }
-
-            return $b['total_cali'] <=> $a['total_cali'];
-        });
-
-        // 3. Obtener Top 3 dominios (CON keys)
-        $top3Domains = array_slice($this->domainResults, 0, 3, true);
-
-        // 4. Descripciones NOM-035
+        // 1. Descripciones (copiadas de tu código original)
         $descriptions = [
             'conditions' => 'Se refieren a las condiciones peligrosas e inseguras o deficientes e insalubres; es decir, a las condiciones del lugar de trabajo que bajo ciertas circunstancias exigen del trabajador un esfuerzo adicional de adaptación.',
             'work_activity' => 'Se refieren a las exigencias que el trabajo impone al trabajador y que exceden su capacidad, pueden ser de diversa naturaleza, como cuantitativas, cognitivas o mentales, emocionales, de responsabilidad, así como cargas contradictorias o inconsistentes.',
@@ -3978,28 +3952,69 @@ class Nom035 extends Page
             'pertenencia' => 'Se refiere a la falta de sentimiento de orgullo y compromiso con el trabajo y la organización, así como a la incertidumbre sobre la continuidad laboral o inestabilidad en la contratación.'
         ];
 
-        // 5. Insertar en el template
+        // 2. Orden de riesgo para el sort
+        $riesgoOrden = [
+            'Muy Alto' => 5,
+            'Alto' => 4,
+            'Medio' => 3,
+            'Bajo' => 2,
+            'Nulo' => 1,
+            'Despreciable' => 0,
+        ];
+
+        // 3. Ordenar el arreglo principal (conserva las keys, esto es importante)
+        uasort($this->domainResults, function ($a, $b) use ($riesgoOrden) {
+            $riesgoA = $riesgoOrden[$a['riesgo']] ?? 0;
+            $riesgoB = $riesgoOrden[$b['riesgo']] ?? 0;
+
+            if ($riesgoA !== $riesgoB) {
+                return $riesgoB <=> $riesgoA; // Orden descendente
+            }
+            return $b['total_cali'] <=> $a['total_cali'];
+        });
+
+        // 4. FILTRAR: Solo conservar Muy Alto, Alto y Medio
+        // array_filter preserva las keys (ej: 'work_journey'), lo cual necesitamos para las descripciones
+        $filteredDomains = array_filter($this->domainResults, function ($domain) {
+            return in_array($domain['riesgo'], ['Muy Alto', 'Alto', 'Medio']);
+        });
+
+        // 5. Preparar variables para el Template Processor
+
+        // Si no hay riesgos medios o altos, creamos un registro dummy para informar
+        if (empty($filteredDomains)) {
+            $count = 1;
+            // Simulamos un dominio vacío para imprimir un mensaje
+            $loopData = [
+                'none' => [
+                    'nombre' => 'No se detectaron dominios con riesgo Medio, Alto o Muy Alto.',
+                    'riesgo' => '-',
+                    'desc'   => ''
+                ]
+            ];
+        } else {
+            $count = count($filteredDomains);
+            $loopData = $filteredDomains;
+        }
+
+        // 6. CLONAR FILAS
+        // Esto buscará ${dom_top_name} en el Word y repetirá la fila $count veces
+        $template->cloneRow('dom_top_name', $count);
+
         $i = 1;
+        foreach ($loopData as $key => $domain) {
 
-        foreach ($top3Domains as $key => $domain) {
+            $nombre = $domain['nombre'];
+            $nivel  = $domain['riesgo'];
+            // Si es el dummy (key=none), usamos string vacío, si no, buscamos en el array de descripciones
+            $desc   = ($key === 'none') ? '' : ($descriptions[$key] ?? 'Descripción no disponible');
 
-            $template->setValue("domain{$i}_name", $domain['nombre']);
-            $template->setValue("domain{$i}_level", $domain['riesgo']);
-            $template->setValue(
-                "domain{$i}_description",
-                $descriptions[$key] ?? 'Descripción no disponible'
-            );
+            $template->setValue("dom_top_name#$i", $nombre);
+            $template->setValue("dom_top_level#$i", $nivel);
+            $template->setValue("dom_top_desc#$i", $desc);
 
             $i++;
         }
-
-        // 6. Rellenar vacíos si hay menos de 3
-        for (; $i <= 3; $i++) {
-            $template->setValue("domain{$i}_name", 'N/A');
-            $template->setValue("domain{$i}_level", 'N/A');
-            $template->setValue("domain{$i}_description", 'N/A');
-        }
-
     }
     private function convertToPdf(string $wordPath,string $nombreArchivoSalida): string
     {
@@ -4641,33 +4656,7 @@ class Nom035 extends Page
     }
     private function fillTop3DomainsG3(TemplateProcessor $template)
     {
-        // 1. Orden de riesgo (texto → valor numérico)
-        $riesgoOrden = [
-            'Muy alto' => 5,
-            'Alto' => 4,
-            'Medio' => 3,
-            'Bajo' => 2,
-            'Nulo' => 1,
-            'Despreciable' => 0,
-        ];
-
-        // 2. Ordenar el arreglo principal (conserva las keys)
-        uasort($this->generalDomainResultsGuideIII, function ($a, $b) use ($riesgoOrden) {
-
-            $riesgoA = $riesgoOrden[$a['riesgo']] ?? 0;
-            $riesgoB = $riesgoOrden[$b['riesgo']] ?? 0;
-
-            if ($riesgoA !== $riesgoB) {
-                return $riesgoB <=> $riesgoA;
-            }
-
-            return $b['total_cali'] <=> $a['total_cali'];
-        });
-
-        // 3. Obtener Top 3 dominios (CON keys)
-        $top3Domains = array_slice($this->generalDomainResultsGuideIII, 0, 3, true);
-
-        // 4. Descripciones NOM-035
+        // 1. Descripciones (Incluye los dominios extra de la Guía III)
         $descriptions = [
             'conditions' => 'Se refieren a las condiciones peligrosas e inseguras o deficientes e insalubres; es decir, a las condiciones del lugar de trabajo que bajo ciertas circunstancias exigen del trabajador un esfuerzo adicional de adaptación.',
             'work_activity' => 'Se refieren a las exigencias que el trabajo impone al trabajador y que exceden su capacidad, pueden ser de diversa naturaleza, como cuantitativas, cognitivas o mentales, emocionales, de responsabilidad, así como cargas contradictorias o inconsistentes.',
@@ -4681,26 +4670,59 @@ class Nom035 extends Page
             'inestable' => 'Se refiere a la falta de sentimiento de orgullo y compromiso con el trabajo y la organización, así como a la incertidumbre sobre la continuidad laboral o inestabilidad en la contratación.'
         ];
 
-        // 5. Insertar en el template
-        $i = 1;
+        // 2. Definir valores numéricos para el ordenamiento
+        $riesgoOrden = [
+            'Muy alto' => 5,
+            'Alto' => 4,
+            'Medio' => 3,
+            'Bajo' => 2,
+            'Nulo' => 1,
+            'Despreciable' => 0,
+        ];
 
-        foreach ($top3Domains as $key => $domain) {
+        // 3. Ordenar el arreglo principal (conserva las keys)
+        uasort($this->generalDomainResultsGuideIII, function ($a, $b) use ($riesgoOrden) {
+            $riesgoA = $riesgoOrden[$a['riesgo']] ?? 0;
+            $riesgoB = $riesgoOrden[$b['riesgo']] ?? 0;
 
-            $template->setValue("domain{$i}_name", $domain['nombre']);
-            $template->setValue("domain{$i}_level", $domain['riesgo']);
-            $template->setValue(
-                "domain{$i}_description",
-                $descriptions[$key] ?? 'Descripción no disponible'
-            );
+            if ($riesgoA !== $riesgoB) {
+                return $riesgoB <=> $riesgoA; // Mayor riesgo primero
+            }
+            return $b['total_cali'] <=> $a['total_cali']; // Desempate por puntaje
+        });
 
-            $i++;
+        // 4. FILTRAR: Solo conservar Muy Alto, Alto y Medio
+        $filteredDomains = array_filter($this->generalDomainResultsGuideIII, function ($domain) {
+            $r = $domain['riesgo'];
+            return $r === 'Muy alto' || $r === 'Alto' || $r === 'Medio';
+        });
+
+        // 5. Preparar variables para el Template Processor
+        if (empty($filteredDomains)) {
+            // Si no hay riesgos, creamos un registro dummy
+            $loopData = [
+                ['nombre' => 'No se detectaron dominios con riesgo Medio, Alto o Muy Alto', 'riesgo' => '', 'description' => '']
+            ];
+            $count = 1;
+        } else {
+            $loopData = $filteredDomains;
+            $count = count($filteredDomains);
         }
 
-        // 6. Rellenar vacíos si hay menos de 3
-        for (; $i <= 3; $i++) {
-            $template->setValue("domain{$i}_name", 'N/A');
-            $template->setValue("domain{$i}_level", 'N/A');
-            $template->setValue("domain{$i}_description", 'N/A');
+        // 6. CLONAR FILAS (Usando cloneRow en lugar de setValues fijos)
+        // Asegúrate de que en tu Word exista una fila con ${dom_top_name}
+        $template->cloneRow('dom_top_name', $count);
+
+        $i = 1;
+        foreach ($loopData as $key => $domain) {
+            // Si es el dummy array, no tiene key válida para description, manejamos eso:
+            $descText = (isset($descriptions[$key])) ? $descriptions[$key] : ($domain['description'] ?? '');
+
+            $template->setValue("dom_top_name#$i", $domain['nombre']);
+            $template->setValue("dom_top_level#$i", $domain['riesgo']);
+            $template->setValue("dom_top_desc#$i", $descText);
+
+            $i++;
         }
     }
 

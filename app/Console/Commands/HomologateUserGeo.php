@@ -33,6 +33,13 @@ class HomologateUserGeo extends Command
         'SILAO' => 'SILAO DE LA VICTORIA',
         'SAN MIGUEL' => 'SAN MIGUEL DE ALLENDE',
         'SMA' => 'SAN MIGUEL DE ALLENDE',
+        'TLAQUEPAQUE' => 'SAN PEDRO TLAQUEPAQUE',
+        'SANTIAGO DE QUERETARO' => 'QUERÉTARO',
+        'QUERETARO' => 'QUERÉTARO', // Por si acaso
+        'CD GUZMAN' => 'CIUDAD GUZMÁN',
+        'GUZMAN' => 'CIUDAD GUZMÁN',
+        'CIUDAD DE MEXICO' => 'CIUDAD DE MÉXICO', // Intento forzar match si existe
+        'CDMX' => 'CIUDAD DE MÉXICO',
     ];
 
     public function handle()

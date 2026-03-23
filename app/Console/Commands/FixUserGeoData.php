@@ -19,15 +19,44 @@ class FixUserGeoData extends Command
     {
         $this->info('🚀 Iniciando proceso de migración y normalización de usuarios...');
 
-        // --- DICCIONARIOS DE CORRECCIÓN MANUAL ---
-        $stateCorrections = [
-            'ESTADO DE MEXICO' => 'MEXICO', // En BD oficial suele ser MEXICO
-            'VERACRUZ' => 'VERACRUZ DE IGNACIO DE LA LLAVE',
-            'COAHUILA' => 'COAHUILA DE ZARAGOZA',
-            'MICHOACAN' => 'MICHOACAN DE OCAMPO',
-            'QUERETARO' => 'QUERETARO', // A veces viene como Queretaro de Arteaga
+        // --- MAPEO DE CORRECCIÓN DE ID LEGACY (USUARIO -> ID VIEJO -> NOMBRE REAL) ---
+        // Este mapa ignora los nombres corruptos (India) y usa los IDs originales (1-32)
+        $legacyIdToStateName = [
+            1 => 'AGUASCALIENTES',
+            2 => 'BAJA CALIFORNIA',
+            3 => 'BAJA CALIFORNIA SUR',
+            4 => 'CAMPECHE',
+            5 => 'COAHUILA DE ZARAGOZA', // Ajuste a nombre oficial
+            6 => 'COLIMA',
+            7 => 'CHIAPAS',
+            8 => 'CHIHUAHUA',
+            9 => 'CIUDAD DE MEXICO',
+            10 => 'DURANGO',
+            11 => 'GUANAJUATO',
+            12 => 'GUERRERO',
+            13 => 'HIDALGO',
+            14 => 'JALISCO',
+            15 => 'MEXICO', // O Estado de México
+            16 => 'MICHOACAN DE OCAMPO', // Ajuste a nombre oficial
+            17 => 'MORELOS',
+            18 => 'NAYARIT',
+            19 => 'NUEVO LEON',
+            20 => 'OAXACA',
+            21 => 'PUEBLA',
+            22 => 'QUERETARO',
+            23 => 'QUINTANA ROO',
+            24 => 'SAN LUIS POTOSI',
+            25 => 'SINALOA',
+            26 => 'SONORA',
+            27 => 'TABASCO',
+            28 => 'TAMAULIPAS',
+            29 => 'TLAXCALA',
+            30 => 'VERACRUZ DE IGNACIO DE LA LLAVE', // Ajuste a nombre oficial
+            31 => 'YUCATAN',
+            32 => 'ZACATECAS'
         ];
 
+        // --- DICCIONARIOS DE CORRECCIÓN MANUAL (Para Ciudades) ---
         $cityCorrections = [
             // Guanajuato
             'SILAO' => 'SILAO DE LA VICTORIA',
@@ -131,23 +160,35 @@ class FixUserGeoData extends Command
             // 1. Birth State
             if ($user->birth_state && is_numeric($user->birth_state)) {
                 $oldStateId = (int)$user->birth_state;
-                $stateName = $oldStates[$oldStateId] ?? null;
                 
-                if ($stateName) {
-                    $searchName = mb_strtoupper($stateName, 'UTF-8');
-                    // 1. Aplicar corrección manual de Estado
-                    if (isset($stateCorrections[$searchName])) {
-                        $searchName = $stateCorrections[$searchName];
+                // PRIMERO: Intentar usar el mapa de IDs fijos (1-32) que sabemos que son correctos
+                $searchName = null;
+                if (isset($legacyIdToStateName[$oldStateId])) {
+                    $searchName = $legacyIdToStateName[$oldStateId];
+                } else {
+                    // Si no está en el mapa fijo (ej: ID > 32), usar el nombre del JSON legacy
+                    $stateName = $oldStates[$oldStateId] ?? null;
+                    if ($stateName) {
+                        $searchName = mb_strtoupper($stateName, 'UTF-8');
+                         // Aplicar corrección manual de nombre si existe
+                        /*if (isset($stateCorrections[$searchName])) {
+                            $searchName = $stateCorrections[$searchName];
+                        }*/
                     }
-
-                    // Buscar exacto o sanitizado
+                }
+                
+                if ($searchName) {
+                    // Buscar exacto o sanitizado en la NUEVA BD
                     $newStateId = $newStatesMap[$searchName] ?? $newStatesMap[$this->sanitize($searchName)] ?? null;
                     
-                    if ($newStateId && $newStateId != $oldStateId) {
-                        $user->birth_state = $newStateId;
-                        $needsUpdate = true;
-                    } elseif (!$newStateId) {
-                        $errors[] = "Usuario {$user->id}: Estado '$stateName' (ID $oldStateId) no encontrado.";
+                    if ($newStateId) {
+                        // ¡Éxito! Encontramos el nuevo ID
+                        if ($newStateId != $oldStateId) {
+                            $user->birth_state = $newStateId;
+                            $needsUpdate = true;
+                        }
+                    } else {
+                        $errors[] = "Usuario {$user->id}: Estado '$searchName' (ID $oldStateId) no encontrado en nueva BD.";
                     }
                 }
             }

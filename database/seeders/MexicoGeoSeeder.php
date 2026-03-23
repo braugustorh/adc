@@ -22,17 +22,17 @@ class MexicoGeoSeeder extends Seeder
 
         // URL del JSON limpio de Estados y Municipios (Fuente: cisnerosnow/GitHub)
         $url = 'https://raw.githubusercontent.com/cisnerosnow/json-estados-municipios-mexico/master/estados-municipios.json';
-        
+
         try {
             $response = Http::get($url);
-            
+
             if ($response->failed()) {
                 $this->command->error('❌ Error al descargar el catálogo. Verifica tu conexión a internet.');
                 return;
             }
 
             $data = $response->json();
-            
+
             if (empty($data)) {
                 $this->command->error('❌ El JSON descargado está vacío o es inválido.');
                 return;
@@ -88,7 +88,7 @@ class MexicoGeoSeeder extends Seeder
                 $state = State::create([
                     'country_id' => $mexico->id,
                     'name' => $estadoUpper,
-                    'status' => true // Asumiendo que tienes una columna status boolean
+                    'status' => 'active' // En Postgres se requiere string explícito 'Active'
                 ]);
 
                 // Preparar array de municipios para inserción masiva (más rápido)
@@ -97,7 +97,7 @@ class MexicoGeoSeeder extends Seeder
                     $citiesData[] = [
                         'state_id' => $state->id,
                         'name' => mb_strtoupper($municipioNombre, 'UTF-8'),
-                        'status' => true,
+                        'status' => 'active', // También para ciudades
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
@@ -105,7 +105,7 @@ class MexicoGeoSeeder extends Seeder
 
                 // Insertar en lotes
                 City::insert($citiesData);
-                
+
                 $this->command->info("✅ $estadoUpper cargado con " . count($citiesData) . " municipios.");
             }
 

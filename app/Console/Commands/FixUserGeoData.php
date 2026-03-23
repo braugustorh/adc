@@ -6,18 +6,67 @@ use Illuminate\Console\Command;
 use App\Models\User;
 use App\Models\State;
 use App\Models\City;
-use App\Models\Country;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class FixUserGeoData extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'fix:user-geo-data';
-    protected $description = 'Migra los IDs viejos de birth_state/birth_city a los nuevos IDs oficiales y normaliza state/city.';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Corrige los IDs de estado y ciudad de los usuarios basándose en un mapa de legado y diccionarios de corrección.';
+
+    /**
+     * Execute the console command.
+     */
     public function handle()
     {
         $this->info('🚀 Iniciando proceso de migración y normalización de usuarios...');
+
+        // 1. Cargar el mapa de legado (ID viejo -> Nombre viejo/corrupto)
+        $jsonPath = database_path('seeders/legacy_geo_map.json');
+        if (!File::exists($jsonPath)) {
+            $this->error('❌ No se encontró el archivo legacy_geo_map.json. Ejecuta primero map:legacy-geo-ids');
+            return;
+        }
+
+        $legacyMap = json_decode(File::get($jsonPath), true);
+        $oldStates = $legacyMap['states'] ?? [];
+        $oldCities = $legacyMap['cities'] ?? [];
+
+        $this->info('✅ Mapa de legado cargado.');
+
+        // 2. Cargar los NUEVOS catálogos de SEPOMEX en memoria para búsqueda rápida
+        // Estructura: [ 'NOMBRE_ESTADO' => id ]
+        $newStatesMap = State::pluck('id', 'name')->mapWithKeys(function ($id, $name) {
+            return [mb_strtoupper($name, 'UTF-8') => $id];
+        })->toArray();
+
+        // Estructura: [ 'NOMBRE_CIUDAD' => [ state_id => city_id ] ]
+        // Esto permite buscar "Celaya" y saber a qué estado pertenece
+        $newCitiesRaw = City::select('id', 'state_id', 'name')->get();
+        $newCitiesMap = [];
+        foreach ($newCitiesRaw as $city) {
+            $nameUpper = mb_strtoupper($city->name, 'UTF-8');
+            $newCitiesMap[$nameUpper][$city->state_id] = $city->id;
+            
+            // También guardar versión sanitizada (sin acentos)
+            $sanitized = $this->sanitize($nameUpper);
+            if ($sanitized !== $nameUpper) {
+                $newCitiesMap[$sanitized][$city->state_id] = $city->id;
+            }
+        }
+
+        $this->info('✅ Nuevo catálogo indexado (tolerancia a acentos activada).');
 
         // --- MAPEO DE CORRECCIÓN DE ID LEGACY (USUARIO -> ID VIEJO -> NOMBRE REAL) ---
         // Este mapa ignora los nombres corruptos (India) y usa los IDs originales (1-32)
@@ -56,195 +105,147 @@ class FixUserGeoData extends Command
             32 => 'ZACATECAS'
         ];
 
-        // --- DICCIONARIOS DE CORRECCIÓN MANUAL (Para Ciudades) ---
-        $cityCorrections = [
-            // Guanajuato
-            'SILAO' => 'SILAO DE LA VICTORIA',
-            'DOLORES HIDALGO' => 'DOLORES HIDALGO CUNA DE LA INDEPENDENCIA NACIONAL',
-            'PURISIMA DE BUSTOS' => 'PURISIMA DEL RINCON',
-            'SAN MIGUEL DE ALLENDE' => 'SAN MIGUEL DE ALLENDE', 
-            'RINCON DE TAMAYO' => 'CELAYA', // Es localidad
-            'SAN JOSE AGUA AZUL' => 'APASEO EL GRANDE', // Es localidad
-            'SAN ROQUE' => 'IRAPUATO', // Probable localidad
-            'MEDINA' => 'LEON', // Probable localidad (Alfaro/Medina)
-
-            // Querétaro
-            'AMEALCO' => 'AMEALCO DE BONFIL',
-            'CADEREYTA' => 'CADEREYTA DE MONTES', // Asumiendo Qro
-            
-            // Otros
-            'OAXACA' => 'OAXACA DE JUAREZ',
-            'ZIHUATANEJO' => 'ZIHUATANEJO DE AZUETA',
-            'ACAPULCO' => 'ACAPULCO DE JUAREZ',
-            'CHILAPA' => 'CHILAPA DE ALVAREZ',
-            'POZA RICA' => 'POZA RICA DE HIDALGO',
-            'PACHUCA' => 'PACHUCA DE SOTO',
-            'VILLAHERMOSA' => 'CENTRO', // Villahermosa es la ciudad, el municipio es Centro (Tabasco)
-            'GUZMAN' => 'ZAPOTLAN EL GRANDE', // Ciudad Guzmán
-            'CHIAPA' => 'CHIAPA DE CORZO',
-            'OJO CALIENTE' => 'OJOCALIENTE',
-            'EL ORO' => 'EL ORO', // Existe en EdoMex y Durango, depende del estado
-            'VILLACHUATO' => 'PANINDICUARO', // Localidad en Michoacán
+        // --- MAPEO DE CORRECCIÓN DE CIUDADES (ID VIEJO -> NOMBRE REAL) ---
+        // Basado en el feedback del usuario
+        $legacyIdToCityName = [
+            348 => 'LEON',
+            336 => 'CELAYA',
+            345 => 'IRAPUATO',
+            343 => 'GUANAJUATO',
+            584 => 'ZAPOPAN',
+            1861 => 'SAN LUIS POTOSI',
+            // Puedes agregar más aquí si detectas patrones
         ];
 
-        $mapFile = 'legacy_geo_map.json';
-        if (!Storage::exists($mapFile)) {
-            $this->error('❌ No se encontró el archivo de mapeo legacy_geo_map.json.');
-            return;
-        }
+        // --- DICCIONARIOS DE CORRECCIÓN MANUAL (Nombres de texto) ---
+        $stateCorrections = [
+            'ESTADO DE MEXICO' => 'MEXICO', 
+            'VERACRUZ' => 'VERACRUZ DE IGNACIO DE LA LLAVE',
+            'COAHUILA' => 'COAHUILA DE ZARAGOZA',
+            'MICHOACAN' => 'MICHOACAN DE OCAMPO',
+            'QUERETARO DE ARTEAGA' => 'QUERETARO',
+        ];
 
-        $legacyMap = json_decode(Storage::get($mapFile), true);
-        $oldStates = $legacyMap['states'] ?? [];
-        $oldCities = $legacyMap['cities'] ?? [];
+        $cityCorrections = [
+            'SILAO' => 'SILAO DE LA VICTORIA',
+            'DOLORES HIDALGO' => 'DOLORES HIDALGO CUNA DE LA INDEPENDENCIA NACIONAL',
+            // Agrega más si es necesario
+        ];
 
-        $this->info('✅ Mapa de legado cargado.');
-
-        // Construir catálogo de búsqueda tolerante a acentos
-        // Map: 'NOMBRE_CON_ACENTO' => ID (Prioridad 1)
-        // Map: 'NOMBRE_SIN_ACENTO' => ID (Prioridad 2)
-        
-        $newStatesMap = [];
-        foreach (State::all() as $state) {
-            $upper = mb_strtoupper($state->name, 'UTF-8');
-            $newStatesMap[$upper] = $state->id;
-            $newStatesMap[$this->sanitize($upper)] = $state->id;
-        }
-
-        $newCitiesMap = [];
-        // Para ciudades, agrupamos por estado si es posible, o globalmente
-        // Mapa global: 'NOMBRE_CIUDAD' => [StateId => CityId]
-        // Esto permite desambiguar si hay 'ACAMBARO' en dos estados diferentes
-        foreach (City::all() as $city) {
-            $upper = mb_strtoupper($city->name, 'UTF-8');
-            $sanitized = $this->sanitize($upper);
-            
-            // Guardamos ID por Estado para búsqueda contextual
-            if (!isset($newCitiesMap[$upper])) $newCitiesMap[$upper] = [];
-            $newCitiesMap[$upper][$city->state_id] = $city->id;
-
-            if (!isset($newCitiesMap[$sanitized])) $newCitiesMap[$sanitized] = [];
-            $newCitiesMap[$sanitized][$city->state_id] = $city->id;
-        }
-
-        $mexico = Country::where('name', 'Mexico')->orWhere('name', 'MÉXICO')->first();
-        $mexicoId = $mexico ? $mexico->id : 142;
-
-        $this->info('✅ Nuevo catálogo indexado (tolerancia a acentos activada).');
-
+        // 3. Procesar Usuarios
         $users = User::all();
-        $bar = $this->output->createProgressBar($users->count());
+        $bar = $this->output->createProgressBar(count($users));
+        $bar->start();
+
         $updatedCount = 0;
         $errors = [];
 
         foreach ($users as $user) {
             $needsUpdate = false;
-            
-            // --- A. Normalizar Dirección Actual ---
-            if ($user->state) {
-                $upperState = mb_strtoupper($user->state, 'UTF-8');
-                if ($user->state !== $upperState) {
-                    $user->state = $upperState;
-                    $needsUpdate = true;
-                }
-            }
-            if ($user->city) {
-                $upperCity = mb_strtoupper($user->city, 'UTF-8');
-                if ($user->city !== $upperCity) {
-                    $user->city = $upperCity;
-                    $needsUpdate = true;
-                }
-            }
+            $originalStateId = $user->birth_state;
 
-            // --- B. Migrar IDs de Nacimiento ---
-
-            // 1. Birth State
+            // --- PASO 1: CORREGIR ESTADO ---
             if ($user->birth_state && is_numeric($user->birth_state)) {
                 $oldStateId = (int)$user->birth_state;
-                
-                // PRIMERO: Intentar usar el mapa de IDs fijos (1-32) que sabemos que son correctos
-                $searchName = null;
+                $searchStateName = null;
+
+                // A) Mapeo Directo ID -> Nombre Oficial (Prioridad)
                 if (isset($legacyIdToStateName[$oldStateId])) {
-                    $searchName = $legacyIdToStateName[$oldStateId];
-                } else {
-                    // Si no está en el mapa fijo (ej: ID > 32), usar el nombre del JSON legacy
-                    $stateName = $oldStates[$oldStateId] ?? null;
-                    if ($stateName) {
-                        $searchName = mb_strtoupper($stateName, 'UTF-8');
-                         // Aplicar corrección manual de nombre si existe
-                        /*if (isset($stateCorrections[$searchName])) {
-                            $searchName = $stateCorrections[$searchName];
-                        }*/
+                    $searchStateName = $legacyIdToStateName[$oldStateId];
+                } 
+                // B) Fallback a JSON Legacy (para IDs > 32 o desconocidos)
+                else {
+                    $legacyName = $oldStates[$oldStateId] ?? null;
+                    if ($legacyName) {
+                        $searchStateName = mb_strtoupper($legacyName, 'UTF-8');
+                        if (isset($stateCorrections[$searchStateName])) {
+                            $searchStateName = $stateCorrections[$searchStateName];
+                        }
                     }
                 }
-                
-                if ($searchName) {
-                    // Buscar exacto o sanitizado en la NUEVA BD
-                    $newStateId = $newStatesMap[$searchName] ?? $newStatesMap[$this->sanitize($searchName)] ?? null;
-                    
+
+                if ($searchStateName) {
+                    $newStateId = $newStatesMap[$searchStateName] ?? $newStatesMap[$this->sanitize($searchStateName)] ?? null;
+
                     if ($newStateId) {
-                        // ¡Éxito! Encontramos el nuevo ID
+                        // Actualizar ID en memoria (y marcar para guardar si cambió)
+                        // IMPORTANTE: Incluso si el ID es el mismo numéricamente, validamos que conceptualmente sea correcto.
+                        // Pero solo guardamos si el número cambia para no saturar la DB.
+                        // Sin embargo, para la búsqueda de ciudad abajo, necesitamos el $newStateId correcto.
+                        $user->birth_state = $newStateId; 
                         if ($newStateId != $oldStateId) {
-                            $user->birth_state = $newStateId;
                             $needsUpdate = true;
                         }
                     } else {
-                        $errors[] = "Usuario {$user->id}: Estado '$searchName' (ID $oldStateId) no encontrado en nueva BD.";
+                        $errors[] = "Usuario {$user->id}: Estado '$searchStateName' (ID Legacy $oldStateId) no encontrado en SEPOMEX.";
                     }
                 }
             }
 
-            // 2. Birth City
+            // --- PASO 2: CORREGIR CIUDAD ---
             if ($user->birth_city && is_numeric($user->birth_city)) {
                 $oldCityId = (int)$user->birth_city;
-                $cityName = $oldCities[$oldCityId] ?? null;
-                
-                if ($cityName) {
-                    $searchName = mb_strtoupper($cityName, 'UTF-8');
-                    
-                    // 1. Aplicar corrección manual de Ciudad
-                    if (isset($cityCorrections[$searchName])) {
-                        $searchName = $cityCorrections[$searchName];
-                    }
-                    
-                    $sanitizedName = $this->sanitize($searchName);
+                $searchCityName = null;
 
-                    // Intentar buscar ID de ciudad
-                    $candidates = $newCitiesMap[$searchName] ?? $newCitiesMap[$sanitizedName] ?? [];
-                    
-                    $newCityId = null;
-
-                    // Si ya tenemos el ID del estado NUEVO (calculado arriba o existente), filtramos por ahí
-                    $currentStateId = is_numeric($user->birth_state) ? $user->birth_state : null;
-                    
-                    if ($currentStateId && isset($candidates[$currentStateId])) {
-                        // Coincidencia perfecta: Nombre + Estado
-                        $newCityId = $candidates[$currentStateId];
-                    } elseif (count($candidates) === 1) {
-                        // Solo hay una ciudad con ese nombre en todo el país (suerte)
-                        $newCityId = reset($candidates);
-                    } elseif (count($candidates) > 1) {
-                        $errors[] = "Usuario {$user->id}: Ciudad '$cityName' es ambigua (existe en varios estados).";
-                    }
-
-                    if ($newCityId && $newCityId != $oldCityId) {
-                        $user->birth_city = $newCityId;
-                        $needsUpdate = true;
-                    } elseif (!$newCityId && empty($candidates)) {
-                        $errors[] = "Usuario {$user->id}: Ciudad '$cityName' (ID $oldCityId) no encontrada.";
+                // A) Mapeo Directo ID -> Nombre Ciudad (Prioridad)
+                if (isset($legacyIdToCityName[$oldCityId])) {
+                    $searchCityName = $legacyIdToCityName[$oldCityId];
+                }
+                // B) Fallback a JSON Legacy
+                else {
+                    $legacyCityName = $oldCities[$oldCityId] ?? null;
+                    if ($legacyCityName) {
+                        $searchCityName = mb_strtoupper($legacyCityName, 'UTF-8');
+                        if (isset($cityCorrections[$searchCityName])) {
+                            $searchCityName = $cityCorrections[$searchCityName];
+                        }
                     }
                 }
-            }
-            
-            // 3. Birth Country
-            if ($user->birth_country == '142' && $mexicoId != 142) {
-                $user->birth_country = $mexicoId;
-                $needsUpdate = true;
+
+                if ($searchCityName) {
+                    // Buscar ID de ciudad en SEPOMEX
+                    // Intentamos filtrar por el estado YA CORREGIDO del usuario
+                    $currentStateId = $user->birth_state; // Este ya es el ID nuevo (o el viejo si no cambió)
+                    
+                    $foundCityId = null;
+
+                    // 1. Buscar coincidencia exacta en el estado correcto
+                    if (isset($newCitiesMap[$searchCityName][$currentStateId])) {
+                        $foundCityId = $newCitiesMap[$searchCityName][$currentStateId];
+                    }
+                    // 2. Buscar coincidencia sanitizada en el estado correcto
+                    elseif (isset($newCitiesMap[$this->sanitize($searchCityName)][$currentStateId])) {
+                         $foundCityId = $newCitiesMap[$this->sanitize($searchCityName)][$currentStateId];
+                    }
+                    // 3. (Opcional) Buscar en cualquier estado si no se encuentra en el actual?
+                    // Riesgoso, mejor reportar error si no coincide con el estado.
+                    else {
+                        // Intento desesperado: ¿Existe esa ciudad en algún otro estado?
+                        if (isset($newCitiesMap[$searchCityName])) {
+                            // Tomar el primero (solo para debug o si se acepta el riesgo)
+                            // $foundCityId = reset($newCitiesMap[$searchCityName]);
+                        }
+                    }
+
+                    if ($foundCityId) {
+                        if ($foundCityId != $oldCityId) {
+                            $user->birth_city = $foundCityId;
+                            $needsUpdate = true;
+                        }
+                    } else {
+                        // Si tenemos nombre pero no ID, es un error de "No encontrado"
+                        // Ojo: Si searchCityName viene del JSON legacy corrupto (ej: "DHING") y no está en el mapa manual, fallará aquí.
+                        // Esto es ESPERADO para ciudades indias no mapeadas.
+                        $errors[] = "Usuario {$user->id}: Ciudad '$searchCityName' (ID Legacy $oldCityId) no encontrada en Estado ID $currentStateId.";
+                    }
+                }
             }
 
             if ($needsUpdate) {
-                $user->saveQuietly();
+                $user->save();
                 $updatedCount++;
             }
+
             $bar->advance();
         }
 
@@ -254,16 +255,23 @@ class FixUserGeoData extends Command
 
         if (count($errors) > 0) {
             $this->warn("⚠️ Se encontraron " . count($errors) . " inconsistencias:");
-            foreach ($errors as $error) $this->warn($error);
-            Storage::put('migration_errors.log', implode("\n", $errors));
+            foreach (array_slice($errors, 0, 50) as $error) { // Mostrar solo los primeros 50
+                $this->line($error);
+            }
+            if (count($errors) > 50) {
+                $this->line("... y " . (count($errors) - 50) . " más.");
+            }
+        } else {
+            $this->info("✨ ¡Cero errores! La migración fue perfecta.");
         }
     }
 
     private function sanitize($string)
     {
+        $string = mb_strtoupper($string, 'UTF-8');
         $string = str_replace(
-            ['Á', 'É', 'Í', 'Ó', 'Ú', 'Ü'],
-            ['A', 'E', 'I', 'O', 'U', 'U'],
+            ['Á', 'É', 'Í', 'Ó', 'Ú', 'Ü', 'Ñ'],
+            ['A', 'E', 'I', 'O', 'U', 'U', 'N'],
             $string
         );
         return $string;

@@ -88,7 +88,7 @@ class MexicoGeoSeeder extends Seeder
                 $state = State::create([
                     'country_id' => $mexico->id,
                     'name' => $estadoUpper,
-                    'status' => 1 // Asumiendo que tienes una columna status
+                    'status' => true // Asumiendo que tienes una columna status boolean
                 ]);
 
                 // Preparar array de municipios para inserción masiva (más rápido)
@@ -97,7 +97,7 @@ class MexicoGeoSeeder extends Seeder
                     $citiesData[] = [
                         'state_id' => $state->id,
                         'name' => mb_strtoupper($municipioNombre, 'UTF-8'),
-                        'status' => 1,
+                        'status' => true,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];

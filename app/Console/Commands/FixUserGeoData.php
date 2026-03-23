@@ -23,27 +23,21 @@ class FixUserGeoData extends Command
      *
      * @var string
      */
-    protected $description = 'Corrige los IDs de estado y ciudad de los usuarios basándose en un mapa de legado y diccionarios de corrección.';
+    protected $description = 'Corrige los IDs de estado y ciudad de los usuarios basándose en mapas estáticos (sin dependencia de JSON).';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $this->info('🚀 Iniciando proceso de migración y normalización de usuarios...');
+        $this->info('🚀 Iniciando proceso de migración y normalización de usuarios (Modo Estático)...');
 
-        // 1. Cargar el mapa de legado (ID viejo -> Nombre viejo/corrupto)
-        $jsonPath = database_path('seeders/legacy_geo_map.json');
-        if (!File::exists($jsonPath)) {
-            $this->error('❌ No se encontró el archivo legacy_geo_map.json. Ejecuta primero map:legacy-geo-ids');
-            return;
-        }
+        // 1. OMITIR CARGA DE JSON (Ya no es necesario, usamos mapas hardcoded)
+        // Inicializamos arrays vacíos para compatibilidad con lógica anterior
+        $oldStates = [];
+        $oldCities = [];
 
-        $legacyMap = json_decode(File::get($jsonPath), true);
-        $oldStates = $legacyMap['states'] ?? [];
-        $oldCities = $legacyMap['cities'] ?? [];
-
-        $this->info('✅ Mapa de legado cargado.');
+        $this->info('✅ Usando mapas de corrección internos (sin archivo JSON).');
 
         // 2. Cargar los NUEVOS catálogos de SEPOMEX en memoria para búsqueda rápida
         // Estructura: [ 'NOMBRE_ESTADO' => id ]
@@ -168,10 +162,7 @@ class FixUserGeoData extends Command
                     $newStateId = $newStatesMap[$searchStateName] ?? $newStatesMap[$this->sanitize($searchStateName)] ?? null;
 
                     if ($newStateId) {
-                        // Actualizar ID en memoria (y marcar para guardar si cambió)
-                        // IMPORTANTE: Incluso si el ID es el mismo numéricamente, validamos que conceptualmente sea correcto.
-                        // Pero solo guardamos si el número cambia para no saturar la DB.
-                        // Sin embargo, para la búsqueda de ciudad abajo, necesitamos el $newStateId correcto.
+                        // Actualizar ID en memoria
                         $user->birth_state = $newStateId; 
                         if ($newStateId != $oldStateId) {
                             $needsUpdate = true;
@@ -217,14 +208,9 @@ class FixUserGeoData extends Command
                     elseif (isset($newCitiesMap[$this->sanitize($searchCityName)][$currentStateId])) {
                          $foundCityId = $newCitiesMap[$this->sanitize($searchCityName)][$currentStateId];
                     }
-                    // 3. (Opcional) Buscar en cualquier estado si no se encuentra en el actual?
-                    // Riesgoso, mejor reportar error si no coincide con el estado.
-                    else {
-                        // Intento desesperado: ¿Existe esa ciudad en algún otro estado?
-                        if (isset($newCitiesMap[$searchCityName])) {
-                            // Tomar el primero (solo para debug o si se acepta el riesgo)
-                            // $foundCityId = reset($newCitiesMap[$searchCityName]);
-                        }
+                    // 3. Buscar en cualquier estado si no se encuentra en el actual (Solo si es nombre único)
+                    elseif (isset($newCitiesMap[$searchCityName]) && count($newCitiesMap[$searchCityName]) === 1) {
+                        $foundCityId = reset($newCitiesMap[$searchCityName]);
                     }
 
                     if ($foundCityId) {
@@ -233,10 +219,11 @@ class FixUserGeoData extends Command
                             $needsUpdate = true;
                         }
                     } else {
-                        // Si tenemos nombre pero no ID, es un error de "No encontrado"
-                        // Ojo: Si searchCityName viene del JSON legacy corrupto (ej: "DHING") y no está en el mapa manual, fallará aquí.
-                        // Esto es ESPERADO para ciudades indias no mapeadas.
-                        $errors[] = "Usuario {$user->id}: Ciudad '$searchCityName' (ID Legacy $oldCityId) no encontrada en Estado ID $currentStateId.";
+                        // Solo reportar error si el nombre viene de nuestro mapa manual (significa que escribimos mal el nombre o no existe en SEPOMEX)
+                        // Si viene del JSON vacío, no reportará nada (correcto).
+                        if (isset($legacyIdToCityName[$oldCityId])) {
+                             $errors[] = "Usuario {$user->id}: Ciudad '$searchCityName' (ID Legacy $oldCityId) no encontrada en Estado ID $currentStateId.";
+                        }
                     }
                 }
             }

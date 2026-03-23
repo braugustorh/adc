@@ -36,13 +36,10 @@ class EditUser extends EditRecord
 
     protected static string $resource = UserResource::class;
     protected static ?string $title='Editar Usuarios';
-
+    public $countries=[];
     public $token;
     public String $cp;
-    public $countries=[];
-    public $estadosMexico=[];
-    public array $estadosIds;
-    public array $estadosMX=[];
+
     protected function authorizeAccess(): void
     {
         abort_unless(VisorRoleHelper::canEdit(), 403, __('Ups!, no estas autorizado para realizar esta acción.'));
@@ -119,14 +116,12 @@ class EditUser extends EditRecord
                         ->label('Estado de Nacimiento')
                         ->options(function(Get $get): array{
                                 $country= $get('birth_country');
-                                $states = [];
                                 if($country){
-                                    $states=State::where('country_id',$country)
+                                   return State::where('country_id',$country)
                                        ->pluck('name','id')
-                                       ->mapWithKeys(fn($name, $id) => [$id => ucfirst($name)])
                                       ->toArray();
                                 }
-                            return $states;
+                            return [];
                         })
                         ->loadingMessage('Cargando Estado...')
                         ->searchingMessage('Buscando Estados...')
@@ -137,14 +132,12 @@ class EditUser extends EditRecord
                         ->options(
                             function(Get $get): array{
                                 $state= $get('birth_state');
-                                $cities = [];
                                 if($state){
-                                    $cities=City::where('state_id',$state)
+                                    return City::where('state_id',$state)
                                         ->pluck('name','id')
-                                        ->mapWithKeys(fn($name, $id) => [$id => ucfirst($name)])
                                         ->toArray();
                                 }
-                                return $cities;
+                                return [];
                             }
                         )
                         ->loadingMessage('Cargando Municipios...')
@@ -177,56 +170,30 @@ class EditUser extends EditRecord
                     Select::make('state')
                         ->label('Estado')
                         ->live()
-                        ->options($this->estadosMexico)
+                        // Reemplazo de API por BD Local
+                        ->options(fn () => State::where('country_id', 142)->pluck('name', 'name'))
                         ->searchable()
-                        ->loadingMessage('Cargando Estados...')
-                        ->searchingMessage('Buscando Estados...')
-                        //->mess
                         ->default(null),
+
                     Select::make('city')
                         ->label('Ciudad')
                         ->live()
-                        ->options(
-                            function(Get $get): array{
-                                $state= $get('state');
-                                //dd($this->estadosMX);
-
-                                if($state){
-
-                                    if (!empty($this->estadosMX) && is_array($this->estadosMX)) {
-
-                                        $flipped = array_flip($this->estadosMX); // ahora keys = nombre_estado, values = estado_id
-                                        $stateId = $flipped[$state] ?? null;
-                                       // $stateId = $stateId+1;
-                                    }
-
-                                    $citiesResponse = Http::withHeaders([
-                                        "Accept"=> "application/json",
-                                        "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
-                                    ])->get('https://api.tau.com.mx/dipomex/v1/municipios?id_estado='.$stateId);
-                                    $citiesArray = json_decode($citiesResponse->body(), true);
-                                    if (is_array($citiesArray) && isset($citiesArray['municipios']) && is_array($citiesArray['municipios']) && count($citiesArray['municipios']) > 0) {
-                                        $cities = array_column($citiesArray['municipios'], 'MUNICIPIO', 'MUNICIPIO');
-                                    } else {
-                                        Notification::make()
-                                            ->title('Error')
-                                            ->danger()
-                                            ->icon('heroicon-o-x-circle')
-                                            ->iconColor('danger')
-                                            ->body('No se pudieron obtener los municipios para el estado seleccionado')
-                                            ->send();
-                                        $cities = [];
-                                    }
-
-                                }else{
-                                    $cities = [];
-                                }
-                                return $cities;
-                            }
-                        )
                         ->searchable()
+                        ->options(function(Get $get): array{
+                            $stateName = $get('state');
+                            if (!$stateName) {
+                                return [];
+                            }
+
+                            // Reemplazo de API por BD Local
+                            return City::query()
+                                ->whereHas('state', function ($query) use ($stateName) {
+                                    $query->where('name', 'like', $stateName);
+                                })
+                                ->pluck('name', 'name')
+                                ->toArray();
+                        })
                         ->loadingMessage('Cargando Municipios...')
-                        ->searchingMessage('Buscando Municipios...')
                         ->default(null),
                     TextInput::make('colony')
                         ->label('Colonia')
@@ -462,77 +429,9 @@ class EditUser extends EditRecord
     }
     public function mount($record):void
     {
-        $response = Http::withHeaders([
-            "Accept"=> "application/json",
-            "api-token"=> "qJgEjApgNVP3YZKIwiOoZdiZJh4SXjMy2AD0MPr4erJziEaPKK98avKzs850wQdYYBs",
-            "user-email"=> "braugustorh@gmail.com"
-        ])->get("https://www.universal-tutorial.com/api/getaccesstoken");
 
-        $this->token = $response->json(['auth_token']);
-        $countriesResponse = Http::withHeaders([
-            "Authorization"=>"Bearer ". $this->token,
-            "Accept"=> "application/json",
-        ])->get("https://www.universal-tutorial.com/api/countries/");
-
-        $res=Http::withHeaders([
-            "Accept"=> "application/json",
-            "APIKEY"=> "5e41fcafd8ee7e437980977e8b8ad009e357c2cd",
-        ])->get('https://api.tau.com.mx/dipomex/v1/estados');
-
-        $colonyArray=json_decode($res->body(),true);
-
-        if (is_array($colonyArray)) {
-
-          $this->estadosMexico = array_column($colonyArray['estados'], 'ESTADO', 'ESTADO');
-          $this->estadosIds= array_column($colonyArray['estados'], 'ESTADO', 'ESTADO_id');
-
-        }else{
-            Notification::make()
-                ->title('Error')
-                ->danger()
-                ->icon('heroicon-o-x-circle')
-                ->iconColor('danger')
-                ->body('No se pudo obtener la lista de estados')
-                ->send();
-
-        }
         $user = User::find($record);
         $this->countries=Country::all()->pluck('name','id')->toArray();
-
-        $this->estadosMX = [
-            1 => "AGUASCALIENTES",
-            2 => "BAJA CALIFORNIA",
-            3 => "BAJA CALIFORNIA SUR",
-            4 => "CAMPECHE",
-            7 => "CHIAPAS",
-            8 => "CHIHUAHUA",
-            9 => "CIUDAD DE MEXICO",
-            5 => "COAHUILA DE ZARAGOZA",
-            6 => "COLIMA",
-            10 => "DURANGO",
-            11 => "GUANAJUATO",
-            12 => "GUERRERO",
-            13 => "HIDALGO",
-            14 => "JALISCO",
-            15 => "MEXICO",
-            16 => "MICHOACAN DE OCAMPO",
-            17 => "MORELOS",
-            18 => "NAYARIT",
-            19 => "NUEVO LEON",
-            20 => "OAXACA",
-            21 => "PUEBLA",
-            22 => "QUERETARO",
-            23 => "QUINTANA ROO",
-            24 => "SAN LUIS POTOSI",
-            25 => "SINALOA",
-            26 => "SONORA",
-            27 => "TABASCO",
-            28 => "TAMAULIPAS",
-            29 => "TLAXCALA",
-            30 => "VERACRUZ DE LA LLAVE",
-            31 => "YUCATAN",
-            32 => "ZACATECAS"
-        ];
 
         parent::mount($record); // TODO: Change the autogenerated stub
 

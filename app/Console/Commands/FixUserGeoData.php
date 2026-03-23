@@ -19,6 +19,45 @@ class FixUserGeoData extends Command
     {
         $this->info('🚀 Iniciando proceso de migración y normalización de usuarios...');
 
+        // --- DICCIONARIOS DE CORRECCIÓN MANUAL ---
+        $stateCorrections = [
+            'ESTADO DE MEXICO' => 'MEXICO', // En BD oficial suele ser MEXICO
+            'VERACRUZ' => 'VERACRUZ DE IGNACIO DE LA LLAVE',
+            'COAHUILA' => 'COAHUILA DE ZARAGOZA',
+            'MICHOACAN' => 'MICHOACAN DE OCAMPO',
+            'QUERETARO' => 'QUERETARO', // A veces viene como Queretaro de Arteaga
+        ];
+
+        $cityCorrections = [
+            // Guanajuato
+            'SILAO' => 'SILAO DE LA VICTORIA',
+            'DOLORES HIDALGO' => 'DOLORES HIDALGO CUNA DE LA INDEPENDENCIA NACIONAL',
+            'PURISIMA DE BUSTOS' => 'PURISIMA DEL RINCON',
+            'SAN MIGUEL DE ALLENDE' => 'SAN MIGUEL DE ALLENDE', 
+            'RINCON DE TAMAYO' => 'CELAYA', // Es localidad
+            'SAN JOSE AGUA AZUL' => 'APASEO EL GRANDE', // Es localidad
+            'SAN ROQUE' => 'IRAPUATO', // Probable localidad
+            'MEDINA' => 'LEON', // Probable localidad (Alfaro/Medina)
+
+            // Querétaro
+            'AMEALCO' => 'AMEALCO DE BONFIL',
+            'CADEREYTA' => 'CADEREYTA DE MONTES', // Asumiendo Qro
+            
+            // Otros
+            'OAXACA' => 'OAXACA DE JUAREZ',
+            'ZIHUATANEJO' => 'ZIHUATANEJO DE AZUETA',
+            'ACAPULCO' => 'ACAPULCO DE JUAREZ',
+            'CHILAPA' => 'CHILAPA DE ALVAREZ',
+            'POZA RICA' => 'POZA RICA DE HIDALGO',
+            'PACHUCA' => 'PACHUCA DE SOTO',
+            'VILLAHERMOSA' => 'CENTRO', // Villahermosa es la ciudad, el municipio es Centro (Tabasco)
+            'GUZMAN' => 'ZAPOTLAN EL GRANDE', // Ciudad Guzmán
+            'CHIAPA' => 'CHIAPA DE CORZO',
+            'OJO CALIENTE' => 'OJOCALIENTE',
+            'EL ORO' => 'EL ORO', // Existe en EdoMex y Durango, depende del estado
+            'VILLACHUATO' => 'PANINDICUARO', // Localidad en Michoacán
+        ];
+
         $mapFile = 'legacy_geo_map.json';
         if (!Storage::exists($mapFile)) {
             $this->error('❌ No se encontró el archivo de mapeo legacy_geo_map.json.');
@@ -96,6 +135,11 @@ class FixUserGeoData extends Command
                 
                 if ($stateName) {
                     $searchName = mb_strtoupper($stateName, 'UTF-8');
+                    // 1. Aplicar corrección manual de Estado
+                    if (isset($stateCorrections[$searchName])) {
+                        $searchName = $stateCorrections[$searchName];
+                    }
+
                     // Buscar exacto o sanitizado
                     $newStateId = $newStatesMap[$searchName] ?? $newStatesMap[$this->sanitize($searchName)] ?? null;
                     
@@ -115,6 +159,12 @@ class FixUserGeoData extends Command
                 
                 if ($cityName) {
                     $searchName = mb_strtoupper($cityName, 'UTF-8');
+                    
+                    // 1. Aplicar corrección manual de Ciudad
+                    if (isset($cityCorrections[$searchName])) {
+                        $searchName = $cityCorrections[$searchName];
+                    }
+                    
                     $sanitizedName = $this->sanitize($searchName);
 
                     // Intentar buscar ID de ciudad

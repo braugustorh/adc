@@ -44,12 +44,27 @@ class MexicoGeoSeeder extends Seeder
         }
 
         // 1. Limpiar tablas existentes (sin borrar IDs si es posible, pero aquí vamos a reiniciar para limpiar basura)
-        // IMPORTANTE: Desactivamos checks de llaves foráneas temporalmente para truncar
-        // TRUNCATE causa commit implícito en MySQL, por eso lo hacemos FUERA de la transacción.
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // Detección de driver para desactivar FKs correctamente
+        $driver = DB::connection()->getDriverName();
+
+        if ($driver === 'mysql') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        } elseif ($driver === 'pgsql') {
+            DB::statement('SET CONSTRAINTS ALL DEFERRED;');
+        } elseif ($driver === 'sqlite') {
+            DB::statement('PRAGMA foreign_keys = OFF;');
+        }
+
         City::truncate();
         State::truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        if ($driver === 'mysql') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        } elseif ($driver === 'pgsql') {
+            DB::statement('SET CONSTRAINTS ALL IMMEDIATE;');
+        } elseif ($driver === 'sqlite') {
+            DB::statement('PRAGMA foreign_keys = ON;');
+        }
 
         $this->command->info('🧹 Tablas cities y states limpiadas.');
 

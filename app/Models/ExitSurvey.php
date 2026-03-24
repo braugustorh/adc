@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ExitSurvey extends Model
 {
@@ -33,6 +34,27 @@ class ExitSurvey extends Model
         'reasons_for_leaving' => 'array',
         'met_expectations' => 'boolean',
     ];
+
+    /**
+     * Obtiene un mapa de campo => comentario (pregunta) desde la base de datos.
+     */
+    public static function getQuestionsMap()
+    {
+        $columns = DB::select("SHOW FULL COLUMNS FROM exit_surveys");
+        $questions = [];
+
+        // Campos irrelevantes para el reporte
+        $exclude = ['id', 'user_id', 'created_at', 'updated_at', 'status'];
+
+        foreach ($columns as $column) {
+            // Field y Comment son propiedades del objeto devuelto por SHOW FULL COLUMNS
+            if (!in_array($column->Field, $exclude) && !empty($column->Comment)) {
+                $questions[$column->Field] = $column->Comment;
+            }
+        }
+
+        return $questions;
+    }
 
     public function user()
     {

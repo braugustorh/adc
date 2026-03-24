@@ -40,14 +40,37 @@ class ExitSurvey extends Model
      */
     public static function getQuestionsMap()
     {
-        $columns = DB::select("SHOW FULL COLUMNS FROM exit_surveys");
+        $driver = DB::connection()->getDriverName();
+        $columns = [];
+
+        if ($driver === 'pgsql') {
+            // Consulta para PostgreSQL
+            // Obtenemos el nombre de la columna como "Field" y la descripción como "Comment"
+            // para mantener la compatibilidad con el código existente.
+            $query = "
+                SELECT
+                    a.attname AS \"Field\",
+                    d.description AS \"Comment\"
+                FROM pg_class c
+                JOIN pg_attribute a ON a.attrelid = c.oid
+                LEFT JOIN pg_description d ON d.objoid = c.oid AND d.objsubid = a.attnum
+                WHERE c.relname = 'exit_surveys'
+                AND a.attnum > 0
+                AND NOT a.attisdropped
+            ";
+            $columns = DB::select($query);
+        } else {
+            // Consulta para MySQL / MariaDB
+            $columns = DB::select("SHOW FULL COLUMNS FROM exit_surveys");
+        }
+
         $questions = [];
 
         // Campos irrelevantes para el reporte
         $exclude = ['id', 'user_id', 'created_at', 'updated_at', 'status'];
 
         foreach ($columns as $column) {
-            // Field y Comment son propiedades del objeto devuelto por SHOW FULL COLUMNS
+            // Field y Comment vendrán con esos nombres en ambos casos gracias a los alias en la query de pgsql
             if (!in_array($column->Field, $exclude) && !empty($column->Comment)) {
                 $questions[$column->Field] = $column->Comment;
             }

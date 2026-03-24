@@ -155,7 +155,6 @@ class ViolenceProtocolWidget extends Widget
                 ->send();
             return;
         }
-
         return response()->download($path, 'Protocolo_Violencia_Laboral.pdf');
     }
 

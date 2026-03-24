@@ -558,6 +558,18 @@ class UserResource extends Resource
                                 ->send();
                         }
                     }),
+                Tables\Actions\Action::make('downloadExitSurvey')
+                    ->label('')
+                    ->tooltip('Descargar Entrevista de Salida')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('warning')
+                    ->url(fn (User $record) => route('users.download-exit-survey', $record))
+                    ->openUrlInNewTab()
+                    ->visible(fn (User $record) =>
+                        !$record->status &&
+                        \App\Models\ExitSurvey::where('user_id', $record->id)->exists() &&
+                        \Auth::user()->hasAnyRole('RH Corp', 'Administrador')
+                    ),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

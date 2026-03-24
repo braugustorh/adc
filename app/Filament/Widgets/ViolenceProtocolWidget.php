@@ -75,6 +75,7 @@ class ViolenceProtocolWidget extends Widget
 
     public function downloadProtocol()
     {
+        /*
         try {
             // 1. Generar las 3 variables
             $mes = strtoupper(\Carbon\Carbon::now()->locale('es')->isoFormat('MMMM')); // mes en mayúsculas
@@ -142,6 +143,20 @@ class ViolenceProtocolWidget extends Widget
                 ->danger()
                 ->send();
         }
+        */
+        $path = storage_path('app/plantillas/Protocolo2026.pdf');
+
+        // Verificamos si existe antes de intentar descargarlo
+        if (!file_exists($path)) {
+            Notification::make()
+                ->title('Error')
+                ->body('El archivo del protocolo no se encuentra disponible.')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        return response()->download($path, 'Protocolo_Violencia_Laboral.pdf');
     }
 
     public function sendComplaint()

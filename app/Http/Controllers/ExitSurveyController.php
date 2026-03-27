@@ -17,7 +17,9 @@ class ExitSurveyController extends Controller
 
         $canDownload = auth()->check() && (
             auth()->user()->hasRole('RH Corp') ||
-            auth()->user()->hasRole('Administrador')
+            auth()->user()->hasRole('Administrador')||
+            auth()->user()->hasRole('RH')
+
         );
 
         if (!$canDownload) {
@@ -45,4 +47,3 @@ class ExitSurveyController extends Controller
         return $pdf->stream('Entrevista_Salida_' . $user->name . '.pdf');
     }
 }
-

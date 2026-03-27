@@ -568,7 +568,7 @@ class UserResource extends Resource
                     ->visible(fn (User $record) =>
                         !$record->status &&
                         \App\Models\ExitSurvey::where('user_id', $record->id)->exists() &&
-                        \Auth::user()->hasAnyRole('RH Corp', 'Administrador')
+                        \Auth::user()->hasAnyRole('RH Corp', 'Administrador','RH')
                     ),
             ])
             ->bulkActions([

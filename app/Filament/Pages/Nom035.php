@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\ActiveSurvey;
+use App\Models\Campaign;
 use App\Models\Evaluation;
 use App\Models\EvaluationsTypes;
 use App\Models\IdentifiedCollaborator;
@@ -1640,11 +1641,23 @@ class Nom035 extends Page
                 'requires_clinical' => $section2 >= 1 || $section3 >= 3 || $section4 >= 2,
             ];
         }
+        $user=auth()->user();
+        $sedeId=$user->sede_id;
+        $campaign = Campaign::whereHas('sedes', function ($query) use ($sedeId) {
+            $query->where('sedes.id', $sedeId);
+        })
+            ->whereHas('evaluations', function ($query) {
+                $query->whereIn('evaluations_types.id', [6, 7, 8]);
+            })
+            ->latest()
+            ->first();
+        $startDate=$campaign->start_date??now();
+        $endDate=$campaign->end_date??now();
         // Pasar las variables directamente, no como arreglo
         $html = view('filament.pages.nom35.identification_report', [
             'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
-            'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
-            'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+            'reportDate' => \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
+            'period' => \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
             'totalSurveys' => $this->colabResponsesG1,
             'noClinical' => $this->colabResponsesG1 - $identifiedEmployees->count(),
             'clinical' => $identifiedEmployees->count(),
@@ -1717,11 +1730,24 @@ class Nom035 extends Page
             'Nulo' => 'El riesgo resulta despreciable por lo que no se requiere medidas adicionales.'
         ];
         //dd($this->generalResultsGuideIIICategory);
+        $user=auth()->user();
+        $sedeId=$user->sede_id;
+        $campaign = Campaign::whereHas('sedes', function ($query) use ($sedeId) {
+            $query->where('sedes.id', $sedeId);
+        })
+            ->whereHas('evaluations', function ($query) {
+                $query->whereIn('evaluations_types.id', [6, 7, 8]);
+            })
+            ->latest()
+            ->first();
+        $startDate=$campaign->start_date??now();
+        $endDate=$campaign->end_date??now();
+
         $html=view('filament.pages.nom35.risk_factor_report', [
             'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
-            'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+            'reportDate' => \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
             'guia' => 'III',
-            'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+            'period' => \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
             'responsesTotalG2' => $this->totalResponsesG3,
             'generalResults' => $this->generalResultsGuideIII,
             'calificacionG2' =>  $this->calificacionG3,
@@ -2720,14 +2746,25 @@ class Nom035 extends Page
                         ]
                    ]
                 ];
-
+                $user=auth()->user();
+                $sedeId=$user->sede_id;
+                $campaign = Campaign::whereHas('sedes', function ($query) use ($sedeId) {
+                    $query->where('sedes.id', $sedeId);
+                })
+                    ->whereHas('evaluations', function ($query) {
+                        $query->whereIn('evaluations_types.id', [6, 7, 8]);
+                    })
+                    ->latest()
+                    ->first();
+                $startDate=$campaign->start_date??now();
+                $endDate=$campaign->end_date??now();
                 return [
                     'users' => $user,
                     'user_id' => $userId,
                     'empresa' => auth()->user()->sede->company_name??'No definido',
                     'nombre' => $user->name . ' ' . $user->first_name . ' ' . $user->last_name,
                     'fecha' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
-                    'fecha_aplicacion' => $items->first()->created_at->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+                    'fecha_aplicacion' => \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D [de] MMMM, YYYY').' al '.\Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D [de] MMMM, YYYY'),
                     'puesto' => $user->position->name ?? 'No definido',
                     'responses' => $responses,
                     'categories' => $categoriesWithLevels,
@@ -3075,11 +3112,21 @@ class Nom035 extends Page
             ],
         ];
 
-
+        $user=auth()->user();
+        $sedeId=$user->sede_id;
+        $campaign = Campaign::whereHas('sedes', function ($query) use ($sedeId) {
+            $query->where('sedes.id', $sedeId);
+        })
+            ->whereHas('evaluations', function ($query) {
+                $query->whereIn('evaluations_types.id', [6, 7, 8]);
+            })
+            ->latest()
+            ->first();
+        $periodo=$campaign->end_date??now();
 
         $html=view('filament.pages.nom35.risk_factor_report_cover', [
             'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
-            'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+            'reportDate' => \Carbon\Carbon::parse($periodo)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
             'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'responsesTotalG2' => $this->responsesTotalG2,
             'generalResults' => $this->generalResults,
@@ -3214,12 +3261,23 @@ class Nom035 extends Page
                 'risk_level'=>$this->getDomainRiskLevelG3('pertenencia',$this->coverInestableResponses->avg()),
             ]
         ];
-
+        $user=auth()->user();
+        $sedeId=$user->sede_id;
+        $campaign = Campaign::whereHas('sedes', function ($query) use ($sedeId) {
+            $query->where('sedes.id', $sedeId);
+        })
+            ->whereHas('evaluations', function ($query) {
+                $query->whereIn('evaluations_types.id', [6, 7, 8]);
+            })
+            ->latest()
+            ->first();
+        $startDate=$campaign->start_date??now();
+        $endDate=$campaign->end_date??now();
 
         $html=view('filament.pages.nom35.risk_factor_report_cover', [
             'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
-            'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
-            'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
+            'reportDate' => \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
+            'period' => \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D [de] MMMM, YYYY'). ' al ' . \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
             'responsesTotalG2' => $this->totalResponsesG3,
             'generalResults' => $this->generalResultsGuideIII,
             'calificacionG2' => $this->calificacionG3,
@@ -3497,13 +3555,24 @@ class Nom035 extends Page
                 'actividad'    => $texto_actividad
             ];
         }
+        $sedeId=$user->sede_id;
+        $campaign = Campaign::whereHas('sedes', function ($query) use ($sedeId) {
+            $query->where('sedes.id', $sedeId);
+        })
+            ->whereHas('evaluations', function ($query) {
+                $query->whereIn('evaluations_types.id', [6, 7, 8]);
+            })
+            ->latest()
+            ->first();
+        $periodo=$campaign->end_date??now();
 
         // 4. EJECUTAMOS EL CLONADO DE BLOQUE
         // 'bloque_sedes' debe coincidir con las etiquetas en tu Word
         $template->cloneBlock('bloque_sedes', 0, true, false, $replacements);
 
 
-        $colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)->count();
+        $colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)
+            ->where('created_at','<=',$periodo)->count();
         $recomendaciones = [
             'Muy Alto' =>'Se requiere realizar el análisis de cada categoría y dominio para establecer las acciones de intervención apropiadas, mediante un Programa de intervención que deberá incluir evaluaciones específicas1, y contemplar campañas de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',
             'Alto' => 'Se requiere realizar un análisis de cada categoría y dominio, de manera que se puedan determinar las acciones de intervención apropiadas a través de un Programa de intervención, que podrá incluir una evaluación específica y deberá incluir una campaña de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',
@@ -4230,12 +4299,21 @@ class Nom035 extends Page
             */
             throw $e;
         }
-
-        $periodo=Nom035Process::where('id',$this->norma->id)->where('sede_id',$user->sede_id)->first()->start_date??'N/A';
+        $sedeId=$user->sede_id;
+        $campaig = Campaign::whereHas('sedes', function ($query) use ($sedeId) {
+            $query->where('sedes.id', $sedeId);
+        })
+            ->whereHas('evaluations', function ($query) {
+                $query->whereIn('evaluations_types.id', [6, 7, 8]);
+            })
+            ->latest()
+            ->first();
+        $periodo=$campaig->end_date??now();
         $colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)->where('created_at','<=',$periodo)->count();
         $total_colab=Nom035Process::where('id',$this->norma->id)->where('sede_id',$user->sede_id)->first()->total_employees??0;
         $hombres=$colaboradores>0?User::where('sede_id', $user->sede_id)->where('status','=',1)->where('sex','=','Masculino')->count():0;
         $mujeres=$colaboradores>0?User::where('sede_id', $user->sede_id)->where('status','=',1)->where('sex','=','Femenino')->count():0;
+
 
 
         $recomendaciones = [
@@ -4254,11 +4332,12 @@ class Nom035 extends Page
         $template->setValue('responsable',$user->sede?->responsible ?? 'Claudia Leticia Esparza Araujo');
         $template->setValue('cedula', $user->sede?->card_id ?? '8128209');
 
-        $template->setValue('periodo', $periodo instanceof \Carbon\Carbon ? $periodo->locale('es')->isoFormat('D [de] MMMM [de] YYYY') : $periodo);
+        $template->setValue('periodo',
+            \Carbon\Carbon::parse($periodo)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'));
         $template->setValue('total_colab', $total_colab);
         $template->setValue('hombres', $hombres);
         $template->setValue('mujeres', $mujeres);
-       // $template->setValue('count_colab', $colaboradores??'N/A');
+       $template->setValue('count_colab', $colaboradores??'N/A');
         $template->setValue('count_eva', $this->totalResponsesG3);
         $template->setValue('cali', number_format($this->calificacionG3, 2));
         $template->setValue('riesgo', $this->resultCuestionarioG3);

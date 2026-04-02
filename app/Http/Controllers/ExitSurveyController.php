@@ -19,7 +19,6 @@ class ExitSurveyController extends Controller
             auth()->user()->hasRole('RH Corp') ||
             auth()->user()->hasRole('Administrador')||
             auth()->user()->hasRole('RH')
-
         );
 
         if (!$canDownload) {

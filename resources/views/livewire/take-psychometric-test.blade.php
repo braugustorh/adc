@@ -1,35 +1,100 @@
-<div>
-    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-4 lg:px-4">
+<div x-data="{ showHelpModal: false }">
 
-        <div class="mb-8">
-            <div class="flex justify-between text-sm font-medium text-gray-500 mb-2">
-                <span>Pregunta {{ $currentQuestionIndex + 1 }} de {{ $totalQuestions }}</span>
-                <span>{{ round((($currentQuestionIndex) / $totalQuestions) * 100) }}%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300"
-                     style="width: {{ (($currentQuestionIndex) / $totalQuestions) * 100 }}%"></div>
+    @if($showWelcome)
+        {{-- ======================================================== --}}
+        {{-- PANTALLA 1: TARJETA DE BIENVENIDA E INSTRUCCIONES        --}}
+        {{-- ======================================================== --}}
+
+        {{-- Cambiamos el ancho fijo por porcentajes: 100% en móviles, 60% en tablets, y exactamente 40% en pantallas grandes --}}
+        <div class="w-full mx-auto py-4 px-2 sm:px-4 lg:px-2">
+
+            <div class="bg-white shadow-2xl sm:rounded-2xl overflow-hidden">
+                {{-- Encabezado de color --}}
+                <div class="bg-indigo-600 px-6 py-10 sm:p-12 text-center">
+                    <h2 class="text-3xl font-extrabold text-white tracking-tight">
+                        {{ $testName }}
+                    </h2>
+                    <p class="mt-3 text-indigo-100 text-lg font-medium">Instrucciones de la evaluación</p>
+                </div>
+
+                {{-- Cuerpo de instrucciones --}}
+                <div class="px-4 py-8 sm:p-12 bg-gray-50 text-center sm:text-left">
+                    <div class="prose prose-indigo prose-lg text-gray-700 mx-auto leading-relaxed text-justify">
+                        {!! nl2br(e($instructions)) !!}
+                    </div>
+
+                    {{-- Botón de acción principal --}}
+                    <div class="mt-10 flex justify-center">
+                        <button wire:click="startTest"
+                                class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-bold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Comenzar Evaluación
+                            <svg class="ml-3 -mr-1 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="bg-white shadow sm:rounded-lg overflow-hidden">
-            <div class="px-4 py-5 sm:p-6">
-                <div wire:key="question-idx-{{ $currentQuestionIndex }}">
-                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                        Pregunta {{ $currentQuestionIndex + 1 }}
-                    </span>
+    @else
+        {{-- ======================================================== --}}
+        {{-- PANTALLA 2: EL EXAMEN ACTUAL (Tu diseño original)        --}}
+        {{-- ======================================================== --}}
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-4 lg:px-4">
 
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-6 mt-2">
-                        {{ $question->question }}
-                    </h3>
+            {{-- HEADER: Barra de progreso + Botón de Ayuda --}}
+            <div class="mb-8">
+                <div class="flex justify-between items-center text-sm font-medium text-gray-500 mb-2">
+                    <span>Pregunta {{ $currentQuestionIndex + 1 }} de {{ $totalQuestions }}</span>
 
-                    @if ($errors->any())
-                        <div class="mb-4 bg-red-50 border-l-4 border-red-500 p-4">
-                            <p class="text-red-700 text-sm">Por favor revisa tus respuestas.</p>
-                        </div>
-                    @endif
+                    <div class="flex items-center gap-4">
+                        {{-- BOTÓN FLOTANTE DE AYUDA (?) --}}
+                        <button @click="showHelpModal = true" type="button" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 focus:outline-none bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded-full transition-colors">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Ver Instrucciones
+                        </button>
+
+                        <span class="font-bold text-gray-700">{{ round((($currentQuestionIndex) / $totalQuestions) * 100) }}%</span>
+                    </div>
+                </div>
+
+                {{-- Barra de Progreso --}}
+                <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                    <div class="bg-indigo-600 h-2.5 rounded-full transition-all duration-500 ease-out"
+                         style="width: {{ (($currentQuestionIndex) / $totalQuestions) * 100 }}%"></div>
+                </div>
+            </div>
+
+            {{-- LA PREGUNTA (Tu código intacto) --}}
+            <div class="bg-white shadow sm:rounded-lg overflow-hidden border border-gray-100">
+                <div class="px-4 py-6 sm:p-8">
+                    <div wire:key="question-idx-{{ $currentQuestionIndex }}">
+                        <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold text-indigo-600 bg-indigo-50 uppercase tracking-wide mb-4">
+                            Pregunta {{ $currentQuestionIndex + 1 }}
+                        </span>
+
+                        <h3 class="text-xl leading-7 font-semibold text-gray-900 mb-8">
+                            {{ $question->question }}
+                        </h3>
+
+                        @if ($errors->any())
+                            <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-md">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-red-700 font-medium">Debe seleccionar una respuesta para continuar.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
 
                     <div class="mt-4">
+
                         @switch($question->answer_type_id)
 
                             @case(2)
@@ -37,14 +102,14 @@
                                     @foreach($question->answers as $ans)
                                         <label wire:key="q-idx-{{ $currentQuestionIndex }}-ans-{{ $ans->id }}"
                                                class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition {{ isset($answers[$question->id]) && $answers[$question->id] == $ans->id ? 'border-indigo-500 bg-indigo-50 ring-1 ring-indigo-500' : 'border-gray-200' }}">
-                                            <div class="flex items-center h-5">
+                                            <div class="me-3 flex items-center h-5">
                                                 <input type="radio"
                                                        wire:model="answers.{{ $question->id }}"
                                                        name="question_{{ $question->id }}"
                                                        value="{{ $ans->id }}"
                                                        class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
                                             </div>
-                                            <div class="ml-3 text-sm">
+                                            <div class="text-sm">
                                                 <span class="font-medium text-gray-700">{{ $ans->text }}</span>
                                             </div>
                                         </label>
@@ -54,6 +119,7 @@
                                 @break
 
                             @case(4)
+
                                 <div class="flex space-x-4 justify-center mt-6">
                                     @foreach($question->answers as $ans)
                                         <label wire:key="q-idx-{{ $currentQuestionIndex }}-ans-{{ $ans->id }}" class="cursor-pointer">
@@ -75,6 +141,7 @@
                                 @break
 
                             @case(5)
+
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
@@ -87,16 +154,18 @@
                                         <tbody class="bg-white divide-y divide-gray-200">
                                         @foreach($question->answers as $ans)
                                             <tr wire:key="cleaver-idx-{{ $currentQuestionIndex }}-ans-{{ $ans->id }}">
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                <td class="px-3.5 pr-10 py-3.5 whitespace-nowrap text-sm font-medium text-gray-900">
                                                     {{ $ans->text }}
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-center">
+
+                                                <td class="pl-6 pr-3.5 py-3.5 whitespace-nowrap text-center">
                                                     <input type="radio"
                                                            wire:model="answers.{{ $question->id }}.most"
                                                            value="{{ $ans->id }}"
                                                            name="most_group_{{ $question->id }}"
-                                                           class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                                                           class="ms-6 focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
                                                 </td>
+
                                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                                     <input type="radio"
                                                            wire:model="answers.{{ $question->id }}.least"
@@ -119,29 +188,81 @@
                 </div>
             </div>
 
-            <div class="px-4 py-4 sm:px-6 bg-gray-50 text-right">
-                <button wire:click="nextQuestion"
-                        wire:loading.attr="disabled"
-                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
-                    <span wire:loading.remove>
-                        {{ $currentQuestionIndex < $totalQuestions - 1 ? 'Siguiente Pregunta' : 'Finalizar Evaluación' }}
-                    </span>
-                    <span wire:loading>Procesando...</span>
-                    <svg wire:loading.remove class="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </button>
+                {{-- FOOTER / BOTÓN SIGUIENTE --}}
+                <div class="bg-gray-50 px-4 py-4 sm:px-8 sm:flex sm:flex-row-reverse border-t border-gray-100">
+                    <button wire:click="nextQuestion"
+                            wire:loading.attr="disabled"
+                            class="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-bold rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 sm:w-auto sm:text-sm transition-colors">
+                        <span wire:loading.remove>
+                            {{ $currentQuestionIndex < $totalQuestions - 1 ? 'Siguiente Pregunta' : 'Finalizar Evaluación' }}
+                        </span>
+                        <span wire:loading>Procesando...</span>
+                        <svg wire:loading.remove class="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- ======================================================== --}}
+    {{-- MODAL FLOTANTE DE AYUDA (Se muestra al darle al botón ?) --}}
+    {{-- ======================================================== --}}
+    <div x-show="showHelpModal" style="display: none;" class="fixed z-50 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+
+            {{-- Fondo oscuro transparente --}}
+            <div x-show="showHelpModal"
+                 x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                 x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                 @click="showHelpModal = false" aria-hidden="true"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            {{-- Tarjeta del Modal --}}
+            <div x-show="showHelpModal"
+                 x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-bold text-gray-900" id="modal-title">
+                                Instrucciones
+                            </h3>
+                            <div class="mt-4 text-sm text-gray-600 prose prose-indigo leading-relaxed">
+                                {!! nl2br(e($instructions)) !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" @click="showHelpModal = false"
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Entendido, continuar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-
-
-<!-- DEBUG: Agrega esto temporalmente en la vista -->
-    <div class="fixed top-4 right-4 bg-yellow-100 p-4 rounded shadow text-xs">
-        <p><strong>DEBUG INFO:</strong></p>
-        <p>Question ID: {{ $question->id ?? 'NULL' }}</p>
-        <p>Question Index: {{ $currentQuestionIndex }}</p>
-        <p>Total Questions: {{ $totalQuestions }}</p>
-        <p>Question Text: {{ substr($question->question ?? 'NULL', 0, 50) }}...</p>
-    </div>
+        <!-- DEBUG: Agrega esto temporalmente en la vista -->
+        <div class="fixed top-4 right-4 bg-yellow-100 p-4 rounded shadow text-xs">
+            <p><strong>DEBUG INFO:</strong></p>
+            <p>Question ID: {{ $question->id ?? 'NULL' }}</p>
+            <p>Question Index: {{ $currentQuestionIndex }}</p>
+            <p>Total Questions: {{ $totalQuestions }}</p>
+            <p>Question Text: {{ substr($question->question ?? 'NULL', 0, 50) }}...</p>
+        </div>
 </div>
+
+
+

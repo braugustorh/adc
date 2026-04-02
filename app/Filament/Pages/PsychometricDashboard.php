@@ -21,6 +21,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Support\Facades\Http;
 
 class PsychometricDashboard extends Page implements HasTable
 {
@@ -58,9 +59,21 @@ class PsychometricDashboard extends Page implements HasTable
             )
             ->columns([
                 Tables\Columns\TextColumn::make('evaluable.name')
-                    ->label('Candidato / Usuario')
+                    ->label('Evaluado')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    // Agrega el subtítulo (Candidato vs Colaborador)
+                    ->description(fn (PsychometricEvaluation $record): string =>
+                    $record->evaluable_type === \App\Models\User::class ? 'Colaborador Interno' : 'Candidato Externo'
+                    )
+                    // Pone un ícono distintivo
+                    ->icon(fn (PsychometricEvaluation $record): string =>
+                    $record->evaluable_type === \App\Models\User::class ? 'heroicon-m-identification' : 'heroicon-m-user-circle'
+                    )
+                    // Le da color ÚNICAMENTE al ícono (dejando el texto en color por defecto)
+                    ->iconColor(fn (PsychometricEvaluation $record): string =>
+                    $record->evaluable_type === \App\Models\User::class ? 'info' : 'success'
+                    ),
 
                 Tables\Columns\TextColumn::make('evaluationType.name')
                     ->label('Prueba')
@@ -127,7 +140,7 @@ class PsychometricDashboard extends Page implements HasTable
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('success')
                     ->visible(fn (PsychometricEvaluation $record) => $record->status === 'completed')
-                    ->url(fn ($record) => '#') // Aquí pondremos la ruta real luego
+                    ->action(fn (PsychometricEvaluation $record) => $this->downloadPdf($record))
                     ->openUrlInNewTab(),
             ]);
     }
@@ -136,35 +149,87 @@ class PsychometricDashboard extends Page implements HasTable
     {
         return [
             // ---------------------------------------------------------------
-            // ACCIÓN 1: Asignar a Colaboradores (Internos)
+            // ACCIÓN: Asignar a Colaboradores (Internos)
             // ---------------------------------------------------------------
-            Action::make('assign_evaluation')
+            Action::make('assign_internal')
                 ->label('Asignar a Colaborador')
-                ->icon('heroicon-o-user')
+                ->icon('heroicon-o-identification')
                 ->color('primary')
                 ->form([
-                    // Seleccionar al Colaborador (User)
-                    Select::make('user_id')
-                        ->label('Colaborador')
-                        ->options(User::where('status', true)->pluck('name', 'id')) // Filtra activos si es necesario
+                    // 1. Selector de Sede (Visible y editable solo para Admin/RH Corp)
+                    Forms\Components\Select::make('sede_id')
+                        ->label('Sede')
+                        ->options(\App\Models\Sede::pluck('name', 'id'))
                         ->searchable()
-                        ->required(),
+                        ->preload()
+                        ->live() // Hace que el campo 'user_id' escuche y se actualice al cambiar la sede
+                        // Si no es Admin/RH Corp, no se muestra este campo
+                        ->visible(fn () => auth()->user()->hasAnyRole(['Administrador', 'RH Corp']))
+                        ->required(fn () => auth()->user()->hasAnyRole(['Administrador', 'RH Corp'])),
 
-                    // Selección Múltiple de Exámenes
+                    // 2. Selector de Colaborador (Dependiente de la sede)
+                    Forms\Components\Select::make('user_id')
+                        ->label('Colaborador')
+                        ->options(function (Forms\Get $get) {
+                            // Determinar qué sede usar para el filtro
+                            if (auth()->user()->hasAnyRole(['Administrador', 'RH Corp'])) {
+                                $sedeId = $get('sede_id');
+                            } else {
+                                $sedeId = auth()->user()->sede_id; // RH Local usa su propia sede por defecto
+                            }
+
+                            if (! $sedeId) {
+                                return []; // Si no hay sede seleccionada, no muestra usuarios
+                            }
+
+                            // Filtrar usuarios de esa sede (puedes agregar ->where('status', true) si tienes ese campo)
+                            return \App\Models\User::where('sede_id', $sedeId)
+                                ->pluck('name', 'id');
+                        })
+                        ->searchable()
+                        ->required()
+                        ->loadingMessage('Cargando colaboradores...'),
+                    // 3. Selección de Evaluaciones
                     Select::make('evaluation_type_ids')
                         ->label('Batería de Evaluaciones')
-                        ->options(EvaluationsTypes::all()->pluck('name', 'id'))
+                        ->options(EvaluationsTypes::whereIN('id',[9,10,11,12])->pluck('name', 'id'))
                         ->multiple()
                         ->preload()
                         ->required()
-                        ->helperText('Selecciona todas las pruebas que aplicará este colaborador.'),
+                        ->helperText('El colaborador recibirá una notificación en la plataforma y se le desplegará la
+                        opción de Psicometría en su menú lateral.'),
                 ])
                 ->action(function (array $data) {
-                    $this->createBatchEvaluations(
-                        evaluableId: $data['user_id'],
-                        evaluableType: User::class,
-                        evaluationTypeIds: $data['evaluation_type_ids']
-                    );
+                    $user = User::find($data['user_id']);
+                    $batchId = (string) Str::uuid();
+
+                    // 1. Crear las evaluaciones asociadas al modelo User
+                    foreach ($data['evaluation_type_ids'] as $typeId) {
+                        PsychometricEvaluation::create([
+                            'evaluations_type_id' => $typeId,
+                            'evaluable_id' => $user->id,
+                            'evaluable_type' => User::class, // Declaramos que es un interno
+                            'assigned_by' => auth()->id(),
+                            'batch_id' => $batchId,
+                            'status' => 'assigned',
+                            'assigned_at' => now(),
+                        ]);
+                    }
+
+                    // 2. Notificación en pantalla (Toast verde para quien asigna)
+                    Notification::make()
+                        ->title('Evaluaciones Asignadas')
+                        ->body("La batería fue asignada correctamente a {$user->name}.")
+                        ->success()
+                        ->send();
+
+                    // 3. NOTIFICACIÓN DE BASE DE DATOS (Para el Colaborador evaluado)
+                    Notification::make()
+                        ->title('Nueva Evaluación Psicométrica')
+                        ->body('Se te ha asignado una prueba. Por favor, revisa tu sección de Psicometría en el menú.')
+                        ->icon('heroicon-o-clipboard-document-check')
+                        ->success()
+                        ->sendToDatabase($user); // Esto hace que le aparezca el globito rojo en la campana
                 }),
 
             // ---------------------------------------------------------------
@@ -410,6 +475,68 @@ class PsychometricDashboard extends Page implements HasTable
 
         // Aquí podrías llamar a tu Job de envío de correos
         // SendEvaluationLinkJob::dispatch($evaluableId, $evaluableType, $accessToken);
+    }
+    public function downloadPdf(PsychometricEvaluation $record)
+    {
+        // 1. Calculamos los resultados con tu cerebro psicométrico
+        $service = new PsychometricScoringService();
+        $results = $service->calculate($record);
+
+        // 2. Preparamos los datos para la vista del PDF
+        $candidateName = $record->evaluable->name ?? 'Candidato';
+        $testName = $results['test_name'] ?? 'Evaluacion';
+        $date = \Carbon\Carbon::parse($record->updated_at)->locale('es')->isoFormat('D [de] MMMM, YYYY');
+
+        // 3. Renderizamos el HTML (Crearemos esta vista en el Paso 2)
+        $html = view('pdf.psychometric_report', [
+            'record' => $record,
+            'results' => $results,
+            'candidateName' => $candidateName,
+            'date' => $date,
+        ])->render();
+
+        // 4. Forzar codificación UTF-8
+        $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
+
+        // 5. Payload para PDFShift
+        $payload = [
+            'source'    => $html,
+            'landscape' => false,
+            'use_print' => true, // <-- Recomendado en true para que Tailwind aplique estilos de impresión
+            'margin'    => [
+                'top'    => '20px',
+                'bottom' => '20px',
+                'left'   => '15px',
+                'right'  => '15px',
+            ],
+        ];
+
+        // 6. Llamada a la API
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'X-API-Key'    => config('services.pdfshift.api_key'),
+        ])
+            ->withBody(json_encode($payload, JSON_UNESCAPED_UNICODE), 'application/json')
+            ->post('https://api.pdfshift.io/v3/convert/pdf');
+
+        // 7. Retorno / Descarga
+        if ($response->successful()) {
+            $pdfContent = $response->body();
+
+            // Nombre del archivo dinámico
+            $fileName = 'Reporte_' . Str::slug($testName) . '_' . Str::slug($candidateName) . '.pdf';
+
+            return response()->streamDownload(function () use ($pdfContent) {
+                echo $pdfContent;
+            }, $fileName);
+
+        } else {
+            Notification::make()
+                ->title('Error al generar PDF')
+                ->body('No se pudo generar el PDF con PDFShift.')
+                ->danger()
+                ->send();
+        }
     }
 
 }

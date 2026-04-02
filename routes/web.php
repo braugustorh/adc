@@ -62,5 +62,7 @@ Route::get('/evaluacion/{token}', [PublicEvaluationController::class, 'landing']
 Route::get('/evaluacion/{token}/realizar', TakePsychometricTest::class)
     ->name('evaluation.take');
 
+
 Route::view('/evaluation/finished', 'evaluations.process-finished')
     ->name('evaluation.finished');
+

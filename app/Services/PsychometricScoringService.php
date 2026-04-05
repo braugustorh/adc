@@ -601,25 +601,118 @@ class PsychometricScoringService
 
     private function calculateCleaver($evaluation)
     {
+        // 1. Cargar el diccionario original
+        $originalDictionary = config('cleaver.plantilla');
+        $percentilesDB = config('cleaver.percentiles');
+
+        // 2. Normalizar el diccionario: convertir todas las llaves a mayúsculas
+        $dictionary = [];
+        foreach ($originalDictionary as $word => $values) {
+            // Usamos mb_strtoupper con UTF-8 para no romper acentos (ej: ECUÁNIME)
+            $normalizedWord = mb_strtoupper(trim($word), 'UTF-8');
+            $dictionary[$normalizedWord] = $values;
+        }
+
+        // 3. Consulta a la base de datos
         $answers = EvaluationUserAnswer::where('psychometric_evaluation_id', $evaluation->id)
             ->join('answers', 'evaluation_user_answers.answer_id', '=', 'answers.id')
-            ->select('answers.code')
+            ->join('questions', 'answers.question_id', '=', 'questions.id')
+            ->select('questions.order', 'evaluation_user_answers.attribute', 'answers.text')
             ->get();
 
-        $scores = ['D' => 0, 'I' => 0, 'S' => 0, 'C' => 0];
+        $scoresMas = ['D' => 0, 'I' => 0, 'S' => 0, 'C' => 0];
+        $scoresMenos = ['D' => 0, 'I' => 0, 'S' => 0, 'C' => 0];
 
+        // 4. Iterar y evaluar
         foreach ($answers as $ans) {
-            $code = strtoupper(substr($ans->code, 0, 1));
-            if (isset($scores[$code])) {
-                $scores[$code]++;
+            // Normalizamos la palabra que viene de la base de datos a mayúsculas
+            $word = mb_strtoupper(trim($ans->text), 'UTF-8');
+
+
+            $selectionAttribute = strtoupper($ans->attribute);
+            $selectionType = in_array($selectionAttribute, ['MOST', 'MAS', 'M']) ? 'MOST' :
+                (in_array($selectionAttribute, ['LEAST', 'MENOS', 'L']) ? 'LEAST' : null);
+
+            // Ahora comparamos peras con peras (MAYÚSCULAS con MAYÚSCULAS)
+            if (!$selectionType || !isset($dictionary[$word])) {
+                continue;
+            }
+
+            $domainLetter = $dictionary[$word][$selectionType];
+            \Log::info("Pregunta {$ans->order}: Palabra '{$ans->text}' seleccionada como {$selectionType} -> Dominio: {$domainLetter}");
+            if ($domainLetter && isset($scoresMas[$domainLetter])) {
+                if ($selectionType === 'MOST') {
+                    $scoresMas[$domainLetter]++;
+                    \Log::info("Pregunta {$ans->order}: Palabra '{$ans->text}' seleccionada como MOST -> +1 a {$domainLetter}");
+                } else {
+                    $scoresMenos[$domainLetter]++;
+                    \Log::info("Pregunta {$ans->order}: Palabra '{$ans->text}' seleccionada como LEAST -> +1 a {$domainLetter}");
+                }
             }
         }
 
+        $scoresTotales = [
+            'D' => $scoresMas['D'] - $scoresMenos['D'],
+            'I' => $scoresMas['I'] - $scoresMenos['I'],
+            'S' => $scoresMas['S'] - $scoresMenos['S'],
+            'C' => $scoresMas['C'] - $scoresMenos['C'],
+        ];
+
+        // Función auxiliar para obtener el % de manera segura
+        // (Por si un puntaje es mayor/menor a los límites de la tabla)
+        $getPercentile = function($type, $domain, $score) use ($percentilesDB) {
+            $table = $percentilesDB[$type][$domain] ?? [];
+            if (empty($table)) return 0;
+
+            if (isset($table[$score])) {
+                return $table[$score];
+            }
+
+            // Si no existe, buscamos el valor más cercano (Fallback de seguridad)
+            $minKey = min(array_keys($table));
+            $maxKey = max(array_keys($table));
+
+            return $score < $minKey ? $table[$minKey] : $table[$maxKey];
+        };
+
+        // Calculamos los percentiles para las 3 gráficas
+        $percentilesMas = [
+            'D' => $getPercentile('M', 'D', $scoresMas['D']),
+            'I' => $getPercentile('M', 'I', $scoresMas['I']),
+            'S' => $getPercentile('M', 'S', $scoresMas['S']),
+            'C' => $getPercentile('M', 'C', $scoresMas['C']),
+        ];
+
+        $percentilesMenos = [
+            'D' => $getPercentile('L', 'D', $scoresMenos['D']),
+            'I' => $getPercentile('L', 'I', $scoresMenos['I']),
+            'S' => $getPercentile('L', 'S', $scoresMenos['S']),
+            'C' => $getPercentile('L', 'C', $scoresMenos['C']),
+        ];
+
+        $percentilesTotales = [
+            'D' => $getPercentile('T', 'D', $scoresTotales['D']),
+            'I' => $getPercentile('T', 'I', $scoresTotales['I']),
+            'S' => $getPercentile('T', 'S', $scoresTotales['S']),
+            'C' => $getPercentile('T', 'C', $scoresTotales['C']),
+        ];
+
         return [
-            'test_name' => 'Cleaver (DISC)',
+            'test_name'  => 'Cleaver (DISC)',
             'chart_type' => 'bar',
-            'scores' => $scores,
-            'summary' => "D:{$scores['D']} I:{$scores['I']} S:{$scores['S']} C:{$scores['C']}"
+            // Podemos mandar los puntajes crudos y sus equivalentes en %
+            'raw_scores' => [
+                'M' => $scoresMas,
+                'L' => $scoresMenos,
+                'T' => $scoresTotales,
+            ],
+            'percentiles' => [
+                'M' => $percentilesMas,
+                'L' => $percentilesMenos,
+                'T' => $percentilesTotales, // <- Esta es la que usarías en tu Chart de Filament
+            ],
+            'scores'     => $percentilesTotales, // Lo seteamos como scores por defecto para tu gráfica
+            'summary'    => "D:{$percentilesTotales['D']}% I:{$percentilesTotales['I']}% S:{$percentilesTotales['S']}% C:{$percentilesTotales['C']}%"
         ];
     }
 }

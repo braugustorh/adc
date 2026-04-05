@@ -50,7 +50,6 @@ Route::group(['middleware' => 'auth'], function () {
         ->name('users.download-exit-survey');
     Route::post('/quejas-violencia/store', [QuejaViolenciaLaboralController::class, 'store'])
         ->name('quejas-violencia.store');
-
 });
 
 // Ruta de entrada (Landing Page)

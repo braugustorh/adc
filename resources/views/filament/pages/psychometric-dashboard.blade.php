@@ -26,7 +26,7 @@
         <!-- Main Content Grid -->
         <div class="grid gap-2 grid-cols-1 sm:grid-cols-3 xl:grid-cols-3">
             <!-- Evaluations Table -->
-            <div class="sm:col-span-2"1>
+            <div class="sm:col-span-2">
 
             {{-- <x-filament::section>
                     <x-slot name="heading">

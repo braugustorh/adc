@@ -33,5 +33,9 @@ return [
     'pdfshift' => [
         'api_key' => env('PDFSHIFT_API_KEY'),
     ],
+    'ilovepdf' => [
+        'api_key' => env('ILOVEPDF_API_KEY'),
+        'public_key' => env('ILOVEPDF_PUBLIC_KEY'),
+    ],
 
 ];

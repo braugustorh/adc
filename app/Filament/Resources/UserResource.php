@@ -199,7 +199,13 @@ class UserResource extends Resource
 
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Estatus')
+                    ->options([
+                        '1' => 'Activo',
+                        '0' => 'Baja',
+                    ])
+                    ->placeholder('Todos'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

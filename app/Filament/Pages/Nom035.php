@@ -4309,11 +4309,14 @@ class Nom035 extends Page
             ->latest()
             ->first();
         $periodo=$campaig->end_date??now();
-        $colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)->where('created_at','<=',$periodo)->count();
+        $colaboradores=$this->colabs->count;
+        //$colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)->where('created_at','<=',$periodo)->count();
         $total_colab=Nom035Process::where('id',$this->norma->id)->where('sede_id',$user->sede_id)->first()->total_employees??0;
+        /*
+         *
         $hombres=$colaboradores>0?User::where('sede_id', $user->sede_id)->where('status','=',1)->where('sex','=','Masculino')->count():0;
         $mujeres=$colaboradores>0?User::where('sede_id', $user->sede_id)->where('status','=',1)->where('sex','=','Femenino')->count():0;
-
+         */
 
 
         $recomendaciones = [
@@ -4335,8 +4338,8 @@ class Nom035 extends Page
         $template->setValue('periodo',
             \Carbon\Carbon::parse($periodo)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'));
         $template->setValue('total_colab', $total_colab);
-        $template->setValue('hombres', $hombres);
-        $template->setValue('mujeres', $mujeres);
+        //$template->setValue('hombres', $hombres);
+        //$template->setValue('mujeres', $mujeres);
        $template->setValue('count_colab', $colaboradores??'N/A');
         $template->setValue('count_eva', $this->totalResponsesG3);
         $template->setValue('cali', number_format($this->calificacionG3, 2));

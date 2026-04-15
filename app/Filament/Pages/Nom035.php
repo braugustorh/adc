@@ -2747,7 +2747,7 @@ class Nom035 extends Page
                         ]
                    ]
                 ];
-                $user=auth()->user();
+                //$user=auth()->user();
                 $sedeId=$user->sede_id;
                 $campaign = Campaign::whereHas('sedes', function ($query) use ($sedeId) {
                     $query->where('sedes.id', $sedeId);

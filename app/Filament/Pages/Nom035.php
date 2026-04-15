@@ -4309,9 +4309,9 @@ class Nom035 extends Page
             ->latest()
             ->first();
         $periodo=$campaig->end_date??now();
-        $colaboradores=$this->colabs->count;
+        $colaboradores=$this->colabs->count();
         //$colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)->where('created_at','<=',$periodo)->count();
-        $total_colab=Nom035Process::where('id',$this->norma->id)->where('sede_id',$user->sede_id)->first()->total_employees??0;
+        $total_colab=Nom035Process::where('id',$this->norma->id)->where('sede_id',$user->sede_id)->first()?->total_employees??0;
         /*
          *
         $hombres=$colaboradores>0?User::where('sede_id', $user->sede_id)->where('status','=',1)->where('sex','=','Masculino')->count():0;

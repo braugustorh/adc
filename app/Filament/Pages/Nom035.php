@@ -3571,8 +3571,8 @@ class Nom035 extends Page
         $template->cloneBlock('bloque_sedes', 0, true, false, $replacements);
 
 
-        $colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)
-            ->where('created_at','<=',$periodo)->count();
+       // $colaboradores = User::where('sede_id', $user->sede_id)->where('status','=',1)->where('created_at','<=',$periodo)->count();
+        $colaboradores=$this->colabs->count();
         $recomendaciones = [
             'Muy Alto' =>'Se requiere realizar el análisis de cada categoría y dominio para establecer las acciones de intervención apropiadas, mediante un Programa de intervención que deberá incluir evaluaciones específicas1, y contemplar campañas de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',
             'Alto' => 'Se requiere realizar un análisis de cada categoría y dominio, de manera que se puedan determinar las acciones de intervención apropiadas a través de un Programa de intervención, que podrá incluir una evaluación específica y deberá incluir una campaña de sensibilización, revisar la política de prevención de riesgos psicosociales y programas para la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral, así como reforzar su aplicación y difusión.',

@@ -3591,8 +3591,8 @@ class Nom035 extends Page
         $template->setValue('responsable',$user->sede?->responsible ?? 'Claudia Leticia Esparza Araujo');
         $template->setValue('cedula', $user->sede?->card_id ?? '8128209');
 
-        $template->setValue('count_colab', $colaboradores??'N/A');
-        $template->setValue('count_eva', $this->responsesTotalG2);
+        $template->setValue('count_colab', $this->responsesTotalG2??'N/A');
+        $template->setValue('count_eva', $this->responsesTotalG2??'N/A');
         $template->setValue('cali', number_format($this->calificacion, 2));
         $template->setValue('riesgo', $this->resultCuestionario);
         $template->setValue('determinacion', $recomendaciones[$this->resultCuestionario]);
@@ -4343,7 +4343,7 @@ class Nom035 extends Page
         $template->setValue('total_colab', $total_colab);
         //$template->setValue('hombres', $hombres);
         //$template->setValue('mujeres', $mujeres);
-       $template->setValue('count_colab', $colaboradores??'N/A');
+       $template->setValue('count_colab', $this->totalResponsesG3);
         $template->setValue('count_eva', $this->totalResponsesG3);
         $template->setValue('cali', number_format($this->calificacionG3, 2));
         $template->setValue('riesgo', $this->resultCuestionarioG3);

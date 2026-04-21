@@ -63,6 +63,7 @@
         // 3. Extracción de Datos
         if ($isCleaver) {
             $cleaverPercentiles = $results['percentiles'] ?? [];
+            $cleaverInterpretations = $results['interpretations'] ?? [];
             $cleaverRaw = $results['raw_scores'] ?? [];
             $cleaverSummary = $results['summary'] ?? '';
             $discDomains = ['D' => 'Empuje', 'I' => 'Influencia', 'S' => 'Constancia', 'C' => 'Apego'];
@@ -94,8 +95,28 @@
     {{-- ========================================================= --}}
     {{-- RENDERIZADO CLEAVER (DISC)                                --}}
     {{-- ========================================================= --}}
-    @if($isCleaver && !empty($cleaverPercentiles))
+    @if($isCleaver && !empty($cleaverPercentiles) && !empty($cleaverInterpretations))
 
+
+        {{-- ALERTAS DE VALIDEZ Y APLANAMIENTO --}}
+        @if(isset($cleaverIsValid) && !$cleaverIsValid)
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-md shadow-sm avoid-break">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>
+                    </div>
+                    <div class="ml-3"><p class="text-sm text-red-700 font-bold">Alerta de Validez: Las respuestas del candidato presentan inconsistencias. Los resultados pueden no ser exactos.</p></div>
+                </div>
+            </div>
+        @endif
+
+        @if(isset($cleaverInterpretations['alert']))
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6 rounded-md shadow-sm avoid-break">
+                <p class="text-sm text-yellow-700 font-bold">⚠️ {{ $cleaverInterpretations['alert'] }}</p>
+            </div>
+        @endif
+
+        {{-- CABECERA GENERAL --}}
         <div class="relative overflow-hidden rounded-xl bg-white border border-gray-200 shadow-sm avoid-break mb-8">
             <div class="absolute left-0 top-0 bottom-0 w-2" style="background-color: #4f46e5;"></div>
             <div class="p-5 pl-7 flex justify-between items-center">
@@ -104,11 +125,12 @@
                     <p class="text-sm text-gray-500 mt-1">Análisis de Motivación, Presión y Comportamiento Normal.</p>
                 </div>
                 <span class="text-sm font-bold text-indigo-700 bg-indigo-50 px-4 py-2 rounded-full border border-indigo-100">
-                    {{ $cleaverSummary }}
-                </span>
+                {{ $cleaverSummary }}
+            </span>
             </div>
         </div>
 
+        {{-- GRÁFICAS (Se mantiene tu misma lógica visual matemática) --}}
         <div class="grid grid-cols-3 gap-4 avoid-break">
             @php
                 $renderDiscLineChart = function($title, $type, $data, $raw_data) {
@@ -162,6 +184,7 @@
             {!! $renderDiscLineChart('Normal (T)', 'T', $cleaverPercentiles['T'], $cleaverRaw['T']) !!}
         </div>
 
+        {{-- LEYENDA --}}
         <div class="flex justify-center gap-6 text-xs text-gray-500 mt-4 bg-gray-50 py-2 rounded-lg border border-gray-100 avoid-break mb-8">
             <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-sm bg-red-500"></div> <b>D</b>ominancia</div>
             <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-sm bg-amber-500"></div> <b>I</b>nfluencia</div>
@@ -169,69 +192,65 @@
             <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-sm bg-blue-500"></div> <b>C</b>ompliance</div>
         </div>
 
+        {{-- INTERPRETACIÓN DINÁMICA POR DOMINIOS --}}
         <div>
             <h3 class="text-xl font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2 avoid-break">Interpretación por Dominios</h3>
             <div class="space-y-6">
-                @php
-                    $dominios = [
-                        'D' => ['nombre' => 'Dominancia o Empuje', 'desc' => 'Capacidad de liderazgo, de lograr resultados y aceptar retos.'],
-                        'I' => ['nombre' => 'Influencia o Relación', 'desc' => 'Habilidad para relacionarse con la gente y motivarla.'],
-                        'S' => ['nombre' => 'Constancia o Permanencia', 'desc' => 'Capacidad para realizar trabajos de manera continua y rutinaria.'],
-                        'C' => ['nombre' => 'Apego o Cumplimiento', 'desc' => 'Habilidad para desarrollar trabajos respetando normas y procedimientos.']
-                    ];
-                @endphp
 
-                @foreach($dominios as $letra => $info)
+                {{-- Iteramos sobre las letras usando los datos inyectados por el backend --}}
+                @foreach(['D', 'I', 'S', 'C'] as $letra)
                     @php
-                        $valM = $cleaverPercentiles['M'][$letra] ?? 0;
-                        $valL = $cleaverPercentiles['L'][$letra] ?? 0;
-                        $valT = $cleaverPercentiles['T'][$letra] ?? 0;
+                        $info = $cleaverInterpretations[$letra];
                     @endphp
+
                     <div class="border border-gray-200 rounded-lg p-5 bg-gray-50 avoid-break shadow-sm">
                         <div class="mb-4 pb-3 border-b border-gray-200">
                             <h4 class="text-lg font-black text-gray-900">
                                 <span class="bg-gray-800 text-white px-2 py-0.5 rounded mr-2">{{ $letra }}</span>
-                                {{ $info['nombre'] }}
+                                {{ $info['name'] }}
                             </h4>
-                            <p class="text-sm text-gray-500 mt-1">{{ $info['desc'] }}</p>
                         </div>
+
                         <div class="grid grid-cols-2 gap-6">
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
                                     <span class="text-xs font-bold uppercase text-blue-600 bg-blue-100 px-2 py-0.5 rounded">Motivación (M)</span>
-                                    <span class="text-sm font-bold text-gray-700">{{ $valM }}%</span>
+                                    <span class="text-sm font-bold text-gray-700">{{ $info['motivacion']['score'] }}%</span>
                                 </div>
-                                <div class="text-sm text-gray-700 bg-white p-3 rounded border border-gray-100 mt-2 h-full">
-                                    @if($valM >= 50)
-                                        <p><strong>Alta ({{$letra}}+):</strong> Muestra fuerte inclinación hacia esta característica cuando se siente motivado o proyecta su perfil ideal.</p>
-                                    @else
-                                        <p><strong>Baja ({{$letra}}-):</strong> Disminuye el uso de esta característica como motor principal para alcanzar sus objetivos.</p>
-                                    @endif
+                                <div class="text-sm text-gray-700 bg-white p-3 rounded border border-gray-100 mt-2 h-full shadow-sm">
+                                    <p><strong>{{ $info['motivacion']['title'] }}:</strong> {{ $info['motivacion']['text'] }}</p>
                                 </div>
                             </div>
+
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
                                     <span class="text-xs font-bold uppercase text-red-600 bg-red-100 px-2 py-0.5 rounded">Presión (L)</span>
-                                    <span class="text-sm font-bold text-gray-700">{{ $valL }}%</span>
+                                    <span class="text-sm font-bold text-gray-700">{{ $info['presion']['score'] }}%</span>
                                 </div>
-                                <div class="text-sm text-gray-700 bg-white p-3 rounded border border-gray-100 mt-2 h-full">
-                                    @if($valL >= 50)
-                                        <p><strong>Alta ({{$letra}}+):</strong> Bajo estrés o situaciones antagónicas, tiende a apoyarse marcadamente en esta conducta.</p>
-                                    @else
-                                        <p><strong>Baja ({{$letra}}-):</strong> Evita utilizar esta conducta cuando se encuentra ante problemas o bajo presión operativa.</p>
-                                    @endif
+                                <div class="text-sm text-gray-700 bg-white p-3 rounded border border-gray-100 mt-2 h-full shadow-sm">
+                                    <p><strong>{{ $info['presion']['title'] }}:</strong> {{ $info['presion']['text'] }}</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-gray-200 flex items-center gap-3">
-                            <span class="text-xs font-bold text-gray-500 uppercase">Comportamiento Diario (T):</span>
-                            <span class="text-sm font-black text-emerald-600">{{ $valT }}%</span>
-                            <span class="text-xs text-gray-500">Refleja el comportamiento natural diario.</span>
+
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-xs font-bold text-gray-500 uppercase">Comportamiento Diario (T):</span>
+                                <span class="text-sm font-black text-emerald-600">{{ $info['diario']['score'] }}%</span>
+                                <span class="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">{{ $info['diario']['title'] }}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded border border-gray-100 shadow-sm text-sm text-gray-700">
+                                <p class="mb-1"><strong>Rasgos de Personalidad:</strong> {{ $info['diario']['traits'] }}</p>
+                                <p><strong>Comportamiento:</strong> {{ $info['diario']['behavior'] }}</p>
+                            </div>
                         </div>
+
                     </div>
                 @endforeach
+
             </div>
         </div>
+
 
         {{-- ========================================================= --}}
         {{-- RENDERIZADO KOSTICK                                       --}}

@@ -1,4 +1,27 @@
-<div x-data="{ showHelpModal: false }">
+<div x-data="{
+        showHelpModal: false,
+        showGlosarioModal: false,
+        elapsedSeconds: @js($accumulatedSeconds),
+        timerInterval: null,
+        formatTime(s) {
+            const h = Math.floor(s / 3600);
+            const m = Math.floor((s % 3600) / 60);
+            const sec = s % 60;
+            if (h > 0) {
+                return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+            }
+            return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+        },
+        startTimer() {
+            if (this.timerInterval) return;
+            this.timerInterval = setInterval(() => { this.elapsedSeconds++; }, 1000);
+        },
+        stopTimer() {
+            if (this.timerInterval) { clearInterval(this.timerInterval); this.timerInterval = null; }
+        }
+    }"
+    @test-started.window="startTimer()"
+>
 
     @if($showWelcome)
         {{-- ======================================================== --}}
@@ -6,7 +29,7 @@
         {{-- ======================================================== --}}
 
         {{-- Cambiamos el ancho fijo por porcentajes: 100% en móviles, 60% en tablets, y exactamente 40% en pantallas grandes --}}
-        <div class="w-full mx-auto py-4 px-2 sm:px-4 lg:px-2">
+        <div class="max-w-2xl mx-auto py-4 px-2 sm:px-4 lg:px-2">
 
             <div class="bg-white shadow-2xl sm:rounded-2xl overflow-hidden">
                 {{-- Encabezado de color --}}
@@ -43,12 +66,31 @@
         {{-- ======================================================== --}}
         <div class="max-w-7xl mx-auto py-12 px-4 sm:px-4 lg:px-4">
 
-            {{-- HEADER: Barra de progreso + Botón de Ayuda --}}
+            {{-- HEADER: Barra de progreso + Botones --}}
             <div class="mb-8">
                 <div class="flex justify-between items-center text-sm font-medium text-gray-500 mb-2">
-                    <span>Pregunta {{ $currentQuestionIndex + 1 }} de {{ $totalQuestions }}</span>
+                    <div class="flex items-center gap-3">
+                        <span>Pregunta {{ $currentQuestionIndex + 1 }} de {{ $totalQuestions }}</span>
+                        {{-- TIMER --}}
+                        <span class="inline-flex items-center gap-1 bg-gray-100 text-gray-700 px-3 py-1 rounded-full font-mono text-xs font-semibold">
+                            <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span x-text="formatTime(elapsedSeconds)">00:00</span>
+                        </span>
+                    </div>
 
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        {{-- BOTÓN GLOSARIO (solo Cleaver) --}}
+                        @if($isCleaver)
+                        <button @click="showGlosarioModal = true" type="button"
+                                style="color: #d97706; background-color: #fffbeb;"
+                                class="inline-flex items-center hover:opacity-80 px-3 py-1 rounded-full transition-opacity">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            Glosario
+                        </button>
+                        @endif
+
                         {{-- BOTÓN FLOTANTE DE AYUDA (?) --}}
                         <button @click="showHelpModal = true" type="button" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 focus:outline-none bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded-full transition-colors">
                             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -255,13 +297,66 @@
         </div>
     </div>
         <!-- DEBUG: Agrega esto temporalmente en la vista -->
-        <div class="fixed top-4 right-4 bg-yellow-100 p-4 rounded shadow text-xs">
-            <p><strong>DEBUG INFO:</strong></p>
-            <p>Question ID: {{ $question->id ?? 'NULL' }}</p>
-            <p>Question Index: {{ $currentQuestionIndex }}</p>
-            <p>Total Questions: {{ $totalQuestions }}</p>
-            <p>Question Text: {{ substr($question->question ?? 'NULL', 0, 50) }}...</p>
+    {{-- ======================================================== --}}
+    {{-- MODAL GLOSARIO CLEAVER                                   --}}
+    {{-- ======================================================== --}}
+    @if($isCleaver)
+    <div x-show="showGlosarioModal" style="display: none;" class="fixed z-50 inset-0 overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div x-show="showGlosarioModal"
+                 x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                 x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                 @click="showGlosarioModal = false" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div x-show="showGlosarioModal"
+                 x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
+
+                {{-- Cabecera del modal --}}
+                <div style="background-color: #f59e0b;" class="px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-6 h-6" style="color:#ffffff;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                        <h3 class="text-lg font-bold" style="color:#ffffff;">Glosario — Pregunta {{ $currentQuestionIndex + 1 }}</h3>
+                    </div>
+                    <button @click="showGlosarioModal = false" style="color:#ffffff;" class="hover:opacity-75 transition-opacity">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                {{-- Cuerpo del modal --}}
+                <div class="px-6 py-4 bg-white">
+                    @php $grupoActual = $glosario[$currentQuestionIndex + 1] ?? []; @endphp
+                    @if($grupoActual)
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        @foreach($grupoActual as $item)
+                        <div class="flex items-start gap-3 rounded-lg px-4 py-3" style="background-color:#fffbeb; border:1px solid #fde68a;">
+                            <span class="font-bold text-gray-800 min-w-[8rem] text-sm">{{ $item['frase'] }}</span>
+                            <span class="text-gray-500 text-sm leading-snug">{{ $item['definicion'] }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                    @else
+                    <p class="text-gray-400 text-sm text-center py-4">No hay definiciones para esta pregunta.</p>
+                    @endif
+                </div>
+
+                <div class="px-6 py-3 flex justify-end border-t border-gray-100 bg-gray-50">
+                    <button type="button" @click="showGlosarioModal = false"
+                            style="background-color:#f59e0b; color:#ffffff;"
+                            class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-sm font-medium hover:opacity-90 focus:outline-none">
+                        Cerrar glosario
+                    </button>
+                </div>
+            </div>
         </div>
+    </div>
+    @endif
+
+    {{-- BLOQUE DEBUG ELIMINADO --}}
 </div>
 
 

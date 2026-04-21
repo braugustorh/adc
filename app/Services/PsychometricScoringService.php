@@ -599,58 +599,56 @@ class PsychometricScoringService
         ];
     }
 
-    private function calculateCleaver($evaluation)
+    public function calculateCleaver($evaluation)
     {
-        // 1. Cargar el diccionario original
+        // 1. Cargar configuraciones y diccionarios
         $originalDictionary = config('cleaver.plantilla');
         $percentilesDB = config('cleaver.percentiles');
+        $interpretationsDB = config('cleaver.interpretations'); // Asegúrate de que el nombre del config sea el correcto
 
-        // 2. Normalizar el diccionario: convertir todas las llaves a mayúsculas
+        // 2. Normalizar la plantilla de palabras a mayúsculas
         $dictionary = [];
         foreach ($originalDictionary as $word => $values) {
-            // Usamos mb_strtoupper con UTF-8 para no romper acentos (ej: ECUÁNIME)
             $normalizedWord = mb_strtoupper(trim($word), 'UTF-8');
             $dictionary[$normalizedWord] = $values;
         }
 
-        // 3. Consulta a la base de datos
+        // 3. Consulta a la base de datos para obtener las respuestas
         $answers = EvaluationUserAnswer::where('psychometric_evaluation_id', $evaluation->id)
             ->join('answers', 'evaluation_user_answers.answer_id', '=', 'answers.id')
             ->join('questions', 'answers.question_id', '=', 'questions.id')
             ->select('questions.order', 'evaluation_user_answers.attribute', 'answers.text')
             ->get();
 
+        // 4. Inicializar contadores de puntuación bruta
         $scoresMas = ['D' => 0, 'I' => 0, 'S' => 0, 'C' => 0];
         $scoresMenos = ['D' => 0, 'I' => 0, 'S' => 0, 'C' => 0];
 
-        // 4. Iterar y evaluar
+        // 5. Iterar y evaluar cada respuesta
         foreach ($answers as $ans) {
-            // Normalizamos la palabra que viene de la base de datos a mayúsculas
             $word = mb_strtoupper(trim($ans->text), 'UTF-8');
-
-
             $selectionAttribute = strtoupper($ans->attribute);
+
+            // Determinar si fue "MÁS" (Most) o "MENOS" (Least)
             $selectionType = in_array($selectionAttribute, ['MOST', 'MAS', 'M']) ? 'MOST' :
                 (in_array($selectionAttribute, ['LEAST', 'MENOS', 'L']) ? 'LEAST' : null);
 
-            // Ahora comparamos peras con peras (MAYÚSCULAS con MAYÚSCULAS)
             if (!$selectionType || !isset($dictionary[$word])) {
-                continue;
+                continue; // Si no es válido o no está en el diccionario, saltar
             }
 
             $domainLetter = $dictionary[$word][$selectionType];
-            \Log::info("Pregunta {$ans->order}: Palabra '{$ans->text}' seleccionada como {$selectionType} -> Dominio: {$domainLetter}");
-            if ($domainLetter && isset($scoresMas[$domainLetter])) {
+
+            if ($domainLetter) {
                 if ($selectionType === 'MOST') {
                     $scoresMas[$domainLetter]++;
-                    \Log::info("Pregunta {$ans->order}: Palabra '{$ans->text}' seleccionada como MOST -> +1 a {$domainLetter}");
                 } else {
                     $scoresMenos[$domainLetter]++;
-                    \Log::info("Pregunta {$ans->order}: Palabra '{$ans->text}' seleccionada como LEAST -> +1 a {$domainLetter}");
                 }
             }
         }
 
+        // 6. Calcular T (Comportamiento Diario / Total) = M - L
         $scoresTotales = [
             'D' => $scoresMas['D'] - $scoresMenos['D'],
             'I' => $scoresMas['I'] - $scoresMenos['I'],
@@ -658,8 +656,15 @@ class PsychometricScoringService
             'C' => $scoresMas['C'] - $scoresMenos['C'],
         ];
 
-        // Función auxiliar para obtener el % de manera segura
-        // (Por si un puntaje es mayor/menor a los límites de la tabla)
+        // 7. VALIDACIÓN CRÍTICA DEL MANUAL CLEAVER
+        $sumaT = array_sum($scoresTotales);
+        $isValid = ($sumaT >= -3 && $sumaT <= 3);
+
+        if (!$isValid) {
+            \Illuminate\Support\Facades\Log::warning("Evaluación Cleaver ID: {$evaluation->id} es INVÁLIDA. Suma de T = {$sumaT}. Posible manipulación o confusión del candidato.");
+        }
+
+        // 8. Convertir Puntuación Bruta a Percentiles (Función anónima de seguridad)
         $getPercentile = function($type, $domain, $score) use ($percentilesDB) {
             $table = $percentilesDB[$type][$domain] ?? [];
             if (empty($table)) return 0;
@@ -668,14 +673,12 @@ class PsychometricScoringService
                 return $table[$score];
             }
 
-            // Si no existe, buscamos el valor más cercano (Fallback de seguridad)
+            // Fallback de seguridad si el puntaje sale de los límites
             $minKey = min(array_keys($table));
             $maxKey = max(array_keys($table));
-
             return $score < $minKey ? $table[$minKey] : $table[$maxKey];
         };
 
-        // Calculamos los percentiles para las 3 gráficas
         $percentilesMas = [
             'D' => $getPercentile('M', 'D', $scoresMas['D']),
             'I' => $getPercentile('M', 'I', $scoresMas['I']),
@@ -697,22 +700,102 @@ class PsychometricScoringService
             'C' => $getPercentile('T', 'C', $scoresTotales['C']),
         ];
 
-        return [
-            'test_name'  => 'Cleaver (DISC)',
-            'chart_type' => 'bar',
-            // Podemos mandar los puntajes crudos y sus equivalentes en %
-            'raw_scores' => [
+        // 9. Generar las interpretaciones completas (Enviamos los 3 arreglos de percentiles)
+        $interpretations = $this->generateInterpretations(
+            $percentilesMas,
+            $percentilesMenos,
+            $percentilesTotales,
+            $interpretationsDB
+        );
+
+        // 10. Retornar el payload completo para Filament / Frontend
+        $data = [
+            'test_name'       => 'Cleaver (DISC)',
+            'is_valid'        => $isValid, // Bandera para mostrar alerta en UI si es false
+            'suma_t'          => $sumaT,
+            'chart_type'      => 'bar',
+            'raw_scores'      => [
                 'M' => $scoresMas,
                 'L' => $scoresMenos,
                 'T' => $scoresTotales,
             ],
-            'percentiles' => [
+            'percentiles'     => [
                 'M' => $percentilesMas,
                 'L' => $percentilesMenos,
-                'T' => $percentilesTotales, // <- Esta es la que usarías en tu Chart de Filament
+                'T' => $percentilesTotales,
             ],
-            'scores'     => $percentilesTotales, // Lo seteamos como scores por defecto para tu gráfica
-            'summary'    => "D:{$percentilesTotales['D']}% I:{$percentilesTotales['I']}% S:{$percentilesTotales['S']}% C:{$percentilesTotales['C']}%"
+            'scores'          => $percentilesTotales, // Para compatibilidad con tu gráfica
+            'interpretations' => $interpretations, // Textos estructurados por M, L y T
+            'summary'         => "D:{$percentilesTotales['D']}% I:{$percentilesTotales['I']}% S:{$percentilesTotales['S']}% C:{$percentilesTotales['C']}%"
         ];
+        return $data;
+    }
+
+    /**
+     * Helper privado para procesar las interpretaciones de Motivación (M), Presión (L) y Comportamiento Diario (T).
+     */
+    private function generateInterpretations($percentilesMas, $percentilesMenos, $percentilesTotales, $interpretationsDB)
+    {
+        $result = [];
+        $domains = ['D', 'I', 'S', 'C'];
+        $flattenedCount = 0;
+
+        // Validación defensiva por si el config no se cargó correctamente
+        if (!$interpretationsDB) {
+            \Illuminate\Support\Facades\Log::error("CRÍTICO: No se cargó config('cleaver.interpretations'). Revisa la caché o la ruta del archivo.");
+            $interpretationsDB = [];
+        }
+
+        foreach ($domains as $domain) {
+            // 1. Extraer los puntajes de las 3 gráficas
+            $scoreM = $percentilesMas[$domain];
+            $scoreL = $percentilesMenos[$domain];
+            $scoreT = $percentilesTotales[$domain];
+
+            // 2. Determinar si cruzaron la línea media (50)
+            $levelM = ($scoreM > 50) ? 'high' : 'low';
+            $levelL = ($scoreL > 50) ? 'high' : 'low';
+            $levelT = ($scoreT > 50) ? 'high' : 'low';
+
+            // 3. Detectar aplanamiento basándonos en la gráfica T
+            if ($scoreT >= 40 && $scoreT <= 60) {
+                $flattenedCount++;
+            }
+
+            // 4. Armar el árbol de interpretación con protección contra nulos (??)
+            $result[$domain] = [
+                'name' => $interpretationsDB[$domain]['name'] ?? 'Nombre de dominio no disponible',
+
+                // --- Análisis de MOTIVACIÓN (M) ---
+                'motivacion' => [
+                    'score' => $scoreM,
+                    'title' => ($levelM === 'high') ? "Alta ({$domain}+)" : "Baja ({$domain}-)",
+                    'text'  => $interpretationsDB['situational'][$domain]['M'][$levelM] ?? 'Interpretación situacional no disponible.'
+                ],
+
+                // --- Análisis de PRESIÓN (L) ---
+                'presion' => [
+                    'score' => $scoreL,
+                    'title' => ($levelL === 'high') ? "Alta ({$domain}+)" : "Baja ({$domain}-)",
+                    'text'  => $interpretationsDB['situational'][$domain]['L'][$levelL] ?? 'Interpretación situacional no disponible.'
+                ],
+
+                // --- Análisis de COMPORTAMIENTO DIARIO (T) ---
+                'diario' => [
+                    'score'    => $scoreT,
+                    'title'    => $interpretationsDB[$domain][$levelT]['title'] ?? 'N/A',
+                    'traits'   => $interpretationsDB[$domain][$levelT]['traits'] ?? 'N/A',
+                    'behavior' => $interpretationsDB[$domain][$levelT]['behavior'] ?? 'N/A',
+                    'text'     => $interpretationsDB['situational']['T']['general'] ?? 'Esta puntuación refleja su comportamiento natural y diario en condiciones normales de trabajo.'
+                ]
+            ];
+        }
+
+        // Si 3 o más factores están aplanados en T, agregamos la alerta
+        if ($flattenedCount >= 3 && isset($interpretationsDB['alerts']['flattened_profile'])) {
+            $result['alert'] = $interpretationsDB['alerts']['flattened_profile'];
+        }
+
+        return $result;
     }
 }

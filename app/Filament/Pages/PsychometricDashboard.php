@@ -32,6 +32,15 @@ class PsychometricDashboard extends Page implements HasTable
     protected static ?string $navigationLabel = 'Dashboard Psicometrías';
     protected static ?int $navigationSort = 3;
 
+    // Mapeo de puestos a IDs de evaluaciones
+    // 9=WES, 10=Moss, 11=Cleaver, 12=Kostick
+    const PUESTO_EVALUACIONES = [
+        'Directivo'    => [10, 11, 12, 9],
+        'Mando Medio'  => [11, 12, 10, 9],
+        'Supervisor'   => [11, 12, 9],
+        'Administrativo' => [12, 11, 9],
+    ];
+
     // Propiedades para filtros
     public $statusFilter = '';
     public $typeFilter = '';
@@ -94,6 +103,18 @@ class PsychometricDashboard extends Page implements HasTable
                         'started' => 'info',
                         default => 'gray',
                     }),
+
+                Tables\Columns\TextColumn::make('puesto')
+                    ->label('Puesto')
+                    ->badge()
+                    ->color(fn (?string $state): string => match ($state) {
+                        'Directivo'      => 'danger',
+                        'Mando Medio'    => 'warning',
+                        'Supervisor'     => 'info',
+                        'Administrativo' => 'success',
+                        default          => 'gray',
+                    })
+                    ->placeholder('—'),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Fecha')
@@ -162,8 +183,7 @@ class PsychometricDashboard extends Page implements HasTable
                         ->options(\App\Models\Sede::pluck('name', 'id'))
                         ->searchable()
                         ->preload()
-                        ->live() // Hace que el campo 'user_id' escuche y se actualice al cambiar la sede
-                        // Si no es Admin/RH Corp, no se muestra este campo
+                        ->live()
                         ->visible(fn () => auth()->user()->hasAnyRole(['Administrador', 'RH Corp']))
                         ->required(fn () => auth()->user()->hasAnyRole(['Administrador', 'RH Corp'])),
 
@@ -171,65 +191,72 @@ class PsychometricDashboard extends Page implements HasTable
                     Forms\Components\Select::make('user_id')
                         ->label('Colaborador')
                         ->options(function (Forms\Get $get) {
-                            // Determinar qué sede usar para el filtro
                             if (auth()->user()->hasAnyRole(['Administrador', 'RH Corp'])) {
                                 $sedeId = $get('sede_id');
                             } else {
-                                $sedeId = auth()->user()->sede_id; // RH Local usa su propia sede por defecto
+                                $sedeId = auth()->user()->sede_id;
                             }
-
-                            if (! $sedeId) {
-                                return []; // Si no hay sede seleccionada, no muestra usuarios
-                            }
-
-                            // Filtrar usuarios de esa sede (puedes agregar ->where('status', true) si tienes ese campo)
-                            return \App\Models\User::where('sede_id', $sedeId)
-                                ->pluck('name', 'id');
+                            if (! $sedeId) return [];
+                            return \App\Models\User::where('sede_id', $sedeId)->pluck('name', 'id');
                         })
                         ->searchable()
                         ->required()
                         ->loadingMessage('Cargando colaboradores...'),
-                    // 3. Selección de Evaluaciones
+
+                    // 3. Puesto
+                    Forms\Components\Select::make('puesto')
+                        ->label('Puesto / Nivel')
+                        ->options([
+                            'Directivo'      => 'Directivo',
+                            'Mando Medio'    => 'Mando Medio (Gerencia / Jefatura)',
+                            'Supervisor'     => 'Supervisor',
+                            'Administrativo' => 'Administrativo',
+                        ])
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(function (Forms\Set $set, $state) {
+                            $set('evaluation_type_ids', self::PUESTO_EVALUACIONES[$state] ?? []);
+                        })
+                        ->helperText('Al seleccionar el puesto se pre-cargan las evaluaciones correspondientes.'),
+
+                    // 4. Selección de Evaluaciones (se pre-llena según puesto)
                     Select::make('evaluation_type_ids')
                         ->label('Batería de Evaluaciones')
-                        ->options(EvaluationsTypes::whereIN('id',[9,10,11,12])->pluck('name', 'id'))
+                        ->options(EvaluationsTypes::whereIN('id', [9, 10, 11, 12])->pluck('name', 'id'))
                         ->multiple()
                         ->preload()
                         ->required()
-                        ->helperText('El colaborador recibirá una notificación en la plataforma y se le desplegará la
-                        opción de Psicometría en su menú lateral.'),
+                        ->helperText('Puedes ajustar manualmente las evaluaciones pre-cargadas.'),
                 ])
                 ->action(function (array $data) {
                     $user = User::find($data['user_id']);
                     $batchId = (string) Str::uuid();
 
-                    // 1. Crear las evaluaciones asociadas al modelo User
                     foreach ($data['evaluation_type_ids'] as $typeId) {
                         PsychometricEvaluation::create([
                             'evaluations_type_id' => $typeId,
-                            'evaluable_id' => $user->id,
-                            'evaluable_type' => User::class, // Declaramos que es un interno
-                            'assigned_by' => auth()->id(),
-                            'batch_id' => $batchId,
-                            'status' => 'assigned',
-                            'assigned_at' => now(),
+                            'evaluable_id'        => $user->id,
+                            'evaluable_type'      => User::class,
+                            'assigned_by'         => auth()->id(),
+                            'batch_id'            => $batchId,
+                            'puesto'              => $data['puesto'] ?? null,
+                            'status'              => 'assigned',
+                            'assigned_at'         => now(),
                         ]);
                     }
 
-                    // 2. Notificación en pantalla (Toast verde para quien asigna)
                     Notification::make()
                         ->title('Evaluaciones Asignadas')
                         ->body("La batería fue asignada correctamente a {$user->name}.")
                         ->success()
                         ->send();
 
-                    // 3. NOTIFICACIÓN DE BASE DE DATOS (Para el Colaborador evaluado)
                     Notification::make()
                         ->title('Nueva Evaluación Psicométrica')
                         ->body('Se te ha asignado una prueba. Por favor, revisa tu sección de Psicometría en el menú.')
                         ->icon('heroicon-o-clipboard-document-check')
                         ->success()
-                        ->sendToDatabase($user); // Esto hace que le aparezca el globito rojo en la campana
+                        ->sendToDatabase($user);
                 }),
 
             // ---------------------------------------------------------------
@@ -246,7 +273,7 @@ class PsychometricDashboard extends Page implements HasTable
                         ->options(Candidate::all()->pluck('name', 'id'))
                         ->searchable()
                         ->required()
-                        ->createOptionForm([ // Opcional: Permitir crear el candidato ahí mismo
+                        ->createOptionForm([
                             TextInput::make('name')->required()->label('Nombre Completo'),
                             TextInput::make('email')->email()->required()->unique('candidates','email')->label('Correo'),
                             TextInput::make('phone')->tel()->label('Teléfono'),
@@ -255,15 +282,32 @@ class PsychometricDashboard extends Page implements HasTable
                             return Candidate::create($data)->id;
                         }),
 
-                    // Selección Múltiple de Exámenes
+                    // Puesto
+                    Forms\Components\Select::make('puesto')
+                        ->label('Puesto / Nivel')
+                        ->options([
+                            'Directivo'      => 'Directivo',
+                            'Mando Medio'    => 'Mando Medio (Gerencia / Jefatura)',
+                            'Supervisor'     => 'Supervisor',
+                            'Administrativo' => 'Administrativo',
+                        ])
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(function (Forms\Set $set, $state) {
+                            $set('evaluation_type_ids', self::PUESTO_EVALUACIONES[$state] ?? []);
+                        })
+                        ->helperText('Al seleccionar el puesto se pre-cargan las evaluaciones correspondientes.'),
+
+                    // Selección Múltiple de Exámenes (se pre-llena según puesto)
                     Select::make('evaluation_type_ids')
                         ->label('Batería de Evaluaciones')
-                        ->options(EvaluationsTypes::whereIN('id',[9,10,11,12])->pluck('name', 'id'))
+                        ->options(EvaluationsTypes::whereIN('id', [9, 10, 11, 12])->pluck('name', 'id'))
                         ->multiple()
                         ->preload()
                         ->required()
                         ->helperText('El candidato recibirá un único enlace para todas estas pruebas.'),
-                   Forms\Components\DatePicker::make('expires_at')
+
+                    Forms\Components\DatePicker::make('expires_at')
                         ->label('Fecha de Vencimiento')
                         ->helperText('Fecha límite para completar todas las evaluaciones')
                         ->required()
@@ -273,7 +317,8 @@ class PsychometricDashboard extends Page implements HasTable
                     $this->createBatchEvaluations(
                         evaluableId: $data['candidate_id'],
                         evaluableType: Candidate::class,
-                        evaluationTypeIds: $data['evaluation_type_ids']
+                        evaluationTypeIds: $data['evaluation_type_ids'],
+                        puesto: $data['puesto'] ?? null,
                     );
                 }),
 
@@ -437,22 +482,23 @@ class PsychometricDashboard extends Page implements HasTable
 // FUNCIÓN AUXILIAR (Para no repetir código)
 // -----------------------------------------------------------------------
 // Esta función encapsula la lógica "difícil" para que tus acciones queden limpias
-    protected function createBatchEvaluations($evaluableId, $evaluableType, $evaluationTypeIds)
+    protected function createBatchEvaluations($evaluableId, $evaluableType, $evaluationTypeIds, $puesto = null)
     {
         $batchId = Str::uuid();
-        $accessToken = Str::random(40); // El Token Mágico
+        $accessToken = Str::random(40);
 
-        DB::transaction(function () use ($evaluableId, $evaluableType, $evaluationTypeIds, $batchId, $accessToken) {
+        DB::transaction(function () use ($evaluableId, $evaluableType, $evaluationTypeIds, $batchId, $accessToken, $puesto) {
             foreach ($evaluationTypeIds as $typeId) {
                 PsychometricEvaluation::create([
                     'evaluations_type_id' => $typeId,
-                    'evaluable_id' => $evaluableId,
-                    'evaluable_type' => $evaluableType, // Aquí cambia dinámicamente (User o Candidate)
-                    'assigned_by' => auth()->id(),
-                    'batch_id' => $batchId,
-                    'access_token' => $accessToken,
-                    'status' => 'assigned',
-                    'assigned_at' => now(),
+                    'evaluable_id'        => $evaluableId,
+                    'evaluable_type'      => $evaluableType,
+                    'assigned_by'         => auth()->id(),
+                    'batch_id'            => $batchId,
+                    'access_token'        => $accessToken,
+                    'puesto'              => $puesto,
+                    'status'              => 'assigned',
+                    'assigned_at'         => now(),
                 ]);
             }
         });

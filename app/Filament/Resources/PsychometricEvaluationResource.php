@@ -243,7 +243,7 @@ class PsychometricEvaluationResource extends Resource
         return [
             'index' => Pages\ListPsychometricEvaluations::route('/'),
            // 'create' => Pages\CreatePsychometricEvaluation::route('/create'),
-           // 'view' => Pages\ViewPsychometricEvaluation::route('/{record}'),
+           //'view' => Pages\ViewPsychometricEvaluation::route('/{record}'),
            // 'edit' => Pages\EditPsychometricEvaluation::route('/{record}/edit'),
         ];
     }

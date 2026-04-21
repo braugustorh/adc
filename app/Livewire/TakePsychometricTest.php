@@ -17,10 +17,16 @@ class TakePsychometricTest extends Component
     public $totalQuestions = 0;
     public $answers = [];
 
-    // --- NUEVAS VARIABLES PARA LA UX DE INSTRUCCIONES ---
+    // --- VARIABLES PARA LA UX DE INSTRUCCIONES ---
     public $showWelcome = true;
     public $instructions = '';
     public $testName = '';
+
+    // --- TIMER ---
+    public int $accumulatedSeconds = 0; // Segundos de pruebas anteriores del mismo batch
+
+    // --- GLOSARIO CLEAVER ---
+    public bool $isCleaver = false;
 
     public function mount($token)
     {
@@ -36,6 +42,12 @@ class TakePsychometricTest extends Component
         // Cargamos el nombre y las instrucciones de la prueba
         $this->testName = $this->evaluation->evaluationType->name ?? 'Evaluación Psicométrica';
         $this->loadInstructions();
+
+        // Detectar si es prueba Cleaver
+        $this->isCleaver = $this->evaluation->evaluations_type_id == 11;
+
+        // Calcular segundos acumulados de pruebas anteriores ya completadas
+        $this->accumulatedSeconds = $this->evaluation->getAccumulatedSecondsByToken();
     }
 
     /**
@@ -77,6 +89,9 @@ class TakePsychometricTest extends Component
         if ($this->evaluation->status === 'assigned') {
             $this->evaluation->update(['status' => 'started', 'started_at' => now()]);
         }
+
+        // Disparar evento para iniciar el timer en Alpine
+        $this->dispatch('test-started');
     }
 
     public function getCurrentQuestion()
@@ -160,10 +175,17 @@ class TakePsychometricTest extends Component
 
     public function finishEvaluation()
     {
+        // Calcular tiempo transcurrido para esta prueba individual
+        $elapsedSeconds = 0;
+        if ($this->evaluation->started_at) {
+            $elapsedSeconds = (int) now()->diffInSeconds($this->evaluation->started_at);
+        }
+
         $this->evaluation->update([
             'status' => 'completed',
             'completed_at' => now(),
-            'progress' => 100
+            'progress' => 100,
+            'elapsed_seconds' => $elapsedSeconds,
         ]);
 
         return redirect()->route('evaluation.landing', ['token' => $this->token]);
@@ -174,8 +196,11 @@ class TakePsychometricTest extends Component
         // Si estamos en la bienvenida, no necesitamos cargar la pregunta aún
         $question = $this->showWelcome ? null : $this->getCurrentQuestion();
 
+        $glosario = $this->isCleaver ? config('cleaver.glosario') : [];
+
         return view('livewire.take-psychometric-test', [
-            'question' => $question
+            'question' => $question,
+            'glosario' => $glosario,
         ]);
     }
 }

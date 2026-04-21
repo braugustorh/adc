@@ -24,6 +24,12 @@ class TakeInternalEvaluation extends Page
     public $instructions = '';
     public $testName = '';
 
+    // --- TIMER ---
+    public int $accumulatedSeconds = 0;
+
+    // --- GLOSARIO CLEAVER ---
+    public bool $isCleaver = false;
+
     public function mount($record)
     {
         $this->evaluation = PsychometricEvaluation::findOrFail($record);
@@ -41,6 +47,12 @@ class TakeInternalEvaluation extends Page
         $this->totalQuestions = $this->evaluation->evaluationType->questions()->count();
         $this->testName = $this->evaluation->evaluationType->name ?? 'Evaluación Psicométrica';
         $this->loadInstructions();
+
+        // Detectar si es prueba Cleaver
+        $this->isCleaver = $this->evaluation->evaluations_type_id == 11;
+
+        // Calcular segundos acumulados de pruebas anteriores ya completadas del mismo batch
+        $this->accumulatedSeconds = $this->evaluation->getAccumulatedSecondsByToken();
     }
 
     public function loadInstructions()
@@ -71,6 +83,8 @@ class TakeInternalEvaluation extends Page
         if ($this->evaluation->status === 'assigned') {
             $this->evaluation->update(['status' => 'started', 'started_at' => now()]);
         }
+        // Disparar evento para iniciar el timer en Alpine
+        $this->dispatch('test-started');
     }
 
     public function getCurrentQuestion()
@@ -153,10 +167,17 @@ class TakeInternalEvaluation extends Page
 
     public function finishEvaluation()
     {
+        // Calcular tiempo transcurrido para esta prueba individual
+        $elapsedSeconds = 0;
+        if ($this->evaluation->started_at) {
+            $elapsedSeconds = (int) now()->diffInSeconds($this->evaluation->started_at);
+        }
+
         $this->evaluation->update([
             'status' => 'completed',
             'completed_at' => now(),
-            'progress' => 100
+            'progress' => 100,
+            'elapsed_seconds' => $elapsedSeconds,
         ]);
 
         // Al terminar, lo regresamos a su dashboard de pruebas
@@ -165,8 +186,10 @@ class TakeInternalEvaluation extends Page
 
     public function getViewData(): array
     {
+        $glosario = $this->isCleaver ? config('cleaver.glosario') : [];
         return [
-            'question' => $this->showWelcome ? null : $this->getCurrentQuestion()
+            'question' => $this->showWelcome ? null : $this->getCurrentQuestion(),
+            'glosario' => $glosario,
         ];
     }
 }

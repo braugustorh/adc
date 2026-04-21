@@ -32,6 +32,8 @@ class PsychometricEvaluation extends Model
         'response_summary',
         'result_document_url',
         'interpretation_document_url',
+        'elapsed_seconds',
+        'puesto',
     ];
 
     protected $casts = [
@@ -111,6 +113,18 @@ class PsychometricEvaluation extends Model
         };
     }
     // --- NUEVAS FUNCIONES DE LÓGICA DE NEGOCIO ---
+
+    /**
+     * Suma los elapsed_seconds de todas las evaluaciones completadas del mismo token/batch.
+     * Útil para inicializar el timer acumulado al comenzar una nueva prueba.
+     */
+    public function getAccumulatedSecondsByToken(): int
+    {
+        return (int) self::query()
+            ->where('access_token', $this->access_token)
+            ->where('status', 'completed')
+            ->sum('elapsed_seconds');
+    }
 
     /**
      * Busca la siguiente evaluación pendiente para un token dado.

@@ -197,11 +197,16 @@ class PsychometricDashboard extends Page implements HasTable
                                 $sedeId = auth()->user()->sede_id;
                             }
                             if (! $sedeId) return [];
-                            return \App\Models\User::where('sede_id', $sedeId)->pluck('name', 'id');
+                            return \App\Models\User::where('sede_id', $sedeId)
+                                ->get()
+                                ->mapWithKeys(fn ($user) => [
+                                    $user->id => trim($user->name . ' ' . $user->first_name . ' ' . $user->last_name)
+                                ]);
                         })
                         ->searchable()
                         ->required()
                         ->loadingMessage('Cargando colaboradores...'),
+
 
                     // 3. Puesto
                     Forms\Components\Select::make('puesto')
@@ -527,7 +532,7 @@ class PsychometricDashboard extends Page implements HasTable
         // 1. Calculamos los resultados con tu cerebro psicométrico
         $service = new PsychometricScoringService();
         $results = $service->calculate($record);
-
+       // dd($results);
         // 2. Preparamos los datos para la vista del PDF
         $candidateName = $record->evaluable->name ?? 'Candidato';
         $testName = $results['test_name'] ?? 'Evaluacion';

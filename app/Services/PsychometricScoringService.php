@@ -75,7 +75,7 @@ class PsychometricScoringService
             // Subescala 6: Presión (PR)
             6 => 'V', 16 => 'V', 26 => 'V', 36 => 'F', 46 => 'F', 56 => 'V', 66 => 'F', 76 => 'V', 86 => 'V',
             // Subescala 7: Claridad (CL)
-            7 => 'F', 17 => 'V', 27 => 'F', 37 => 'V', 47 => 'F', 57 => 'F', 67 => 'V', 77 => 'F', 87 => 'V',
+            7 => 'F', 17 => 'V', 27 => 'F', 37 => 'V', 47 => 'F', 57 => 'F', 67 => 'F', 77 => 'F', 87 => 'V',
             // Subescala 8: Control (CN)
             8 => 'V', 18 => 'F', 28 => 'V', 38 => 'V', 48 => 'V', 58 => 'V', 68 => 'V', 78 => 'V', 88 => 'F',
             // Subescala 9: Innovación (IN)
@@ -122,28 +122,28 @@ class PsychometricScoringService
         // 1.5 BAREMOS DIMENSIONES (Acumulado)
         $baremosDimensions = [
             'Relaciones' => [
-                ['max' => 5, 'label' => 'Excelente', 'color' => 'green'],
-                ['max' => 10, 'label' => 'Buena', 'color' => 'green'],
-                ['max' => 15, 'label' => 'Tiende a Buena', 'color' => 'blue'],
-                ['max' => 20, 'label' => 'Promedio', 'color' => 'gray'],
-                ['max' => 24, 'label' => 'Mala', 'color' => 'orange'],
-                ['max' => 99, 'label' => 'Deficiente', 'color' => 'red'],
+                ['max' => 5, 'label' => 'Deficitaria', 'color' => 'red'],
+                ['max' => 10, 'label' => 'Mala', 'color' => 'orange'],
+                ['max' => 15, 'label' => 'Promedio', 'color' => 'gray'],
+                ['max' => 20, 'label' => 'Tiende a Buena', 'color' => 'blue'],
+                ['max' => 24, 'label' => 'Buena', 'color' => 'green'],
+                ['max' => 99, 'label' => 'Excelente', 'color' => 'green'],
             ],
             'Auto-realización' => [
-                ['max' => 4, 'label' => 'Excelente', 'color' => 'green'],
-                ['max' => 9, 'label' => 'Buena', 'color' => 'green'],
-                ['max' => 14, 'label' => 'Tiende a Buena', 'color' => 'blue'],
-                ['max' => 18, 'label' => 'Promedio', 'color' => 'gray'],
-                ['max' => 23, 'label' => 'Mala', 'color' => 'orange'],
-                ['max' => 99, 'label' => 'Deficiente', 'color' => 'red'],
+                ['max' => 4, 'label' => 'Deficitaria', 'color' => 'red'],
+                ['max' => 9, 'label' => 'Mala', 'color' => 'orange'],
+                ['max' => 14, 'label' => 'Promedio', 'color' => 'gray'],
+                ['max' => 18, 'label' => 'Tiende a Buena', 'color' => 'blue'],
+                ['max' => 23, 'label' => 'Buena', 'color' => 'green'],
+                ['max' => 99, 'label' => 'Excelente', 'color' => 'green'],
             ],
             'Estabilidad/Cambio' => [
-                ['max' => 6, 'label' => 'Excelente', 'color' => 'green'],
-                ['max' => 13, 'label' => 'Buena', 'color' => 'green'],
-                ['max' => 15, 'label' => 'Tiende a Buena', 'color' => 'blue'],
-                ['max' => 19, 'label' => 'Promedio', 'color' => 'gray'],
-                ['max' => 24, 'label' => 'Mala', 'color' => 'orange'],
-                ['max' => 99, 'label' => 'Deficiente', 'color' => 'red'],
+                ['max' => 6, 'label' => 'Deficitaria', 'color' => 'red'],
+                ['max' => 13, 'label' => 'Mala', 'color' => 'orange'],
+                ['max' => 15, 'label' => 'Promedio', 'color' => 'gray'],
+                ['max' => 19, 'label' => 'Tiende a Buena', 'color' => 'blue'],
+                ['max' => 24, 'label' => 'Buena', 'color' => 'green'],
+                ['max' => 99, 'label' => 'Excelente', 'color' => 'green'],
             ],
         ];
 
@@ -539,22 +539,22 @@ class PsychometricScoringService
             $dimensionRange = '';
             $dimensionPercentile = 0;
 
-            if ($percentage <= 20) {
+            if ($percentage <= 24) {
                 $dimensionPercentile = 5;
                 $dimensionRange = 'Deficiente';
-            } elseif ($percentage <= 40) {
+            } elseif ($percentage <= 39) {
                 $dimensionPercentile = 10;
                 $dimensionRange = 'Inferior';
-            } elseif ($percentage <= 50) {
+            } elseif ($percentage <= 49) {
                 $dimensionPercentile = 20;
                 $dimensionRange = 'Inferior al Término Medio';
-            } elseif ($percentage <= 60) {
+            } elseif ($percentage <= 59) {
                 $dimensionPercentile = 30;
                 $dimensionRange = 'Término Medio';
-            } elseif ($percentage <= 75) {
+            } elseif ($percentage <= 64) {
                 $dimensionPercentile = 40;
                 $dimensionRange = 'Superior al Término Medio';
-            } elseif ($percentage <= 90) {
+            } elseif ($percentage <= 89) {
                 $dimensionPercentile = 50;
                 $dimensionRange = 'Superior';
             } else {
@@ -579,13 +579,13 @@ class PsychometricScoringService
         $percentile = 0;
         $range = '';
 
-        if ($totalRawScore <= 24) { $percentile = 5;  $range = 'Deficiente'; }
-        elseif ($totalRawScore <= 39) { $percentile = 10; $range = 'Inferior'; }
-        elseif ($totalRawScore <= 49) { $percentile = 20; $range = 'Inferior al Término Medio'; }
-        elseif ($totalRawScore <= 59) { $percentile = 30; $range = 'Término Medio'; }
-        elseif ($totalRawScore <= 74) { $percentile = 40; $range = 'Superior al Término Medio'; }
-        elseif ($totalRawScore <= 89) { $percentile = 50; $range = 'Superior'; }
-        elseif ($totalRawScore <= 100) { $percentile = 60; $range = 'Excelente'; }
+        if ($totalRawScore <= 7) { $percentile = 10;  $range = 'Deficiente'; }
+        elseif ($totalRawScore <= 11) { $percentile = 25; $range = 'Inferior'; }
+        elseif ($totalRawScore <= 14) { $percentile = 40; $range = 'Inferior al Término Medio'; }
+        elseif ($totalRawScore <= 17) { $percentile = 50; $range = 'Término Medio'; }
+        elseif ($totalRawScore <= 22) { $percentile = 60; $range = 'Superior al Término Medio'; }
+        elseif ($totalRawScore <= 26) { $percentile = 75; $range = 'Superior'; }
+        elseif ($totalRawScore <= 30) { $percentile = 90; $range = 'Excelente'; }
 
 
         return [

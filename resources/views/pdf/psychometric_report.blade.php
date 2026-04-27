@@ -68,17 +68,10 @@
             $cleaverSummary = $results['summary'] ?? '';
             $discDomains = ['D' => 'Empuje', 'I' => 'Influencia', 'S' => 'Constancia', 'C' => 'Apego'];
         } elseif ($isKostick) {
-            $kostickScores = $results['scores'] ?? [];
-            $kostickAreas = $results['areas'] ?? [
-                'Grado de Energía' => ['G', 'L'],
-                'Liderazgo y Dirección' => ['I', 'T', 'V'],
-                'Naturaleza Social' => ['S', 'R', 'D'],
-                'Adaptación al Trabajo' => ['C', 'E'],
-                'Naturaleza Emocional' => ['Z', 'K', 'N'],
-                'Subordinación' => ['F', 'W'],
-                'Grado de Empuje' => ['A', 'P', 'X', 'B', 'O'],
-            ];
-            $kostickOrder = ['G','L','I','T','V','S','R','D','C','E','Z','K','F','W','N','A','P','X','B','O'];
+            $kostickScores        = $results['scores'] ?? [];
+            $kostickFactores      = $results['factoresAgrupados'] ?? [];
+            $kostickInterpretacion= $results['kostickInterpretation'] ?? [];
+            $kostickOrder         = ['G','L','I','T','V','S','R','D','C','E','Z','K','F','W','N','A','P','X','B','O'];
         } else {
             $globalRange = $results['range'] ?? 'N/A';
             $globalColors = $getColorHex($globalRange);
@@ -257,58 +250,57 @@
         {{-- ========================================================= --}}
     @elseif($isKostick && !empty($kostickScores))
 
-        <div class="relative overflow-hidden rounded-xl bg-white border border-gray-200 shadow-sm avoid-break mb-8">
+        {{-- ── CABECERA ────────────────────────────────────────────── --}}
+        <div class="relative overflow-hidden rounded-xl bg-white border border-gray-200 shadow-sm avoid-break mb-6">
             <div class="absolute left-0 top-0 bottom-0 w-2" style="background-color: #4f46e5;"></div>
             <div class="p-5 pl-7 flex justify-between items-center">
                 <div>
-                    <h3 class="text-lg font-bold text-gray-900 tracking-tight">Rueda de Perfil Kostick</h3>
-                    <p class="text-sm text-gray-500 mt-1">Análisis de 20 dimensiones de comportamiento y preferencias en el entorno laboral.</p>
+                    <h3 class="text-lg font-bold text-gray-900 tracking-tight">Perfil de Personalidad Kostick</h3>
+                    <p class="text-sm text-gray-500 mt-1">20 dimensiones agrupadas en 7 factores de comportamiento y preferencias laborales.</p>
+                </div>
+                <div class="flex gap-2 text-[10px] font-bold">
+                    <span class="px-2 py-1 rounded bg-indigo-100 text-indigo-800">Alto 7-9</span>
+                    <span class="px-2 py-1 rounded bg-emerald-100 text-emerald-800">Medio 4-6</span>
+                    <span class="px-2 py-1 rounded bg-amber-100 text-amber-800">Bajo 1-3</span>
                 </div>
             </div>
         </div>
 
-        {{-- Contenedor Principal Kostick (Usamos md:grid-cols-12 para PDF) --}}
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        {{-- ── GRÁFICA RADAR + BARRAS RESUMEN ──────────────────────── --}}
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
 
-            {{-- A. GRÁFICA DE RADAR --}}
-            <div class="md:col-span-5 bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex flex-col items-center justify-center avoid-break">
-                <h4 class="font-bold text-gray-800 mb-6 w-full text-center">Gráfica Radar</h4>
-
+            {{-- RADAR --}}
+            <div class="md:col-span-5 bg-white border border-gray-200 rounded-xl p-5 shadow-sm flex flex-col items-center avoid-break">
+                <h4 class="font-bold text-gray-700 mb-4 text-sm">Gráfica Radar — 20 Dimensiones</h4>
                 @php
                     $cx = 150; $cy = 150; $rMax = 110;
                     $numPoints = count($kostickOrder);
                     $angleStep = M_PI * 2 / $numPoints;
 
-                    $radarHtml = '<div class="w-full max-w-[320px] aspect-square relative">';
+                    $radarHtml = '<div class="w-full max-w-[300px] aspect-square">';
                     $radarHtml .= '<svg viewBox="0 0 300 300" class="w-full h-full overflow-visible">';
 
-                    // 1. Dibujar círculos concéntricos (Escala 0 al 9)
                     for ($i = 1; $i <= 9; $i++) {
                         $r = ($rMax / 9) * $i;
-                        $stroke = ($i === 5) ? '#6366f1' : '#e5e7eb'; // Resaltar línea media (5)
-                        $strokeW = ($i === 5) ? '1.5' : '1';
-                        $radarHtml .= '<circle cx="'.$cx.'" cy="'.$cy.'" r="'.$r.'" fill="none" stroke="'.$stroke.'" stroke-width="'.$strokeW.'"/>';
-
+                        $stroke = ($i === 5) ? '#6366f1' : '#e5e7eb';
+                        $sw = ($i === 5) ? '1.5' : '0.8';
+                        $radarHtml .= '<circle cx="'.$cx.'" cy="'.$cy.'" r="'.$r.'" fill="none" stroke="'.$stroke.'" stroke-width="'.$sw.'"/>';
                         if (in_array($i, [3, 6, 9])) {
-                            $radarHtml .= '<text x="'.$cx.'" y="'.($cy - $r - 3).'" font-size="8" fill="#9ca3af" text-anchor="middle">'.$i.'</text>';
+                            $radarHtml .= '<text x="'.$cx.'" y="'.($cy - $r - 3).'" font-size="7" fill="#9ca3af" text-anchor="middle">'.$i.'</text>';
                         }
                     }
 
-                    // 2. Dibujar Ejes y Letras
                     $polyPoints = [];
                     foreach ($kostickOrder as $index => $let) {
                         $angle = $index * $angleStep - (M_PI / 2);
-
                         $xEnd = $cx + $rMax * cos($angle);
                         $yEnd = $cy + $rMax * sin($angle);
-                        $radarHtml .= '<line x1="'.$cx.'" y1="'.$cy.'" x2="'.$xEnd.'" y2="'.$yEnd.'" stroke="#f3f4f6" stroke-width="1"/>';
-
-                        $labelR = $rMax + 16;
+                        $radarHtml .= '<line x1="'.$cx.'" y1="'.$cy.'" x2="'.$xEnd.'" y2="'.$yEnd.'" stroke="#f3f4f6" stroke-width="0.8"/>';
+                        $labelR = $rMax + 17;
                         $lx = $cx + $labelR * cos($angle);
                         $ly = $cy + $labelR * sin($angle);
                         $align = $lx > $cx + 5 ? 'start' : ($lx < $cx - 5 ? 'end' : 'middle');
-                        $radarHtml .= '<text x="'.$lx.'" y="'.($ly + 4).'" font-size="12" font-weight="bold" fill="#374151" text-anchor="'.$align.'">'.$let.'</text>';
-
+                        $radarHtml .= '<text x="'.$lx.'" y="'.($ly + 4).'" font-size="11" font-weight="bold" fill="#374151" text-anchor="'.$align.'">'.$let.'</text>';
                         $score = max(0, min(9, $kostickScores[$let] ?? 0));
                         $scoreR = ($rMax / 9) * $score;
                         $px = $cx + $scoreR * cos($angle);
@@ -316,8 +308,7 @@
                         $polyPoints[] = "{$px},{$py}";
                     }
 
-                    // 3. Dibujar el Polígono y los Puntos
-                    $radarHtml .= '<polygon points="'.implode(' ', $polyPoints).'" fill="rgba(99, 102, 241, 0.15)" stroke="#4f46e5" stroke-width="2" stroke-linejoin="round"/>';
+                    $radarHtml .= '<polygon points="'.implode(' ', $polyPoints).'" fill="rgba(99,102,241,0.15)" stroke="#4f46e5" stroke-width="2" stroke-linejoin="round"/>';
 
                     foreach ($kostickOrder as $index => $let) {
                         $angle = $index * $angleStep - (M_PI / 2);
@@ -325,8 +316,7 @@
                         $scoreR = ($rMax / 9) * $score;
                         $px = $cx + $scoreR * cos($angle);
                         $py = $cy + $scoreR * sin($angle);
-
-                        $radarHtml .= '<circle cx="'.$px.'" cy="'.$py.'" r="3.5" fill="#4f46e5" stroke="#ffffff" stroke-width="1.5"></circle>';
+                        $radarHtml .= '<circle cx="'.$px.'" cy="'.$py.'" r="3" fill="#4f46e5" stroke="#fff" stroke-width="1.5"/>';
                     }
 
                     $radarHtml .= '</svg></div>';
@@ -334,46 +324,40 @@
                 @endphp
             </div>
 
-            {{-- B. BARRAS POR ÁREAS DE DESEMPEÑO --}}
-            <div class="md:col-span-7 bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <h4 class="font-bold text-gray-800 mb-6 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                    Puntuaciones por Áreas de Desempeño
-                </h4>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                    @foreach($kostickAreas as $areaName => $letters)
-                        {{-- Aplicamos avoid-break aquí para que el área completa baje a la siguiente hoja si no cabe --}}
-                        <div class="bg-gray-50 border border-gray-100 rounded-lg p-3 avoid-break">
-                            <h5 class="text-xs font-bold text-gray-700 uppercase mb-3">{{ $areaName }}</h5>
-
-                            <div class="space-y-3">
-                                @foreach($letters as $let)
+            {{-- BARRAS RESUMEN POR FACTOR ──────────────────────────── --}}
+            <div class="md:col-span-7 bg-white border border-gray-200 rounded-xl p-5 shadow-sm avoid-break">
+                <h4 class="font-bold text-gray-700 mb-4 text-sm">Puntuaciones por Factor</h4>
+                <div class="space-y-4">
+                    @foreach($kostickFactores as $factorNum => $factorData)
+                        @php
+                            $factorTitle = $factorData['Título'] ?? ($factorData['Titulo'] ?? "Factor {$factorNum}");
+                            $factorDims  = $factorData['Dimension'] ?? [];
+                        @endphp
+                        <div class="avoid-break">
+                            <p class="text-[10px] font-bold text-indigo-700 uppercase tracking-widest mb-1.5">
+                                {{ $factorNum }}. {{ $factorTitle }}
+                            </p>
+                            <div class="space-y-1.5 pl-2">
+                                @foreach($factorDims as $let)
                                     @php
-                                        $score = $kostickScores[$let] ?? 0;
-                                        $percent = ($score / 9) * 100;
-
-                                        // Colores HEX Directos para que PDFShift los imprima perfectamente
-                                        if($score >= 6) {
-                                            $barColorHex = '#6366f1'; // Alto (Indigo)
-                                            $textColorHex = '#4f46e5';
-                                        } elseif($score <= 3) {
-                                            $barColorHex = '#fbbf24'; // Bajo (Amber)
-                                            $textColorHex = '#d97706';
-                                        } else {
-                                            $barColorHex = '#34d399'; // Promedio (Emerald)
-                                            $textColorHex = '#059669';
-                                        }
+                                        $sc = $kostickScores[$let] ?? 0;
+                                        $pct = ($sc / 9) * 100;
+                                        $barColor = $sc >= 7 ? '#6366f1' : ($sc >= 4 ? '#34d399' : '#fbbf24');
+                                        $txtColor = $sc >= 7 ? '#4f46e5' : ($sc >= 4 ? '#059669' : '#d97706');
+                                        $interpTitle = $kostickInterpretacion[$let][$sc]['detalle'] ?? $let;
+                                        // Truncar a 45 chars para no desbordar
+                                        $interpTitle = strlen($interpTitle) > 50 ? substr($interpTitle, 0, 50).'…' : $interpTitle;
                                     @endphp
-                                    <div>
-                                        <div class="flex justify-between items-end mb-1">
-                                            <span class="text-[11px] font-bold text-gray-600">Factor {{ $let }}</span>
-                                            <span class="text-[10px] font-black" style="color: {{ $textColorHex }};">
-                                                {{ $score }} / 9
-                                            </span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
-                                            <div class="h-1.5 rounded-full transition-all duration-1000" style="width: {{ $percent }}%; background-color: {{ $barColorHex }};"></div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-5 h-5 rounded flex items-center justify-center text-[9px] font-black text-white shrink-0" style="background-color: {{ $barColor }};">{{ $let }}</span>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between mb-0.5">
+                                                <span class="text-[9px] text-gray-500 truncate">{{ $interpTitle }}</span>
+                                                <span class="text-[9px] font-black shrink-0 ml-1" style="color:{{ $txtColor }}">{{ $sc }}/9</span>
+                                            </div>
+                                            <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                                <div class="h-1.5 rounded-full" style="width:{{ $pct }}%; background-color:{{ $barColor }};"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -381,14 +365,109 @@
                         </div>
                     @endforeach
                 </div>
-
-                <div class="mt-6 flex justify-center gap-4 text-[10px] text-gray-500 border-t pt-4 avoid-break">
-                    <div class="flex items-center gap-1"><div class="w-2.5 h-2.5 rounded-sm" style="background-color: #6366f1;"></div> Alto (6-9)</div>
-                    <div class="flex items-center gap-1"><div class="w-2.5 h-2.5 rounded-sm" style="background-color: #34d399;"></div> Promedio (4-5)</div>
-                    <div class="flex items-center gap-1"><div class="w-2.5 h-2.5 rounded-sm" style="background-color: #fbbf24;"></div> Bajo (0-3)</div>
-                </div>
             </div>
         </div>
+
+        {{-- ── INTERPRETACIÓN DETALLADA POR FACTORES ───────────────── --}}
+        <div class="page-break"></div>
+
+        <div class="mb-6 avoid-break">
+            <h3 class="text-xl font-black text-gray-900 uppercase tracking-tight border-b-2 border-indigo-500 pb-2 mb-1">
+                Interpretación Detallada por Factores
+            </h3>
+            <p class="text-xs text-gray-400">La glosa corresponde a la puntuación obtenida (1–9) en cada dimensión.</p>
+        </div>
+
+        @foreach($kostickFactores as $factorNum => $factorData)
+            @php
+                $factorTitle = $factorData['Título'] ?? ($factorData['Titulo'] ?? "Factor {$factorNum}");
+                $factorDims  = $factorData['Dimension'] ?? [];
+                // Colores por número de factor
+                $fColors = [
+                    1 => ['hdr' => '#4f46e5', 'light' => '#eef2ff', 'text' => '#3730a3'],
+                    2 => ['hdr' => '#0891b2', 'light' => '#ecfeff', 'text' => '#164e63'],
+                    3 => ['hdr' => '#059669', 'light' => '#ecfdf5', 'text' => '#064e3b'],
+                    4 => ['hdr' => '#d97706', 'light' => '#fef3c7', 'text' => '#78350f'],
+                    5 => ['hdr' => '#dc2626', 'light' => '#fef2f2', 'text' => '#7f1d1d'],
+                    6 => ['hdr' => '#7c3aed', 'light' => '#f5f3ff', 'text' => '#4c1d95'],
+                    7 => ['hdr' => '#0f766e', 'light' => '#f0fdfa', 'text' => '#134e4a'],
+                ];
+                $fc = $fColors[$factorNum] ?? ['hdr' => '#6b7280', 'light' => '#f9fafb', 'text' => '#1f2937'];
+            @endphp
+
+            <div class="rounded-xl border border-gray-200 overflow-hidden shadow-sm mb-5 avoid-break">
+                {{-- Header del factor --}}
+                <div class="px-5 py-3 flex items-center gap-3" style="background-color: {{ $fc['hdr'] }};">
+                    <span class="w-7 h-7 rounded-full bg-white flex items-center justify-center text-xs font-black" style="color: {{ $fc['hdr'] }};">{{ $factorNum }}</span>
+                    <h4 class="text-base font-black text-white uppercase tracking-wide">{{ $factorTitle }}</h4>
+                    <div class="ml-auto flex gap-1.5">
+                        @foreach($factorDims as $let)
+                            <span class="w-6 h-6 rounded-full bg-white bg-opacity-20 flex items-center justify-center text-xs font-black text-white">{{ $let }}</span>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Grid de dimensiones --}}
+                <div style="background-color: {{ $fc['light'] }};" class="p-4">
+                    <div class="{{ count($factorDims) >= 3 ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-1 gap-4' }}">
+                        @foreach($factorDims as $let)
+                            @php
+                                $sc = $kostickScores[$let] ?? 0;
+                                $safeScore = max(1, min(9, $sc));
+                                $interp = $kostickInterpretacion[$let][$safeScore] ?? null;
+                                $pct = ($sc / 9) * 100;
+
+                                // Color de la barra según score
+                                if ($sc >= 7) {
+                                    $barHex = '#6366f1'; $badgeBg = '#eef2ff'; $badgeTxt = '#3730a3';
+                                    $scoreLabel = 'Alto';
+                                } elseif ($sc >= 4) {
+                                    $barHex = '#34d399'; $badgeBg = '#ecfdf5'; $badgeTxt = '#065f46';
+                                    $scoreLabel = 'Promedio';
+                                } else {
+                                    $barHex = '#fbbf24'; $badgeBg = '#fef3c7'; $badgeTxt = '#78350f';
+                                    $scoreLabel = 'Bajo';
+                                }
+                            @endphp
+
+                            <div class="bg-white rounded-lg border border-gray-200 p-3 shadow-sm avoid-break">
+
+                                {{-- Fila superior: letra + score + label --}}
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black text-white shrink-0" style="background-color: {{ $barHex }};">
+                                        {{ $let }}
+                                    </span>
+                                    <div class="flex-1">
+                                        @if($interp)
+                                            <p class="text-[10px] font-bold uppercase tracking-wide leading-tight" style="color: {{ $fc['text'] }};">
+                                                {{ $interp['detalle'] }}
+                                            </p>
+                                        @else
+                                            <p class="text-[10px] font-bold text-gray-500 uppercase">Dimensión {{ $let }}</p>
+                                        @endif
+                                    </div>
+                                    <span class="shrink-0 text-xs font-black px-2 py-0.5 rounded-full" style="background-color: {{ $badgeBg }}; color: {{ $badgeTxt }};">
+                                        {{ $sc }}/9 · {{ $scoreLabel }}
+                                    </span>
+                                </div>
+
+                                {{-- Barra de score --}}
+                                <div class="w-full bg-gray-100 rounded-full h-2 mb-3">
+                                    <div class="h-2 rounded-full" style="width:{{ $pct }}%; background-color:{{ $barHex }};"></div>
+                                </div>
+
+                                {{-- Glosa --}}
+                                @if($interp && !empty($interp['glosa']))
+                                    <p class="text-[10px] text-gray-600 leading-relaxed border-l-2 pl-2" style="border-color: {{ $barHex }};">
+                                        {{ $interp['glosa'] }}
+                                    </p>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        @endforeach
 
     @else
         {{-- ========================================================= --}}

@@ -283,6 +283,260 @@ class PsychometricScoringService
             'G' => 0, 'L' => 0, 'P' => 0, 'I' => 0, 'T' => 0, 'V' => 0, 'X' => 0, 'S' => 0, 'B' => 0, 'O' => 0,
             'R' => 0, 'D' => 0, 'C' => 0, 'Z' => 0, 'E' => 0, 'K' => 0, 'F' => 0, 'W' => 0, 'N' => 0, 'A' => 0
         ];
+        $factoresAgrupados=[
+            1=>[
+                'Título'=>'Grado de Energía',
+                'Dimension'=>['N','G','A']
+            ],
+            2=>[
+                'Titulo'=>'Liderazgo',
+                'Dimension'=>['L','P','I']
+            ],
+            3=>[
+                'Titulo'=>'Modo de Vida',
+                'Dimension'=>['T','V']
+                ],
+            4=>[
+                'Titulo'=>'Naturaleza Social',
+                'Dimension'=>['X','S','B','O'],
+                ],
+            5=>[
+                'Título'=>'Adaptación al Trabajo',
+                'Dimension'=>['R','D','C']
+                ],
+            6=>[
+                'Titulo'=>'Relaciones Interpersonales',
+                'Dimension'=>['Z','E','K']
+            ],
+            7=>[
+                'Titulo'=>'Subordinación',
+                'Dimension'=>['F','W']
+            ]
+
+        ];
+        $kostickInterpretation= [
+            'A' => [
+                1 => ['detalle' => 'NECESIDAD DE REALIZAR ( INICIATIVA)', 'glosa' => '1.- Tiene dificultad para terminar lo que inicia, no tiene iniciativa, no encuentra recompensa en el trabajo, realizándose en otros planos.'],
+                2 => ['detalle' => 'NECESIDAD DE REALIZAR ( INICIATIVA)', 'glosa' => '2.- Tiende a tener dificultades en terminar lo que inicia, necesita ser presionado para realizar su trabajo.'],
+                3 => ['detalle' => 'NECESIDAD DE REALIZAR ( INICIATIVA)', 'glosa' => '3.- No siente preocupación de terminar lo que inicia; no es ambicioso, tiende a no realizarse a través de ejecución de tareas.'],
+                4 => ['detalle' => 'NECESIDAD DE REALIZAR ( INICIATIVA)', 'glosa' => '4.- Siente la necesidad de terminar una tarea cuando la inicia; tiene un grado regular de ambición.'],
+                5 => ['detalle' => 'NECESIDAD DE REALIZAR ( INICIATIVA)', 'glosa' => '5.- Tiene iniciativa. Tiene un grado de ambición regular; se realiza a través del trabajo.'],
+                6 => ['detalle' => 'NECESIDAD DE REALIZAR ( INICIATIVA)', 'glosa' => '6.- Es ambicioso, toma la iniciativa; tiene una necesidad intensa de realizar; tiene el deseo de ser el mejor; fija altos padrones de ejecución.'],
+                7 => ['detalle' => 'NECESIDAD DE REALIZAR ( INICIATIVA)', 'glosa' => '7.- Es ambicioso. Tiene una necesidad intensa de realizar, fija padrones de ejecución muy altos para sí y para los otros; siente la necesidad de ser el mejor.'],
+                8 => ['detalle' => 'NECESIDAD DE REALIZAR ( INICIATIVA)', 'glosa' => '8.- Es muy ambicioso; necesita ser el mejor; tiene una necesidad exagerada de realizar. Tiende a fijar padrones de ejecución irrealísticamente altos.'],
+                9 => ['detalle' => 'NECESIDAD DE REALIZAR ( INICIATIVA)', 'glosa' => '9.- Es exageradamente ambicioso; fija padrones de ejecución extremadamente altos para sí y para los otros, se frustra con facilidad al no conseguir alcanzar los padrones que estipula.'],
+            ],
+            'B' => [
+                1 => ['detalle' => 'NECESIDAD DE PERTENECER A GRUPOS.', 'glosa' => '1.- Independiente, no presta importancia a la participación en grupos. Tiene opiniones y puntos de vista propios, tiende a entrar en dificultad cuando trabaja en equipo.'],
+                2 => ['detalle' => 'NECESIDAD DE PERTENECER A GRUPOS.', 'glosa' => '2.- Comportamiento independiente, no se preocupa de estar de acuerdo con los miembros del grupo, no siendo influenciable por las opiniones del mismo. Tiene dificultad en mudar de opinión y de trabajar en equipo.'],
+                3 => ['detalle' => 'NECESIDAD DE PERTENECER A GRUPOS.', 'glosa' => '3.- Persona no influenciable por las actitudes y puntos de vista del grupo. es independiente pudiendo entrar en conflicto con las opiniones del grupo.'],
+                4 => ['detalle' => 'NECESIDAD DE PERTENECER A GRUPOS.', 'glosa' => '4.- Está en igualdad con el grupo, al mismo tiempo que influencia al grupo puede ceder en sus puntos de vista.'],
+                5 => ['detalle' => 'NECESIDAD DE PERTENECER A GRUPOS.', 'glosa' => '5.- Participa del grupo recibiendo cierta influencia, pudiendo influenciarse por las opiniones del grupo.'],
+                6 => ['detalle' => 'NECESIDAD DE PERTENECER A GRUPOS.', 'glosa' => '6.- Le agrada escuchar y seguir al grupo. Es influenciables por las actitudes y puntos de vista del grupo.'],
+                7 => ['detalle' => 'NECESIDAD DE PERTENECER A GRUPOS.', 'glosa' => '7.- Necesita comportarse de acuerdo con las actitudes y puntos de vista del grupo tendiendo a depender del mismo.'],
+                8 => ['detalle' => 'NECESIDAD DE PERTENECER A GRUPOS.', 'glosa' => '8.- Fuertemente influenciable por los puntos de vista y actitudes del grupo. es dependiente de la aprobación del grupo.'],
+                9 => ['detalle' => 'NECESIDAD DE PERTENECER A GRUPOS.', 'glosa' => '9.- Es dependiente del grupo. Subordina sus opiniones y actitudes comportándose totalmente de acuerdo con el grupo. Motivado por el trabajo apenas cuando es estimulado por el grupo.'],
+            ],
+            'C' => [
+                1 => ['detalle' => 'TIPO ORGANIZADO', 'glosa' => '1.- Extremadamente desorganizado.'],
+                2 => ['detalle' => 'TIPO ORGANIZADO', 'glosa' => '2.- Mínima preocupación de orden y organización.'],
+                3 => ['detalle' => 'TIPO ORGANIZADO', 'glosa' => '3.- Poca preocupación de orden y organización.'],
+                4 => ['detalle' => 'TIPO ORGANIZADO', 'glosa' => '4.- Poco organizado.'],
+                5 => ['detalle' => 'TIPO ORGANIZADO', 'glosa' => '5.- Es una persona con agrado regular de organización.'],
+                6 => ['detalle' => 'TIPO ORGANIZADO', 'glosa' => '7/6.- Muy organizado, trata de estar con todo su material siempre en orden.'],
+                7 => ['detalle' => 'TIPO ORGANIZADO', 'glosa' => '7/6.- Muy organizado, trata de estar con todo su material siempre en orden.'],
+                8 => ['detalle' => 'TIPO ORGANIZADO', 'glosa' => '8.- Extremadamente organizado, No consigue trabajar en ambiente desorganizado.'],
+                9 => ['detalle' => 'TIPO ORGANIZADO', 'glosa' => '9.- Exagerada preocupación con el orden y organización, no consigue trabajar en ambiente desorganizado.'],
+            ],
+            'D' => [
+                1 => ['detalle' => 'INTERESADO EN TRABAJAR CON DETALLES', 'glosa' => '1.- No valoriza detalles, corre serie riesgo de no prestar atención a detalles importantes para la corrección de los trabajos.'],
+                2 => ['detalle' => 'INTERESADO EN TRABAJAR CON DETALLES', 'glosa' => '2.- Trabaja sin detenerse en detalles, tendiendo a perder detalles importantes para el éxito de su trabajo.'],
+                3 => ['detalle' => 'INTERESADO EN TRABAJAR CON DETALLES', 'glosa' => '3.- Poco interés por detalles, prefiriendo la visión del conjunto.'],
+                4 => ['detalle' => 'INTERESADO EN TRABAJAR CON DETALLES', 'glosa' => '4.- Interés personal regular por detalles.'],
+                5 => ['detalle' => 'INTERESADO EN TRABAJAR CON DETALLES', 'glosa' => '5.- Buena capacidad de ver detalles y trabajar con ellos.'],
+                6 => ['detalle' => 'INTERESADO EN TRABAJAR CON DETALLES', 'glosa' => '7/6.- Le agrada realizar trabajos que exijan atención en detalles.'],
+                7 => ['detalle' => 'INTERESADO EN TRABAJAR CON DETALLES', 'glosa' => '7/6.- Le agrada realizar trabajos que exijan atención en detalles.'],
+                8 => ['detalle' => 'INTERESADO EN TRABAJAR CON DETALLES', 'glosa' => '8.- Se dedica a eliminar pormenores, perdiendo la visión del conjunto.'],
+                9 => ['detalle' => 'INTERESADO EN TRABAJAR CON DETALLES', 'glosa' => '9.- Gran interés en detalles. Tiende a omitir conceptos importantes y perder la visión del conjunto.'],
+            ],
+            'E' => [
+                1 => ['detalle' => 'TIPO EMOCIONALMENTE CONTENIDO', 'glosa' => '1.- Deja reflejar sus emociones en el trabajo, necesitando ser dinámico, se torna completamente envuelto emocionalmente con el trabajo que realiza.'],
+                2 => ['detalle' => 'TIPO EMOCIONALMENTE CONTENIDO', 'glosa' => '2.- Deja reflejar sus emociones, tiene expresión dinámica y dramática; gasta mucha energía cuando trabaja, tornándose emocionalmente envuelto con su trabajo.'],
+                3 => ['detalle' => 'TIPO EMOCIONALMENTE CONTENIDO', 'glosa' => '3.- Tiende a envolverse emocionalmente con su trabajo, es dinámico en su expresión, dejando reflejar sus emociones.'],
+                4 => ['detalle' => 'TIPO EMOCIONALMENTE CONTENIDO', 'glosa' => '4.- Grado regular de envolvimiento emocional con el trabajo, se esfuerza para que sus emociones no interfieran en el trabajo.'],
+                5 => ['detalle' => 'TIPO EMOCIONALMENTE CONTENIDO', 'glosa' => '5.- Poco envolvimiento emocional en el trabajo, equilibra sus emociones.'],
+                6 => ['detalle' => 'TIPO EMOCIONALMENTE CONTENIDO', 'glosa' => '6.- Tiende a ser calmado y formal en el trabajo, controla sus emociones.'],
+                7 => ['detalle' => 'TIPO EMOCIONALMENTE CONTENIDO', 'glosa' => '7.- Es calmado y formal en el trabajo, contiene sus emociones difícilmente demuestra lo que está sintiendo.'],
+                8 => ['detalle' => 'TIPO EMOCIONALMENTE CONTENIDO', 'glosa' => '8.- Es frío y formal en el trabajo; característicamente racional; no demuestra lo que siente, tiende a esconder sus emociones, no dando valor a personas emotivas.'],
+                9 => ['detalle' => 'TIPO EMOCIONALMENTE CONTENIDO', 'glosa' => '9.- Es racional y formal en su trabajo, racionalizando sus emociones, no se permite demostraciones afectivas en el trabajo. No consigue trabajar con personas emotivas.'],
+            ],
+            'F' => [
+                1 => ['detalle' => 'NECESIDAD DE OBEDIENCIA A LA AUTORIDAD.', 'glosa' => '1.- Es rebelde ante la autoridad. Necesita sentirse libre y exento de control de la jefatura; su opinión respecto de su trabajo es el factor que lo motiva y no la opinión de la jefatura.'],
+                2 => ['detalle' => 'NECESIDAD DE OBEDIENCIA A LA AUTORIDAD.', 'glosa' => '2.- Comportamiento independiente, poca preocupación en estar de acuerdo con la autoridad, eventualmente enfrenta a la autoridad y prefiere no recibir supervisión.'],
+                3 => ['detalle' => 'NECESIDAD DE OBEDIENCIA A LA AUTORIDAD.', 'glosa' => '3.- Auto-confiado y motivado por el trabajo y no por el reconocimiento del jefe. No necesita del incentivo del jefe. Tiende a ser resistente a la autoridad. Se siente libre para expresar sus puntos de vista.'],
+                4 => ['detalle' => 'NECESIDAD DE OBEDIENCIA A LA AUTORIDAD.', 'glosa' => '4.- Tiene confianza en sí mismo, no dependiendo del control de la jefatura, eventualmente puede argumentar con la jefatura.'],
+                5 => ['detalle' => 'NECESIDAD DE OBEDIENCIA A LA AUTORIDAD.', 'glosa' => '5.- Tiene confianza en sí mismo, conviviendo en igualdad con la autoridad.'],
+                6 => ['detalle' => 'NECESIDAD DE OBEDIENCIA A LA AUTORIDAD.', 'glosa' => '6.- Influenciable por las opiniones y puntos de vista de sus superiores; trata de corresponder a la expectativa de su superiores.'],
+                7 => ['detalle' => 'NECESIDAD DE OBEDIENCIA A LA AUTORIDAD.', 'glosa' => '7.- Necesita obedecer al jefe para recibir estímulos que lo motiven.'],
+                8 => ['detalle' => 'NECESIDAD DE OBEDIENCIA A LA AUTORIDAD.', 'glosa' => '8.- Se preocupa mucho en respetar y obedecer al jefe, tratando de asegurarse del valor de su trabajo.'],
+                9 => ['detalle' => 'NECESIDAD DE OBEDIENCIA A LA AUTORIDAD.', 'glosa' => '9.- No tiene confianza en sí mismo, depende del apoyo de su jefe para poder trabajar. Necesita ser constantemente motivado por la autoridad.'],
+            ],
+            'G' => [
+                1 => ['detalle' => 'DESEMPEÑO DEL TRABAJO ARDUO Y CONCENTRADO ( RESPONSABILIDAD ).', 'glosa' => '1.- No le agradan trabajos que exijan esfuerzo, puede dejar para el día siguiente lo que podía hacer hoy.'],
+                2 => ['detalle' => 'DESEMPEÑO DEL TRABAJO ARDUO Y CONCENTRADO ( RESPONSABILIDAD ).', 'glosa' => '2.- Dedica poco esfuerzo a la realización de sus trabajos.'],
+                3 => ['detalle' => 'DESEMPEÑO DEL TRABAJO ARDUO Y CONCENTRADO ( RESPONSABILIDAD ).', 'glosa' => '3.- Le agrada realizar trabajos que no exijan esfuerzo para ser realizados.'],
+                4 => ['detalle' => 'DESEMPEÑO DEL TRABAJO ARDUO Y CONCENTRADO ( RESPONSABILIDAD ).', 'glosa' => '5/4.- Identificación regular con trabajos difíciles.'],
+                5 => ['detalle' => 'DESEMPEÑO DEL TRABAJO ARDUO Y CONCENTRADO ( RESPONSABILIDAD ).', 'glosa' => '5/4.- Identificación regular con trabajos difíciles.'],
+                6 => ['detalle' => 'DESEMPEÑO DEL TRABAJO ARDUO Y CONCENTRADO ( RESPONSABILIDAD ).', 'glosa' => '6.- Identificación sobre regular con trabajos difíciles.'],
+                7 => ['detalle' => 'DESEMPEÑO DEL TRABAJO ARDUO Y CONCENTRADO ( RESPONSABILIDAD ).', 'glosa' => '7.- Prefiere trabajos que exijan esfuerzo para ser realizado.'],
+                8 => ['detalle' => 'DESEMPEÑO DEL TRABAJO ARDUO Y CONCENTRADO ( RESPONSABILIDAD ).', 'glosa' => '8.- Es bastante dedicado al trabajo que exige esfuerzo para ser realizado.'],
+                9 => ['detalle' => 'DESEMPEÑO DEL TRABAJO ARDUO Y CONCENTRADO ( RESPONSABILIDAD ).', 'glosa' => '9.- Es extremadamente dedicado a trabajos que exigen esfuerzos para ser realizados.'],
+            ],
+            'I' => [
+                1 => ['detalle' => 'FACILIDAD EN LA TOMA DE DECISIONES.', 'glosa' => '1.- Siente dificultad para decidirse, el proceso de decisión le crea angustia y malestar; no le agrada tomar decisiones.'],
+                2 => ['detalle' => 'FACILIDAD EN LA TOMA DE DECISIONES.', 'glosa' => '2.- Es lento en la toma de decisiones. Se preocupa mucho por la calidad de la decisión ( tiende a dejar de tomar decisiones ).'],
+                3 => ['detalle' => 'FACILIDAD EN LA TOMA DE DECISIONES.', 'glosa' => '3.- Piensa para decidirse; tiende a ser reflexivo, es lento en el proceso de toma de decisiones.'],
+                4 => ['detalle' => 'FACILIDAD EN LA TOMA DE DECISIONES.', 'glosa' => '4.- Grado regular de capacidad para decidirse.'],
+                5 => ['detalle' => 'FACILIDAD EN LA TOMA DE DECISIONES.', 'glosa' => '5.- Buena capacidad para decidirse; trata de imprimir en sus decisiones el mismo grado de calidad y rapidez.'],
+                6 => ['detalle' => 'FACILIDAD EN LA TOMA DE DECISIONES.', 'glosa' => '6.- Toma decisiones con facilidad sin, entretanto, apresurarse en dejar de medir las consecuencias de sus decisiones.'],
+                7 => ['detalle' => 'FACILIDAD EN LA TOMA DE DECISIONES.', 'glosa' => '7.- Rápido para decidirse; se preocupa poco de las consecuencias de sus decisiones, dando más énfasis a la velocidad en la toma de las mismas.'],
+                8 => ['detalle' => 'FACILIDAD EN LA TOMA DE DECISIONES.', 'glosa' => '8.- Impulsivo, da más énfasis a la velocidad que a la seguridad de la decisiones. Puede tomar decisiones apresuradas.'],
+                9 => ['detalle' => 'FACILIDAD EN LA TOMA DE DECISIONES.', 'glosa' => '9.- Extremadamente rápido para decidirse; corre el riesgo de tomar decisiones no pensadas.'],
+            ],
+            'K' => [
+                1 => ['detalle' => 'NECESIDAD DE SER DEFENSIVAMENTE AGRESIVO', 'glosa' => '1.- No manifiesta sus opiniones francamente, estando a la defensiva casi siempre.'],
+                2 => ['detalle' => 'NECESIDAD DE SER DEFENSIVAMENTE AGRESIVO', 'glosa' => '2.- Está a la defensiva la mayor parte del tiempo, difícilmente se manifiesta abiertamente.'],
+                3 => ['detalle' => 'NECESIDAD DE SER DEFENSIVAMENTE AGRESIVO', 'glosa' => '3.- Posee reserva en la manifestación de su s opiniones. Tiende a estar en la defensiva.'],
+                4 => ['detalle' => 'NECESIDAD DE SER DEFENSIVAMENTE AGRESIVO', 'glosa' => '4.- Tiende a estar a la defensiva con las personas.'],
+                5 => ['detalle' => 'NECESIDAD DE SER DEFENSIVAMENTE AGRESIVO', 'glosa' => '5.- Grado medio de defensa, tiende a ser reservado.'],
+                6 => ['detalle' => 'NECESIDAD DE SER DEFENSIVAMENTE AGRESIVO', 'glosa' => '6.- Capacidad para enfrentar y argumentar con las personas.'],
+                7 => ['detalle' => 'NECESIDAD DE SER DEFENSIVAMENTE AGRESIVO', 'glosa' => '7.- Enfrenta las personas, es abierto y sincero.'],
+                8 => ['detalle' => 'NECESIDAD DE SER DEFENSIVAMENTE AGRESIVO', 'glosa' => '9/8.- Persona que se opone y enfrenta franca y abiertamente a los otros.'],
+                9 => ['detalle' => 'NECESIDAD DE SER DEFENSIVAMENTE AGRESIVO', 'glosa' => '9/8.- Persona que se opone y enfrenta franca y abiertamente a los otros.'],
+            ],
+            'L' => [
+                1 => ['detalle' => 'PAPEL DE LIDERAZGO.', 'glosa' => '1.- No acepta el papel de líder, prefiere ser liderado a liderar, en posición de jefatura, tiene a evitar el liderazgo.'],
+                2 => ['detalle' => 'PAPEL DE LIDERAZGO.', 'glosa' => '2.- Tiene problemas con liderazgo. Prefiere ser orientado por los otros . No obtiene suficiente recompensa interior en el papel de liderazgo.'],
+                3 => ['detalle' => 'PAPEL DE LIDERAZGO.', 'glosa' => '3.- No obtiene suficiente recompensa interior como líder, tiende a transferir los problemas de liderazgo.'],
+                4 => ['detalle' => 'PAPEL DE LIDERAZGO.', 'glosa' => '4.- Grado medio de confianza en sí mismo como líder, pudiendo igualmente ejercer el liderazgo y ser liderado.'],
+                5 => ['detalle' => 'PAPEL DE LIDERAZGO.', 'glosa' => '5.- Confía en sí mismo como líder, tiende a ejercer el liderazgo.'],
+                6 => ['detalle' => 'PAPEL DE LIDERAZGO.', 'glosa' => '6.- Le agrada liderar es una persona que asume el liderazgo del grupo.'],
+                7 => ['detalle' => 'PAPEL DE LIDERAZGO.', 'glosa' => '7.- Tiene confianza en sí como líder; le agrada tomar el liderazgo del grupo.'],
+                8 => ['detalle' => 'PAPEL DE LIDERAZGO.', 'glosa' => '8.- Muy confiado como líder; es considerado como un líder en el grupo.'],
+                9 => ['detalle' => 'PAPEL DE LIDERAZGO.', 'glosa' => '9.- Es impulsado por un fuerte deseo de liderazgo. Es auto-confiante a punto de tomar frecuentemente el liderazgo.'],
+            ],
+            'N' => [
+                1 => ['detalle' => 'NECESIDAD DE COMPLETAR LA TAREA.', 'glosa' => '1.- Persona que se preocupa principalmente en fijar objetivos y metas, no sintiendo ninguna necesidad en acabar lo que inicia. Necesita realizar muchas tareas simultáneamente, pudiendo dejar trabajos incompletos.'],
+                2 => ['detalle' => 'NECESIDAD DE COMPLETAR LA TAREA.', 'glosa' => '2.- Persona que no siente la necesidad de completar tareas personalmente, prefiere descentralizar los trabajos para permanecer en una actividad de coordinación.'],
+                3 => ['detalle' => 'NECESIDAD DE COMPLETAR LA TAREA.', 'glosa' => '3.- Puede delegar sus trabajos. Puede realizar muchas tareas simultáneamente.'],
+                4 => ['detalle' => 'NECESIDAD DE COMPLETAR LA TAREA.', 'glosa' => '4.- Puede delegar sus trabajos. Puede realizar algunas tareas simultáneamente.'],
+                5 => ['detalle' => 'NECESIDAD DE COMPLETAR LA TAREA.', 'glosa' => '5.- Puede delegar parte de sus trabajos, dejando para sí la realización completa de buena parte de ella.'],
+                6 => ['detalle' => 'NECESIDAD DE COMPLETAR LA TAREA.', 'glosa' => '6.- Tiene necesidad de completar sus tareas.'],
+                7 => ['detalle' => 'NECESIDAD DE COMPLETAR LA TAREA.', 'glosa' => '7.- Necesita mucho terminar lo que comienza; fija toda su atención en la realización de una tarea hasta terminarla.'],
+                8 => ['detalle' => 'NECESIDAD DE COMPLETAR LA TAREA.', 'glosa' => '8.- Persistente. Tiene dificultad en dejar la tarea que está haciendo. Tiene que completar lo que comienza. Siente dificultad en delegar.'],
+                9 => ['detalle' => 'NECESIDAD DE COMPLETAR LA TAREA.', 'glosa' => '9.- No consigue dejar lo que está haciendo. Es extremadamente preocupado con la necesidad de completar una tarea. Queda frustrado y ansioso al no terminar lo que inicia. Siente mucha dificultad para delegar.'],
+            ],
+            'O' => [
+                1 => ['detalle' => 'NECESIDAD AFECTIVA.', 'glosa' => '1.- Tiene un modo racional de abordar las cosas (intelectualizada) cierta dificultad de relacionamiento.'],
+                2 => ['detalle' => 'NECESIDAD AFECTIVA.', 'glosa' => '3/2.- Mantiene un relacionamiento formal con las personas.'],
+                3 => ['detalle' => 'NECESIDAD AFECTIVA.', 'glosa' => '3/2.- Mantiene un relacionamiento formal con las personas.'],
+                4 => ['detalle' => 'NECESIDAD AFECTIVA.', 'glosa' => '4.- Le agrada pertenecer al grupo y participar con otras personas.'],
+                5 => ['detalle' => 'NECESIDAD AFECTIVA.', 'glosa' => '5.- Se relaciona cálidamente con las personas.'],
+                6 => ['detalle' => 'NECESIDAD AFECTIVA.', 'glosa' => '6.- Persona que le agrada recibir el afecto de los otros.'],
+                7 => ['detalle' => 'NECESIDAD AFECTIVA.', 'glosa' => '7.- Necesita tener el afecto y apoyo de los otros.'],
+                8 => ['detalle' => 'NECESIDAD AFECTIVA.', 'glosa' => '8.- Sensible, necesita obtener el afecto y apoyo de los otros en su relacionamiento.'],
+                9 => ['detalle' => 'NECESIDAD AFECTIVA.', 'glosa' => '9.- Es extremadamente afectivo en su relacionamiento; siente la necesidad de ser querido.'],
+            ],
+            'P' => [
+                1 => ['detalle' => 'NECESIDAD DE CONTROLAR A LOS OTROS ( DOMINANCIA ).', 'glosa' => '1.- No le agrada asumir responsabilidad por terceros, tiene dificultad en controlar a los otros.'],
+                2 => ['detalle' => 'NECESIDAD DE CONTROLAR A LOS OTROS ( DOMINANCIA ).', 'glosa' => '2.- Se inclina por sí mismo, poco interés en controlar personas, tiene dificultad en controlar a los otros.'],
+                3 => ['detalle' => 'NECESIDAD DE CONTROLAR A LOS OTROS ( DOMINANCIA ).', 'glosa' => '3.- Prefiere no responsabilizarse por los otros. Tiende a no controlar a los otros.'],
+                4 => ['detalle' => 'NECESIDAD DE CONTROLAR A LOS OTROS ( DOMINANCIA ).', 'glosa' => '4.- Agrado de sí mismo y respeta a los otros. Grado regular de preocupación en controlar a los otros.'],
+                5 => ['detalle' => 'NECESIDAD DE CONTROLAR A LOS OTROS ( DOMINANCIA ).', 'glosa' => '5.- Se interesa por las personas, pudiendo eventualmente manejarlas, a través de la imagen de protector.'],
+                6 => ['detalle' => 'NECESIDAD DE CONTROLAR A LOS OTROS ( DOMINANCIA ).', 'glosa' => '6.- Le agrada influenciar a las personas transmitiéndoles sus puntos de vista.'],
+                7 => ['detalle' => 'NECESIDAD DE CONTROLAR A LOS OTROS ( DOMINANCIA ).', 'glosa' => '7.- Le agrada ser responsable de las personas; necesita influenciar a los otros.'],
+                8 => ['detalle' => 'NECESIDAD DE CONTROLAR A LOS OTROS ( DOMINANCIA ).', 'glosa' => '8.- Se preocupa de orientar y dirigir a las personas, controlándolas de acuerdo con sus puntos de vista.'],
+                9 => ['detalle' => 'NECESIDAD DE CONTROLAR A LOS OTROS ( DOMINANCIA ).', 'glosa' => '9.- Persona fuertemente dominante. Se preocupa de dirigir a las personas según su voluntad.'],
+            ],
+            'R' => [
+                1 => ['detalle' => 'TIPO TEORICO ( PRACTICA )', 'glosa' => '1.- Ejecuta los trabajos sin planificar.'],
+                2 => ['detalle' => 'TIPO TEORICO ( PRACTICA )', 'glosa' => '2.- Tiene dificultades en planificar sus trabajos, prefiriendo ejecutar a planificar.'],
+                3 => ['detalle' => 'TIPO TEORICO ( PRACTICA )', 'glosa' => '3.- Prefiere ejecutar a planificar.'],
+                4 => ['detalle' => 'TIPO TEORICO ( PRACTICA )', 'glosa' => '5/4.- Prefiere planificar y formular estrategias 40 a 50% del tiempo.'],
+                5 => ['detalle' => 'TIPO TEORICO ( PRACTICA )', 'glosa' => '5/4.- Prefiere planificar y formular estrategias 40 a 50% del tiempo.'],
+                6 => ['detalle' => 'TIPO TEORICO ( PRACTICA )', 'glosa' => '7/6.- Prefiere planificar y formular estrategias 70% del tiempo.'],
+                7 => ['detalle' => 'TIPO TEORICO ( PRACTICA )', 'glosa' => '7/6.- Prefiere planificar y formular estrategias 70% del tiempo.'],
+                8 => ['detalle' => 'TIPO TEORICO ( PRACTICA )', 'glosa' => '8.- Gasta la mayor parte del tiempo, 80 a 90%, planificando y formulando estrategias.'],
+                9 => ['detalle' => 'TIPO TEORICO ( PRACTICA )', 'glosa' => '9.- Gasta la totalidad de su tiempo planificando, tiene dificultades en ejecutar tareas.'],
+            ],
+            'S' => [
+                1 => ['detalle' => 'DISPOSICION SOCIAL', 'glosa' => '1.- Persona introvertida, sin preocupación por la comunicación social. Socialmente sin condición.'],
+                2 => ['detalle' => 'DISPOSICION SOCIAL', 'glosa' => '2.- Es una persona reservada en su relacionamiento social.'],
+                3 => ['detalle' => 'DISPOSICION SOCIAL', 'glosa' => '3.- Posee cierta reserva en la comunicación social.'],
+                4 => ['detalle' => 'DISPOSICION SOCIAL', 'glosa' => '4.- Preocupación regular (50%) con la comunicación social.'],
+                5 => ['detalle' => 'DISPOSICION SOCIAL', 'glosa' => '5.- Buena capacidad de escuchar y comunicarse socialmente.'],
+                6 => ['detalle' => 'DISPOSICION SOCIAL', 'glosa' => '6.- Posee buen relacionamiento social.'],
+                7 => ['detalle' => 'DISPOSICION SOCIAL', 'glosa' => '7.- Buena disposición social. Persona muy receptiva.'],
+                8 => ['detalle' => 'DISPOSICION SOCIAL', 'glosa' => '8.- Persona extrovertida, con óptima capacidad de comunicación.'],
+                9 => ['detalle' => 'DISPOSICION SOCIAL', 'glosa' => '9.- Persona muy participativa y receptiva a la comunicación.'],
+            ],
+            'T' => [
+                1 => ['detalle' => 'TIPO ACTIVO-INQUIETO Y AGIL ( STRESS )', 'glosa' => '1.- No le agrada trabajar con presión de plazos, tiende a no dar importancia al tiempo establecido.'],
+                2 => ['detalle' => 'TIPO ACTIVO-INQUIETO Y AGIL ( STRESS )', 'glosa' => '2.- Trabaja calmadamente, poco preocupado en cuanto a límites de tiempo, tiene dificultad en manejar plazos pre - establecidos, no se siente bien con trabajos que exijan plazos pre - establecidos.'],
+                3 => ['detalle' => 'TIPO ACTIVO-INQUIETO Y AGIL ( STRESS )', 'glosa' => '3.- Se preocupa eventualmente por los límites de tiempo, prefiriendo no trabajar en base a presión de plazos.'],
+                4 => ['detalle' => 'TIPO ACTIVO-INQUIETO Y AGIL ( STRESS )', 'glosa' => '4.- Es responsable en cuanto a límites de tiempo. Tiende a ejecutar sus deberes dentro de los plazos determinados.'],
+                5 => ['detalle' => 'TIPO ACTIVO-INQUIETO Y AGIL ( STRESS )', 'glosa' => '5.- Se preocupa por lo límites de tiempo. Trabaja dentro de los límites de tiempo establecidos.'],
+                6 => ['detalle' => 'TIPO ACTIVO-INQUIETO Y AGIL ( STRESS )', 'glosa' => '6.- Responsabilidad sobre regular en cuanto a límites de tiempo.'],
+                7 => ['detalle' => 'TIPO ACTIVO-INQUIETO Y AGIL ( STRESS )', 'glosa' => '7.- Es una persona inquieta y muy preocupada con plazos, tiene mucha necesidad de realizar sus trabajos dentro de los límites de tiempo.'],
+                8 => ['detalle' => 'TIPO ACTIVO-INQUIETO Y AGIL ( STRESS )', 'glosa' => '8.- Posee mucha tensión interna. Fuertemente preocupado con los límites de tiempo.'],
+                9 => ['detalle' => 'TIPO ACTIVO-INQUIETO Y AGIL ( STRESS )', 'glosa' => '9.- Persona que esta permanentemente tensa y fuertemente impulsada a trabajar dentro de los límites de tiempo.'],
+            ],
+            'V' => [
+                1 => ['detalle' => 'TIPO CON VIGOR FISICO.', 'glosa' => '1.- No le agradan trabajos que exijan movimiento; necesita actividades que pueden ser realizadas sentadas.'],
+                2 => ['detalle' => 'TIPO CON VIGOR FISICO.', 'glosa' => '2.- Prefiere trabajos que pueden ser realizados sentado.'],
+                3 => ['detalle' => 'TIPO CON VIGOR FISICO.', 'glosa' => '3.- Poco interés en actividades que exijan movimiento. Prefiere trabajar sentado.'],
+                4 => ['detalle' => 'TIPO CON VIGOR FISICO.', 'glosa' => '5/4.- Grado regular de vigor físico. Tiende a preferir funciones que exijan movimiento limitado.'],
+                5 => ['detalle' => 'TIPO CON VIGOR FISICO.', 'glosa' => '5/4.- Grado regular de vigor físico. Tiende a preferir funciones que exijan movimiento limitado.'],
+                6 => ['detalle' => 'TIPO CON VIGOR FISICO.', 'glosa' => '6.- Le agrada estar en movimiento.'],
+                7 => ['detalle' => 'TIPO CON VIGOR FISICO.', 'glosa' => '7.- Necesita estar en constante movimiento.'],
+                8 => ['detalle' => 'TIPO CON VIGOR FISICO.', 'glosa' => '8.- Es muy dinámico, tiene dificultad en realizar actividades que lo obliguen a estar parado en un ambiente.'],
+                9 => ['detalle' => 'TIPO CON VIGOR FISICO.', 'glosa' => '9.- Es extremadamente inquieto, necesita realizar actividades que exijan bastante movimiento.'],
+            ],
+            'W' => [
+                1 => ['detalle' => 'NECESIDAD DE REGLAMENTO Y SUPERVISION.', 'glosa' => '1.- No le agrada seguir reglamentos, le agrada ir y venir libremente, es auto-dirigido, no le agrada ser orientado.'],
+                2 => ['detalle' => 'NECESIDAD DE REGLAMENTO Y SUPERVISION.', 'glosa' => '2.- Persona que prefiere no seguir normas. Le agrada ser libre. Prefiere auto-dirigirse a ser orientado.'],
+                3 => ['detalle' => 'NECESIDAD DE REGLAMENTO Y SUPERVISION.', 'glosa' => '3.- Poca necesidad de reglamentos y normas, prefiere recibir supervisión apenas ocasionalmente.'],
+                4 => ['detalle' => 'NECESIDAD DE REGLAMENTO Y SUPERVISION.', 'glosa' => '4.- Regular interés por seguir normas y reglamentos.'],
+                5 => ['detalle' => 'NECESIDAD DE REGLAMENTO Y SUPERVISION.', 'glosa' => '5.- Le agrada seguir reglamentos y obtener "la palabra oficial".'],
+                6 => ['detalle' => 'NECESIDAD DE REGLAMENTO Y SUPERVISION.', 'glosa' => '6.- Le agrada seguir normas y reglamentos.'],
+                7 => ['detalle' => 'NECESIDAD DE REGLAMENTO Y SUPERVISION.', 'glosa' => '7.- Necesita respetar normas y reglamentos.'],
+                8 => ['detalle' => 'NECESIDAD DE REGLAMENTO Y SUPERVISION.', 'glosa' => '8.- Se preocupa mucho en respetar normas y reglamentos.'],
+                9 => ['detalle' => 'NECESIDAD DE REGLAMENTO Y SUPERVISION.', 'glosa' => '9.- Necesita de normas y reglamentos para poder trabajar.'],
+            ],
+            'X' => [
+                1 => ['detalle' => 'NECESIDAD DE SER CONSIDERADO', 'glosa' => '1.- Prefiere mantenerse reservado, le agrada pasar desapercibido. No le agrada ser el centro de las atenciones.'],
+                2 => ['detalle' => 'NECESIDAD DE SER CONSIDERADO', 'glosa' => '2.- Es reservado en sus contactos sociales, tiende a no sentirse bien cuando es el centro de las atenciones.'],
+                3 => ['detalle' => 'NECESIDAD DE SER CONSIDERADO', 'glosa' => '3.- Es sincero en sus contactos sociales.'],
+                4 => ['detalle' => 'NECESIDAD DE SER CONSIDERADO', 'glosa' => '4.- Grado regular de solicitud , tiende a saber escuchar a las personas.'],
+                5 => ['detalle' => 'NECESIDAD DE SER CONSIDERADO', 'glosa' => '5.- Es solícito buscando amistad en el apoyo de los otros.'],
+                6 => ['detalle' => 'NECESIDAD DE SER CONSIDERADO', 'glosa' => '6.- Persona que le agrada recibir atención de los otros y de ser notado.'],
+                7 => ['detalle' => 'NECESIDAD DE SER CONSIDERADO', 'glosa' => '7.- Le agrada hablar respecto de sus actividades con el fin de sentirse valorizado y aceptado.'],
+                8 => ['detalle' => 'NECESIDAD DE SER CONSIDERADO', 'glosa' => '8.- Necesita sentirse valorizado por las personas, llamando la atención sobre sí mismo.'],
+                9 => ['detalle' => 'NECESIDAD DE SER CONSIDERADO', 'glosa' => '9.- Exageradamente dependiente de las opiniones de los otros, trata de hacerse notar en el grupo en el cual se encuentra.'],
+            ],
+            'Z' => [
+                1 => ['detalle' => 'NECESIDAD DE CAMBIO. NECESIDAD DE IDENTIFICARSE', 'glosa' => '1.- Tiene gran dificultad para enfrentar nuevas situaciones y cambios; necesita trabajos rutinarios y repetidos en situaciones estables e inmutables.'],
+                2 => ['detalle' => 'NECESIDAD DE CAMBIO. NECESIDAD DE IDENTIFICARSE', 'glosa' => '2.- Resistente a las mudanzas, es más indicado para trabajos de rutina y repetidos.'],
+                3 => ['detalle' => 'NECESIDAD DE CAMBIO. NECESIDAD DE IDENTIFICARSE', 'glosa' => '3.- Posee cierta reserva a los cambios. Prefiere trabajos de rutina y repetidos.'],
+                4 => ['detalle' => 'NECESIDAD DE CAMBIO. NECESIDAD DE IDENTIFICARSE', 'glosa' => '4.- Medianamente receptivo a los cambios, dependiendo de las circunstancias que las envuelven, puede ofrecer resistencia a los mismos.'],
+                5 => ['detalle' => 'NECESIDAD DE CAMBIO. NECESIDAD DE IDENTIFICARSE', 'glosa' => '5.- Receptivo a los cambios. Se ajusta a los mismos.'],
+                6 => ['detalle' => 'NECESIDAD DE CAMBIO. NECESIDAD DE IDENTIFICARSE', 'glosa' => '6.- Se ajusta fácilmente a los cambios; tiene flexibilidad de pensamiento.'],
+                7 => ['detalle' => 'NECESIDAD DE CAMBIO. NECESIDAD DE IDENTIFICARSE', 'glosa' => '7.- Necesita variar sus actividades, identificándose con cambios y con lo que es nuevo. Prefiere trabajos que exijan creatividad.'],
+                8 => ['detalle' => 'NECESIDAD DE CAMBIO. NECESIDAD DE IDENTIFICARSE', 'glosa' => '8.- Es impulsado a mudar frecuentemente sus preferencias, necesita cambios continuamente en el trabajo.'],
+                9 => ['detalle' => 'NECESIDAD DE CAMBIO. NECESIDAD DE IDENTIFICARSE', 'glosa' => '9.- Es impulsado por una fuerte necesidad de cambiar constantemente sus actividades, siendo inconstante en sus preferencias y actividades.'],
+            ],
+        ];
+
 
         foreach ($answers as $ans) {
             if ($ans->code && isset($scores[$ans->code])) {
@@ -291,10 +545,12 @@ class PsychometricScoringService
         }
 
         return [
-            'test_name' => 'Kostick',
-            'chart_type' => 'radar',
-            'scores' => $scores,
-            'summary' => "Perfil de comportamiento y preferencias."
+            'test_name'            => 'Kostick',
+            'chart_type'           => 'radar',
+            'scores'               => $scores,
+            'factoresAgrupados'    => $factoresAgrupados,
+            'kostickInterpretation'=> $kostickInterpretation,
+            'summary'              => "Perfil de comportamiento y preferencias."
         ];
     }
 

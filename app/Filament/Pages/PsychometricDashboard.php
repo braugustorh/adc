@@ -136,6 +136,7 @@ class PsychometricDashboard extends Page implements HasTable
             ])
             ->actions([
                 // ACCIÓN 1: VER RESULTADOS (MODAL)
+                /*
                 Tables\Actions\ViewAction::make('results')
                     ->label('Resultados')
                     ->icon('heroicon-o-eye')
@@ -154,7 +155,7 @@ class PsychometricDashboard extends Page implements HasTable
                             'results' => $results
                         ]);
                     }),
-
+                    */
                 // ACCIÓN 2: DESCARGAR PDF (Placeholder por ahora)
                 Tables\Actions\Action::make('pdf')
                     ->label('PDF')

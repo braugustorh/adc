@@ -48,8 +48,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/exit-survey', ExitSurveyPage::class)->name('filament.pages.exit-survey-page');
     Route::get('/users/{user}/download-exit-survey', [\App\Http\Controllers\ExitSurveyController::class, 'download'])
         ->name('users.download-exit-survey');
-    Route::post('/quejas-violencia/store', [QuejaViolenciaLaboralController::class, 'store'])
-        ->name('quejas-violencia.store');
+    // Route::post('/quejas-violencia/store', [\App\Http\Controllers\QuejaViolenciaLaboralController::class, 'store'])
+    //     ->name('quejas-violencia.store');
 });
 
 // Ruta de entrada (Landing Page)
@@ -64,4 +64,12 @@ Route::get('/evaluacion/{token}/realizar', TakePsychometricTest::class)
 
 Route::view('/evaluation/finished', 'evaluations.process-finished')
     ->name('evaluation.finished');
+
+// ── Reporte General Psicométrico (preview + descarga PDF) ──────────────────
+Route::middleware('auth')->group(function () {
+    Route::get('/reporte-psicometrico/{key}', [\App\Http\Controllers\PsychometricReportController::class, 'show'])
+        ->name('psychometric.report.preview');
+    Route::get('/reporte-psicometrico/{key}/pdf', [\App\Http\Controllers\PsychometricReportController::class, 'downloadPdf'])
+        ->name('psychometric.report.pdf');
+});
 

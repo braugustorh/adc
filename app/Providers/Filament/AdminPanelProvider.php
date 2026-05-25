@@ -5,7 +5,10 @@ namespace App\Providers\Filament;
 use App\Filament\Resources\UserResource\Widgets\UsersStatsOverview;
 use App\Filament\Widgets\CampaignEvaluationsWidget;
 use App\Filament\Widgets\DocumentsLibraryWidget;
+use App\Filament\Widgets\RecentVacationRequestsWidget;
 use App\Filament\Widgets\VacancyStats;
+use App\Filament\Widgets\VacationChartWidget;
+use App\Filament\Widgets\VacationStatsWidget;
 use App\Filament\Widgets\ViolenceProtocolWidget;
 use App\Http\Middleware\CheckUserStatusAndEvaluation;
 use Filament\Http\Middleware\Authenticate;
@@ -57,10 +60,14 @@ class AdminPanelProvider extends PanelProvider
             ])
             //->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                UsersStatsOverview::class,    // Segunda posición
-                Widgets\AccountWidget::class, // Primera posición
+                UsersStatsOverview::class,    // Segunda posicin
+                \App\Filament\Widgets\CustomAccountWidget::class, // Primera posicin
+                VacationStatsWidget::class, // Cuarta posicin
                 CampaignEvaluationsWidget::class, // Tercera posición
-                VacancyStats::class, // Cuarta posición
+                VacancyStats::class,
+                RecentVacationRequestsWidget::class,
+                VacationChartWidget::class,
+
                 DocumentsLibraryWidget::class,
                 ViolenceProtocolWidget::class,
                 //Widgets\FilamentInfoWidget::class, // Comentado
@@ -79,11 +86,11 @@ class AdminPanelProvider extends PanelProvider
                 CheckUserStatusAndEvaluation::class,
             ])
             ->plugins([
-                FilamentBackgroundsPlugin::make()
-                    ->imageProvider(
-                        MyImages::make()
-                            ->directory('images/backgrounds')
-                    ),
+//                FilamentBackgroundsPlugin::make()
+//                    ->imageProvider(
+//                        MyImages::make()
+//                            ->directory('images/backgrounds')
+//                    ),
             ])->databaseNotifications();
 
 

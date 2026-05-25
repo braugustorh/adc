@@ -167,20 +167,18 @@ class TakeInternalEvaluation extends Page
 
     public function finishEvaluation()
     {
-        // Calcular tiempo transcurrido para esta prueba individual
         $elapsedSeconds = 0;
         if ($this->evaluation->started_at) {
-            $elapsedSeconds = (int) now()->diffInSeconds($this->evaluation->started_at);
+            $elapsedSeconds = max(0, (int) now()->diffInSeconds($this->evaluation->started_at, false));
         }
 
         $this->evaluation->update([
-            'status' => 'completed',
-            'completed_at' => now(),
-            'progress' => 100,
+            'status'          => 'completed',
+            'completed_at'    => now(),
+            'progress'        => 100,
             'elapsed_seconds' => $elapsedSeconds,
         ]);
 
-        // Al terminar, lo regresamos a su dashboard de pruebas
         return redirect(MyPsychometricEvaluations::getUrl());
     }
 

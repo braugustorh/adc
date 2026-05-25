@@ -62,7 +62,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 UsersStatsOverview::class,    // Segunda posicin
                 \App\Filament\Widgets\CustomAccountWidget::class, // Primera posicin
-                VacationStatsWidget::class, // Cuarta posicin
+                //VacationStatsWidget::class, // Cuarta posicin
                 CampaignEvaluationsWidget::class, // Tercera posición
                 VacancyStats::class,
                 RecentVacationRequestsWidget::class,

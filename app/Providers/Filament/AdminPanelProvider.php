@@ -65,8 +65,8 @@ class AdminPanelProvider extends PanelProvider
                 //VacationStatsWidget::class, // Cuarta posicin
                 CampaignEvaluationsWidget::class, // Tercera posición
                 VacancyStats::class,
-                RecentVacationRequestsWidget::class,
-                VacationChartWidget::class,
+                //RecentVacationRequestsWidget::class,
+                //VacationChartWidget::class,
 
                 DocumentsLibraryWidget::class,
                 ViolenceProtocolWidget::class,

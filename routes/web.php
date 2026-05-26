@@ -48,8 +48,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/exit-survey', ExitSurveyPage::class)->name('filament.pages.exit-survey-page');
     Route::get('/users/{user}/download-exit-survey', [\App\Http\Controllers\ExitSurveyController::class, 'download'])
         ->name('users.download-exit-survey');
-    // Route::post('/quejas-violencia/store', [\App\Http\Controllers\QuejaViolenciaLaboralController::class, 'store'])
-    //     ->name('quejas-violencia.store');
+    //Route::post('/quejas-violencia/store', [\App\Http\Controllers\QuejaViolenciaLaboralController::class, 'store'])
+     //  ->name('quejas-violencia.store');
+       //
 });
 
 // Ruta de entrada (Landing Page)

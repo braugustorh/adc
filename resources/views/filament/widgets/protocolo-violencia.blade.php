@@ -367,34 +367,7 @@
                     document.getElementById('success-modal').classList.add('hidden');
                 });
 
-                // Manejar envío del formulario
-                document.getElementById('complaint-form').addEventListener('submit', function(e) {
-                    e.preventDefault();
-
-                    const formData = new FormData(this);
-
-                    fetch('{{ route("quejas-violencia.store") }}', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                document.getElementById('complaint-modal').classList.add('hidden');
-                                document.getElementById('success-modal').classList.remove('hidden');
-                                document.getElementById('complaint-form').reset();
-                            } else {
-                                alert('Ocurrió un error al enviar la queja. Por favor, inténtelo de nuevo.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Ocurrió un error al enviar la queja. Por favor, inténtelo de nuevo.');
-                        });
-                });
+                // El envío del formulario se maneja via Livewire (wire:submit="sendComplaint")
             });
         </script>
     @endpush

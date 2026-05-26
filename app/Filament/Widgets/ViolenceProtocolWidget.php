@@ -72,7 +72,7 @@ class ViolenceProtocolWidget extends Widget
         $this->dispatch('open-modal', id: 'modal-complaint');
 
     }
-
+//queja 2026 protocolo
     public function downloadProtocol()
     {
         /*
@@ -246,6 +246,7 @@ class ViolenceProtocolWidget extends Widget
                 $message->to('contactorh@adcentrales.com')
                     ->subject('Nueva Queja de Violencia Laboral - ' . $data['quejoso_nombre']);
             });
+
 
             // Cerrar modal de formulario
             $this->dispatch('close-modal', id: 'modal-complaint');

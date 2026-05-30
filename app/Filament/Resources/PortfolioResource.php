@@ -342,8 +342,15 @@ class PortfolioResource extends Resource
                 Tables\Columns\TextColumn::make('fullName')
                     ->label('Nombre')
                     ->getStateUsing(fn ($record) =>
-                    trim("{$record->user->name} {$record->user->first_name} {$record->user->last_name}")
+                        trim("{$record->user->name} {$record->user->first_name} {$record->user->last_name}")
                     )
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('user', function (Builder $q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%")
+                                ->orWhere('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%");
+                        });
+                    })
                     ->sortable(),
                 Tables\Columns\IconColumn::make('acta_url')
                     ->label('Acta de nacimiento')

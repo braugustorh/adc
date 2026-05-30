@@ -345,10 +345,11 @@ class PortfolioResource extends Resource
                         trim("{$record->user->name} {$record->user->first_name} {$record->user->last_name}")
                     )
                     ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query->whereHas('user', function (Builder $q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%")
-                                ->orWhere('first_name', 'like', "%{$search}%")
-                                ->orWhere('last_name', 'like', "%{$search}%");
+                        $term = '%' . strtolower($search) . '%';
+                        return $query->whereHas('user', function (Builder $q) use ($term) {
+                            $q->whereRaw('LOWER(name) LIKE ?', [$term])
+                                ->orWhereRaw('LOWER(first_name) LIKE ?', [$term])
+                                ->orWhereRaw('LOWER(last_name) LIKE ?', [$term]);
                         });
                     })
                     ->sortable(),

@@ -150,7 +150,7 @@ class Nom035 extends Page
 
             $this->loadIdentifiedEvents();
         }else{
-            $this->norma=collect();
+            $this->norma=null;
         }
 
         $this->colabs =User::where('sede_id', auth()->user()->sede_id ?? null)

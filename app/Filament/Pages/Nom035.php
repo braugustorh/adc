@@ -103,7 +103,7 @@ class Nom035 extends Page
     }
     public function getCurrentSedeId()
     {
-        if (auth()->check() && auth()->user()->hasRole('RH Corp','Administrador')) {
+        if (auth()->check() && auth()->user()->hasAnyRole(['RH Corp','Administrador'])) {
             return session('selected_sede_id');
         }
         $user = auth()->user();
@@ -124,7 +124,7 @@ class Nom035 extends Page
 
     public function loadMonitorData()
     {
-        $this->sedes_monitor = \App\Models\Sede::with('razonSocials')->get()->map(function($sede) {
+        $this->sedes_monitor = \App\Models\Sede::all()->get()->map(function($sede) {
             $process = Nom035Process::where('sede_id', $sede->id)
                 ->orderBy('created_at', 'desc')
                 ->first();

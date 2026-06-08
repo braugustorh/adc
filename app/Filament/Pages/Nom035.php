@@ -144,9 +144,9 @@ class Nom035 extends Page
                 'progress' => $totalColabs > 0 ? round(($responses / $totalColabs) * 100) : 0,
                 'total_colabs' => $totalColabs,
                 'responses' => $responses,
-               // 'razones_sociales' => $sede->razonSocials->pluck('name')->toArray(),
+                //'razones_sociales' => $sede->razonSocials->pluck('name')->toArray(),
             ];
-        })->toArray();
+        })->sortBy('name')->values()->toArray();
     }
 
     // Inicializar datos

@@ -108,102 +108,179 @@
 
 
     @if($stage === 'monitor')
-        <div class="space-y-6">
+        @php
+            // Agrupar sedes por primera letra (ya vienen ordenadas por nombre)
+            $sedesAgrupadas = collect($sedes_monitor)->groupBy(fn($s) => strtoupper(mb_substr($s['name'], 0, 1)))->sortKeys();
+        @endphp
+
+        <div
+            class="space-y-6"
+            x-data="{
+                search: '',
+                sedeVisible(name) {
+                    return this.search.trim() === '' || name.toLowerCase().includes(this.search.toLowerCase());
+                },
+                groupVisible(names) {
+                    return this.search.trim() === '' || names.some(n => n.toLowerCase().includes(this.search.toLowerCase()));
+                }
+            }"
+        >
             <!-- Encabezado Estandarizado -->
-            <div class="mb-8 border-b border-gray-100 dark:border-white/10 pb-5">
-                <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
-                    Monitor de Sedes - NOM-035
-                </h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                    Panel corporativo para el seguimiento de cumplimiento por centro de trabajo.
-                </p>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
-                @foreach($sedes_monitor as $sede)
-                    @php
-                        $statusHex = match($sede['status']) {
-                            'finalizado' => '#10b981',
-                            'Sin activar' => '#9ca3af',
-                            default => '#f59e0b',
-                        };
-                    @endphp
+            <div class="mb-6 border-b border-gray-100 dark:border-white/10 pb-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
+                        Monitor de Sedes - NOM-035
+                    </h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Panel corporativo para el seguimiento de cumplimiento por centro de trabajo.
+                        <span class="font-semibold text-gray-700 dark:text-gray-300">{{ count($sedes_monitor) }} sedes</span>
+                    </p>
+                </div>
 
-                    <div x-data="{ open: false }"
-                         class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl shadow-sm transition-all hover:shadow-md"
-                         style="border-left: 5px solid {{ $statusHex }};">
-
-                        <!-- Fila Principal con Alineación Centrada -->
-                        <div style="display: flex; align-items: center; padding: 1.5rem; gap: 2rem; flex-wrap: nowrap;">
-
-                            <!-- 1. Identificador de Sede (Estandarizado) -->
-                            <div style="flex: 0 0 240px;">
-                                <h3 class="text-lg font-extrabold text-gray-950 dark:text-white uppercase tracking-tight leading-none">
-                                    {{ $sede['name'] }}
-                                </h3>
-                                <!-- Forzamos Uppercase y tamaño fijo para evitar el error de la captura -->
-                                <div style="display: flex; align-items: center; gap: 4px; margin-top: 6px;">
-                                    <x-filament::icon icon="heroicon-m-map-pin" class="w-3.5 h-3.5 text-gray-400" />
-                                    <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; line-height: 1;">
-                                    {{ Str::upper($sede['location'] ?? 'UBICACIÓN NO DEFINIDA') }}
-                                </span>
-                                </div>
-                            </div>
-
-                            <!-- 2. Sección de Métricas (Simétrica) -->
-                            <div style="flex: 1; padding: 0 2rem; border-left: 1px solid rgba(0,0,0,0.05); border-right: 1px solid rgba(0,0,0,0.05);">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
-                                    <div style="display: flex; gap: 1.5rem; font-size: 11px; font-weight: 600; color: #4b5563;" class="dark:text-gray-400">
-                                        <span>COLAB: <b class="text-gray-950 dark:text-white text-xs">{{ $sede['total_colabs'] }}</b></span>
-                                        <span>RESP: <b class="text-gray-950 dark:text-white text-xs">{{ $sede['responses'] }} ({{ $sede['progress'] }}%)</b></span>
-                                    </div>
-                                    <span style="font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase;">LÍMITE: --/--/--</span>
-                                </div>
-
-                                <!-- Barra de progreso con color de acento -->
-                                <div style="width: 100%; background: #f3f4f6; height: 8px; border-radius: 99px; overflow: hidden;" class="dark:bg-gray-800">
-                                    <div style="width: {{ $sede['progress'] }}%; background: {{ $statusHex }}; height: 100%; border-radius: 99px; transition: width 1s ease-in-out;"></div>
-                                </div>
-
-                                <button @click="open = !open"
-                                        class="mt-3 flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase hover:text-primary-600 transition-colors">
-                                    <x-filament::icon icon="heroicon-m-chevron-down" class="w-3.5 h-3.5 transition-transform" ::class="open ? 'rotate-180' : ''" />
-                                    Razones Sociales ({{ count($sede['razones_sociales'] ?? []) }})
-                                </button>
-                            </div>
-
-                            <!-- 3. Acciones (Botones Limpios) -->
-                            <div style="flex: 0 0 200px; display: flex; align-items: center; justify-content: flex-end; gap: 1rem;">
-                                <!-- Label de Estatus con diseño Outline para no saturar -->
-                                <span style="font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 6px; border: 1.5px solid {{ $statusHex }}44; color: {{ $statusHex }}; background: {{ $statusHex }}08; text-transform: uppercase; letter-spacing: 0.02em;">
-                                {{ $sede['status'] }}
-                            </span>
-
-                                <x-filament::button
-                                    wire:click="selectSede({{ $sede['id'] }})"
-                                    size="sm"
-                                    color="primary"
-                                    class="font-bold uppercase tracking-wide"
-                                    style="padding-left: 1.5rem; padding-right: 1.5rem;"
-                                >
-                                    Gestionar
-                                </x-filament::button>
-                            </div>
-                        </div>
-
-                        <!-- Panel de Razones Sociales (Diseño Minimalista) -->
-                        <div x-show="open" x-collapse x-cloak
-                             class="bg-gray-50 dark:bg-white/5 border-t border-gray-100 dark:border-white/5 p-5">
-                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                                @foreach($sede['razones_sociales'] ?? [] as $rs)
-                                    <span style="font-size: 10px; font-weight: 700; padding: 6px 12px; background: white; border: 1px solid #e5e7eb; border-radius: 8px; color: #4b5563; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" class="dark:bg-gray-800 dark:border-white/10 dark:text-gray-400">
-                                    {{ $rs }}
-                                </span>
-                                @endforeach
-                            </div>
-                        </div>
+                <!-- Barra de Búsqueda -->
+                <div class="relative w-full sm:w-80">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+                        </svg>
                     </div>
-                @endforeach
+                    <input
+                        x-model="search"
+                        type="text"
+                        placeholder="Buscar sede por nombre…"
+                        class="block w-full rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 py-2 pl-9 pr-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition"
+                    />
+                    <button
+                        x-show="search.length > 0"
+                        @click="search = ''"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition"
+                        title="Limpiar búsqueda"
+                    >
+                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
+
+            <!-- Sin resultados -->
+            <div
+                x-show="!{{ json_encode(collect($sedes_monitor)->pluck('name')->values()) }}.some(n => n.toLowerCase().includes(search.toLowerCase()))"
+                x-cloak
+                class="flex flex-col items-center justify-center py-16 text-gray-400"
+            >
+                <svg class="h-12 w-12 mb-3 opacity-40" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+                </svg>
+                <p class="text-sm font-semibold">Sin resultados para "<span x-text="search"></span>"</p>
+                <p class="text-xs mt-1">Intenta con otro nombre de sede.</p>
+            </div>
+
+            <!-- Sedes agrupadas por letra -->
+            @foreach($sedesAgrupadas as $letra => $sedesGrupo)
+                @php
+                    $nombresGrupo = $sedesGrupo->pluck('name')->values()->toJson();
+                @endphp
+                <div x-show="groupVisible({{ $nombresGrupo }})">
+
+                    <!-- Separador Alfabético -->
+                    <div class="flex items-center gap-3 mb-4 mt-2">
+                        <span class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 text-sm font-extrabold tracking-tight">
+                            {{ $letra }}
+                        </span>
+                        <div class="flex-1 border-t border-gray-200 dark:border-white/10"></div>
+                        <span class="flex-shrink-0 text-xs font-semibold text-gray-400">{{ $sedesGrupo->count() }} {{ $sedesGrupo->count() === 1 ? 'sede' : 'sedes' }}</span>
+                    </div>
+
+                    <!-- Cards del grupo -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 0.5rem;">
+                        @foreach($sedesGrupo as $sede)
+                            @php
+                                $statusHex = match($sede['status']) {
+                                    'finalizado' => '#10b981',
+                                    'Sin activar' => '#9ca3af',
+                                    default => '#f59e0b',
+                                };
+                            @endphp
+
+                            <div
+                                x-show="sedeVisible('{{ addslashes($sede['name']) }}')"
+                                x-data="{ open: false }"
+                                class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl shadow-sm transition-all hover:shadow-md"
+                                style="border-left: 5px solid {{ $statusHex }};"
+                            >
+                                <!-- Fila Principal -->
+                                <div style="display: flex; align-items: center; padding: 1.5rem; gap: 2rem; flex-wrap: nowrap;">
+
+                                    <!-- 1. Identificador de Sede -->
+                                    <div style="flex: 0 0 240px;">
+                                        <h3 class="text-lg font-extrabold text-gray-950 dark:text-white uppercase tracking-tight leading-none">
+                                            {{ $sede['name'] }}
+                                        </h3>
+                                        <div style="display: flex; align-items: center; gap: 4px; margin-top: 6px;">
+                                            <x-filament::icon icon="heroicon-m-map-pin" class="w-3.5 h-3.5 text-gray-400" />
+                                            <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; line-height: 1;">
+                                                {{ Str::upper($sede['location'] ?? 'UBICACIÓN NO DEFINIDA') }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 2. Métricas -->
+                                    <div style="flex: 1; padding: 0 2rem; border-left: 1px solid rgba(0,0,0,0.05); border-right: 1px solid rgba(0,0,0,0.05);">
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
+                                            <div style="display: flex; gap: 1.5rem; font-size: 11px; font-weight: 600; color: #4b5563;" class="dark:text-gray-400">
+                                                <span>COLAB: <b class="text-gray-950 dark:text-white text-xs">{{ $sede['total_colabs'] }}</b></span>
+                                                <span>RESP: <b class="text-gray-950 dark:text-white text-xs">{{ $sede['responses'] }} ({{ $sede['progress'] }}%)</b></span>
+                                            </div>
+                                            <span style="font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase;">LÍMITE: --/--/--</span>
+                                        </div>
+
+                                        <!-- Barra de progreso -->
+                                        <div style="width: 100%; background: #f3f4f6; height: 8px; border-radius: 99px; overflow: hidden;" class="dark:bg-gray-800">
+                                            <div style="width: {{ $sede['progress'] }}%; background: {{ $statusHex }}; height: 100%; border-radius: 99px; transition: width 1s ease-in-out;"></div>
+                                        </div>
+
+                                        <button @click="open = !open"
+                                                class="mt-3 flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase hover:text-primary-600 transition-colors">
+                                            <x-filament::icon icon="heroicon-m-chevron-down" class="w-3.5 h-3.5 transition-transform" ::class="open ? 'rotate-180' : ''" />
+                                            Razones Sociales ({{ count($sede['razones_sociales'] ?? []) }})
+                                        </button>
+                                    </div>
+
+                                    <!-- 3. Acciones -->
+                                    <div style="flex: 0 0 200px; display: flex; align-items: center; justify-content: flex-end; gap: 1rem;">
+                                        <span style="font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 6px; border: 1.5px solid {{ $statusHex }}44; color: {{ $statusHex }}; background: {{ $statusHex }}08; text-transform: uppercase; letter-spacing: 0.02em;">
+                                            {{ $sede['status'] }}
+                                        </span>
+
+                                        <x-filament::button
+                                            wire:click="selectSede({{ $sede['id'] }})"
+                                            size="sm"
+                                            color="primary"
+                                            class="font-bold uppercase tracking-wide"
+                                            style="padding-left: 1.5rem; padding-right: 1.5rem;"
+                                        >
+                                            Gestionar
+                                        </x-filament::button>
+                                    </div>
+                                </div>
+
+                                <!-- Panel de Razones Sociales -->
+                                <div x-show="open" x-collapse x-cloak
+                                     class="bg-gray-50 dark:bg-white/5 border-t border-gray-100 dark:border-white/5 p-5">
+                                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                        @foreach($sede['razones_sociales'] ?? [] as $rs)
+                                            <span style="font-size: 10px; font-weight: 700; padding: 6px 12px; background: white; border: 1px solid #e5e7eb; border-radius: 8px; color: #4b5563; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" class="dark:bg-gray-800 dark:border-white/10 dark:text-gray-400">
+                                                {{ $rs }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
         </div>
     @endif
 

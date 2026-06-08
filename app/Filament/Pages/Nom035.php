@@ -124,7 +124,7 @@ class Nom035 extends Page
 
     public function loadMonitorData()
     {
-        $this->sedes_monitor = \App\Models\Sede::all()->get()->map(function($sede) {
+        $this->sedes_monitor = \App\Models\Sede::all()->map(function($sede) {
             $process = Nom035Process::where('sede_id', $sede->id)
                 ->orderBy('created_at', 'desc')
                 ->first();

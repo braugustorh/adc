@@ -137,6 +137,18 @@ class GeneralReportService
 
         // Detectar si la IA devolvió un error
         $aiError = null;
+        if ($aiResponse && isset($aiResponse['reporte']['resultado_global']['porcentaje_ajuste'])) {
+            $p = $aiResponse['reporte']['resultado_global']['porcentaje_ajuste'];
+
+            // Regla de negocio inquebrantable
+            if ($p >= 85) $d = "APTO";
+            elseif ($p >= 70) $d = "APTO CON PLAN DE DESARROLLO";
+            elseif ($p >= 60) $d = "RIESGO / EN OBSERVACIÓN";
+            else $d = "NO APTO";
+
+            $aiResponse['reporte']['resultado_global']['dictamen'] = $d;
+            $aiResponse['reporte']['resultado_global']['apto'] = ($p >= 70);
+        }
         if (isset($aiResponse['__ai_error']) && $aiResponse['__ai_error'] === true) {
             $aiError    = $aiResponse;
             $aiResponse = null;

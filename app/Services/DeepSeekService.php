@@ -120,6 +120,12 @@ REGLAS GLOBALES Y CALIBRACIÓN CULTURAL:
 1. Contexto México: La alta distancia jerárquica puede suprimir la Dominancia (D) en Cleaver. La Constancia (S) y Cumplimiento (C) suelen ser altas por evitación de incertidumbre.
 2. Cero Alucinaciones: Limita tus conclusiones estrictamente a los números presentados y a las competencias ya pre-calculadas.
 
+REGLAS DE DECISIÓN PARA DICTAMEN (ESTRICTO):
+1. Porcentaje >= 85%: Dictamen 'APTO' (Plan preventivo).
+2. Porcentaje 70% - 84%: Dictamen 'APTO CON PLAN DE DESARROLLO' (Enfocado en cerrar brechas).
+3. Porcentaje 60% - 69%: Dictamen 'RIESGO / EN OBSERVACIÓN' (Plan crítico y supervisión).
+4. Porcentaje < 60%: Dictamen 'NO APTO' (Justificar inviabilidad).
+
 FORMATO DE SALIDA OBLIGATORIO (sin markdown, solo JSON puro):
 {
     "pasos_de_razonamiento": {
@@ -131,8 +137,8 @@ FORMATO DE SALIDA OBLIGATORIO (sin markdown, solo JSON puro):
     "reporte": {
         "resultado_global": {
             "apto": true,
-            "dictamen": "Apto | Apto con Plan de Desarrollo | No Apto",
-            "nivel_ajuste": "Alto|Medio|Bajo",
+            "dictamen": "APTO | APTO CON PLAN DE DESARROLLO | RIESGO / EN OBSERVACIÓN | NO APTO",
+            "nivel_ajuste": "Alto | Medio | Bajo | Insuficiente",
             "porcentaje_ajuste": 85
         },
         "resumen_ejecutivo": "string (máx 100 palabras detallando ajuste cognitivo y conductual)",

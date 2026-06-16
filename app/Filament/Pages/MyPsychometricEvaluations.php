@@ -33,6 +33,13 @@ class MyPsychometricEvaluations extends Page implements HasTable
             ->whereIn('status', ['assigned', 'started'])
             ->exists();
     }
+    public static function getNavigationBadge(): ?string
+    {
+        return PsychometricEvaluation::where('evaluable_type', User::class)
+            ->where('evaluable_id', auth()->id())
+            ->whereIn('status', ['assigned', 'started'])
+            ->count();
+    }
 
     // =========================================================================
     // TABLA: Mostrar solo las pruebas del usuario autenticado

@@ -255,7 +255,7 @@ class PsychometricEvaluationResource extends Resource
     //Se agrega función para que solo la persona con permiso pueda ver el recurso
     public static function canViewAny(): bool
     {
-        return auth()->user()->hasAnyRole(['Administrador','RH Corp']);
+        return auth()->user()->hasAnyRole(['Administrador']);
     }
 
 }

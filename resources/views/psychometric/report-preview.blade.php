@@ -53,8 +53,11 @@
         :candidateData="$candidateData"
         :psychometricResults="$psychometricResults"
         :competencias="$competencias"
+        :cleaverIdeal="$cleaverIdeal"
         :meta="$meta"
         :reportKey="$reportKey"
+        :ajusteGlobalPhp="$ajusteGlobalPhp"
+        :dictamenPhp="$dictamenPhp"
     />
 @else
     {{-- ══════════════════════════════════════════════════════════════ --}}
@@ -64,8 +67,11 @@
         :psychometricResults="$psychometricResults"
         :candidateData="$candidateData"
         :competencias="$competencias"
+        :cleaverIdeal="$cleaverIdeal"
         :meta="$meta"
         :reportKey="$reportKey"
+        :ajusteGlobalPhp="$ajusteGlobalPhp"
+        :dictamenPhp="$dictamenPhp"
     />
 @endif
 

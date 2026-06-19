@@ -6,62 +6,67 @@ use Illuminate\Support\Facades\Log;
 
 class CompetencyScoringService
 {
-    private array $nivelesPesos = [
+    /**
+     * Matriz de Configuración Estructural (SEDYCO Calibrado)
+     * peso_global: Representa el % de impacto de esta competencia en el perfil global (La suma da 1.00).
+     * factores: Las variables psicométricas que componen la competencia (La suma de sus pesos debe dar ~1.00).
+     */
+    private array $nivelesConfig = [
         'DIRECTIVO' => [
-            'Liderazgo' => ['cleaver.d' => 0.35, 'kostick.l' => 0.35, 'moss.supervision' => 0.30],
-            'Comunicación' => ['cleaver.i' => 0.40, 'kostick.x' => 0.25, 'moss.relaciones' => 0.35],
-            'Manejo de Conflictos' => ['moss.evaluacion' => 0.35, 'moss.decision' => 0.35, 'inverso.cleaver.s' => 0.15, 'kostick.e' => 0.15],
-            'Negociación' => ['cleaver.d' => 0.35, 'cleaver.i' => 0.20, 'moss.decision' => 0.25, 'moss.sentido_comun' => 0.20],
-            'Organización' => ['kostick.c' => 0.40, 'kostick.e' => 0.30, 'terman.ci' => 0.30],
-            'Análisis de Problemas' => ['terman.ci' => 0.40, 'terman.abstraccion' => 0.30, 'moss.evaluacion' => 0.30],
-            'Toma de Decisiones' => ['cleaver.d' => 0.40, 'moss.decision' => 0.30, 'terman.ci' => 0.20, 'inverso.cleaver.s' => 0.10],
-            'Pensamiento Estratégico' => ['terman.ci' => 0.35, 'terman.abstraccion' => 0.35, 'inverso.cleaver.s' => 0.15, 'moss_wess.innovacion' => 0.15],
-            'Resiliencia' => ['inverso.cleaver.s' => 0.40, 'kostick.e' => 0.40, 'cleaver.d' => 0.20],
-            'Enfoque en Resultados' => ['kostick.a' => 0.35, 'kostick.g' => 0.25, 'cleaver.d' => 0.20, 'kostick.n' => 0.20],
-            'Trabajo en Equipo' => ['cleaver.i' => 0.25, 'kostick.s' => 0.25, 'moss_wess.cohesion' => 0.25, 'kostick.b' => 0.25],
-            'Disposición de Servicio' => ['cleaver.i' => 0.30, 'kostick.s' => 0.30, 'moss.relaciones' => 0.40],
+            'Liderazgo' => ['peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.35, 'kostick.l' => 0.35, 'moss.supervision' => 0.30]],
+            'Pensamiento Estratégico' => ['peso_global' => 0.15, 'factores' => ['terman.ci' => 0.40, 'terman.abstraccion' => 0.40, 'inverso.cleaver.s' => 0.20]],
+            'Toma de Decisiones' => ['peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.40, 'moss.decision' => 0.40, 'terman.ci' => 0.20]],
+            'Enfoque en Resultados' => ['peso_global' => 0.10, 'factores' => ['kostick.a' => 0.40, 'cleaver.d' => 0.30, 'kostick.n' => 0.30]],
+            'Negociación' => ['peso_global' => 0.10, 'factores' => ['cleaver.d' => 0.35, 'cleaver.i' => 0.30, 'moss.decision' => 0.35]],
+            'Manejo de Conflictos' => ['peso_global' => 0.10, 'factores' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.40, 'kostick.e' => 0.20]],
+            'Organización' => ['peso_global' => 0.05, 'factores' => ['kostick.c' => 0.40, 'kostick.e' => 0.30, 'terman.ci' => 0.30]],
+            'Análisis de Problemas' => ['peso_global' => 0.05, 'factores' => ['terman.ci' => 0.40, 'terman.abstraccion' => 0.30, 'moss.evaluacion' => 0.30]],
+            'Comunicación' => ['peso_global' => 0.05, 'factores' => ['cleaver.i' => 0.40, 'kostick.x' => 0.30, 'moss.relaciones' => 0.30]],
+            'Resiliencia' => ['peso_global' => 0.05, 'factores' => ['inverso.cleaver.s' => 0.40, 'kostick.e' => 0.40, 'cleaver.d' => 0.20]],
+            'Trabajo en Equipo' => ['peso_global' => 0.03, 'factores' => ['cleaver.i' => 0.40, 'kostick.s' => 0.30, 'moss_wess.cohesion' => 0.30]],
+            'Disposición de Servicio' => ['peso_global' => 0.02, 'factores' => ['cleaver.i' => 0.40, 'kostick.s' => 0.30, 'moss.relaciones' => 0.30]],
         ],
         'MANDO_MEDIO' => [
-            'Liderazgo' => ['cleaver.d' => 0.30, 'kostick.l' => 0.30, 'moss.supervision' => 0.40],
-            'Comunicación' => ['cleaver.i' => 0.35, 'kostick.x' => 0.30, 'moss.relaciones' => 0.35],
-            'Manejo de Conflictos' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.30, 'kostick.e' => 0.30],
-            'Negociación' => ['cleaver.d' => 0.25, 'cleaver.i' => 0.35, 'moss.decision' => 0.20, 'moss.sentido_comun' => 0.20],
-            'Organización' => ['kostick.c' => 0.35, 'cleaver.c' => 0.35, 'terman.ci' => 0.30],
-            'Análisis de Problemas' => ['terman.ci' => 0.50, 'terman.abstraccion' => 0.20, 'moss.evaluacion' => 0.30],
-            'Toma de Decisiones' => ['cleaver.d' => 0.30, 'moss.decision' => 0.40, 'terman.ci' => 0.30],
-            'Pensamiento Estratégico' => ['terman.ci' => 0.40, 'terman.abstraccion' => 0.40, 'moss_wess.innovacion' => 0.20],
-            'Resiliencia' => ['inverso.cleaver.s' => 0.30, 'kostick.e' => 0.40, 'moss_wess.presion' => 0.30],
-            'Enfoque en Resultados' => ['kostick.a' => 0.30, 'kostick.n' => 0.30, 'cleaver.d' => 0.20, 'kostick.g' => 0.20],
-            'Trabajo en Equipo' => ['kostick.s' => 0.30, 'cleaver.i' => 0.30, 'moss_wess.cohesion' => 0.40],
-            'Disposición de Servicio' => ['kostick.s' => 0.40, 'moss.relaciones' => 0.40, 'cleaver.i' => 0.20],
+            'Organización' => ['peso_global' => 0.15, 'factores' => ['cleaver.c' => 0.35, 'kostick.c' => 0.35, 'terman.ci' => 0.30]],
+            'Manejo de Conflictos' => ['peso_global' => 0.15, 'factores' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.30, 'kostick.e' => 0.30]],
+            'Liderazgo' => ['peso_global' => 0.10, 'factores' => ['moss.supervision' => 0.40, 'cleaver.d' => 0.30, 'kostick.l' => 0.30]],
+            'Toma de Decisiones' => ['peso_global' => 0.10, 'factores' => ['moss.decision' => 0.40, 'cleaver.d' => 0.30, 'terman.ci' => 0.30]],
+            'Análisis de Problemas' => ['peso_global' => 0.10, 'factores' => ['terman.ci' => 0.50, 'terman.abstraccion' => 0.20, 'moss.evaluacion' => 0.30]],
+            'Comunicación' => ['peso_global' => 0.10, 'factores' => ['cleaver.i' => 0.35, 'moss.relaciones' => 0.35, 'kostick.x' => 0.30]],
+            'Trabajo en Equipo' => ['peso_global' => 0.10, 'factores' => ['moss_wess.cohesion' => 0.40, 'cleaver.i' => 0.30, 'kostick.s' => 0.30]],
+            'Enfoque en Resultados' => ['peso_global' => 0.10, 'factores' => ['kostick.a' => 0.30, 'kostick.n' => 0.30, 'cleaver.d' => 0.20, 'kostick.g' => 0.20]],
+            'Negociación' => ['peso_global' => 0.03, 'factores' => ['cleaver.i' => 0.40, 'cleaver.d' => 0.30, 'moss.sentido_comun' => 0.30]],
+            'Pensamiento Estratégico' => ['peso_global' => 0.03, 'factores' => ['terman.ci' => 0.40, 'terman.abstraccion' => 0.40, 'moss_wess.innovacion' => 0.20]],
+            'Resiliencia' => ['peso_global' => 0.02, 'factores' => ['kostick.e' => 0.40, 'moss_wess.presion' => 0.30, 'inverso.cleaver.s' => 0.30]],
+            'Disposición de Servicio' => ['peso_global' => 0.02, 'factores' => ['moss.relaciones' => 0.50, 'kostick.s' => 0.30, 'cleaver.i' => 0.20]],
         ],
         'SUPERVISOR' => [
-            'Liderazgo' => ['cleaver.d' => 0.40, 'kostick.l' => 0.30, 'moss.supervision' => 0.30],
-            'Comunicación' => ['cleaver.i' => 0.40, 'moss.relaciones' => 0.35, 'kostick.x' => 0.25],
-            'Manejo de Conflictos' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.30, 'kostick.e' => 0.30],
-            'Negociación' => ['cleaver.i' => 0.50, 'cleaver.d' => 0.25, 'moss.sentido_comun' => 0.25],
-            'Organización' => ['cleaver.c' => 0.40, 'kostick.c' => 0.40, 'terman.ci' => 0.20],
-            'Análisis de Problemas' => ['terman.ci' => 0.50, 'terman.abstraccion' => 0.20, 'moss.evaluacion' => 0.30],
-            'Toma de Decisiones' => ['moss.decision' => 0.40, 'terman.ci' => 0.30, 'cleaver.d' => 0.30],
-            'Pensamiento Estratégico' => ['terman.ci' => 0.60, 'terman.abstraccion' => 0.40],
-            'Resiliencia' => ['kostick.e' => 0.40, 'inverso.cleaver.s' => 0.40, 'cleaver.d' => 0.20],
-            'Enfoque en Resultados' => ['kostick.n' => 0.40, 'cleaver.d' => 0.30, 'kostick.g' => 0.30],
-            'Trabajo en Equipo' => ['cleaver.i' => 0.40, 'kostick.s' => 0.30, 'moss.relaciones' => 0.30],
-            'Disposición de Servicio' => ['moss.relaciones' => 0.50, 'kostick.s' => 0.30, 'cleaver.i' => 0.20],
+            'Liderazgo' => ['peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.40, 'moss.supervision' => 0.40, 'kostick.l' => 0.20]],
+            'Organización' => ['peso_global' => 0.15, 'factores' => ['cleaver.c' => 0.40, 'kostick.c' => 0.40, 'terman.ci' => 0.20]],
+            'Comunicación' => ['peso_global' => 0.10, 'factores' => ['cleaver.i' => 0.40, 'moss.relaciones' => 0.40, 'kostick.x' => 0.20]],
+            'Trabajo en Equipo' => ['peso_global' => 0.10, 'factores' => ['cleaver.i' => 0.40, 'moss.relaciones' => 0.30, 'kostick.s' => 0.30]],
+            'Enfoque en Resultados' => ['peso_global' => 0.10, 'factores' => ['kostick.n' => 0.40, 'cleaver.d' => 0.30, 'kostick.g' => 0.30]],
+            'Manejo de Conflictos' => ['peso_global' => 0.10, 'factores' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.30, 'kostick.e' => 0.30]],
+            'Análisis de Problemas' => ['peso_global' => 0.10, 'factores' => ['terman.ci' => 0.50, 'moss.evaluacion' => 0.30, 'terman.abstraccion' => 0.20]],
+            'Disposición de Servicio' => ['peso_global' => 0.10, 'factores' => ['moss.relaciones' => 0.50, 'kostick.s' => 0.30, 'cleaver.i' => 0.20]],
+            'Toma de Decisiones' => ['peso_global' => 0.05, 'factores' => ['moss.decision' => 0.40, 'terman.ci' => 0.30, 'cleaver.d' => 0.30]],
+            'Resiliencia' => ['peso_global' => 0.02, 'factores' => ['kostick.e' => 0.40, 'inverso.cleaver.s' => 0.40, 'cleaver.d' => 0.20]],
+            'Negociación' => ['peso_global' => 0.02, 'factores' => ['cleaver.i' => 0.50, 'moss.sentido_comun' => 0.30, 'cleaver.d' => 0.20]],
+            'Pensamiento Estratégico' => ['peso_global' => 0.01, 'factores' => ['terman.ci' => 0.60, 'terman.abstraccion' => 0.40]],
         ],
         'ADMINISTRATIVO' => [
-            'Liderazgo' => ['cleaver.d' => 1.00],
-            'Comunicación' => ['cleaver.i' => 1.00],
-            'Manejo de Conflictos' => ['inverso.cleaver.s' => 1.00],
-            'Negociación' => ['cleaver.i' => 0.60, 'cleaver.d' => 0.40],
-            'Organización' => ['cleaver.c' => 0.60, 'terman.ci' => 0.40],
-            'Análisis de Problemas' => ['terman.ci' => 0.60, 'terman.abstraccion' => 0.40],
-            'Toma de Decisiones' => ['terman.ci' => 0.60, 'cleaver.d' => 0.40],
-            'Pensamiento Estratégico' => ['terman.ci' => 0.50, 'terman.abstraccion' => 0.50],
-            'Resiliencia' => ['inverso.cleaver.s' => 0.60, 'cleaver.d' => 0.40],
-            'Enfoque en Resultados' => ['cleaver.d' => 1.00],
-            'Trabajo en Equipo' => ['cleaver.i' => 1.00],
-            'Disposición de Servicio' => ['cleaver.i' => 1.00],
+            'Organización' => ['peso_global' => 0.20, 'factores' => ['cleaver.c' => 0.40, 'kostick.c' => 0.30, 'terman.ci' => 0.30]],
+            'Disposición de Servicio' => ['peso_global' => 0.15, 'factores' => ['cleaver.s' => 0.40, 'moss.relaciones' => 0.40, 'kostick.s' => 0.20]],
+            'Trabajo en Equipo' => ['peso_global' => 0.15, 'factores' => ['cleaver.s' => 0.40, 'moss_wess.cohesion' => 0.30, 'cleaver.i' => 0.30]],
+            'Análisis de Problemas' => ['peso_global' => 0.10, 'factores' => ['terman.ci' => 0.50, 'terman.abstraccion' => 0.30, 'cleaver.c' => 0.20]],
+            'Comunicación' => ['peso_global' => 0.10, 'factores' => ['cleaver.i' => 0.40, 'moss.relaciones' => 0.30, 'cleaver.s' => 0.30]],
+            'Enfoque en Resultados' => ['peso_global' => 0.10, 'factores' => ['kostick.a' => 0.40, 'cleaver.c' => 0.30, 'kostick.n' => 0.30]],
+            'Resiliencia' => ['peso_global' => 0.05, 'factores' => ['inverso.cleaver.s' => 0.50, 'kostick.e' => 0.30, 'cleaver.c' => 0.20]],
+            'Toma de Decisiones' => ['peso_global' => 0.05, 'factores' => ['cleaver.c' => 0.40, 'moss.decision' => 0.30, 'terman.ci' => 0.30]],
+            'Manejo de Conflictos' => ['peso_global' => 0.05, 'factores' => ['inverso.cleaver.s' => 0.40, 'moss.evaluacion' => 0.40, 'kostick.e' => 0.20]],
+            'Negociación' => ['peso_global' => 0.02, 'factores' => ['cleaver.i' => 0.40, 'moss.sentido_comun' => 0.40, 'cleaver.c' => 0.20]],
+            'Liderazgo' => ['peso_global' => 0.02, 'factores' => ['cleaver.c' => 0.40, 'moss.supervision' => 0.40, 'kostick.l' => 0.20]],
+            'Pensamiento Estratégico' => ['peso_global' => 0.01, 'factores' => ['terman.ci' => 0.60, 'terman.abstraccion' => 0.40]],
         ],
     ];
 
@@ -72,39 +77,79 @@ class CompetencyScoringService
         'Enfoque en Resultados' => '🎯', 'Trabajo en Equipo' => '👥', 'Disposición de Servicio' => '💝'
     ];
 
+    /**
+     * Calcula los puntajes de las competencias para un candidato dado sus testResults.
+     */
     public function calculate(string $nivel, array $testResults): array
     {
         $nivel = strtoupper(trim($nivel));
-        if (!isset($this->nivelesPesos[$nivel])) {
+        if (!isset($this->nivelesConfig[$nivel])) {
             $nivel = 'MANDO_MEDIO'; // fallback estandar
         }
 
-        $competencias = $this->nivelesPesos[$nivel];
+        $competencias = $this->nivelesConfig[$nivel];
         $valores = $this->extraerValoresNormalizados($testResults);
 
         $resultado = [];
 
-        foreach ($competencias as $nombre_competencia => $indicadores) {
+        foreach ($competencias as $nombre_competencia => $config) {
+            $pesoGlobal = $config['peso_global'];
+            $indicadores = $config['factores'];
+
             $scoreTotal = 0;
             $pesoTotalValido = 0;
 
-            foreach ($indicadores as $indicador => $peso) {
-                // Verificación estricta de existencia y nulidad en los resultados unificados del candidato
+            foreach ($indicadores as $indicador => $pesoRelativo) {
                 if (isset($valores[$indicador]) && $valores[$indicador] !== null) {
-                    $scoreTotal += $valores[$indicador] * $peso;
-                    $pesoTotalValido += $peso;
+                    $scoreTotal += $valores[$indicador] * $pesoRelativo;
+                    $pesoTotalValido += $pesoRelativo;
                 }
             }
 
-            // Evitamos división por cero y procesamos solo si hay datos mapeados activos
+            // Evitamos división por cero. Escalamos si falta alguna prueba.
             if ($pesoTotalValido > 0) {
-                // Regla de tres: redistribuye el peso de las pruebas ausentes escalando el score obtenido al 100%
                 $scoreFinal = ($scoreTotal / $pesoTotalValido);
-                $resultado[] = $this->formatearCompetencia($nombre_competencia, $scoreFinal);
+                $comp = $this->formatearCompetencia($nombre_competencia, $scoreFinal);
+                $comp['peso_global'] = $pesoGlobal; // Agregado para el cálculo de Ajuste Global posterior
+                $resultado[] = $comp;
             }
         }
 
         return $resultado;
+    }
+
+    /**
+     * Calcula el porcentaje de ajuste clínico global aplicando penalizaciones
+     * a las áreas críticas deficientes (Gap Analysis estructural).
+     * * @param array $competenciasEvaluadas Array de competencias devuelto por calculate()
+     * @return float Porcentaje exacto (0-100)
+     */
+    public function calcularAjusteGlobal(array $competenciasEvaluadas): float
+    {
+        $ajusteTotal = 0;
+        $totalPesoRegistrado = 0;
+
+        foreach ($competenciasEvaluadas as $comp) {
+            $puntaje = $comp['puntaje'];
+            $pesoGlobal = $comp['peso_global'] ?? 0;
+
+            // Regla Clínica SEDYCO: Si es competencia de alta criticidad (>= 15% del perfil)
+            // y el candidato falla rotundamente (< 40), se penaliza la calificación para evitar
+            // compensaciones irreales.
+            if ($pesoGlobal >= 0.15 && $puntaje < 40) {
+                $puntaje *= 0.8; // Penalización del 20% sobre su puntaje
+            }
+
+            $ajusteTotal += ($puntaje * $pesoGlobal);
+            $totalPesoRegistrado += $pesoGlobal;
+        }
+
+        // Si por alguna razón faltan pruebas y el peso global no llega a 1.00, re-escalamos
+        if ($totalPesoRegistrado > 0 && $totalPesoRegistrado < 1.0) {
+            $ajusteTotal = $ajusteTotal / $totalPesoRegistrado;
+        }
+
+        return round(min(100, max(0, $ajusteTotal)), 2);
     }
 
     private function extraerValoresNormalizados(array $res): array
@@ -112,7 +157,6 @@ class CompetencyScoringService
         $v = [];
 
         // Cleaver
-        // Acepta "Cleaver", "Cleaver (DISC)", etc.
         $cleaverKey = $this->findKeyStr($res, 'Cleaver');
         if ($cleaverKey && isset($res[$cleaverKey]['scores'])) {
             $c = $res[$cleaverKey]['scores'];
@@ -121,6 +165,7 @@ class CompetencyScoringService
             $v['cleaver.s'] = $c['S'] ?? null;
             $v['cleaver.c'] = $c['C'] ?? null;
             $v['inverso.cleaver.s'] = isset($c['S']) ? max(0, 100 - $c['S']) : null;
+            $v['inverso.cleaver.d'] = isset($c['D']) ? max(0, 100 - $c['D']) : null;
         }
 
         // Kostick
@@ -142,7 +187,6 @@ class CompetencyScoringService
         $mossKey = $this->findKeyStr($res, 'Moss', 'Moss Wes'); // Excluimos Moss Wess
         if ($mossKey && isset($res[$mossKey]['scores'])) {
             $m = $res[$mossKey]['scores'];
-            // Se manejan posibles diferencias de acentos (utf8 encoding) al extraer del backend
             $v['moss.supervision'] = $m['Habilidad de Supervisión']['percentage'] ?? $m['Habilidad de Supervisin']['percentage'] ?? null;
             $v['moss.decision'] = $m['Capacidad de Decisión']['percentage'] ?? $m['Capacidad de Decisin']['percentage'] ?? null;
             $v['moss.evaluacion'] = $m['Capacidad de Evaluación']['percentage'] ?? $m['Capacidad de Evaluacin']['percentage'] ?? null;
@@ -160,7 +204,6 @@ class CompetencyScoringService
             if (isset($t['series'][7]['puntaje'])) {
                 $v['terman.abstraccion'] = min(100, max(0, ($t['series'][7]['puntaje'] / 20) * 100));
             }
-            // A veces el indice es literal '7' en vez de int 7, pero php resuelve esto.
         }
 
         // Moss Wess
@@ -209,8 +252,7 @@ class CompetencyScoringService
             'icono'   => $this->iconos[$nombre] ?? '💡',
             'nivel'   => $level,
             'etiqueta'=> $label,
-            'puntaje' => $score // No se muestra, pero util para calculos (ej. Ajuste % fallback)
+            'puntaje' => $score
         ];
     }
 }
-

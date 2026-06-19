@@ -1,9 +1,10 @@
-@props(['reportData', 'candidateData', 'psychometricResults', 'competencias', 'cleaverIdeal' => ['D' => 50, 'I' => 50, 'S' => 50, 'C' => 50], 'meta', 'reportKey'])
+@props(['reportData', 'candidateData', 'psychometricResults', 'competencias', 'cleaverIdeal' => ['D' => 50, 'I' => 50, 'S' => 50, 'C' => 50], 'meta', 'reportKey', 'ajusteGlobalPhp', 'dictamenPhp'])
 @php
     $reporteBase = $reportData['reporte'] ?? $reportData;
-    $apto = $reporteBase['resultado_global']['apto'] ?? false;
-    $dictamen = $reporteBase['resultado_global']['dictamen'] ?? ($apto ? 'Apto' : 'No Apto');
-    $porcentajeAjuste = $reporteBase['resultado_global']['porcentaje_ajuste'] ?? 0;
+
+    // >>> CAMBIO CLAVE: Usamos PHP como fuente de verdad absoluta <<<
+    $dictamen = $dictamenPhp;
+    $porcentajeAjuste = $ajusteGlobalPhp;
 
     // Variables de estilo dinámico
     $badgeStyle = 'badge-success';

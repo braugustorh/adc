@@ -537,6 +537,9 @@ class PsychometricDashboard extends Page implements HasTable
                         'competencias' => $output['competencias'] ?? [],
                         'cleaver_ideal' => $output['cleaver_ideal'] ?? ['D' => 50, 'I' => 50, 'S' => 50, 'C' => 50],
                         'ai_report' => $analisisIa,
+                        'ai_error'           => $output['ai_error'] ?? null,
+                        'ajuste_global'      => $output['ajuste_global'] ?? 0,
+                        'dictamen_calculado' => $output['dictamen_calculado'] ?? 'Pendiente',
                     ];
 
                     \Illuminate\Support\Facades\Cache::put("psych_report_{$reportKey}", $reportDataToCache, now()->addHours(1));

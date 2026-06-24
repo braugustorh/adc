@@ -21,7 +21,7 @@ class DeepSeekService
      * @param array $testResults    Resultados de las pruebas aplicadas
      * @return array                Reporte estructurado o array con clave '__ai_error'
      */
-    public function generateReport(array $candidateData, array $testResults, array $competencias = [], float $ajusteGlobal = 0.0): array
+    public function generateReport(array $candidateData, array $testResults, array $competencias = [], float $ajusteGlobal = 0.0, string $dictamen = ''): array
     {
         $puesto = $candidateData['puesto'] ?? 'General';
 
@@ -29,7 +29,7 @@ class DeepSeekService
         $deterministicSeed = abs(crc32(json_encode($testResults) . $puesto));
 
         // Pasamos el ajuste global al constructor del prompt
-        $prompt = $this->buildUserPrompt($candidateData, $testResults, $puesto, $competencias, $ajusteGlobal);
+        $prompt = $this->buildUserPrompt($candidateData, $testResults, $puesto, $competencias, $ajusteGlobal,$dictamen);
 
         try {
             $queryBuilder = $this->deepseek
@@ -115,31 +115,26 @@ class DeepSeekService
     {
         return <<<PROMPT
 Eres un psicólogo organizacional experto basado estrictamente en el "Modelo de Assessment Psicométrico Estratificado SEDYCO v1.1".
-Tu única función es analizar resultados de pruebas psicométricas y generar un dictamen clínico en formato JSON estricto.
+Tu única función es generar un dictamen clínico en formato JSON estricto, basándote en los resultados provistos.
+
+INFORMACIÓN DEL SISTEMA (HECHOS INMUTABLES):
+1. El porcentaje de ajuste global calculado por el sistema es: {ajuste_global_calculado}%
+2. El dictamen final asignado por el sistema es: "{dictamen_php}"
+Tu trabajo NO es calcular el dictamen, sino REDACTAR la justificación clínica congruente con este resultado.
 
 REGLAS GLOBALES Y CALIBRACIÓN CULTURAL:
 1. Contexto México: La alta distancia jerárquica puede suprimir la Dominancia (D) en Cleaver. La Constancia (S) y Cumplimiento (C) suelen ser altas por evitación de incertidumbre.
-2. Cero Alucinaciones Matemáticas: Tienes PROHIBIDO calcular el porcentaje de ajuste. Debes usar EXACTAMENTE el valor numérico que viene en "candidato.ajuste_global_calculado".
-3. PRUEBAS OPCIONALES (MUY IMPORTANTE): Las pruebas Kostick, Moss y Moss Wess son opcionales para niveles Supervisores y Administrativos. Si en el JSON de entrada NO aparecen estas pruebas, ignóralas por completo. Basa tu análisis clínico y brechas estrictamente en las pruebas provistas (ej. Terman y Cleaver) y en las 'competencias_precalculadas'. NO menciones en el reporte que "faltan pruebas" ni penalices al candidato.
-
-REGLAS DE DECISIÓN PARA DICTAMEN (ESTRICTO BASADO EN EL AJUSTE PROVISTO):
-Si ajuste_global_calculado >= 85: Dictamen 'APTO'
-Si ajuste_global_calculado >= 70 y < 85: Dictamen 'APTO CON PLAN DE DESARROLLO'
-Si ajuste_global_calculado >= 60 y < 70: Dictamen 'RIESGO / EN OBSERVACIÓN'
-Si ajuste_global_calculado < 60: Dictamen 'NO APTO'
+2. PRUEBAS OPCIONALES (MUY IMPORTANTE): Las pruebas Kostick, Moss y Moss Wess son opcionales para niveles Supervisores y Administrativos. Si en el JSON de entrada NO aparecen estas pruebas, ignóralas por completo. Basa tu análisis clínico y brechas estrictamente en las pruebas provistas y en las 'competencias_precalculadas'. NO menciones en el reporte que "faltan pruebas" ni penalices al candidato.
 
 FORMATO DE SALIDA OBLIGATORIO (sin markdown, solo JSON puro):
 {
     "pasos_de_razonamiento": {
         "1_analisis_de_competencias_criticas": "Análisis de las brechas en las competencias con mayor peso global.",
-        "2_justificacion_del_dictamen": "Explicación del dictamen basado en el ajuste_global_calculado."
+        "2_justificacion_del_dictamen": "Explicación de por qué el perfil coincide con el dictamen de {dictamen_php}."
     },
     "reporte": {
         "resultado_global": {
-            "apto": true,
-            "dictamen": "APTO | APTO CON PLAN DE DESARROLLO | RIESGO / EN OBSERVACIÓN | NO APTO",
-            "nivel_ajuste": "Alto | Medio | Bajo | Insuficiente",
-            "porcentaje_ajuste": 85 // DEBE SER EXACTAMENTE IGUAL AL PROVISTO EN EL INPUT
+            "nivel_ajuste": "Alto | Medio | Bajo | Insuficiente"
         },
         "resumen_ejecutivo": "string (máx 100 palabras detallando ajuste cognitivo y conductual)",
         "fortaleza_principal": "string (1 frase, ej: Alta capacidad organizacional y enfoque)",
@@ -158,7 +153,7 @@ FORMATO DE SALIDA OBLIGATORIO (sin markdown, solo JSON puro):
 PROMPT;
     }
 
-    protected function buildUserPrompt(array $candidateData, array $testResults, string $puesto, array $competencias = [], float $ajusteGlobal = 0.0): string
+    protected function buildUserPrompt(array $candidateData, array $testResults, string $puesto, array $competencias = [], float $ajusteGlobal = 0.0, string $dictamen = ''): string
     {
         $jsonEntrada = [
             'candidato' => [
@@ -166,7 +161,8 @@ PROMPT;
                 'puesto' => $puesto,
                 'fecha_evaluacion' => date('Y-m-d'),
                 // >>> INYECCIÓN CLAVE: El modelo usará esto como verdad absoluta <<<
-                'ajuste_global_calculado' => $ajusteGlobal
+                'ajuste_global_calculado' => $ajusteGlobal,
+                'dictamen_asignado'=>$dictamen,
             ],
             'pruebas' => $testResults,
             'competencias_precalculadas' => $competencias
@@ -179,7 +175,10 @@ PROMPT;
             'target_perfil_sedyco'  => $reglasSedyco
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
-        return "Realiza el dictamen final basado en la siguiente información. IMPORTANTE: Usa estrictamente el 'ajuste_global_calculado' provisto en el JSON; no realices tus propios cálculos:\n\n" . $payload;    }
+        return "Realiza el reporte clínico basado en la siguiente información. IMPORTANTE: El sistema ya ha determinado que el ajuste es {$ajusteGlobal}% y el dictamen es '{$dictamen}'. Tu único trabajo es REDACTAR la justificación clínica y el plan de desarrollo congruentes con este dictamen:\n\n" . $payload;
+
+
+    }
 
     /**
      * Mapea las directrices del manual SEDYCO v1.1 a arrays estructurados según el nivel jerárquico.

@@ -143,7 +143,7 @@ class GeneralReportService
         );
 
         // 5. Llamar a DeepSeek (Actualizamos la firma para pasar el ajuste global)
-        $aiResponse = $deepSeek->generateReport($candidateData, $testResults, $competencias, $ajusteGlobal);
+        $aiResponse = $deepSeek->generateReport($candidateData, $testResults, $competencias, $ajusteGlobal,$dictamenPHP);
 
         // Detectar si la IA devolvió un error
         $aiError = null;

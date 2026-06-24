@@ -11,62 +11,67 @@ class CompetencyScoringService
      * peso_global: Representa el % de impacto de esta competencia en el perfil global (La suma da 1.00).
      * factores: Las variables psicométricas que componen la competencia (La suma de sus pesos debe dar ~1.00).
      */
+    /**
+     * Matriz de Configuración Estructural (SEDYCO Calibrado)
+     * peso_global: Representa el % de impacto de esta competencia en el perfil global (La suma da 1.00).
+     * factores: Las variables psicométricas que componen la competencia (La suma de sus pesos debe dar ~1.00).
+     */
     private array $nivelesConfig = [
         'DIRECTIVO' => [
             'Liderazgo' => ['peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.35, 'kostick.l' => 0.35, 'moss.supervision' => 0.30]],
-            'Pensamiento Estratégico' => ['peso_global' => 0.15, 'factores' => ['terman.ci' => 0.40, 'terman.abstraccion' => 0.40, 'inverso.cleaver.s' => 0.20]],
-            'Toma de Decisiones' => ['peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.40, 'moss.decision' => 0.40, 'terman.ci' => 0.20]],
+            'Pensamiento Estratégico' => ['peso_global' => 0.15, 'factores' => ['terman.ci' => 0.20, 'terman.abstraccion' => 0.40, 'terman.planeacion' => 0.20, 'inverso.cleaver.s' => 0.20]],
+            'Toma de Decisiones' => ['peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.40, 'moss.decision' => 0.40, 'terman.juicio' => 0.20]],
             'Enfoque en Resultados' => ['peso_global' => 0.10, 'factores' => ['kostick.a' => 0.40, 'cleaver.d' => 0.30, 'kostick.n' => 0.30]],
             'Negociación' => ['peso_global' => 0.10, 'factores' => ['cleaver.d' => 0.35, 'cleaver.i' => 0.30, 'moss.decision' => 0.35]],
             'Manejo de Conflictos' => ['peso_global' => 0.10, 'factores' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.40, 'kostick.e' => 0.20]],
-            'Organización' => ['peso_global' => 0.05, 'factores' => ['kostick.c' => 0.40, 'kostick.e' => 0.30, 'terman.ci' => 0.30]],
-            'Análisis de Problemas' => ['peso_global' => 0.05, 'factores' => ['terman.ci' => 0.40, 'terman.abstraccion' => 0.30, 'moss.evaluacion' => 0.30]],
+            'Organización' => ['peso_global' => 0.05, 'factores' => ['kostick.c' => 0.40, 'kostick.e' => 0.30, 'terman.organizacion' => 0.30]],
+            'Análisis de Problemas' => ['peso_global' => 0.05, 'factores' => ['terman.ci' => 0.10, 'terman.analisis' => 0.30, 'terman.abstraccion' => 0.30, 'moss.evaluacion' => 0.30]],
             'Comunicación' => ['peso_global' => 0.05, 'factores' => ['cleaver.i' => 0.40, 'kostick.x' => 0.30, 'moss.relaciones' => 0.30]],
             'Resiliencia' => ['peso_global' => 0.05, 'factores' => ['inverso.cleaver.s' => 0.40, 'kostick.e' => 0.40, 'cleaver.d' => 0.20]],
             'Trabajo en Equipo' => ['peso_global' => 0.03, 'factores' => ['cleaver.i' => 0.40, 'kostick.s' => 0.30, 'moss_wess.cohesion' => 0.30]],
             'Disposición de Servicio' => ['peso_global' => 0.02, 'factores' => ['cleaver.i' => 0.40, 'kostick.s' => 0.30, 'moss.relaciones' => 0.30]],
         ],
         'MANDO_MEDIO' => [
-            'Organización' => ['peso_global' => 0.15, 'factores' => ['cleaver.c' => 0.35, 'kostick.c' => 0.35, 'terman.ci' => 0.30]],
+            'Organización' => ['peso_global' => 0.15, 'factores' => ['cleaver.c' => 0.35, 'kostick.c' => 0.35, 'terman.organizacion' => 0.30]],
             'Manejo de Conflictos' => ['peso_global' => 0.15, 'factores' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.30, 'kostick.e' => 0.30]],
             'Liderazgo' => ['peso_global' => 0.10, 'factores' => ['moss.supervision' => 0.40, 'cleaver.d' => 0.30, 'kostick.l' => 0.30]],
-            'Toma de Decisiones' => ['peso_global' => 0.10, 'factores' => ['moss.decision' => 0.40, 'cleaver.d' => 0.30, 'terman.ci' => 0.30]],
-            'Análisis de Problemas' => ['peso_global' => 0.10, 'factores' => ['terman.ci' => 0.50, 'terman.abstraccion' => 0.20, 'moss.evaluacion' => 0.30]],
+            'Toma de Decisiones' => ['peso_global' => 0.10, 'factores' => ['moss.decision' => 0.40, 'cleaver.d' => 0.30, 'terman.juicio' => 0.30]],
+            'Análisis de Problemas' => ['peso_global' => 0.10, 'factores' => ['terman.ci' => 0.20, 'terman.analisis' => 0.30, 'terman.abstraccion' => 0.20, 'moss.evaluacion' => 0.30]],
             'Comunicación' => ['peso_global' => 0.10, 'factores' => ['cleaver.i' => 0.35, 'moss.relaciones' => 0.35, 'kostick.x' => 0.30]],
             'Trabajo en Equipo' => ['peso_global' => 0.10, 'factores' => ['moss_wess.cohesion' => 0.40, 'cleaver.i' => 0.30, 'kostick.s' => 0.30]],
             'Enfoque en Resultados' => ['peso_global' => 0.10, 'factores' => ['kostick.a' => 0.30, 'kostick.n' => 0.30, 'cleaver.d' => 0.20, 'kostick.g' => 0.20]],
             'Negociación' => ['peso_global' => 0.03, 'factores' => ['cleaver.i' => 0.40, 'cleaver.d' => 0.30, 'moss.sentido_comun' => 0.30]],
-            'Pensamiento Estratégico' => ['peso_global' => 0.03, 'factores' => ['terman.ci' => 0.40, 'terman.abstraccion' => 0.40, 'moss_wess.innovacion' => 0.20]],
+            'Pensamiento Estratégico' => ['peso_global' => 0.03, 'factores' => ['terman.ci' => 0.20, 'terman.abstraccion' => 0.40, 'terman.planeacion' => 0.20, 'moss_wess.innovacion' => 0.20]],
             'Resiliencia' => ['peso_global' => 0.02, 'factores' => ['kostick.e' => 0.40, 'moss_wess.presion' => 0.30, 'inverso.cleaver.s' => 0.30]],
             'Disposición de Servicio' => ['peso_global' => 0.02, 'factores' => ['moss.relaciones' => 0.50, 'kostick.s' => 0.30, 'cleaver.i' => 0.20]],
         ],
         'SUPERVISOR' => [
             'Liderazgo' => ['peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.40, 'moss.supervision' => 0.40, 'kostick.l' => 0.20]],
-            'Organización' => ['peso_global' => 0.15, 'factores' => ['cleaver.c' => 0.40, 'kostick.c' => 0.40, 'terman.ci' => 0.20]],
+            'Organización' => ['peso_global' => 0.15, 'factores' => ['cleaver.c' => 0.40, 'kostick.c' => 0.40, 'terman.organizacion' => 0.20]],
             'Comunicación' => ['peso_global' => 0.10, 'factores' => ['cleaver.i' => 0.40, 'moss.relaciones' => 0.40, 'kostick.x' => 0.20]],
             'Trabajo en Equipo' => ['peso_global' => 0.10, 'factores' => ['cleaver.i' => 0.40, 'moss.relaciones' => 0.30, 'kostick.s' => 0.30]],
             'Enfoque en Resultados' => ['peso_global' => 0.10, 'factores' => ['kostick.n' => 0.40, 'cleaver.d' => 0.30, 'kostick.g' => 0.30]],
             'Manejo de Conflictos' => ['peso_global' => 0.10, 'factores' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.30, 'kostick.e' => 0.30]],
-            'Análisis de Problemas' => ['peso_global' => 0.10, 'factores' => ['terman.ci' => 0.50, 'moss.evaluacion' => 0.30, 'terman.abstraccion' => 0.20]],
+            'Análisis de Problemas' => ['peso_global' => 0.10, 'factores' => ['terman.ci' => 0.20, 'terman.analisis' => 0.30, 'terman.abstraccion' => 0.20, 'moss.evaluacion' => 0.30]],
             'Disposición de Servicio' => ['peso_global' => 0.10, 'factores' => ['moss.relaciones' => 0.50, 'kostick.s' => 0.30, 'cleaver.i' => 0.20]],
-            'Toma de Decisiones' => ['peso_global' => 0.05, 'factores' => ['moss.decision' => 0.40, 'terman.ci' => 0.30, 'cleaver.d' => 0.30]],
+            'Toma de Decisiones' => ['peso_global' => 0.05, 'factores' => ['moss.decision' => 0.40, 'terman.juicio' => 0.30, 'cleaver.d' => 0.30]],
             'Resiliencia' => ['peso_global' => 0.02, 'factores' => ['kostick.e' => 0.40, 'inverso.cleaver.s' => 0.40, 'cleaver.d' => 0.20]],
             'Negociación' => ['peso_global' => 0.02, 'factores' => ['cleaver.i' => 0.50, 'moss.sentido_comun' => 0.30, 'cleaver.d' => 0.20]],
-            'Pensamiento Estratégico' => ['peso_global' => 0.01, 'factores' => ['terman.ci' => 0.60, 'terman.abstraccion' => 0.40]],
+            'Pensamiento Estratégico' => ['peso_global' => 0.01, 'factores' => ['terman.ci' => 0.30, 'terman.abstraccion' => 0.40, 'terman.planeacion' => 0.30]],
         ],
         'ADMINISTRATIVO' => [
-            'Organización' => ['peso_global' => 0.20, 'factores' => ['cleaver.c' => 0.40, 'kostick.c' => 0.30, 'terman.ci' => 0.30]],
+            'Organización' => ['peso_global' => 0.20, 'factores' => ['cleaver.c' => 0.40, 'kostick.c' => 0.30, 'terman.organizacion' => 0.30]],
             'Disposición de Servicio' => ['peso_global' => 0.15, 'factores' => ['cleaver.s' => 0.40, 'moss.relaciones' => 0.40, 'kostick.s' => 0.20]],
             'Trabajo en Equipo' => ['peso_global' => 0.15, 'factores' => ['cleaver.s' => 0.40, 'moss_wess.cohesion' => 0.30, 'cleaver.i' => 0.30]],
-            'Análisis de Problemas' => ['peso_global' => 0.10, 'factores' => ['terman.ci' => 0.50, 'terman.abstraccion' => 0.30, 'cleaver.c' => 0.20]],
+            'Análisis de Problemas' => ['peso_global' => 0.10, 'factores' => ['terman.ci' => 0.20, 'terman.analisis' => 0.30, 'terman.abstraccion' => 0.30, 'cleaver.c' => 0.20]],
             'Comunicación' => ['peso_global' => 0.10, 'factores' => ['cleaver.i' => 0.40, 'moss.relaciones' => 0.30, 'cleaver.s' => 0.30]],
             'Enfoque en Resultados' => ['peso_global' => 0.10, 'factores' => ['kostick.a' => 0.40, 'cleaver.c' => 0.30, 'kostick.n' => 0.30]],
             'Resiliencia' => ['peso_global' => 0.05, 'factores' => ['inverso.cleaver.s' => 0.50, 'kostick.e' => 0.30, 'cleaver.c' => 0.20]],
-            'Toma de Decisiones' => ['peso_global' => 0.05, 'factores' => ['cleaver.c' => 0.40, 'moss.decision' => 0.30, 'terman.ci' => 0.30]],
+            'Toma de Decisiones' => ['peso_global' => 0.05, 'factores' => ['cleaver.c' => 0.40, 'moss.decision' => 0.30, 'terman.juicio' => 0.30]],
             'Manejo de Conflictos' => ['peso_global' => 0.05, 'factores' => ['inverso.cleaver.s' => 0.40, 'moss.evaluacion' => 0.40, 'kostick.e' => 0.20]],
             'Negociación' => ['peso_global' => 0.02, 'factores' => ['cleaver.i' => 0.40, 'moss.sentido_comun' => 0.40, 'cleaver.c' => 0.20]],
             'Liderazgo' => ['peso_global' => 0.02, 'factores' => ['cleaver.c' => 0.40, 'moss.supervision' => 0.40, 'kostick.l' => 0.20]],
-            'Pensamiento Estratégico' => ['peso_global' => 0.01, 'factores' => ['terman.ci' => 0.60, 'terman.abstraccion' => 0.40]],
+            'Pensamiento Estratégico' => ['peso_global' => 0.01, 'factores' => ['terman.ci' => 0.30, 'terman.abstraccion' => 0.40, 'terman.planeacion' => 0.30]],
         ],
     ];
 
@@ -175,7 +180,7 @@ class CompetencyScoringService
             foreach (['l','n','p','i','g','a','s','x','e','c','b'] as $l) {
                 $val = $k[strtoupper($l)] ?? null;
                 if ($val !== null) {
-                    $v["kostick.{$l}"] = min(100, max(0, (($val - 1) / 8) * 100)); // 1-9 to 0-100
+                    $v["kostick.{$l}"] = min(100, max(0, ($val / 9) * 100));
                 }
             }
             if (isset($k['P'])) {
@@ -198,11 +203,64 @@ class CompetencyScoringService
         $termanKey = $this->findKeyStr($res, 'Terman');
         if ($termanKey) {
             $t = $res[$termanKey];
+
+            // CORRECCIÓN 1: Mapeo escalonado (piecewise) para el CI
             if (isset($t['ci_score'])) {
-                $v['terman.ci'] = min(100, max(0, (($t['ci_score'] - 80) / 61) * 100)); // 80->0, 141->100
+                $ci = (float)$t['ci_score'];
+                if ($ci >= 120) {
+                    // Superior o Sobresaliente (120+) -> 90% a 100%
+                    $v['terman.ci'] = min(100, 90 + (($ci - 120) / 21) * 10);
+                } elseif ($ci >= 110) {
+                    // Término Medio Alto (110-119) -> 80% a 89%
+                    $v['terman.ci'] = 80 + (($ci - 110) / 9) * 9;
+                } elseif ($ci >= 90) {
+                    // Normal (90-109) -> 70% a 79% (Nivel funcional aceptable)
+                    $v['terman.ci'] = 70 + (($ci - 90) / 19) * 9;
+                } elseif ($ci >= 80) {
+                    // Término Medio Bajo (80-89) -> 50% a 69% (En riesgo)
+                    $v['terman.ci'] = 50 + (($ci - 80) / 9) * 19;
+                } else {
+                    // Inferior o Deficiente (<80) -> 0% a 49%
+                    $v['terman.ci'] = max(0, ($ci / 79) * 49);
+                }
             }
-            if (isset($t['series'][7]['puntaje'])) {
-                $v['terman.abstraccion'] = min(100, max(0, ($t['series'][7]['puntaje'] / 20) * 100));
+            // 2. Función Helper parametrizada por Baremos Clínicos Reales
+            // Recibe: Puntos obtenidos, Inicio del rango "Normal", Inicio del rango "Sobresaliente", Máximo posible
+            $escalarClinico = function($puntaje, $inicioNormal, $inicioSobresaliente, $maximo) {
+                if ($puntaje >= $inicioSobresaliente) {
+                    // Rango Sobresaliente/TM Alto (80% a 100%)
+                    $divisor = ($maximo - $inicioSobresaliente) ?: 1;
+                    return min(100, 80 + (($puntaje - $inicioSobresaliente) / $divisor) * 20);
+                } elseif ($puntaje >= $inicioNormal) {
+                    // Rango Normal Funcional (70% a 79%)
+                    $divisor = ($inicioSobresaliente - 1 - $inicioNormal) ?: 1;
+                    return 70 + (($puntaje - $inicioNormal) / $divisor) * 9;
+                } elseif ($puntaje >= ($inicioNormal - 3)) {
+                    // Rango TM Bajo / Riesgo Medio (50% a 69%)
+                    return 50 + (($puntaje - ($inicioNormal - 3)) / 2) * 19;
+                } else {
+                    // Deficiente (< 50%)
+                    $divisor = ($inicioNormal - 4) ?: 1;
+                    return max(0, ($puntaje / $divisor) * 49);
+                }
+            };
+
+            // 3. Extracción de Series Estratégicas (Datos exactos extraídos de PsychometricScoringService)
+            if (isset($t['series'])) {
+                // Serie II (Juicio) - Normal inicia: 12, TM Alto/Sobresaliente inicia: 18, Max: 22
+                if (isset($t['series'][2]['puntaje'])) $v['terman.juicio'] = $escalarClinico((float)$t['series'][2]['puntaje'], 12, 18, 22);
+
+                // Serie VI (Análisis) - Normal inicia: 9, TM Alto/Sobresaliente inicia: 15, Max: 20
+                if (isset($t['series'][6]['puntaje'])) $v['terman.analisis'] = $escalarClinico((float)$t['series'][6]['puntaje'], 9, 15, 20);
+
+                // Serie VII (Abstracción) - Normal inicia: 9, TM Alto/Sobresaliente inicia: 16, Max: 20
+                if (isset($t['series'][7]['puntaje'])) $v['terman.abstraccion'] = $escalarClinico((float)$t['series'][7]['puntaje'], 9, 16, 20);
+
+                // Serie VIII (Planeación) - Normal inicia: 8, TM Alto/Sobresaliente inicia: 13, Max: 17
+                if (isset($t['series'][8]['puntaje'])) $v['terman.planeacion'] = $escalarClinico((float)$t['series'][8]['puntaje'], 8, 13, 17);
+
+                // Serie IX (Organización) - Normal inicia: 10, TM Alto/Sobresaliente inicia: 16, Max: 18
+                if (isset($t['series'][9]['puntaje'])) $v['terman.organizacion'] = $escalarClinico((float)$t['series'][9]['puntaje'], 10, 16, 18);
             }
         }
 

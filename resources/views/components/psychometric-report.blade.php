@@ -169,7 +169,7 @@
                 <div class="card-header">
                     <h2>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                        Alineación de Competencias al Puesto
+                        Alineación de Competencias
                     </h2>
                 </div>
                 <div class="card-body flex-1 flex flex-col items-center justify-center">
@@ -263,7 +263,7 @@
 
         <!-- Footer -->
         <footer class="grid grid-cols-2 md:grid-cols-4 gap-5 pt-6 border-t border-gray-200 mt-10 text-xs text-gray-500 mb-6">
-            <div><label class="block font-bold text-gray-900 mb-1">Modelo</label>SEDYCO v1.1</div>
+            <div><label class="block font-bold text-gray-900 mb-1">Modelo</label>SEDYCO v1.2</div>
             <div><label class="block font-bold text-gray-900 mb-1">Próxima Revisión</label>{{ \Carbon\Carbon::parse($meta['generado_en'] ?? now())->addYear()->format('d / m / Y') }}</div>
             <div class="col-span-2 text-center text-gray-400 font-medium">Documento confidencial — Propiedad exclusiva</div>
         </footer>

@@ -148,18 +148,61 @@
                         </div>
                     </div>
                     @php
-                        // Contadores separados
+                        // Contadores para Competencias Requeridas
                         $reqFuertes = collect($competencias)->where('requerida', true)->where('nivel', 'strong')->count();
                         $reqMod = collect($competencias)->where('requerida', true)->where('nivel', 'moderate')->count();
                         $reqDeb = collect($competencias)->where('requerida', true)->where('nivel', 'weak')->count();
+
+                        // Contadores para Competencias Adicionales
                         $adicionales = collect($competencias)->where('requerida', false)->count();
+                        $adFuertes = collect($competencias)->where('requerida', false)->where('nivel', 'strong')->count();
+                        $adMod = collect($competencias)->where('requerida', false)->where('nivel', 'moderate')->count();
+                        $adDeb = collect($competencias)->where('requerida', false)->where('nivel', 'weak')->count();
                     @endphp
                     <div class="w-full border-t border-gray-100 pt-4 flex flex-col gap-2">
-                        <div class="flex justify-between items-center text-sm"><span class="text-gray-500 font-medium">Nivel de Ajuste</span><span class="font-bold text-gray-900">{{ $reporteBase['resultado_global']['nivel_ajuste'] ?? 'No definido' }}</span></div>
-                        <div class="flex justify-between items-center text-sm"><span class="text-gray-500 font-medium">Fuertes (Req)</span><span class="font-bold text-teal-600">{{ $reqFuertes }}</span></div>
-                        <div class="flex justify-between items-center text-sm"><span class="text-gray-500 font-medium">Moderadas (Req)</span><span class="font-bold text-amber-600">{{ $reqMod }}</span></div>
-                        <div class="flex justify-between items-center text-sm"><span class="text-gray-500 font-medium">Débiles (Req)</span><span class="font-bold text-rose-600">{{ $reqDeb }}</span></div>
-                        <div class="flex justify-between items-center text-sm"><span class="text-gray-500 font-medium">Adicionales al Puesto</span><span class="font-bold text-gray-500">{{ $adicionales }}</span></div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500 font-medium">Nivel de Ajuste</span>
+                            <span class="font-bold text-gray-900">{{ $reporteBase['resultado_global']['nivel_ajuste'] ?? 'No definido' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500 font-medium">Fuertes (Req)</span>
+                            <span class="font-bold text-teal-600">{{ $reqFuertes }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500 font-medium">Moderadas (Req)</span>
+                            <span class="font-bold text-amber-600">{{ $reqMod }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500 font-medium">Débiles (Req)</span>
+                            <span class="font-bold text-rose-600">{{ $reqDeb }}</span>
+                        </div>
+
+                        <div class="pt-2 mt-1 border-t border-dashed border-gray-200/70 flex flex-col gap-1.5">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-400 font-medium">Adicionales al Puesto</span>
+                                <span class="font-bold text-gray-400">{{ $adicionales }}</span>
+                            </div>
+
+                            @if($adicionales > 0)
+                                <div class="flex justify-end items-center gap-1.5">
+                                    @if($adFuertes > 0)
+                                        <span class="flex items-center gap-1 text-[10px] font-bold text-teal-600 bg-teal-50 border border-teal-100/50 px-1.5 py-0.5 rounded-md shadow-sm">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>{{ $adFuertes }}
+                                    </span>
+                                    @endif
+                                    @if($adMod > 0)
+                                        <span class="flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-100/50 px-1.5 py-0.5 rounded-md shadow-sm">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>{{ $adMod }}
+                                    </span>
+                                    @endif
+                                    @if($adDeb > 0)
+                                        <span class="flex items-center gap-1 text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-100/50 px-1.5 py-0.5 rounded-md shadow-sm">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>{{ $adDeb }}
+                                    </span>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </section>

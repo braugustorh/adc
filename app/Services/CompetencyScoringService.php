@@ -322,16 +322,43 @@ class CompetencyScoringService
             'requerida'=> $esRequerida // <-- Lo guardamos en el arreglo final
         ];
     }
+    /**
+     * Devuelve los valores ideales de las 12 competencias para renderizar el radar chart.
+     * Calibrado clínicamente bajo el Modelo SEDYCO v1.1 y Baremos Hofstede (México).
+     */
     public function getIdealCompetenciesProfile(string $nivel): array
     {
-        // EL CAMBIO ESTÁ EN ESTA LÍNEA (str_replace):
+        // Normalizamos el string para que "Mando Medio" de la BD haga match con "MANDO_MEDIO" del arreglo
         $nivel = str_replace(' ', '_', strtoupper(trim($nivel)));
+
         $ideales = [
-            'DIRECTIVO' => ['Liderazgo' => 95, 'Pensamiento Estratégico' => 95, 'Toma de Decisiones' => 90, 'Enfoque en Resultados' => 90, 'Negociación' => 85, 'Manejo de Conflictos' => 85, 'Organización' => 75, 'Análisis de Problemas' => 85, 'Comunicación' => 80, 'Resiliencia' => 85, 'Trabajo en Equipo' => 70, 'Disposición de Servicio' => 60],
-            'MANDO_MEDIO' => ['Organización' => 85, 'Manejo de Conflictos' => 85, 'Liderazgo' => 85, 'Toma de Decisiones' => 80, 'Análisis de Problemas' => 80, 'Comunicación' => 80, 'Trabajo en Equipo' => 80, 'Enfoque en Resultados' => 85, 'Negociación' => 75, 'Pensamiento Estratégico' => 70, 'Resiliencia' => 75, 'Disposición de Servicio' => 70],
-            'SUPERVISOR' => ['Liderazgo' => 85, 'Organización' => 85, 'Comunicación' => 85, 'Trabajo en Equipo' => 80, 'Enfoque en Resultados' => 85, 'Manejo de Conflictos' => 80, 'Análisis de Problemas' => 75, 'Disposición de Servicio' => 80, 'Toma de Decisiones' => 75, 'Resiliencia' => 75, 'Negociación' => 65, 'Pensamiento Estratégico' => 60],
-            'ADMINISTRATIVO' => ['Organización' => 90, 'Disposición de Servicio' => 90, 'Trabajo en Equipo' => 85, 'Análisis de Problemas' => 75, 'Comunicación' => 75, 'Enfoque en Resultados' => 80, 'Resiliencia' => 75, 'Toma de Decisiones' => 70, 'Manejo de Conflictos' => 70, 'Negociación' => 60, 'Liderazgo' => 50, 'Pensamiento Estratégico' => 50],
+            'DIRECTIVO' => [
+                'Liderazgo' => 90, 'Pensamiento Estratégico' => 90, 'Toma de Decisiones' => 85,
+                'Enfoque en Resultados' => 85, 'Negociación' => 80, 'Manejo de Conflictos' => 80,
+                'Análisis de Problemas' => 85, 'Resiliencia' => 80, 'Comunicación' => 75,
+                'Organización' => 70, 'Trabajo en Equipo' => 65, 'Disposición de Servicio' => 60
+            ],
+            'MANDO_MEDIO' => [
+                'Liderazgo' => 80, 'Organización' => 80, 'Manejo de Conflictos' => 80,
+                'Trabajo en Equipo' => 80, 'Comunicación' => 80, 'Toma de Decisiones' => 80,
+                'Análisis de Problemas' => 80, 'Enfoque en Resultados' => 80, 'Negociación' => 75,
+                'Pensamiento Estratégico' => 75, 'Resiliencia' => 75, 'Disposición de Servicio' => 75
+            ],
+            'SUPERVISOR' => [
+                'Organización' => 85, 'Trabajo en Equipo' => 85, 'Enfoque en Resultados' => 80,
+                'Disposición de Servicio' => 80, 'Comunicación' => 75, 'Análisis de Problemas' => 75,
+                'Resiliencia' => 75, 'Manejo de Conflictos' => 70, 'Liderazgo' => 65,
+                'Toma de Decisiones' => 65, 'Negociación' => 60, 'Pensamiento Estratégico' => 60
+            ],
+            'ADMINISTRATIVO' => [
+                'Organización' => 90, 'Disposición de Servicio' => 90, 'Trabajo en Equipo' => 85,
+                'Enfoque en Resultados' => 80, 'Análisis de Problemas' => 75, 'Resiliencia' => 75,
+                'Comunicación' => 70, 'Toma de Decisiones' => 60, 'Manejo de Conflictos' => 60,
+                'Pensamiento Estratégico' => 50, 'Negociación' => 50, 'Liderazgo' => 45
+            ],
         ];
+
+        // Retorna el ideal del puesto, o un "plano de 70" si el puesto no existe en la matriz
         return $ideales[$nivel] ?? array_fill_keys(array_keys($ideales['ADMINISTRATIVO']), 70);
     }
 }

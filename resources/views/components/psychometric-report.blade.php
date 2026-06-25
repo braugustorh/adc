@@ -55,7 +55,7 @@
         .gauge-ring circle.progress { stroke: var(--blue); stroke-linecap: round; stroke-dasharray: 439.82; transition: stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1); }
         .gauge-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         /* Semáforo Competencias */
-        .competency-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+        .competency-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; height: 100%; }
         .competency-icon { font-size: 1.5rem; background: #f1f5f9; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); }
         .status-strong { background-color: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
         .status-strong .competency-level { color: var(--green-text); }
@@ -169,7 +169,7 @@
                 <div class="card-header">
                     <h2>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                        Perfil Conductual — Cleaver (DISC)
+                        Alineación de Competencias al Puesto
                     </h2>
                 </div>
                 <div class="card-body flex-1 flex flex-col items-center justify-center">
@@ -193,21 +193,21 @@
                 </h2>
             </div>
             <div class="card-body">
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch">
                     @foreach($competencias as $comp)
                         <div class="competency-card status-{{ $comp['nivel'] }}">
                             <div class="flex items-center gap-3">
                                 <div class="competency-icon">{{ $comp['icono'] }}</div>
                                 <div class="flex flex-col">
-                                    <div class="flex items-center gap-2 mb-0.5">
-                                        <span class="text-sm font-bold text-gray-900 leading-tight">{{ $comp['nombre'] }}</span>
+                                    <span class="text-sm font-bold text-gray-900 leading-tight mb-1">{{ $comp['nombre'] }}</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="competency-level text-xs font-semibold">{{ $comp['etiqueta'] }}</span>
                                         @if(!$comp['requerida'])
-                                            <span class="bg-gray-200 text-gray-500 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                            <span class="bg-white/50 text-gray-400 text-[8px] font-bold px-1.5 py-0.5 rounded border border-gray-100 uppercase tracking-wider">
                                                 Adicional
                                             </span>
                                         @endif
                                     </div>
-                                    <span class="competency-level text-xs font-semibold">{{ $comp['etiqueta'] }}</span>
                                 </div>
                             </div>
                             <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style="background-color: var(--{{ $comp['nivel'] === 'strong' ? 'green' : ($comp['nivel'] === 'moderate' ? 'yellow' : 'red') }}); color: white;">

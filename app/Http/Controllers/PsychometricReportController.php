@@ -33,6 +33,7 @@ class PsychometricReportController extends Controller
             'ajusteGlobalPhp'     => $data['ajuste_global'] ?? 0,
             'dictamenPhp'         => $data['dictamen_calculado'] ?? 'Pendiente',
             'competenciasIdeal'   => $data['competencias_ideal'] ?? [],
+            'isPdfExport'         => false,
         ]);
     }
 

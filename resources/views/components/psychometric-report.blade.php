@@ -196,16 +196,17 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     @foreach($competencias as $comp)
                         <div class="competency-card status-{{ $comp['nivel'] }}">
-                            @if(!$comp['requerida'])
-                                <!-- Etiqueta flotante para Adicional -->
-                                <span class="absolute -top-2 -right-2 bg-gray-100 text-gray-500 border border-gray-200 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm">
-                                    Adicional
-                                </span>
-                            @endif
                             <div class="flex items-center gap-3">
                                 <div class="competency-icon">{{ $comp['icono'] }}</div>
                                 <div class="flex flex-col">
-                                    <span class="text-sm font-bold text-gray-900 leading-tight">{{ $comp['nombre'] }}</span>
+                                    <div class="flex items-center gap-2 mb-0.5">
+                                        <span class="text-sm font-bold text-gray-900 leading-tight">{{ $comp['nombre'] }}</span>
+                                        @if(!$comp['requerida'])
+                                            <span class="bg-gray-200 text-gray-500 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                                Adicional
+                                            </span>
+                                        @endif
+                                    </div>
                                     <span class="competency-level text-xs font-semibold">{{ $comp['etiqueta'] }}</span>
                                 </div>
                             </div>

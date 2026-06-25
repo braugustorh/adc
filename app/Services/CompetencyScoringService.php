@@ -95,7 +95,7 @@ class CompetencyScoringService
      */
     public function calculate(string $nivel, array $testResults): array
     {
-        $nivel = strtoupper(trim($nivel));
+        $nivel = str_replace(' ', '_', strtoupper(trim($nivel)));
         if (!isset($this->nivelesConfig[$nivel])) {
             $nivel = 'ADMINISTRATIVO'; // Fallback seguro
         }
@@ -324,7 +324,8 @@ class CompetencyScoringService
     }
     public function getIdealCompetenciesProfile(string $nivel): array
     {
-        $nivel = strtoupper(trim($nivel));
+        // EL CAMBIO ESTÁ EN ESTA LÍNEA (str_replace):
+        $nivel = str_replace(' ', '_', strtoupper(trim($nivel)));
         $ideales = [
             'DIRECTIVO' => ['Liderazgo' => 95, 'Pensamiento Estratégico' => 95, 'Toma de Decisiones' => 90, 'Enfoque en Resultados' => 90, 'Negociación' => 85, 'Manejo de Conflictos' => 85, 'Organización' => 75, 'Análisis de Problemas' => 85, 'Comunicación' => 80, 'Resiliencia' => 85, 'Trabajo en Equipo' => 70, 'Disposición de Servicio' => 60],
             'MANDO_MEDIO' => ['Organización' => 85, 'Manejo de Conflictos' => 85, 'Liderazgo' => 85, 'Toma de Decisiones' => 80, 'Análisis de Problemas' => 80, 'Comunicación' => 80, 'Trabajo en Equipo' => 80, 'Enfoque en Resultados' => 85, 'Negociación' => 75, 'Pensamiento Estratégico' => 70, 'Resiliencia' => 75, 'Disposición de Servicio' => 70],

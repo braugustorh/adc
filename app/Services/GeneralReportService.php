@@ -130,6 +130,10 @@ class GeneralReportService
 
         // >>> NUEVO: Calcular el % de ajuste estricto en PHP <<<
         $ajusteGlobal = $competencyService->calcularAjusteGlobal($competencias);
+        // Obtener el perfil Ideal para la gráfica
+        $competenciasIdeal = $competencyService->getIdealCompetenciesProfile(
+            $consolidated['puesto'] ?? 'General'
+        );
 
         // Regla de negocio inquebrantable en PHP
         if ($ajusteGlobal >= 85) $dictamenPHP = "APTO";
@@ -173,6 +177,7 @@ class GeneralReportService
             'ai_error'     => $aiError,
             'ajuste_global'=> $ajusteGlobal,      // <-- AQUI PASAMOS EL 48.91%
             'dictamen_calculado' => $dictamenPHP, // <-- AQUI PASAMOS EL "NO APTO"
+            'competencias_ideal' => $competenciasIdeal,
             'ai_raw'       => is_string($aiResponse) ? $aiResponse : json_encode($aiResponse, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
         ];
     }

@@ -32,6 +32,7 @@ class PsychometricReportController extends Controller
             'aiAvailable'         => ! empty($data['ai_report']),
             'ajusteGlobalPhp'     => $data['ajuste_global'] ?? 0,
             'dictamenPhp'         => $data['dictamen_calculado'] ?? 'Pendiente',
+            'competenciasIdeal'   => $data['competencias_ideal'] ?? [],
         ]);
     }
 
@@ -55,6 +56,7 @@ class PsychometricReportController extends Controller
             'meta'                => $data['meta'] ?? [],
             'aiAvailable'         => ! empty($data['ai_report']),
             'cleaverIdeal'        => $data['cleaver_ideal'] ?? ['D' => 50, 'I' => 50, 'S' => 50, 'C' => 50], // ← NUEVO
+            'competenciasIdeal'   => $data['competencias_ideal'] ?? [],
             // >>> ESTAS DOS LÍNEAS FALTABAN AQUÍ <<<
             'ajusteGlobalPhp'     => $data['ajuste_global'] ?? 0,
             'dictamenPhp'         => $data['dictamen_calculado'] ?? 'Pendiente',

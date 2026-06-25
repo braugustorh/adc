@@ -58,6 +58,7 @@
         :reportKey="$reportKey"
         :ajusteGlobalPhp="$ajusteGlobalPhp"
         :dictamenPhp="$dictamenPhp"
+        :competenciasIdeal="$competenciasIdeal"
     />
 @else
     {{-- ══════════════════════════════════════════════════════════════ --}}

@@ -1,4 +1,4 @@
-@props(['reportData', 'candidateData', 'psychometricResults', 'competencias', 'cleaverIdeal' => ['D' => 50, 'I' => 50, 'S' => 50, 'C' => 50], 'meta', 'reportKey', 'ajusteGlobalPhp', 'dictamenPhp'])
+@props(['reportData', 'candidateData', 'psychometricResults', 'competencias', 'cleaverIdeal' => ['D' => 50, 'I' => 50, 'S' => 50, 'C' => 50], 'meta', 'reportKey', 'ajusteGlobalPhp', 'dictamenPhp', 'competenciasIdeal'])
 @php
     $reporteBase = $reportData['reporte'] ?? $reportData;
 
@@ -148,13 +148,18 @@
                         </div>
                     </div>
                     @php
-                        $fuertes = collect($competencias)->where('nivel', 'strong')->count();
-                        $desarrollar = collect($competencias)->where('nivel', '!=', 'strong')->count();
+                        // Contadores separados
+                        $reqFuertes = collect($competencias)->where('requerida', true)->where('nivel', 'strong')->count();
+                        $reqMod = collect($competencias)->where('requerida', true)->where('nivel', 'moderate')->count();
+                        $reqDeb = collect($competencias)->where('requerida', true)->where('nivel', 'weak')->count();
+                        $adicionales = collect($competencias)->where('requerida', false)->count();
                     @endphp
-                    <div class="w-full border-t border-gray-100 pt-4 flex flex-col gap-3">
+                    <div class="w-full border-t border-gray-100 pt-4 flex flex-col gap-2">
                         <div class="flex justify-between items-center text-sm"><span class="text-gray-500 font-medium">Nivel de Ajuste</span><span class="font-bold text-gray-900">{{ $reporteBase['resultado_global']['nivel_ajuste'] ?? 'No definido' }}</span></div>
-                        <div class="flex justify-between items-center text-sm"><span class="text-gray-500 font-medium">Competencias Fuertes</span><span class="font-bold text-gray-900">{{ $fuertes }} / {{ count($competencias) }}</span></div>
-                        <div class="flex justify-between items-center text-sm"><span class="text-gray-500 font-medium">Áreas de Oportunidad</span><span class="font-bold text-gray-900">{{ $desarrollar }} / {{ count($competencias) }}</span></div>
+                        <div class="flex justify-between items-center text-sm"><span class="text-gray-500 font-medium">Fuertes (Req)</span><span class="font-bold text-teal-600">{{ $reqFuertes }}</span></div>
+                        <div class="flex justify-between items-center text-sm"><span class="text-gray-500 font-medium">Moderadas (Req)</span><span class="font-bold text-amber-600">{{ $reqMod }}</span></div>
+                        <div class="flex justify-between items-center text-sm"><span class="text-gray-500 font-medium">Débiles (Req)</span><span class="font-bold text-rose-600">{{ $reqDeb }}</span></div>
+                        <div class="flex justify-between items-center text-sm"><span class="text-gray-500 font-medium">Adicionales al Puesto</span><span class="font-bold text-gray-500">{{ $adicionales }}</span></div>
                     </div>
                 </div>
             </section>
@@ -191,6 +196,12 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     @foreach($competencias as $comp)
                         <div class="competency-card status-{{ $comp['nivel'] }}">
+                            @if(!$comp['requerida'])
+                                <!-- Etiqueta flotante para Adicional -->
+                                <span class="absolute -top-2 -right-2 bg-gray-100 text-gray-500 border border-gray-200 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm">
+                                    Adicional
+                                </span>
+                            @endif
                             <div class="flex items-center gap-3">
                                 <div class="competency-icon">{{ $comp['icono'] }}</div>
                                 <div class="flex flex-col">
@@ -274,40 +285,60 @@
         // Radar Cleaver
         const ctx = document.getElementById('radarChart')?.getContext('2d');
         if(ctx) {
+            const rawCompetencias = @json($competencias);
+            const idealProfile = @json($competenciasIdeal ?? []);
+
+            // Ordenar para que las requeridas salgan primero juntas, luego las adicionales
+            const sorted = [...rawCompetencias].sort((a, b) => (a.requerida === b.requerida) ? 0 : a.requerida ? -1 : 1);
+
+            const labels = sorted.map(c => c.nombre);
+            const candidateData = sorted.map(c => c.puntaje);
+            const idealData = labels.map(label => idealProfile[label] || 70);
+
             new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['Dominancia (D)', 'Influencia (I)', 'Constancia (S)', 'Cumplimiento (C)'],
+                    labels: labels,
                     datasets: [
                         {
                             label: 'Ideal SEDYCO',
-                            data: [{{ $cleaverIdeal['D'] }}, {{ $cleaverIdeal['I'] }}, {{ $cleaverIdeal['S'] }}, {{ $cleaverIdeal['C'] }}],
+                            data: idealData,
                             backgroundColor: 'rgba(79, 70, 229, 0.08)',
                             borderColor: '#4f46e5',
                             borderWidth: 2,
                             borderDash: [6, 4],
                             pointBackgroundColor: '#4f46e5',
-                            pointRadius: 4,
                         },
                         {
                             label: 'Candidato',
-                            data: [{{ $cleaverScores['D'] }}, {{ $cleaverScores['I'] }}, {{ $cleaverScores['S'] }}, {{ $cleaverScores['C'] }}],
-                            backgroundColor: 'rgba(13, 148, 136, 0.12)',
+                            data: candidateData,
+                            backgroundColor: 'rgba(13, 148, 136, 0.20)',
                             borderColor: '#0d9488',
                             borderWidth: 2,
                             pointBackgroundColor: '#0d9488',
-                            pointRadius: 4,
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        r: { beginAtZero: true, min: 0, max: 100, ticks: { stepSize: 20 } }
+                        r: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            ticks: { display: false },
+                            pointLabels: {
+                                font: { size: 9, family: 'Inter' },
+                                color: (context) => {
+                                    // CORRECCIÓN AQUÍ
+                                    const index = context.index;
+                                    const comp = sorted[index];
+                                    return (comp && comp.requerida === false) ? '#94a3b8' : '#475569';
+                                }
+                            }
+                        }
                     }
                 }
             });

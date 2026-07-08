@@ -3444,7 +3444,7 @@ class Nom035 extends Page
                 $determinacion = '';
 
                 // Según el nivel, sumar respuestas
-                if ($this->level === 2) { //Guía II
+                if ($this->level === 2 || ($this->level === 1 && ($sedeId===21 || $sedeId===23 || $sedeId===17))) { //Guía II
                     $riskSurvey = RiskFactorSurvey::where('norma_id', $normaId)
                         ->where('user_id', $colab->id)
                         ->sum('equivalence_response');

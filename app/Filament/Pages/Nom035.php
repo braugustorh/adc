@@ -3416,7 +3416,7 @@ class Nom035 extends Page
             $sedeId = $this->getCurrentSedeId();
 
 
-            if ($this->level === 2) {
+            if ($this->level === 2 || ($this->level === 1 && ($sedeId===21 || $sedeId===23 || $sedeId===17))) {
                 $userIds = RiskFactorSurvey::where('norma_id', $normaId)
                     ->where('sede_id', $sedeId)
                     ->with('user')
@@ -3432,7 +3432,8 @@ class Nom035 extends Page
 
                 $colaboradores = \App\Models\User::whereIn('id', $userIds)->get();
             }else{
-                $colaboradores = collect();
+                    $colaboradores = collect();
+
             }
 
 

@@ -2366,11 +2366,13 @@ class Nom035 extends Page
                         ]
                     ]
                 ];
+                $effectiveSedeId = $this->selected_sede_id ?? $this->getCurrentSedeId();
+                $currentSede = \App\Models\Sede::find($effectiveSedeId);
 
                 return [
                     'users' => $user,
                     'user_id' => $userId,
-                    'empresa' => auth()->user()->sede->company_name??'No definido',
+                    'empresa' => $currentSede->company_name ?? 'No definido',
                     'nombre' => $user->name . ' ' . $user->first_name . ' ' . $user->last_name,
                     'fecha' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
                     'fecha_aplicacion' => $items->first()->created_at->locale('es')->isoFormat('D [de] MMMM, YYYY'),

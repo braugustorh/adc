@@ -32,7 +32,7 @@
                 </p>
 
                 <ul class="list-disc list-inside mt-2">
-                    <li>Tus respuestas son confidenciales y anónimas.</li>
+                    <li>Tus respuestas son confidenciales.</li>
                     <li>No hay respuestas correctas o incorrectas, lo importante es tu opinión sincera.</li>
                     <li>La encuesta te tomará aproximadamente 15-20 minutos.</li>
                     <li>Lee cuidadosamente cada pregunta y selecciona la respuesta que mejor refleje tu opinión.</li>

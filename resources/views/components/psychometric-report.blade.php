@@ -179,7 +179,7 @@
 
                         <div class="pt-2 mt-1 border-t border-dashed border-gray-200/70 flex flex-col gap-1.5">
                             <div class="flex justify-between items-center text-sm">
-                                <span class="text-gray-400 font-medium">Adicionales al Puesto</span>
+                                <span class="text-gray-400 font-medium">Competencias Complementarias</span>
                                 <span class="font-bold text-gray-400">{{ $adicionales }}</span>
                             </div>
 
@@ -247,7 +247,7 @@
                                         <span class="competency-level text-xs font-semibold">{{ $comp['etiqueta'] }}</span>
                                         @if(!$comp['requerida'])
                                             <span class="bg-white/50 text-gray-400 text-[8px] font-bold px-1.5 py-0.5 rounded border border-gray-100 uppercase tracking-wider">
-                                                Adicional
+                                                Complementaria
                                             </span>
                                         @endif
                                     </div>

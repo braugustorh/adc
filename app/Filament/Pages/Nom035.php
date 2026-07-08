@@ -1722,8 +1722,11 @@ class Nom035 extends Page
         $startDate=$campaign->start_date??now();
         $endDate=$campaign->end_date??now();
         // Pasar las variables directamente, no como arreglo
+        $effectiveSedeId = $this->selected_sede_id ?? $this->getCurrentSedeId();
+        $currentSede = \App\Models\Sede::find($effectiveSedeId);
+
         $html = view('filament.pages.nom35.identification_report', [
-            'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
+            'company' => $currentSede ? $currentSede->company_name : 'No definido',
             'reportDate' => \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
             'period' => \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
             'totalSurveys' => $this->colabResponsesG1,
@@ -1811,8 +1814,11 @@ class Nom035 extends Page
         $startDate=$campaign->start_date??now();
         $endDate=$campaign->end_date??now();
 
+        $effectiveSedeId = $this->selected_sede_id ?? $this->getCurrentSedeId();
+        $currentSede = \App\Models\Sede::find($effectiveSedeId);
+
         $html=view('filament.pages.nom35.risk_factor_report', [
-            'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
+            'company' => $currentSede ? $currentSede->company_name : 'No definido',
             'reportDate' => \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
             'guia' => 'III',
             'period' => \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
@@ -1883,9 +1889,11 @@ class Nom035 extends Page
             'Bajo' => 'Es necesario una mayor difusión de la política de prevención de riesgos psicosociales y programas para: la prevención de los factores de riesgo psicosocial, la promoción de un entorno organizacional favorable y la prevención de la violencia laboral. ',
             'Nulo' => 'El riesgo resulta despreciable por lo que no se requiere medidas adicionales.'
         ];
+        $effectiveSedeId = $this->selected_sede_id ?? $this->getCurrentSedeId();
+        $currentSede = \App\Models\Sede::find($effectiveSedeId);
 
         $html=view('filament.pages.nom35.risk_factor_report', [
-            'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
+            'company' => $currentSede ? $currentSede->company_name : 'No definido',
             'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'guia' => 'II',
@@ -3194,9 +3202,10 @@ class Nom035 extends Page
             ->latest()
             ->first();
         $periodo=$campaign->end_date??now();
-
+        $effectiveSedeId = $this->selected_sede_id ?? $this->getCurrentSedeId();
+        $currentSede = \App\Models\Sede::find($effectiveSedeId);
         $html=view('filament.pages.nom35.risk_factor_report_cover', [
-            'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
+            'company' => $currentSede ? $currentSede->company_name : 'No definido',
             'reportDate' => \Carbon\Carbon::parse($periodo)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
             'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
             'responsesTotalG2' => $this->responsesTotalG2,
@@ -3345,8 +3354,11 @@ class Nom035 extends Page
         $startDate=$campaign->start_date??now();
         $endDate=$campaign->end_date??now();
 
+        $effectiveSedeId = $this->selected_sede_id ?? $this->getCurrentSedeId();
+        $currentSede = \App\Models\Sede::find($effectiveSedeId);
+
         $html=view('filament.pages.nom35.risk_factor_report_cover', [
-            'company' => auth()->user()->sede->company_name ?? 'No definido', //OK
+            'company' => $currentSede ? $currentSede->company_name : 'No definido',
             'reportDate' => \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
             'period' => \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D [de] MMMM, YYYY'). ' al ' . \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D [de] MMMM [de] YYYY'),
             'responsesTotalG2' => $this->totalResponsesG3,
@@ -5164,9 +5176,11 @@ class Nom035 extends Page
                 'chartImagesCount' => count($chartImages),
                 'chartPaths' => $chartPaths
             ]);
+            $effectiveSedeId = $this->selected_sede_id ?? $this->getCurrentSedeId();
+            $currentSede = \App\Models\Sede::find($effectiveSedeId);
 
             $html = view('filament.pages.nom35.sociodemographic_profile', [
-                'company' => auth()->user()->sede->name ?? 'No definido',
+                'company' => $currentSede ? $currentSede->company_name : 'No definido',
                 'reportDate' => \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
                 'period' => $this->norma->start_date->locale('es')->isoFormat('D [de] MMMM, YYYY') . ' al ' . \Carbon\Carbon::now()->locale('es')->isoFormat('D [de] MMMM, YYYY'),
                 'totalCollaborators' => $colaboradores->count(),

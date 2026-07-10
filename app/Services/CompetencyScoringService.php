@@ -85,7 +85,7 @@ class CompetencyScoringService
     */
     private array $nivelesConfig = [
         'DIRECTIVO' => [
-            'Liderazgo'               => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.35, 'kostick.l' => 0.35, 'moss.supervision' => 0.30]],
+            'Liderazgo'               => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.30, 'kostick.l' => 0.25, 'kostick.p' => 0.20, 'moss.supervision' => 0.25]],
             'Pensamiento Estratégico' => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['terman.ci' => 0.20, 'terman.abstraccion' => 0.40, 'terman.planeacion' => 0.20, 'inverso.cleaver.s' => 0.20]],
             'Toma de Decisiones'      => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.40, 'moss.decision' => 0.40, 'terman.juicio' => 0.20]],
             'Enfoque en Resultados'   => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['kostick.a' => 0.40, 'cleaver.d' => 0.30, 'kostick.n' => 0.30]],

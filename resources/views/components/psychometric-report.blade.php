@@ -124,6 +124,18 @@
                         </div>
                     </div>
                 </div>
+
+                @if(!empty($reporteBase['entorno_optimo_sugerido']))
+                <div class="mt-5 p-4 rounded-xl border flex items-start gap-3 bg-[#fffbeb] border-[#fde68a] text-[#92400e]">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background-color:#fef3c7;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+                    </div>
+                    <div class="text-sm leading-relaxed">
+                        <strong class="block text-xs font-bold uppercase tracking-wider mb-1 text-[#b45309]">Entorno Óptimo Sugerido</strong>
+                        {{ $reporteBase['entorno_optimo_sugerido'] }}
+                    </div>
+                </div>
+                @endif
             </div>
         </section>
 

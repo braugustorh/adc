@@ -130,15 +130,17 @@ FORMATO DE SALIDA OBLIGATORIO (sin markdown, solo JSON puro):
 {
     "pasos_de_razonamiento": {
         "1_analisis_de_competencias_criticas": "Análisis de las brechas en las competencias con mayor peso global.",
-        "2_justificacion_del_dictamen": "Explicación de por qué el perfil coincide con el dictamen de {dictamen_php}."
+        "2_justificacion_del_dictamen": "Explicación de por qué el perfil coincide con el dictamen de {dictamen_php}.",
+        "3_identificacion_entorno_optimo": "Evaluación independiente: Análisis de en qué área, dinámica o tipo de rol el candidato sería excepcional basándose puramente en sus fortalezas y picos más altos."
     },
     "reporte": {
         "resultado_global": {
             "nivel_ajuste": "Alto | Medio | Bajo | Insuficiente"
         },
-        "resumen_ejecutivo": "string (máx 100 palabras detallando ajuste cognitivo y conductual)",
+        "resumen_ejecutivo": "string (máx 100 palabras. IMPORTANTE: Céntrate principalmente en el estilo de trabajo natural y las fortalezas del candidato. OMITE mencionar explícitamente si es APTO o NO APTO, ya que el sistema lo muestra visualmente en otra sección.)",
         "fortaleza_principal": "string (1 frase, ej: Alta capacidad organizacional y enfoque)",
         "brecha_principal": "string (1 frase, ej: Disposición de servicio requiere desarrollo)",
+        "entorno_optimo_sugerido": "string (máx 50 palabras indicando explícitamente en qué dinámicas, áreas o tipos de roles brillaría y aportaría más valor a la empresa, ej: 'Es ideal para roles de Desarrollo de Negocios en frontera de la empresa, o áreas de innovación sin microgestión...')",
         "plan_desarrollo": [
             {
                 "prioridad": "critical|important|normal",

@@ -177,15 +177,15 @@
                             <span class="font-bold text-gray-900">{{ $reporteBase['resultado_global']['nivel_ajuste'] ?? 'No definido' }}</span>
                         </div>
                         <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-500 font-medium">Fuertes (Req)</span>
+                            <span class="text-gray-500 font-medium">Solida (Req)</span>
                             <span class="font-bold text-teal-600">{{ $reqFuertes }}</span>
                         </div>
                         <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-500 font-medium">Moderadas (Req)</span>
+                            <span class="text-gray-500 font-medium">Funcional (Req)</span>
                             <span class="font-bold text-amber-600">{{ $reqMod }}</span>
                         </div>
                         <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-500 font-medium">Débiles (Req)</span>
+                            <span class="text-gray-500 font-medium">Por Desarrollar (Req)</span>
                             <span class="font-bold text-rose-600">{{ $reqDeb }}</span>
                         </div>
 

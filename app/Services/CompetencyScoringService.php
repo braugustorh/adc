@@ -413,14 +413,14 @@ class CompetencyScoringService
     {
         $score = round($score);
         $level = 'weak';
-        $label = 'Débil';
+        $label = 'Latente';
 
         if ($score >= 70) {
             $level = 'strong';
-            $label = 'Fuerte';
+            $label = 'Consolidada';
         } elseif ($score >= 50) {
             $level = 'moderate';
-            $label = 'Moderado';
+            $label = 'En Desarrollo';
         }
 
         return [
@@ -434,41 +434,47 @@ class CompetencyScoringService
     }
     /**
      * Devuelve los valores ideales de las 12 competencias para renderizar el radar chart.
-     * Calibrado clínicamente bajo el Modelo SEDYCO v1.1 y Baremos Hofstede (México).
+     * Recalibrado para Consorcio de Centrales de Autobuses (Operación, Mantenimiento, Servicio).
      */
     public function getIdealCompetenciesProfile(string $nivel): array
     {
-        // Normalizamos el string para que "Mando Medio" de la BD haga match con "MANDO_MEDIO" del arreglo
         $nivel = str_replace(' ', '_', strtoupper(trim($nivel)));
 
         $ideales = [
             'DIRECTIVO' => [
-                'Liderazgo' => 90, 'Pensamiento Estratégico' => 90, 'Toma de Decisiones' => 85,
-                'Enfoque en Resultados' => 85, 'Negociación' => 80, 'Manejo de Conflictos' => 80,
-                'Análisis de Problemas' => 85, 'Resiliencia' => 80, 'Comunicación' => 75,
-                'Organización' => 70, 'Trabajo en Equipo' => 65, 'Disposición de Servicio' => 60
+                // Gerentes de centrales grandes / Directores.
+                // Mucha negociación con líneas de autobuses y manejo de crisis (Resiliencia).
+                'Liderazgo' => 85, 'Toma de Decisiones' => 85, 'Negociación' => 85,
+                'Enfoque en Resultados' => 80, 'Pensamiento Estratégico' => 80, 'Resiliencia' => 80,
+                'Análisis de Problemas' => 80, 'Manejo de Conflictos' => 80, 'Comunicación' => 75,
+                'Organización' => 75, 'Trabajo en Equipo' => 70, 'Disposición de Servicio' => 65
             ],
             'MANDO_MEDIO' => [
-                'Liderazgo' => 80, 'Organización' => 80, 'Manejo de Conflictos' => 80,
-                'Trabajo en Equipo' => 80, 'Comunicación' => 80, 'Toma de Decisiones' => 80,
-                'Análisis de Problemas' => 80, 'Enfoque en Resultados' => 80, 'Negociación' => 75,
-                'Pensamiento Estratégico' => 75, 'Resiliencia' => 75, 'Disposición de Servicio' => 75
+                // Jefaturas y Gerentes de centrales medianas.
+                // Bisagra entre la dirección y el piso. Deben organizar turnos y resolver quejas graves.
+                'Organización' => 80, 'Liderazgo' => 80, 'Manejo de Conflictos' => 80,
+                'Enfoque en Resultados' => 80, 'Toma de Decisiones' => 75, 'Comunicación' => 75,
+                'Análisis de Problemas' => 75, 'Trabajo en Equipo' => 75, 'Resiliencia' => 75,
+                'Disposición de Servicio' => 70, 'Negociación' => 70, 'Pensamiento Estratégico' => 65
             ],
             'SUPERVISOR' => [
-                'Organización' => 85, 'Trabajo en Equipo' => 85, 'Enfoque en Resultados' => 80,
-                'Disposición de Servicio' => 80, 'Comunicación' => 75, 'Análisis de Problemas' => 75,
-                'Resiliencia' => 75, 'Manejo de Conflictos' => 70, 'Liderazgo' => 65,
-                'Toma de Decisiones' => 65, 'Negociación' => 60, 'Pensamiento Estratégico' => 60
+                // Supervisan intendencia, comida, mantenimiento. Tienen a la gente de cuello azul a cargo.
+                // Necesitan Liderazgo firme, estar organizados con los insumos y resolver peleas en piso.
+                'Liderazgo' => 80, 'Organización' => 80, 'Manejo de Conflictos' => 75,
+                'Trabajo en Equipo' => 75, 'Enfoque en Resultados' => 75, 'Comunicación' => 70,
+                'Disposición de Servicio' => 70, 'Resiliencia' => 70, 'Análisis de Problemas' => 65,
+                'Toma de Decisiones' => 65, 'Negociación' => 50, 'Pensamiento Estratégico' => 45
             ],
             'ADMINISTRATIVO' => [
-                'Organización' => 90, 'Disposición de Servicio' => 90, 'Trabajo en Equipo' => 85,
-                'Enfoque en Resultados' => 80, 'Análisis de Problemas' => 75, 'Resiliencia' => 75,
-                'Comunicación' => 70, 'Toma de Decisiones' => 60, 'Manejo de Conflictos' => 60,
-                'Pensamiento Estratégico' => 50, 'Negociación' => 50, 'Liderazgo' => 45
+                // Cajas, comida, auxiliares. Alto volumen de transacciones repetitivas.
+                // Necesitan apegarse a normas (Organización) y atender bien (Disposición de servicio).
+                'Organización' => 75, 'Disposición de Servicio' => 75, 'Trabajo en Equipo' => 70,
+                'Enfoque en Resultados' => 70, 'Resiliencia' => 65, 'Análisis de Problemas' => 60,
+                'Comunicación' => 60, 'Manejo de Conflictos' => 50, 'Toma de Decisiones' => 50,
+                'Liderazgo' => 40, 'Negociación' => 40, 'Pensamiento Estratégico' => 40
             ],
         ];
 
-        // Retorna el ideal del puesto, o un "plano de 70" si el puesto no existe en la matriz
-        return $ideales[$nivel] ?? array_fill_keys(array_keys($ideales['ADMINISTRATIVO']), 70);
+        return $ideales[$nivel] ?? array_fill_keys(array_keys($ideales['ADMINISTRATIVO']), 60);
     }
 }

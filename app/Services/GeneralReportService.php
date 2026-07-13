@@ -136,10 +136,15 @@ class GeneralReportService
         );
 
         // Regla de negocio inquebrantable en PHP
-        if ($ajusteGlobal >= 85) $dictamenPHP = "APTO";
-        elseif ($ajusteGlobal >= 70) $dictamenPHP = "APTO CON PLAN DE DESARROLLO";
-        elseif ($ajusteGlobal >= 60) $dictamenPHP = "RIESGO / EN OBSERVACIÓN";
-        else $dictamenPHP = "NO APTO";
+        if ($ajusteGlobal >= 75) {
+            $dictamenPHP = "ALINEACIÓN ÓPTIMA";
+        } elseif ($ajusteGlobal >= 60) {
+            $dictamenPHP = "POTENCIAL CON PLAN DE DESARROLLO";
+        } elseif ($ajusteGlobal >= 50) {
+            $dictamenPHP = "POTENCIAL LATENTE";
+        } else {
+            $dictamenPHP = "PERFIL NO ALINEADO AL PUESTO";
+        }
 
         // 4b. Obtener perfil ideal Cleaver para el radar chart
         $cleaverIdeal = $deepSeek->getIdealCleaverForChart(

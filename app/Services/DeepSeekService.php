@@ -111,6 +111,10 @@ class DeepSeekService
      * System prompt estático que contiene TODAS las reglas, teoría y formato de salida.
      * Al ser inmutable, el modelo lo procesa con alta consistencia.
      */
+    /**
+     * System prompt estático que contiene TODAS las reglas, teoría y formato de salida.
+     * Al ser inmutable, el modelo lo procesa con alta consistencia.
+     */
     protected function getSystemPrompt(): string
     {
         return <<<PROMPT
@@ -122,34 +126,36 @@ INFORMACIÓN DEL SISTEMA (HECHOS INMUTABLES):
 2. El dictamen final asignado por el sistema es: "{dictamen_php}"
 Tu trabajo NO es calcular el dictamen, sino REDACTAR la justificación clínica congruente con este resultado.
 
-REGLAS GLOBALES Y CALIBRACIÓN CULTURAL:
+REGLAS GLOBALES, CALIBRACIÓN CULTURAL Y DE INDUSTRIA:
 1. Contexto México: La alta distancia jerárquica puede suprimir la Dominancia (D) en Cleaver. La Constancia (S) y Cumplimiento (C) suelen ser altas por evitación de incertidumbre.
-2. PRUEBAS OPCIONALES (MUY IMPORTANTE): Las pruebas Kostick, Moss y Moss Wess son opcionales para niveles Supervisores y Administrativos. Si en el JSON de entrada NO aparecen estas pruebas, ignóralas por completo. Basa tu análisis clínico y brechas estrictamente en las pruebas provistas y en las 'competencias_precalculadas'. NO menciones en el reporte que "faltan pruebas" ni penalices al candidato.
+2. Contexto Operativo (Centrales de Autobuses): El talento evaluado opera en empresas de logística, mantenimiento, atención masiva en piso, taquillas y gerencias de terminal. Aterriza tu lenguaje, ejemplos y planes de desarrollo a esta realidad del sector logístico/servicios.
+3. Tono Constructivo (Growth Mindset): Evita lenguaje punitivo o destructivo. Sustituye palabras como "deficiencia" o "incapacidad" por "área de oportunidad" o "potencial a desarrollar".
+4. PRUEBAS OPCIONALES (MUY IMPORTANTE): Las pruebas Kostick, Moss y Moss Wess son opcionales para niveles Supervisores y Administrativos. Si en el JSON de entrada NO aparecen estas pruebas, ignóralas por completo. Basa tu análisis estrictamente en las pruebas provistas. NO menciones que "faltan pruebas".
 
 FORMATO DE SALIDA OBLIGATORIO (sin markdown, solo JSON puro):
 {
     "pasos_de_razonamiento": {
-        "1_analisis_de_competencias_criticas": "Análisis de las brechas en las competencias con mayor peso global.",
-        "2_justificacion_del_dictamen": "Explicación de por qué el perfil coincide con el dictamen de {dictamen_php}.",
-        "3_identificacion_entorno_optimo": "Evaluación independiente: Análisis de en qué área, dinámica o tipo de rol el candidato sería excepcional basándose puramente en sus fortalezas y picos más altos."
+        "1_analisis_de_competencias_criticas": "Análisis de las áreas fuertes y de oportunidad en las competencias con mayor peso.",
+        "2_justificacion_del_dictamen": "Explicación de por qué el perfil coincide con el dictamen de '{dictamen_php}'.",
+        "3_identificacion_entorno_optimo": "Evaluación independiente: Análisis de en qué área, dinámica o tipo de rol el candidato sería excepcional."
     },
     "reporte": {
         "resultado_global": {
             "nivel_ajuste": "Alto | Medio | Bajo | Insuficiente"
         },
-        "resumen_ejecutivo": "string (máx 100 palabras. IMPORTANTE: Céntrate principalmente en el estilo de trabajo natural y las fortalezas del candidato. OMITE mencionar explícitamente si es APTO o NO APTO, ya que el sistema lo muestra visualmente en otra sección.)",
-        "fortaleza_principal": "string (1 frase, ej: Alta capacidad organizacional y enfoque)",
-        "brecha_principal": "string (1 frase, ej: Disposición de servicio requiere desarrollo)",
-        "entorno_optimo_sugerido": "string (máx 50 palabras indicando explícitamente en qué dinámicas, áreas o tipos de roles brillaría y aportaría más valor a la empresa, ej: 'Es ideal para roles de Desarrollo de Negocios en frontera de la empresa, o áreas de innovación sin microgestión...')",
+        "resumen_ejecutivo": "string (máx 120 palabras. IMPORTANTE: Céntrate principalmente en el estilo de trabajo natural y las fortalezas del candidato. OMITE mencionar explícitamente si es APTO o NO APTO, el sistema ya lo hace.)",
+        "fortaleza_principal": "string (1 frase, ej: Alta capacidad de organización de turnos y apego a protocolos de seguridad)",
+        "brecha_principal": "string (1 frase propositiva, ej: Requiere desarrollar mayor asertividad en la resolución de conflictos en piso)",
+        "entorno_optimo_sugerido": "string (máx 50 palabras indicando en qué áreas de la central, corporativo o logística aportaría más valor, ej: 'Es ideal para roles de control de calidad o back-office administrativo donde predomine el orden sobre la atención al público...')",
         "plan_desarrollo": [
             {
                 "prioridad": "critical|important|normal",
-                "titulo": "string (ej: Disposición de Servicio — Nivel Débil)",
-                "descripcion": "string (Acción recomendada, max 2 oraciones)",
+                "titulo": "string (ej: Comunicación Asertiva — Nivel Latente)",
+                "descripcion": "string (Acción recomendada táctica y aplicable, max 2 oraciones)",
                 "periodo": "0 - 30 días | 30 - 60 días | 60 - 90 días"
             }
         ],
-        "notas_adicionales": "string (solo si hay alertas clínicas)"
+        "notas_adicionales": "string (solo si hay alertas operativas importantes)"
     }
 }
 PROMPT;
@@ -185,6 +191,10 @@ PROMPT;
     /**
      * Mapea las directrices del manual SEDYCO v1.1 a arrays estructurados según el nivel jerárquico.
      */
+    /**
+     * Mapea las directrices del manual SEDYCO v1.1 a arrays estructurados según el nivel jerárquico.
+     * CALIBRADO PARA SECTOR LOGÍSTICO / CENTRALES DE AUTOBUSES
+     */
     private function getSedycoProfile(string $nivel): array
     {
         // Normalizamos espacios y guiones bajos para asegurar el match
@@ -193,63 +203,59 @@ PROMPT;
         return match ($nivelNormalizado) {
             'DIRECTIVO' => [
                 'perfil' => 'Directivo',
-                'Terman' => 'CI 115-130+ (Corte: 110 con compensación)',
-                'Cleaver' => ['D' => '70-85%', 'I' => '50-65%', 'S' => '25-40%', 'C' => '45-60%'],
-                'Kostick' => ['G' => '5-7', 'L' => '6-8', 'A' => '6-8', 'P' => '4-6', 'N' => '4-6', 'T' => '5-7'],
-                'Moss' => ['Supervision' => '75-90%', 'Decision' => '70-85%', 'Evaluacion' => '75-90%', 'Relaciones' => '65-80%', 'Sentido_Comun' => '70-85%'],
-                // Evaluamos las Dimensiones principales y la innovación
-                'Moss_Wess' => ['Relaciones' => 'Promedio/Buena', 'Auto-realización' => 'Promedio/Buena', 'INNOVACION' => 'Promedio/Buena']
+                'Terman' => 'CI 105-125 (Fuerte en Juicio, Planeación y Negociación)',
+                'Cleaver' => ['D' => '65-80%', 'I' => '60-75%', 'S' => '30-45%', 'C' => '50-65%'],
+                'Kostick' => ['G' => '5-7', 'L' => '6-8', 'A' => '6-8', 'P' => '5-7 (Control equilibrado)', 'T' => '5-7 (Manejo de crisis)'],
+                'Moss' => ['Supervision' => '70-85%', 'Decision' => '75-90%', 'Evaluacion' => '70-85%', 'Relaciones' => '70-85%', 'Sentido_Comun' => '75-90%']
             ],
             'MANDO_MEDIO' => [
                 'perfil' => 'Mando Medio',
-                'Terman' => 'CI 105-120 (Corte: 100)',
-                'Cleaver' => ['D' => '50-65%', 'I' => '55-70%', 'S' => '45-60%', 'C' => '50-65%'],
-                'Kostick' => ['G' => '4-6', 'L' => '5-7', 'N' => '5-7', 'A' => '5-7', 'S' => '5-7', 'C' => '4-6'],
-                'Moss' => ['Supervision' => '65-80%', 'Decision' => '60-75%', 'Evaluacion' => '65-80%', 'Relaciones' => '65-80%', 'Sentido_Comun' => '65-75%'],
-                // Mapeado a la dimensión "Relaciones" y a la subescala "APOYO"
-                'Moss_Wess' => ['APOYO' => 'Promedio/Buena (CRÍTICO)', 'Relaciones' => 'Promedio/Buena']
+                'Terman' => 'CI 95-115 (Fuerte en Organización y Análisis operativo)',
+                'Cleaver' => ['D' => '55-70%', 'I' => '50-65%', 'S' => '45-60%', 'C' => '60-75%'],
+                'Kostick' => ['G' => '5-7', 'L' => '5-7', 'N' => '6-8', 'A' => '5-7', 'S' => '5-7', 'C' => '5-7'],
+                'Moss' => ['Supervision' => '65-80%', 'Decision' => '60-75%', 'Evaluacion' => '65-80%', 'Relaciones' => '65-80%', 'Sentido_Comun' => '70-85%']
             ],
             'SUPERVISOR' => [
                 'perfil' => 'Supervisor',
-                'Terman' => 'CI 95-110 (Corte: 90)',
-                'Cleaver' => ['D' => '30-45%', 'I' => '40-55%', 'S' => '65-80%', 'C' => '65-80%'],
-                'Kostick' => ['L' => '4-6', 'C' => '5-7', 'S' => '5-7', 'E' => '4-6', 'N' => '4-6'],
-                'Moss' => ['Supervision' => '50-70%', 'Decision' => '50-65%', 'Evaluacion' => '50-70%', 'Relaciones' => '60-80%', 'Sentido_Comun' => '60-75%'],
-                // Mapeado directo a las subescalas del JSON
-                'Moss_Wess' => ['COHESION' => 'Promedio/Buena', 'CONTROL' => 'Promedio']
+                'Terman' => 'CI 90-105 (Funcional, pragmático)',
+                'Cleaver' => ['D' => '50-65% (Firmeza)', 'I' => '45-60%', 'S' => '60-75%', 'C' => '70-85% (Apego a seguridad)'],
+                'Kostick' => 'Opcional (Si aplica: Liderazgo firme y Necesidad de completar tareas altas)',
+                'Moss' => 'Opcional (Si aplica: Habilidad de supervisión directa)'
             ],
             'ADMINISTRATIVO' => [
                 'perfil' => 'Administrativo',
-                'Terman' => 'CI 90-105 (Corte: 88)',
-                'Cleaver' => ['D' => '15-30%', 'I' => '20-35%', 'S' => '70-90%', 'C' => '75-95%'],
-                'Kostick' => ['C' => '6-8', 'W' => '6-8', 'S' => '4-6', 'A' => '3-5', 'P' => '2-4 (Bajo control sobre otros)'],
-                'Moss' => ['Supervision' => 'No Crítico (30-50%)', 'Decision' => '40-60%', 'Evaluacion' => '40-60%', 'Relaciones' => '50-70%', 'Sentido_Comun' => '60-80%'],
-                // Mapeado directo a las subescalas del JSON
-                'Moss_Wess' => ['ORGANIZACIÓN' => 'Promedio/Buena', 'CLARIDAD' => 'Promedio/Buena']
+                'Terman' => 'CI 85-105 (Fuerte en Atención y Concentración para tareas repetitivas)',
+                'Cleaver' => ['D' => '20-35% (Baja agresividad)', 'I' => '30-45%', 'S' => '70-85% (Paciencia)', 'C' => '75-90% (Apego estricto a manuales y cortes)']
+                // Nota: Kostick y Moss eliminados intencionalmente para evitar alucinaciones de la IA.
             ],
             default => [
-                'nota' => 'No se encontró un perfil estratificado específico para este puesto en el manual SEDYCO. Evaluar competencias generales.'
+                'nota' => 'No se encontró un perfil estratificado específico. Evaluar competencias operativas generales.'
             ]
         };
     }
+
     /**
-     * Devuelve los valores ideales de Cleaver (DISC) como puntos medios de los rangos SEDYCO (0-100).
-     * Usado para renderizar el dataset "Ideal SEDYCO" en la gráfica de radar del reporte.
-     *
-     * Midpoints: Directivo D=(70+85)/2=78, Mando Medio D=(50+65)/2=58, etc.
+     * Devuelve los valores ideales de Cleaver (DISC) como puntos medios.
+     * CALIBRADO PARA SECTOR LOGÍSTICO / CENTRALES DE AUTOBUSES
      */
     public function getIdealCleaverForChart(string $nivel): array
     {
         $nivel = strtoupper(trim($nivel));
 
         $ideales = [
-            'DIRECTIVO'      => ['D' => 78, 'I' => 58, 'S' => 33, 'C' => 53],
-            'MANDO MEDIO'    => ['D' => 58, 'I' => 63, 'S' => 53, 'C' => 58],
-            'SUPERVISOR'     => ['D' => 38, 'I' => 48, 'S' => 73, 'C' => 73],
-            'ADMINISTRATIVO' => ['D' => 23, 'I' => 28, 'S' => 80, 'C' => 85],
+            // D alto para manejar crisis, I alto para negociar con líneas de buses.
+            'DIRECTIVO'      => ['D' => 75, 'I' => 65, 'S' => 38, 'C' => 58],
+
+            // Equilibrio: Resuelven problemas (D) pero mantienen el orden operativo (C).
+            'MANDO MEDIO'    => ['D' => 63, 'I' => 58, 'S' => 53, 'C' => 68],
+
+            // Subimos la D a 58. Necesitan autoridad en piso para controlar personal de limpieza/mantenimiento.
+            'SUPERVISOR'     => ['D' => 58, 'I' => 53, 'S' => 68, 'C' => 78],
+
+            // Paciencia (S) y Apego a reglas (C) altísimos para cajas y servicio al cliente repetitivo.
+            'ADMINISTRATIVO' => ['D' => 28, 'I' => 38, 'S' => 78, 'C' => 83],
         ];
 
         return $ideales[$nivel] ?? ['D' => 50, 'I' => 50, 'S' => 50, 'C' => 50];
     }
-
 }

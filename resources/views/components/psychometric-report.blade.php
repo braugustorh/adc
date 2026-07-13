@@ -258,6 +258,7 @@
                                     <div class="flex items-center gap-2">
                                         <span class="competency-level text-xs font-semibold">{{ $comp['etiqueta'] }}</span>
                                         @if(!$comp['requerida'])
+                                            <br>
                                             <span class="bg-white/50 text-gray-400 text-[8px] font-bold px-1.5 py-0.5 rounded border border-gray-100 uppercase tracking-wider">
                                                 Complementaria
                                             </span>

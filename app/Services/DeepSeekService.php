@@ -128,34 +128,37 @@ Tu trabajo NO es calcular el dictamen, sino REDACTAR la justificación clínica 
 
 REGLAS GLOBALES, CALIBRACIÓN CULTURAL Y DE INDUSTRIA:
 1. Contexto México: La alta distancia jerárquica puede suprimir la Dominancia (D) en Cleaver. La Constancia (S) y Cumplimiento (C) suelen ser altas por evitación de incertidumbre.
-2. Contexto Operativo (Centrales de Autobuses): El talento evaluado opera en empresas de logística, mantenimiento, atención masiva en piso, taquillas y gerencias de terminal. Aterriza tu lenguaje, ejemplos y planes de desarrollo a esta realidad del sector logístico/servicios.
-3. Tono Constructivo (Growth Mindset): Evita lenguaje punitivo o destructivo. Sustituye palabras como "deficiencia" o "incapacidad" por "área de oportunidad" o "potencial a desarrollar".
-4. PRUEBAS OPCIONALES (MUY IMPORTANTE): Las pruebas Kostick, Moss y Moss Wess son opcionales para niveles Supervisores y Administrativos. Si en el JSON de entrada NO aparecen estas pruebas, ignóralas por completo. Basa tu análisis estrictamente en las pruebas provistas. NO menciones que "faltan pruebas".
+2. Contexto Operativo (Centrales de Autobuses): El talento evaluado opera en empresas de logística, mantenimiento, atención masiva en piso, taquillas y gerencias de terminal. Aterriza tu lenguaje y planes de desarrollo a esta realidad.
+3. Tono Constructivo (Growth Mindset): Evita lenguaje punitivo o destructivo.
+4. REGLA ESTRICTA DE PLAN DE DESARROLLO: ÚNICAMENTE debes generar elementos en el "plan_desarrollo" para las competencias que cumplan estas DOS condiciones juntas en el JSON de entrada:
+   a) Que "requerida" sea true.
+   b) Que su "nivel" o "etiqueta" indique oportunidad ("Por Desarrollar", "Funcional", "En Desarrollo", "Latente", "weak", "moderate").
+   ESTÁ ESTRICTAMENTE PROHIBIDO inventar competencias o sugerir planes para competencias "Consolidadas", "Fuertes" o "Complementarias". Si el candidato es perfecto y no tiene brechas, devuelve un arreglo vacío [].
 
 FORMATO DE SALIDA OBLIGATORIO (sin markdown, solo JSON puro):
 {
     "pasos_de_razonamiento": {
-        "1_analisis_de_competencias_criticas": "Análisis de las áreas fuertes y de oportunidad en las competencias con mayor peso.",
+        "1_analisis_de_competencias_criticas": "Análisis de las áreas fuertes y de oportunidad en las competencias requeridas.",
         "2_justificacion_del_dictamen": "Explicación de por qué el perfil coincide con el dictamen de '{dictamen_php}'.",
-        "3_identificacion_entorno_optimo": "Evaluación independiente: Análisis de en qué área, dinámica o tipo de rol el candidato sería excepcional."
+        "3_identificacion_entorno_optimo": "Evaluación independiente de en qué dinámica operativa brillaría el candidato."
     },
     "reporte": {
         "resultado_global": {
             "nivel_ajuste": "Alto | Medio | Bajo | Insuficiente"
         },
-        "resumen_ejecutivo": "string (máx 120 palabras. IMPORTANTE: Céntrate principalmente en el estilo de trabajo natural y las fortalezas del candidato. OMITE mencionar explícitamente si es APTO o NO APTO, el sistema ya lo hace.)",
-        "fortaleza_principal": "string (1 frase, ej: Alta capacidad de organización de turnos y apego a protocolos de seguridad)",
-        "brecha_principal": "string (1 frase propositiva, ej: Requiere desarrollar mayor asertividad en la resolución de conflictos en piso)",
-        "entorno_optimo_sugerido": "string (máx 50 palabras indicando en qué áreas de la central, corporativo o logística aportaría más valor, ej: 'Es ideal para roles de control de calidad o back-office administrativo donde predomine el orden sobre la atención al público...')",
+        "resumen_ejecutivo": "string (máx 120 palabras. Céntrate en fortalezas operativas. OMITE dictámenes finales.)",
+        "fortaleza_principal": "string (1 frase enfocada a la operación)",
+        "brecha_principal": "string (1 frase propositiva sobre la principal competencia requerida baja)",
+        "entorno_optimo_sugerido": "string (máx 50 palabras indicando áreas ideales en la central o corporativo)",
         "plan_desarrollo": [
             {
                 "prioridad": "critical|important|normal",
-                "titulo": "string (ej: Comunicación Asertiva — Nivel Latente)",
+                "titulo": "string (Usa el nombre exacto y etiqueta de la competencia real del JSON, ej: 'Organización — En Desarrollo')",
                 "descripcion": "string (Acción recomendada táctica y aplicable, max 2 oraciones)",
                 "periodo": "0 - 30 días | 30 - 60 días | 60 - 90 días"
             }
         ],
-        "notas_adicionales": "string (solo si hay alertas operativas importantes)"
+        "notas_adicionales": "string (solo si hay alertas operativas)"
     }
 }
 PROMPT;

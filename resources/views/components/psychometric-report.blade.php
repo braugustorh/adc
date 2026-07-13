@@ -250,23 +250,34 @@
             <div class="card-body">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch">
                     @foreach($competencias as $comp)
-                        <div class="competency-card status-{{ $comp['nivel'] }}">
-                            <div class="flex items-center gap-3">
-                                <div class="competency-icon">{{ $comp['icono'] }}</div>
-                                <div class="flex flex-col">
-                                    <span class="text-sm font-bold text-gray-900 leading-tight mb-1">{{ $comp['nombre'] }}</span>
-                                    <div class="flex items-center gap-2">
-                                        <span class="competency-level text-xs font-semibold">{{ $comp['etiqueta'] }}</span>
+                        <!-- 1. Agregamos flex items-center justify-between al contenedor principal -->
+                        <div class="competency-card status-{{ $comp['nivel'] }} flex items-center justify-between">
+
+                            <!-- 2. Agregamos flex-1 y min-w-0 para evitar que empuje al círculo -->
+                            <div class="flex items-center gap-3 flex-1 min-w-0">
+                                <div class="competency-icon shrink-0">{{ $comp['icono'] }}</div>
+
+                                <!-- 3. Agregamos flex-1 y min-w-0 al bloque de texto -->
+                                <div class="flex flex-col flex-1 min-w-0">
+                                    <!-- 4. Agregamos truncate por si el nombre de la competencia es muy largo -->
+                                    <span class="text-sm font-bold text-gray-900 leading-tight mb-1 truncate">{{ $comp['nombre'] }}</span>
+
+                                    <!-- 5. Cambiamos a flex-wrap y gap-1.5 -->
+                                    <div class="flex items-center flex-wrap gap-1.5">
+                                        <span class="competency-level text-xs font-semibold whitespace-nowrap">{{ $comp['etiqueta'] }}</span>
+
                                         @if(!$comp['requerida'])
-                                            <br>
-                                            <span class="bg-white/50 text-gray-400 text-[8px] font-bold px-1.5 py-0.5 rounded border border-gray-100 uppercase tracking-wider">
-                                                Complementaria
-                                            </span>
+                                            <!-- 6. ELIMINADO EL <br> -->
+                                            <span class="bg-white/50 text-gray-400 text-[8px] font-bold px-1.5 py-0.5 rounded border border-gray-100 uppercase tracking-wider whitespace-nowrap">
+                            Complementaria
+                        </span>
                                         @endif
                                     </div>
                                 </div>
                             </div>
-                            <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style="background-color: var(--{{ $comp['nivel'] === 'strong' ? 'green' : ($comp['nivel'] === 'moderate' ? 'yellow' : 'red') }}); color: white;">
+
+                            <!-- 7. Agregamos ml-2 para asegurar una separación mínima del texto -->
+                            <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 ml-2" style="background-color: var(--{{ $comp['nivel'] === 'strong' ? 'green' : ($comp['nivel'] === 'moderate' ? 'yellow' : 'red') }}); color: white;">
                                 @if($comp['nivel'] === 'strong') <svg viewBox="0 0 24 24" width="14" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 @elseif($comp['nivel'] === 'moderate') <svg viewBox="0 0 24 24" width="14" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                 @else <svg viewBox="0 0 24 24" width="14" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>

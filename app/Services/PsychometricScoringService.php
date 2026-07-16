@@ -1216,7 +1216,7 @@ class PsychometricScoringService
         // ─── PASO 5: CLASIFICACIÓN CAPACIDAD DE APRENDIZAJE ──────────────────
         $clasificacionCapacidad = 'Sin clasificación';
         foreach ($rangos_capacidad as $rango) {
-            if ($puntajeBruto >= $rango['min'] && $puntajeBruto <= $rango['max']) {
+            if ($ciScore >= $rango['min'] && $ciScore <= $rango['max']) {
                 $clasificacionCapacidad = $rango['clasificacion'];
                 break;
             }

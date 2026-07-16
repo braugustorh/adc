@@ -45,8 +45,15 @@ class DeepSeekService
                     ->addParameter('response_format', ['type' => 'json_object']);
                 // top_p no es necesario con temperature=0, se omite.
             }
+            \Illuminate\Support\Facades\Log::info('[DEEPSEEK-PAYLOAD]', [
+                'candidateData' => $candidateData,
+                'testResults'   => $testResults,
+                'competencias'  => $competencias,
+                'prompt'        => $prompt,
+            ]);
             file_put_contents(
                 storage_path('logs/deepseek_payload_debug.json'),
+
                 json_encode([
                     'candidateData' => $candidateData,
                     'testResults'   => $testResults,
@@ -128,7 +135,7 @@ Tu trabajo NO es calcular el dictamen, sino REDACTAR la justificación clínica 
 
 REGLAS GLOBALES, CALIBRACIÓN CULTURAL Y DE INDUSTRIA:
 1. Contexto México: La alta distancia jerárquica puede suprimir la Dominancia (D) en Cleaver. La Constancia (S) y Cumplimiento (C) suelen ser altas por evitación de incertidumbre.
-2. Contexto Operativo (Centrales de Autobuses): El talento evaluado opera en empresas de logística, mantenimiento, atención masiva en piso, taquillas y gerencias de terminal. Aterriza tu lenguaje y planes de desarrollo a esta realidad.
+2. Contexto Operativo (Centrales de Autobuses): El talento evaluado opera en empresas de logística, mantenimiento, atención masiva en piso y gerencias de terminal. Aterriza tu lenguaje y planes de desarrollo a esta realidad.
 3. Tono Constructivo (Growth Mindset): Evita lenguaje punitivo o destructivo.
 4. REGLA ESTRICTA DE PLAN DE DESARROLLO: ÚNICAMENTE debes generar elementos en el "plan_desarrollo" para las competencias que cumplan estas DOS condiciones juntas en el JSON de entrada:
    a) Que "requerida" sea true.

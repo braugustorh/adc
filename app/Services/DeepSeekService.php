@@ -212,34 +212,38 @@ PROMPT;
 
         return match ($nivelNormalizado) {
             'DIRECTIVO' => [
-                'perfil' => 'Directivo',
+                'perfil' => 'Directivo (Dirección General / Área / Subdirección)',
                 'Terman' => 'CI 105-125 (Fuerte en Juicio, Planeación y Negociación)',
                 'Cleaver' => ['D' => '65-80%', 'I' => '60-75%', 'S' => '30-45%', 'C' => '50-65%'],
-                'Kostick' => ['G' => '5-7', 'L' => '6-8', 'A' => '6-8', 'P' => '5-7 (Control equilibrado)', 'T' => '5-7 (Manejo de crisis)'],
+                'Kostick' => ['G' => '5-7', 'L' => '6-8', 'A' => '6-8', 'P' => '5-7', 'T' => '5-7'],
                 'Moss' => ['Supervision' => '70-85%', 'Decision' => '75-90%', 'Evaluacion' => '70-85%', 'Relaciones' => '70-85%', 'Sentido_Comun' => '75-90%']
             ],
+            'GERENCIA' => [
+                'perfil' => 'Gerencia Corporativa / Coordinación Senior',
+                'Terman' => 'CI 100-120 (Equilibrio analítico y ejecución táctica)',
+                'Cleaver' => ['D' => '60-75%', 'I' => '55-70%', 'S' => '40-55%', 'C' => '55-70%'],
+                'Kostick' => ['G' => '5-7', 'L' => '5-7', 'A' => '6-8', 'P' => '4-6', 'T' => '5-7'],
+                'Moss' => ['Supervision' => '65-80%', 'Decision' => '70-85%', 'Evaluacion' => '65-80%', 'Relaciones' => '65-80%', 'Sentido_Comun' => '70-85%']
+            ],
             'MANDO_MEDIO' => [
-                'perfil' => 'Mando Medio',
+                'perfil' => 'Mando Medio (Gerencias B, Jefaturas)',
                 'Terman' => 'CI 95-115 (Fuerte en Organización y Análisis operativo)',
                 'Cleaver' => ['D' => '55-70%', 'I' => '50-65%', 'S' => '45-60%', 'C' => '60-75%'],
                 'Kostick' => ['G' => '5-7', 'L' => '5-7', 'N' => '6-8', 'A' => '5-7', 'S' => '5-7', 'C' => '5-7'],
                 'Moss' => ['Supervision' => '65-80%', 'Decision' => '60-75%', 'Evaluacion' => '65-80%', 'Relaciones' => '65-80%', 'Sentido_Comun' => '70-85%']
             ],
             'SUPERVISOR' => [
-                'perfil' => 'Supervisor',
+                'perfil' => 'Supervisor de Piso / Analista Senior',
                 'Terman' => 'CI 90-105 (Funcional, pragmático)',
-                'Cleaver' => ['D' => '50-65% (Firmeza)', 'I' => '45-60%', 'S' => '60-75%', 'C' => '70-85% (Apego a seguridad)'],
-                'Kostick' => 'Opcional (Si aplica: Liderazgo firme y Necesidad de completar tareas altas)',
-                'Moss' => 'Opcional (Si aplica: Habilidad de supervisión directa)'
+                'Cleaver' => ['D' => '50-65%', 'I' => '45-60%', 'S' => '60-75%', 'C' => '70-85%'],
             ],
             'ADMINISTRATIVO' => [
-                'perfil' => 'Administrativo',
-                'Terman' => 'CI 85-105 (Fuerte en Atención y Concentración para tareas repetitivas)',
-                'Cleaver' => ['D' => '20-35% (Baja agresividad)', 'I' => '30-45%', 'S' => '70-85% (Paciencia)', 'C' => '75-90% (Apego estricto a manuales y cortes)']
-                // Nota: Kostick y Moss eliminados intencionalmente para evitar alucinaciones de la IA.
+                'perfil' => 'Administrativo / Auxiliar / Operativo',
+                'Terman' => 'CI 85-105 (Fuerte en Atención y Concentración)',
+                'Cleaver' => ['D' => '20-35%', 'I' => '30-45%', 'S' => '70-85%', 'C' => '75-90%']
             ],
             default => [
-                'nota' => 'No se encontró un perfil estratificado específico. Evaluar competencias operativas generales.'
+                'nota' => 'No se encontró un perfil específico. Evaluar competencias operativas generales.'
             ]
         };
     }
@@ -253,16 +257,10 @@ PROMPT;
         $nivel = strtoupper(trim($nivel));
 
         $ideales = [
-            // D alto para manejar crisis, I alto para negociar con líneas de buses.
             'DIRECTIVO'      => ['D' => 75, 'I' => 65, 'S' => 38, 'C' => 58],
-
-            // Equilibrio: Resuelven problemas (D) pero mantienen el orden operativo (C).
+            'GERENCIA'       => ['D' => 68, 'I' => 62, 'S' => 48, 'C' => 62],
             'MANDO MEDIO'    => ['D' => 63, 'I' => 58, 'S' => 53, 'C' => 68],
-
-            // Subimos la D a 58. Necesitan autoridad en piso para controlar personal de limpieza/mantenimiento.
             'SUPERVISOR'     => ['D' => 58, 'I' => 53, 'S' => 68, 'C' => 78],
-
-            // Paciencia (S) y Apego a reglas (C) altísimos para cajas y servicio al cliente repetitivo.
             'ADMINISTRATIVO' => ['D' => 28, 'I' => 38, 'S' => 78, 'C' => 83],
         ];
 

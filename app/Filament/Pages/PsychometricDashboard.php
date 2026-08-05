@@ -39,6 +39,7 @@ class PsychometricDashboard extends Page implements HasTable
     // "op" = opcional → se pre-carga para que RH pueda desmarcar si no aplica
     const PUESTO_EVALUACIONES = [
         'Directivo'      => [13, 11, 12, 10, 9], // Terman + Cleaver + Kostick + Moss + MossWess
+        'Gerencia'       => [13, 11, 12, 10, 9], // Terman + Cleaver + Kostick + Moss + MossWess
         'Mando Medio'    => [13, 11, 12, 10, 9], // Terman + Cleaver + Kostick + Moss + MossWess
         'Supervisor'     => [13, 11],    // Terman + Cleaver + Kostick(op) + Moss(op)
         'Administrativo' => [13, 11],            // Terman + Cleaver
@@ -52,6 +53,7 @@ class PsychometricDashboard extends Page implements HasTable
      */
     const PUESTO_OBLIGATORIAS = [
         'Directivo'      => [13, 11, 12, 10, 9], // Terman + Cleaver + Kostick + Moss + MossWess
+        'Gerencia'       => [13, 11, 12, 10, 9], // Terman + Cleaver + Kostick + Moss + MossWess
         'Mando Medio'    => [13, 11, 12, 10, 9], // Terman + Cleaver + Kostick + Moss + MossWess
         'Supervisor'     => [13, 11],            // Terman + Cleaver (Kostick/Moss son opcionales)
         'Administrativo' => [13, 11],            // Terman + Cleaver
@@ -124,7 +126,8 @@ class PsychometricDashboard extends Page implements HasTable
                     ->badge()
                     ->color(fn (?string $state): string => match ($state) {
                         'Directivo'      => 'danger',
-                        'Mando Medio'    => 'warning',
+                        'Gerencia'       => 'warning',
+                        'Mando Medio'    => 'primary',
                         'Supervisor'     => 'info',
                         'Administrativo' => 'success',
                         default          => 'gray',
@@ -228,10 +231,11 @@ class PsychometricDashboard extends Page implements HasTable
                     Forms\Components\Select::make('puesto')
                         ->label('Puesto / Nivel')
                         ->options([
-                            'Directivo'      => 'Directivo',
-                            'Mando Medio'    => 'Mando Medio (Gerencia / Jefatura)',
-                            'Supervisor'     => 'Supervisor',
-                            'Administrativo' => 'Administrativo',
+                            'Directivo'      => 'Directivo (Dirección General / Área / Subdirección)',
+                            'Gerencia'       => 'Gerencia (Corporativa / Coordinador Senior)',
+                            'Mando Medio'    => 'Mando Medio (Gerencia B / Jefatura)',
+                            'Supervisor'     => 'Supervisor / Analista Senior',
+                            'Administrativo' => 'Administrativo / Auxiliar / Operativo',
                         ])
                         ->required()
                         ->live()
@@ -307,10 +311,11 @@ class PsychometricDashboard extends Page implements HasTable
                     Forms\Components\Select::make('puesto')
                         ->label('Puesto / Nivel')
                         ->options([
-                            'Directivo'      => 'Directivo',
-                            'Mando Medio'    => 'Mando Medio (Gerencia / Jefatura)',
-                            'Supervisor'     => 'Supervisor',
-                            'Administrativo' => 'Administrativo',
+                            'Directivo'      => 'Directivo (Dirección General / Área / Subdirección)',
+                            'Gerencia'       => 'Gerencia (Corporativa / Coordinador Senior)',
+                            'Mando Medio'    => 'Mando Medio (Gerencia B / Jefatura)',
+                            'Supervisor'     => 'Supervisor / Analista Senior',
+                            'Administrativo' => 'Administrativo / Auxiliar / Operativo',
                         ])
                         ->required()
                         ->live()
@@ -540,6 +545,7 @@ class PsychometricDashboard extends Page implements HasTable
                         'ai_report' => $analisisIa,
                         'ai_error'           => $output['ai_error'] ?? null,
                         'ajuste_global'      => $output['ajuste_global'] ?? 0,
+                        'ajuste_relativo'    => $output['ajuste_relativo'] ?? 0,
                         'dictamen_calculado' => $output['dictamen_calculado'] ?? 'Pendiente'
                     ];
 

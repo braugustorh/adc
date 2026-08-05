@@ -123,28 +123,19 @@ class GeneralReportService
 
         // 4. Calcular competencias
         $competencyService = app(CompetencyScoringService::class);
-        $competencias = $competencyService->calculate(
-            $consolidated['puesto'] ?? 'General',
-            $testResults
-        );
+        $puestoNombre = $consolidated['puesto'] ?? 'General';
 
-        // >>> NUEVO: Calcular el % de ajuste estricto en PHP <<<
+        $competencias = $competencyService->calculate($puestoNombre, $testResults);
+
+        // Ajuste estricto + Ajuste relativo
         $ajusteGlobal = $competencyService->calcularAjusteGlobal($competencias);
-        // Obtener el perfil Ideal para la gráfica
-        $competenciasIdeal = $competencyService->getIdealCompetenciesProfile(
-            $consolidated['puesto'] ?? 'General'
-        );
+        $ajusteRelativo = $competencyService->calcularAjusteRelativo($competencias, $puestoNombre);
 
-        // Regla de negocio inquebrantable en PHP
-        if ($ajusteGlobal >= 75) {
-            $dictamenPHP = "ALINEACIÓN ÓPTIMA";
-        } elseif ($ajusteGlobal >= 60) {
-            $dictamenPHP = "POTENCIAL CON PLAN DE DESARROLLO";
-        } elseif ($ajusteGlobal >= 50) {
-            $dictamenPHP = "POTENCIAL LATENTE";
-        } else {
-            $dictamenPHP = "PERFIL NO ALINEADO AL PUESTO";
-        }
+        // Obtener dictamen dinámico según nivel jerárquico
+        $dictamenPHP = $competencyService->obtenerDictamen($ajusteGlobal, $puestoNombre);
+
+        // Obtener el perfil Ideal para la gráfica
+        $competenciasIdeal = $competencyService->getIdealCompetenciesProfile($puestoNombre);
 
         // 4b. Obtener perfil ideal Cleaver para el radar chart
         $cleaverIdeal = $deepSeek->getIdealCleaverForChart(
@@ -181,6 +172,7 @@ class GeneralReportService
             'ai_report'    => $aiResponse,
             'ai_error'     => $aiError,
             'ajuste_global'=> $ajusteGlobal,      // <-- AQUI PASAMOS EL 48.91%
+            'ajuste_relativo' => $ajusteRelativo,
             'dictamen_calculado' => $dictamenPHP, // <-- AQUI PASAMOS EL "NO APTO"
             'competencias_ideal' => $competenciasIdeal,
             'ai_raw'       => is_string($aiResponse) ? $aiResponse : json_encode($aiResponse, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),

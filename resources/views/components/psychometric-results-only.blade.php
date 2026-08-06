@@ -1,4 +1,8 @@
-@props(['psychometricResults', 'candidateData', 'competencias', 'meta', 'reportKey', 'ajusteGlobalPhp', 'dictamenPhp'])
+@props(['psychometricResults', 'candidateData', 'competencias', 'meta', 'reportKey', 'ajusteGlobalPhp', 'ajusteRelativoPhp' => null, 'dictamenPhp', 'isPdfExport' => false])
+@php
+    // El Ajuste Relativo (Cobertura del Perfil Ideal) es la métrica protagonista.
+    $porcentajeAjuste = $ajusteRelativoPhp ?? $ajusteGlobalPhp;
+@endphp
 
 <div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
     <header class="no-print sticky top-0 z-50 backdrop-blur-xl bg-white/5 border-b border-white/10">
@@ -47,18 +51,22 @@
                 <p class="text-yellow-200/80">Este reporte incluye únicamente los resultados nativos de las pruebas psicométricas y las competencias calculadas algorítmicamente del modelo SEDYCO, debido a que no se pudo generar el análisis avanzado basado en Inteligencia Artificial.</p>
             </div>
         </div>
-        <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 mb-8 flex justify-between items-center">
+        <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 mb-8 flex justify-between items-center flex-wrap gap-6">
             <div>
-                <h3 class="text-xl font-bold text-white mb-1">Ajuste Global al Puesto</h3>
+                <h3 class="text-xl font-bold text-white mb-1">Ajuste al Puesto <span class="text-sm font-normal text-blue-200">(Cobertura del Perfil Ideal)</span></h3>
                 <p class="text-blue-200 text-sm">Calculado analíticamente por el sistema SEDYCO</p>
+                <div class="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+                    <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wide">🛡️ Ajuste Global (seguridad)</span>
+                    <span class="text-sm font-bold text-slate-100">{{ $ajusteGlobalPhp }}%</span>
+                </div>
             </div>
             <div class="flex items-center gap-6">
                 <div class="text-right">
-                    <div class="text-4xl font-black text-white">{{ $ajusteGlobalPhp }}%</div>
+                    <div class="text-4xl font-black text-white">{{ $porcentajeAjuste }}%</div>
                 </div>
                 <div class="px-6 py-3 rounded-xl border border-white/30 font-bold tracking-wide shadow-lg
-            @if(str_contains(strtolower($dictamenPhp), 'no apto')) bg-rose-500/90 text-white
-            @elseif(str_contains(strtolower($dictamenPhp), 'plan')) bg-amber-500/90 text-white
+            @if(str_contains(strtolower($dictamenPhp), 'no apto') || str_contains(strtolower($dictamenPhp), 'no alineado')) bg-rose-500/90 text-white
+            @elseif(str_contains(strtolower($dictamenPhp), 'plan') || str_contains(strtolower($dictamenPhp), 'latente')) bg-amber-500/90 text-white
             @else bg-teal-500/90 text-white @endif">
                     {{ strtoupper($dictamenPhp) }}
                 </div>
@@ -115,4 +123,7 @@
             @endforeach
         </div>
     </main>
+
+    {{-- Marcador esperado por PDFShift (wait_for) para asegurar layout estable --}}
+    <span id="report-ready-flag" data-report-ready="true" style="display:none;"></span>
 </div>

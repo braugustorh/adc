@@ -32,7 +32,8 @@ class PsychometricDashboard extends Page implements HasTable
     protected static string $view = 'filament.pages.psychometric-dashboard';
     protected static ?string $title = 'Dashboard de Psicometrías';
     protected static ?string $navigationLabel = 'Dashboard Psicometrías';
-    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Psicometría';
+    protected static ?int $navigationSort = 1;
 
     // 9=MossWess, 10=Moss, 11=Cleaver, 12=Kostick, 13=Terman-Merril
     // Modelo de Assessment Psicométrico Estratificado (aplica igual a Int/Ext)

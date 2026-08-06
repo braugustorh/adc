@@ -21,15 +21,15 @@ class DeepSeekService
      * @param array $testResults    Resultados de las pruebas aplicadas
      * @return array                Reporte estructurado o array con clave '__ai_error'
      */
-    public function generateReport(array $candidateData, array $testResults, array $competencias = [], float $ajusteGlobal = 0.0, string $dictamen = ''): array
+    public function generateReport(array $candidateData, array $testResults, array $competencias = [], float $ajusteGlobal = 0.0, string $dictamen = '', float $ajusteRelativo = 0.0): array
     {
         $puesto = $candidateData['puesto'] ?? 'General';
 
         // Generar una semilla determinista a partir de los resultados + puesto.
         $deterministicSeed = abs(crc32(json_encode($testResults) . $puesto));
 
-        // Pasamos el ajuste global al constructor del prompt
-        $prompt = $this->buildUserPrompt($candidateData, $testResults, $puesto, $competencias, $ajusteGlobal,$dictamen);
+        // Pasamos el ajuste relativo (protagonista) y el ajuste global (seguridad) al constructor del prompt
+        $prompt = $this->buildUserPrompt($candidateData, $testResults, $puesto, $competencias, $ajusteGlobal, $dictamen, $ajusteRelativo);
 
         try {
             $queryBuilder = $this->deepseek
@@ -135,7 +135,7 @@ Tu trabajo NO es calcular el dictamen, sino REDACTAR la justificación clínica 
 
 REGLAS GLOBALES, CALIBRACIÓN CULTURAL Y DE INDUSTRIA:
 1. Contexto México: La alta distancia jerárquica puede suprimir la Dominancia (D) en Cleaver. La Constancia (S) y Cumplimiento (C) suelen ser altas por evitación de incertidumbre.
-2. Contexto Operativo (Centrales de Autobuses): El talento evaluado opera en empresas de logística, mantenimiento, atención masiva en piso y gerencias de terminal. Aterriza tu lenguaje y planes de desarrollo a esta realidad.
+2. Contexto Operativo (Administradora de Centrales (No choferes, no taquillas)): El talento evaluado opera en empresas de logística, mantenimiento, atención masiva en piso y gerencias de terminal. Aterriza tu lenguaje y planes de desarrollo a esta realidad.
 3. Tono Constructivo (Growth Mindset): Evita lenguaje punitivo o destructivo.
 4. REGLA ESTRICTA DE PLAN DE DESARROLLO: ÚNICAMENTE debes generar elementos en el "plan_desarrollo" para las competencias que cumplan estas DOS condiciones juntas en el JSON de entrada:
    a) Que "requerida" sea true.
@@ -171,7 +171,7 @@ FORMATO DE SALIDA OBLIGATORIO (sin markdown, solo JSON puro):
 PROMPT;
     }
 
-    protected function buildUserPrompt(array $candidateData, array $testResults, string $puesto, array $competencias = [], float $ajusteGlobal = 0.0, string $dictamen = ''): string
+    protected function buildUserPrompt(array $candidateData, array $testResults, string $puesto, array $competencias = [], float $ajusteGlobal = 0.0, string $dictamen = '', float $ajusteRelativo = 0.0): string
     {
         $jsonEntrada = [
             'candidato' => [
@@ -179,8 +179,10 @@ PROMPT;
                 'puesto' => $puesto,
                 'fecha_evaluacion' => date('Y-m-d'),
                 // >>> INYECCIÓN CLAVE: El modelo usará esto como verdad absoluta <<<
-                'ajuste_global_calculado' => $ajusteGlobal,
-                'dictamen_asignado'=>$dictamen,
+                'ajuste_relativo_calculado' => $ajusteRelativo,
+                'ajuste_global_seguridad' => $ajusteGlobal,
+                'dictamen_asignado' => $dictamen,
+                'alertas_conductuales_kostick' => $candidateData['alertas_kostick'] ?? [],
             ],
             'pruebas' => $testResults,
             'competencias_precalculadas' => $competencias
@@ -193,7 +195,7 @@ PROMPT;
             'target_perfil_sedyco'  => $reglasSedyco
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
-        return "Realiza el reporte clínico basado en la siguiente información. IMPORTANTE: El sistema ya ha determinado que el ajuste es {$ajusteGlobal}% y el dictamen es '{$dictamen}'. Tu único trabajo es REDACTAR la justificación clínica y el plan de desarrollo congruentes con este dictamen:\n\n" . $payload;
+        return "Realiza el reporte clínico basado en la siguiente información. IMPORTANTE: El sistema ya ha determinado que el Ajuste Relativo (Cobertura del Perfil Ideal) es {$ajusteRelativo}% (métrica oficial que rige el dictamen), con un Ajuste Global de referencia de seguridad de {$ajusteGlobal}%, y el dictamen es '{$dictamen}'. Tu único trabajo es REDACTAR la justificación clínica y el plan de desarrollo congruentes con este dictamen:\n\n" . $payload;
 
 
     }

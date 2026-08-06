@@ -43,11 +43,14 @@ class ReportSnapshotsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('puesto_original')
                     ->label('Puesto original')
                     ->placeholder('—'),
-                Tables\Columns\TextColumn::make('ajuste_global')
-                    ->label('Ajuste Global')
-                    ->suffix('%'),
                 Tables\Columns\TextColumn::make('ajuste_relativo')
                     ->label('Ajuste Relativo')
+                    ->weight('bold')
+                    ->color('primary')
+                    ->suffix('%'),
+                Tables\Columns\TextColumn::make('ajuste_global')
+                    ->label('🛡️ Ajuste Global (seguridad)')
+                    ->color('gray')
                     ->suffix('%'),
                 Tables\Columns\TextColumn::make('dictamen')
                     ->label('Dictamen')

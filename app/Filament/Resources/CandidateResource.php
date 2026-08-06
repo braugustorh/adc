@@ -20,11 +20,11 @@ class CandidateResource extends Resource
     protected static ?string $model = Candidate::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
-    protected static ?string $navigationGroup = 'Evaluaciones';
+    protected static ?string $navigationGroup = 'Psicometría';
     protected static ?string $navigationLabel = 'Gestión de Candidatos';
     protected static ?string $modelLabel = 'Candidato';
     protected static ?string $pluralModelLabel = 'Candidatos';
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 2;
 
     /**
      * Badge en el menú de navegación con el número de candidatos "En Proceso",

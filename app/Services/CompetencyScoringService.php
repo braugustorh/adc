@@ -85,59 +85,59 @@ class CompetencyScoringService
     */
     private array $nivelesConfig = [
         'DIRECTIVO' => [
-            'Liderazgo'               => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.25, 'kostick.l' => 0.25, 'kostick.p' => 0.25, 'moss.supervision' => 0.25]],
+            'Liderazgo'               => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.25, 'kostick.l_adecuado' => 0.25, 'kostick.p_adecuado' => 0.25, 'moss.supervision' => 0.25]],
             'Pensamiento Estratégico' => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['terman.ci' => 0.15, 'terman.abstraccion' => 0.35, 'terman.planeacion' => 0.30, 'moss_wess.innovacion' => 0.20]],
             'Toma de Decisiones'      => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.40, 'moss.decision' => 0.40, 'terman.juicio' => 0.20]],
-            'Enfoque en Resultados'   => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['kostick.a' => 0.40, 'cleaver.d' => 0.30, 'kostick.n' => 0.30]],
+            'Enfoque en Resultados'   => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['kostick.a_adecuado' => 0.40, 'cleaver.d' => 0.30, 'kostick.n_adecuado' => 0.30]],
             'Negociación'             => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['cleaver.d' => 0.35, 'cleaver.i' => 0.30, 'moss.decision' => 0.35]],
-            'Manejo de Conflictos'    => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.40, 'kostick.e' => 0.20]],
-            'Organización'            => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['kostick.c' => 0.40, 'kostick.e' => 0.30, 'terman.organizacion' => 0.30]], // Suma = 1.00
+            'Manejo de Conflictos'    => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.40, 'kostick.e_adecuado' => 0.20]],
+            'Organización'            => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['kostick.c_adecuado' => 0.40, 'kostick.e_adecuado' => 0.30, 'terman.organizacion' => 0.30]], // Suma = 1.00
             'Análisis de Problemas'   => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['terman.ci' => 0.10, 'terman.analisis' => 0.25, 'terman.abstraccion' => 0.20, 'moss.evaluacion' => 0.45]], // Suma = 1.00
-            'Comunicación'            => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['cleaver.i' => 0.40, 'kostick.x' => 0.30, 'moss.relaciones' => 0.30]],
-            'Resiliencia'             => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['kostick.e' => 0.40, 'cleaver.d' => 0.30, 'moss_wess.presion' => 0.30]], // Inverso Cleaver S eliminado
-            'Trabajo en Equipo'       => ['requerida' => true, 'peso_global' => 0.03, 'factores' => ['cleaver.i' => 0.40, 'kostick.s' => 0.30, 'moss_wess.cohesion' => 0.30]],
-            'Disposición de Servicio' => ['requerida' => true, 'peso_global' => 0.02, 'factores' => ['cleaver.i' => 0.40, 'kostick.s' => 0.30, 'moss.relaciones' => 0.30]],
+            'Comunicación'            => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['cleaver.i' => 0.40, 'kostick.x_adecuado' => 0.30, 'moss.relaciones' => 0.30]],
+            'Resiliencia'             => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['kostick.e_adecuado' => 0.40, 'cleaver.d' => 0.30, 'moss_wess.presion' => 0.30]], // Inverso Cleaver S eliminado
+            'Trabajo en Equipo'       => ['requerida' => true, 'peso_global' => 0.03, 'factores' => ['cleaver.i' => 0.40, 'kostick.s_adecuado' => 0.30, 'moss_wess.cohesion' => 0.30]],
+            'Disposición de Servicio' => ['requerida' => true, 'peso_global' => 0.02, 'factores' => ['cleaver.i' => 0.40, 'kostick.s_adecuado' => 0.30, 'moss.relaciones' => 0.30]],
         ],
         'GERENCIA' => [
-            'Liderazgo'               => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.30, 'kostick.l' => 0.25, 'kostick.p' => 0.20, 'moss.supervision' => 0.25]],
+            'Liderazgo'               => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['cleaver.d' => 0.30, 'kostick.l_adecuado' => 0.25, 'kostick.p_adecuado' => 0.20, 'moss.supervision' => 0.25]],
             'Pensamiento Estratégico' => ['requerida' => true, 'peso_global' => 0.12, 'factores' => ['terman.ci' => 0.15, 'terman.abstraccion' => 0.35, 'terman.planeacion' => 0.30, 'moss_wess.innovacion' => 0.20]],
             'Toma de Decisiones'      => ['requerida' => true, 'peso_global' => 0.12, 'factores' => ['cleaver.d' => 0.40, 'moss.decision' => 0.40, 'terman.juicio' => 0.20]],
-            'Organización'            => ['requerida' => true, 'peso_global' => 0.12, 'factores' => ['cleaver.c' => 0.40, 'kostick.c' => 0.35, 'terman.organizacion' => 0.25]],
-            'Manejo de Conflictos'    => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.35, 'kostick.e' => 0.25]],
-            'Enfoque en Resultados'   => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['kostick.a' => 0.35, 'cleaver.d' => 0.35, 'kostick.n' => 0.30]],
+            'Organización'            => ['requerida' => true, 'peso_global' => 0.12, 'factores' => ['cleaver.c' => 0.40, 'kostick.c_adecuado' => 0.35, 'terman.organizacion' => 0.25]],
+            'Manejo de Conflictos'    => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.35, 'kostick.e_adecuado' => 0.25]],
+            'Enfoque en Resultados'   => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['kostick.a_adecuado' => 0.35, 'cleaver.d' => 0.35, 'kostick.n_adecuado' => 0.30]],
             'Análisis de Problemas'   => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['terman.ci' => 0.10, 'terman.analisis' => 0.30, 'terman.abstraccion' => 0.20, 'moss.evaluacion' => 0.40]],
-            'Comunicación'            => ['requerida' => true, 'peso_global' => 0.08, 'factores' => ['cleaver.i' => 0.35, 'moss.relaciones' => 0.35, 'kostick.x' => 0.30]],
+            'Comunicación'            => ['requerida' => true, 'peso_global' => 0.08, 'factores' => ['cleaver.i' => 0.35, 'moss.relaciones' => 0.35, 'kostick.x_adecuado' => 0.30]],
             'Negociación'             => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['cleaver.d' => 0.35, 'cleaver.i' => 0.35, 'moss.decision' => 0.30]],
-            'Resiliencia'             => ['requerida' => true, 'peso_global' => 0.03, 'factores' => ['kostick.e' => 0.40, 'cleaver.d' => 0.30, 'moss_wess.presion' => 0.30]],
-            'Trabajo en Equipo'       => ['requerida' => true, 'peso_global' => 0.02, 'factores' => ['cleaver.i' => 0.40, 'kostick.s' => 0.30, 'moss_wess.cohesion' => 0.30]],
-            'Disposición de Servicio' => ['requerida' => true, 'peso_global' => 0.01, 'factores' => ['cleaver.i' => 0.40, 'kostick.s' => 0.30, 'moss.relaciones' => 0.30]],
+            'Resiliencia'             => ['requerida' => true, 'peso_global' => 0.03, 'factores' => ['kostick.e_adecuado' => 0.40, 'cleaver.d' => 0.30, 'moss_wess.presion' => 0.30]],
+            'Trabajo en Equipo'       => ['requerida' => true, 'peso_global' => 0.02, 'factores' => ['cleaver.i' => 0.40, 'kostick.s_adecuado' => 0.30, 'moss_wess.cohesion' => 0.30]],
+            'Disposición de Servicio' => ['requerida' => true, 'peso_global' => 0.01, 'factores' => ['cleaver.i' => 0.40, 'kostick.s_adecuado' => 0.30, 'moss.relaciones' => 0.30]],
         ],
         'MANDO_MEDIO' => [
-            'Organización'            => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['cleaver.c' => 0.40, 'kostick.c' => 0.40, 'terman.organizacion' => 0.20]],
-            'Manejo de Conflictos'    => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.30, 'kostick.e' => 0.30]],
-            'Liderazgo'               => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['moss.supervision' => 0.40, 'cleaver.d' => 0.30, 'kostick.l' => 0.30]],
+            'Organización'            => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['cleaver.c' => 0.40, 'kostick.c_adecuado' => 0.40, 'terman.organizacion' => 0.20]],
+            'Manejo de Conflictos'    => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['moss.evaluacion' => 0.40, 'moss.decision' => 0.30, 'kostick.e_adecuado' => 0.30]],
+            'Liderazgo'               => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['moss.supervision' => 0.40, 'cleaver.d' => 0.30, 'kostick.l_adecuado' => 0.30]],
             'Toma de Decisiones'      => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['moss.decision' => 0.50, 'cleaver.d' => 0.40, 'terman.juicio' => 0.10]],
             'Análisis de Problemas'   => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['terman.ci' => 0.05, 'terman.analisis' => 0.20, 'terman.abstraccion' => 0.15, 'moss.evaluacion' => 0.60]],
-            'Comunicación'            => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['cleaver.i' => 0.35, 'moss.relaciones' => 0.35, 'kostick.x' => 0.30]],
-            'Trabajo en Equipo'       => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['moss_wess.cohesion' => 0.40, 'cleaver.i' => 0.30, 'kostick.s' => 0.30]],
-            'Enfoque en Resultados'   => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['kostick.a' => 0.30, 'kostick.n' => 0.30, 'cleaver.d' => 0.20, 'kostick.g' => 0.20]],
+            'Comunicación'            => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['cleaver.i' => 0.35, 'moss.relaciones' => 0.35, 'kostick.x_adecuado' => 0.30]],
+            'Trabajo en Equipo'       => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['moss_wess.cohesion' => 0.40, 'cleaver.i' => 0.30, 'kostick.s_adecuado' => 0.30]],
+            'Enfoque en Resultados'   => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['kostick.a_adecuado' => 0.30, 'kostick.n_adecuado' => 0.30, 'cleaver.d' => 0.20, 'kostick.g_adecuado' => 0.20]],
             'Negociación'             => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['cleaver.i' => 0.40, 'cleaver.d' => 0.30, 'moss.sentido_comun' => 0.30]],
             'Pensamiento Estratégico' => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['terman.ci' => 0.10, 'terman.abstraccion' => 0.35, 'terman.planeacion' => 0.25, 'moss_wess.innovacion' => 0.30]], // Suma = 1.00
-            'Resiliencia'             => ['requerida' => true, 'peso_global' => 0.03, 'factores' => ['kostick.e' => 0.40, 'moss_wess.presion' => 0.30, 'cleaver.d' => 0.30]], // Suma = 1.00
-            'Disposición de Servicio' => ['requerida' => true, 'peso_global' => 0.02, 'factores' => ['moss.relaciones' => 0.50, 'kostick.s' => 0.30, 'cleaver.i' => 0.20]],
+            'Resiliencia'             => ['requerida' => true, 'peso_global' => 0.03, 'factores' => ['kostick.e_adecuado' => 0.40, 'moss_wess.presion' => 0.30, 'cleaver.d' => 0.30]], // Suma = 1.00
+            'Disposición de Servicio' => ['requerida' => true, 'peso_global' => 0.02, 'factores' => ['moss.relaciones' => 0.50, 'kostick.s_adecuado' => 0.30, 'cleaver.i' => 0.20]],
         ],
         'SUPERVISOR' => [
-            'Liderazgo'               => ['requerida' => true, 'peso_global' => 0.20, 'factores' => ['cleaver.d' => 0.40, 'moss.supervision' => 0.40, 'kostick.l' => 0.20]], // Suma = 1.00
-            'Organización'            => ['requerida' => true, 'peso_global' => 0.20, 'factores' => ['cleaver.c' => 0.45, 'kostick.c' => 0.45, 'terman.organizacion' => 0.10]],
-            'Trabajo en Equipo'       => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['cleaver.i' => 0.40, 'moss.relaciones' => 0.30, 'kostick.s' => 0.30]],
-            'Enfoque en Resultados'   => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['kostick.n' => 0.40, 'cleaver.d' => 0.30, 'kostick.g' => 0.30]],
-            'Comunicación'            => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['cleaver.i' => 0.40, 'moss.relaciones' => 0.40, 'kostick.x' => 0.20]],
+            'Liderazgo'               => ['requerida' => true, 'peso_global' => 0.20, 'factores' => ['cleaver.d' => 0.40, 'moss.supervision' => 0.40, 'kostick.l_adecuado' => 0.20]], // Suma = 1.00
+            'Organización'            => ['requerida' => true, 'peso_global' => 0.20, 'factores' => ['cleaver.c' => 0.45, 'kostick.c_adecuado' => 0.45, 'terman.organizacion' => 0.10]],
+            'Trabajo en Equipo'       => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['cleaver.i' => 0.40, 'moss.relaciones' => 0.30, 'kostick.s_adecuado' => 0.30]],
+            'Enfoque en Resultados'   => ['requerida' => true, 'peso_global' => 0.15, 'factores' => ['kostick.n_adecuado' => 0.40, 'cleaver.d' => 0.30, 'kostick.g_adecuado' => 0.30]],
+            'Comunicación'            => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['cleaver.i' => 0.40, 'moss.relaciones' => 0.40, 'kostick.x_adecuado' => 0.20]],
             'Análisis de Problemas'   => ['requerida' => true, 'peso_global' => 0.10, 'factores' => ['terman.ci' => 0.05, 'terman.analisis' => 0.30, 'moss.evaluacion' => 0.55, 'cleaver.c' => 0.10]],
-            'Disposición de Servicio' => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['moss.relaciones' => 0.50, 'kostick.s' => 0.30, 'cleaver.i' => 0.20]],
-            'Resiliencia'             => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['kostick.e' => 0.50, 'cleaver.d' => 0.30, 'cleaver.c' => 0.20]], // Inverso Cleaver S eliminado
+            'Disposición de Servicio' => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['moss.relaciones' => 0.50, 'kostick.s_adecuado' => 0.30, 'cleaver.i' => 0.20]],
+            'Resiliencia'             => ['requerida' => true, 'peso_global' => 0.05, 'factores' => ['kostick.e_adecuado' => 0.50, 'cleaver.d' => 0.30, 'cleaver.c' => 0.20]], // Inverso Cleaver S eliminado
 
             // Adicionales
-            'Manejo de Conflictos'    => ['requerida' => false, 'peso_global' => 0, 'factores' => ['moss.evaluacion' => 0.30, 'moss.decision' => 0.30, 'kostick.e' => 0.20, 'inverso.cleaver.d' => 0.20]],
+            'Manejo de Conflictos'    => ['requerida' => false, 'peso_global' => 0, 'factores' => ['moss.evaluacion' => 0.30, 'moss.decision' => 0.30, 'kostick.e_adecuado' => 0.20, 'inverso.cleaver.d' => 0.20]],
             'Toma de Decisiones'      => ['requerida' => false, 'peso_global' => 0, 'factores' => ['moss.decision' => 0.40, 'terman.juicio' => 0.30, 'cleaver.d' => 0.30]],
             'Negociación'             => ['requerida' => false, 'peso_global' => 0, 'factores' => ['cleaver.i' => 0.50, 'moss.sentido_comun' => 0.30, 'cleaver.d' => 0.20]],
             'Pensamiento Estratégico' => ['requerida' => false, 'peso_global' => 0, 'factores' => ['terman.ci' => 0.30, 'terman.abstraccion' => 0.40, 'terman.planeacion' => 0.30]],
@@ -319,14 +319,21 @@ class CompetencyScoringService
         $kostickKey = $this->findKeyStr($res, 'Kostick');
         if ($kostickKey && isset($res[$kostickKey]['scores'])) {
             $k = $res[$kostickKey]['scores'];
-            foreach (['l','n','p','i','g','a','s','x','e','c','b'] as $l) {
+            foreach (['l','n','p','i','g','a','s','x','e','c','b','r','d','z','k','f','w','t','v','o'] as $l) {
                 $val = $k[strtoupper($l)] ?? null;
                 if ($val !== null) {
+                    // Valor lineal 0-100%
                     $v["kostick.{$l}"] = min(100, max(0, ($val / 9) * 100));
+
+                    // Adecuación por Bandas de Kostick (Tratamiento equitativo de rasgos extremos)
+                    if ($val == 5) {
+                        $v["kostick.{$l}_adecuado"] = 100.0;
+                    } elseif (in_array($val, [3, 4, 6])) {
+                        $v["kostick.{$l}_adecuado"] = 80.0;
+                    } else { // Extremos: 0, 1, 2, 7, 8, 9
+                        $v["kostick.{$l}_adecuado"] = 60.0;
+                    }
                 }
-            }
-            if (isset($k['P'])) {
-                $v['kostick.p_adecuado'] = max(0, 100 - abs($k['P'] - 5) * 25);
             }
         }
 
@@ -472,19 +479,19 @@ class CompetencyScoringService
                 'Resiliencia' => 80, 'Trabajo en Equipo' => 70, 'Disposición de Servicio' => 65
             ],
             'GERENCIA' => [
-                'Liderazgo' => 70, 'Pensamiento Estratégico' => 75, 'Toma de Decisiones' => 80,
+                'Liderazgo' => 80, 'Pensamiento Estratégico' => 75, 'Toma de Decisiones' => 80,
                 'Enfoque en Resultados' => 80, 'Negociación' => 75, 'Manejo de Conflictos' => 75,
                 'Organización' => 80, 'Análisis de Problemas' => 75, 'Comunicación' => 75,
                 'Resiliencia' => 75, 'Trabajo en Equipo' => 75, 'Disposición de Servicio' => 70
             ],
             'MANDO_MEDIO' => [
-                'Liderazgo' => 65, 'Pensamiento Estratégico' => 65, 'Toma de Decisiones' => 75,
+                'Liderazgo' => 75, 'Pensamiento Estratégico' => 65, 'Toma de Decisiones' => 75,
                 'Enfoque en Resultados' => 75, 'Negociación' => 65, 'Manejo de Conflictos' => 70,
                 'Organización' => 75, 'Análisis de Problemas' => 70, 'Comunicación' => 70,
                 'Resiliencia' => 70, 'Trabajo en Equipo' => 70, 'Disposición de Servicio' => 70
             ],
             'SUPERVISOR' => [
-                'Liderazgo' => 60, 'Pensamiento Estratégico' => 50, 'Toma de Decisiones' => 65,
+                'Liderazgo' => 70, 'Pensamiento Estratégico' => 50, 'Toma de Decisiones' => 65,
                 'Enfoque en Resultados' => 70, 'Negociación' => 50, 'Manejo de Conflictos' => 65,
                 'Organización' => 70, 'Análisis de Problemas' => 65, 'Comunicación' => 65,
                 'Resiliencia' => 65, 'Trabajo en Equipo' => 70, 'Disposición de Servicio' => 70
@@ -501,19 +508,29 @@ class CompetencyScoringService
     }
 
     /**
-     * Determina el dictamen textual según el ajuste global y los umbrales
-     * dinámicos configurados por nivel jerárquico.
+     * Determina el Dictamen Final basándose en el Ajuste Relativo (% Cobertura de Perfil).
+     * Aplica frenos de seguridad únicamente ante descarriladores en competencias Core.
      */
-    public function obtenerDictamen(float $ajusteGlobal, string $nivel): string
+    public function obtenerDictamen(float $ajusteRelativo, string $nivel, int $coreDerailers = 0): string
     {
         $nivelNorm = str_replace(' ', '_', strtoupper(trim($nivel)));
         $u = $this->umbralesDictamen[$nivelNorm] ?? $this->umbralesDictamen['ADMINISTRATIVO'];
 
-        if ($ajusteGlobal >= $u['optimo']) {
+        // Freno de mano por seguridad operativa
+        if ($coreDerailers >= 2) {
+            return "PERFIL NO ALINEADO AL PUESTO";
+        }
+
+        if ($coreDerailers === 1 && $ajusteRelativo >= $u['optimo']) {
+            return "POTENCIAL CON PLAN DE DESARROLLO"; // Se topa para forzar el PDI
+        }
+
+        // Dictamen conducido por Ajuste Relativo
+        if ($ajusteRelativo >= $u['optimo']) {
             return "ALINEACIÓN ÓPTIMA";
-        } elseif ($ajusteGlobal >= $u['potencial']) {
+        } elseif ($ajusteRelativo >= $u['potencial']) {
             return "POTENCIAL CON PLAN DE DESARROLLO";
-        } elseif ($ajusteGlobal >= $u['latente']) {
+        } elseif ($ajusteRelativo >= $u['latente']) {
             return "POTENCIAL LATENTE";
         } else {
             return "PERFIL NO ALINEADO AL PUESTO";

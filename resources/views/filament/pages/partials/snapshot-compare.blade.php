@@ -26,15 +26,15 @@
                     </tr>
                 @endforeach
                 <tr style="border-top:2px solid #e5e7eb; font-weight:700;">
-                    <td style="padding:6px 8px;">Ajuste Global</td>
-                    @foreach($snapshots as $s)
-                        <td style="padding:6px 8px;">{{ $s['ajuste_global'] }}%</td>
-                    @endforeach
-                </tr>
-                <tr>
                     <td style="padding:6px 8px;">Ajuste Relativo</td>
                     @foreach($snapshots as $s)
                         <td style="padding:6px 8px;">{{ $s['ajuste_relativo'] }}%</td>
+                    @endforeach
+                </tr>
+                <tr>
+                    <td style="padding:6px 8px; color:#6b7280;">🛡️ Ajuste Global (seguridad)</td>
+                    @foreach($snapshots as $s)
+                        <td style="padding:6px 8px; color:#6b7280;">{{ $s['ajuste_global'] }}%</td>
                     @endforeach
                 </tr>
                 <tr>

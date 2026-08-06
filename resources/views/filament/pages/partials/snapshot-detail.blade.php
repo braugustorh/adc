@@ -17,13 +17,13 @@
                 <div style="font-size:10px; color:#7c3aed; margin-top:2px;">↺ Reevaluación (original: {{ $snapshot->puesto_original }})</div>
             @endif
         </div>
-        <div style="flex:1; min-width:120px; padding:10px 12px; background:#f0fdf4; border-radius:10px;">
-            <div style="font-size:10px; color:#166534; text-transform:uppercase; font-weight:700;">Ajuste Global</div>
-            <div style="font-size:14px; font-weight:700; color:#166534;">{{ $snapshot->ajuste_global }}%</div>
-        </div>
         <div style="flex:1; min-width:120px; padding:10px 12px; background:#eff6ff; border-radius:10px;">
             <div style="font-size:10px; color:#1e40af; text-transform:uppercase; font-weight:700;">Ajuste Relativo</div>
             <div style="font-size:14px; font-weight:700; color:#1e40af;">{{ $snapshot->ajuste_relativo }}%</div>
+        </div>
+        <div style="flex:1; min-width:120px; padding:10px 12px; background:#f0fdf4; border-radius:10px;">
+            <div style="font-size:10px; color:#166534; text-transform:uppercase; font-weight:700;">🛡️ Ajuste Global (seguridad)</div>
+            <div style="font-size:14px; font-weight:700; color:#166534;">{{ $snapshot->ajuste_global }}%</div>
         </div>
         <div style="flex:1; min-width:160px; padding:10px 12px; background:{{ $dc['bg'] }}; border-radius:10px;">
             <div style="font-size:10px; color:{{ $dc['text'] }}; text-transform:uppercase; font-weight:700;">Dictamen</div>

@@ -131,12 +131,20 @@ class GeneralReportService
 
         $competencias = $competencyService->calculate($puestoNombre, $testResults);
 
-        // Ajuste estricto + Ajuste relativo
+        // Ajuste Global (freno de seguridad) y Ajuste Relativo (protagonista del dictamen)
         $ajusteGlobal = $competencyService->calcularAjusteGlobal($competencias);
         $ajusteRelativo = $competencyService->calcularAjusteRelativo($competencias, $puestoNombre);
 
-        // Obtener dictamen dinámico según nivel jerárquico
-        $dictamenPHP = $competencyService->obtenerDictamen($ajusteGlobal, $puestoNombre);
+        // Contar descarriladores (Core Derailers) para la regla de seguridad del dictamen
+        $coreDerailers = 0;
+        foreach ($competencias as $comp) {
+            if (!empty($comp['requerida']) && ($comp['peso_global'] ?? 0) >= 0.15 && $comp['puntaje'] < 40) {
+                $coreDerailers++;
+            }
+        }
+
+        // Obtener dictamen dinámico según nivel jerárquico, conducido por el Ajuste Relativo
+        $dictamenPHP = $competencyService->obtenerDictamen($ajusteRelativo, $puestoNombre, $coreDerailers);
 
         // Obtener el perfil Ideal para la gráfica
         $competenciasIdeal = $competencyService->getIdealCompetenciesProfile($puestoNombre);
@@ -144,15 +152,29 @@ class GeneralReportService
         // 4b. Obtener perfil ideal Cleaver para el radar chart
         $cleaverIdeal = $deepSeek->getIdealCleaverForChart($puestoNombre);
 
-        // 5. Llamar a DeepSeek (Actualizamos la firma para pasar el ajuste global)
-        $aiResponse = $deepSeek->generateReport($candidateData, $testResults, $competencias, $ajusteGlobal,$dictamenPHP);
+        // 4c. Extraer alertas cualitativas de Kostick (extremos 0-2 y 7-9)
+        $alertasKostick = [];
+        $kostickKey = collect($testResults)->keys()->first(fn ($k) => stripos($k, 'Kostick') !== false);
+        if ($kostickKey && isset($testResults[$kostickKey]['scores'])) {
+            $ks = $testResults[$kostickKey]['scores'];
+            if (($ks['P'] ?? 0) >= 8) $alertasKostick[] = "P=" . $ks['P'] . ": Alta necesidad de control. Riesgo de autoritarismo o microgestión.";
+            if (($ks['P'] ?? 0) <= 2) $alertasKostick[] = "P=" . $ks['P'] . ": Baja necesidad de control. Dificultad para asumir responsabilidad sobre otros.";
+            if (($ks['I'] ?? 0) >= 8) $alertasKostick[] = "I=" . $ks['I'] . ": Impulsividad alta en la toma de decisiones.";
+            if (($ks['I'] ?? 0) <= 2) $alertasKostick[] = "I=" . $ks['I'] . ": Alta vacilación e indecisión en momentos críticos.";
+            if (($ks['L'] ?? 0) >= 8) $alertasKostick[] = "L=" . $ks['L'] . ": Deseo ostentoso de liderazgo o estatus.";
+            if (($ks['W'] ?? 0) >= 8) $alertasKostick[] = "W=" . $ks['W'] . ": Alta dependencia de reglas y supervisión directa.";
+        }
+        $candidateData['alertas_kostick'] = $alertasKostick;
+
+        // 5. Llamar a DeepSeek (pasamos el ajuste global de seguridad y el ajuste relativo protagonista)
+        $aiResponse = $deepSeek->generateReport($candidateData, $testResults, $competencias, $ajusteGlobal, $dictamenPHP, $ajusteRelativo);
 
         // Detectar si la IA devolvió un error
         $aiError = null;
         if ($aiResponse && isset($aiResponse['reporte']['resultado_global'])) {
             $aiResponse['reporte']['resultado_global']['dictamen'] = $dictamenPHP;
-            $aiResponse['reporte']['resultado_global']['apto'] = ($ajusteGlobal >= 70);
-            $aiResponse['reporte']['resultado_global']['porcentaje_ajuste'] = $ajusteGlobal;
+            $aiResponse['reporte']['resultado_global']['apto'] = ($ajusteRelativo >= 70);
+            $aiResponse['reporte']['resultado_global']['porcentaje_ajuste'] = $ajusteRelativo;
         }
 
         if (isset($aiResponse['__ai_error']) && $aiResponse['__ai_error'] === true) {
@@ -173,9 +195,11 @@ class GeneralReportService
             'cleaver_ideal' => $cleaverIdeal,
             'ai_report'    => $aiResponse,
             'ai_error'     => $aiError,
-            'ajuste_global'=> $ajusteGlobal,      // <-- AQUI PASAMOS EL 48.91%
-            'ajuste_relativo' => $ajusteRelativo,
-            'dictamen_calculado' => $dictamenPHP, // <-- AQUI PASAMOS EL "NO APTO"
+            'ajuste_global'=> $ajusteGlobal,      // Freno de seguridad (derailers)
+            'ajuste_relativo' => $ajusteRelativo, // Métrica protagonista del dictamen
+            'core_derailers' => $coreDerailers,
+            'alertas_kostick' => $alertasKostick,
+            'dictamen_calculado' => $dictamenPHP,
             'competencias_ideal' => $competenciasIdeal,
             'puesto_original' => $puestoOriginal,
             'puesto_evaluado' => $puestoNombre,

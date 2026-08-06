@@ -182,6 +182,15 @@ class PsychometricDashboard extends Page implements HasTable
                     ->visible(fn (PsychometricEvaluation $record) => $record->status === 'completed')
                     ->action(fn (PsychometricEvaluation $record) => $this->downloadPdf($record))
                     ->openUrlInNewTab(),
+
+                // ACCIÓN 4: Ir a la ficha del candidato (Gestión de Candidatos)
+                Tables\Actions\Action::make('view_candidate')
+                    ->label('Ficha del Candidato')
+                    ->icon('heroicon-o-user-group')
+                    ->color('gray')
+                    ->visible(fn (PsychometricEvaluation $record) => $record->evaluable_type === \App\Models\Candidate::class)
+                    ->url(fn (PsychometricEvaluation $record) => \App\Filament\Resources\CandidateResource::getUrl('view', ['record' => $record->evaluable_id]))
+                    ->openUrlInNewTab(),
             ]);
     }
 
@@ -432,7 +441,23 @@ class PsychometricDashboard extends Page implements HasTable
                         ->visible(fn (Forms\Get $get) => (bool) $get('evaluable_id'))
                         ->placeholder('Seleccionar batería...'),
 
-                    // 4. Panel de vista previa dinámica
+                    // 4. Puesto para el cálculo (por defecto el original de la batería,
+                    //    pero puede cambiarse para reevaluar al candidato contra otro nivel
+                    //    jerárquico sin repetir las pruebas psicométricas).
+                    Forms\Components\Select::make('puesto_override')
+                        ->label('Puesto para este cálculo')
+                        ->helperText('Por defecto se usa el puesto original de la batería. Cámbialo para reevaluar al candidato contra otro nivel jerárquico (útil si su puesto cambió y sus pruebas siguen vigentes).')
+                        ->options([
+                            'Directivo'      => 'Directivo (Dirección General / Área / Subdirección)',
+                            'Gerencia'       => 'Gerencia (Corporativa / Coordinador Senior)',
+                            'Mando Medio'    => 'Mando Medio (Gerencia B / Jefatura)',
+                            'Supervisor'     => 'Supervisor / Analista Senior',
+                            'Administrativo' => 'Administrativo / Auxiliar / Operativo',
+                        ])
+                        ->native(false)
+                        ->visible(fn (Forms\Get $get) => (bool) $get('batch_id')),
+
+                    // 5. Panel de vista previa dinámica
                     Forms\Components\Placeholder::make('preview')
                         ->label('')
                         ->content(function (Forms\Get $get): HtmlString {
@@ -480,7 +505,8 @@ class PsychometricDashboard extends Page implements HasTable
                     $generalService = new GeneralReportService();
                     $deepSeekService = app(\App\Services\DeepSeekService::class);
 
-                    $output = $generalService->generateAiReport($batchId, $deepSeekService);
+                    $puestoOverride = $data['puesto_override'] ?? null;
+                    $output = $generalService->generateAiReport($batchId, $deepSeekService, $puestoOverride);
                     // ────────────────────────────────────────────────────────
 
                     if (isset($output['error'])) {
@@ -517,7 +543,7 @@ class PsychometricDashboard extends Page implements HasTable
                     $reportKey = (string) Str::uuid();
 
                     $name   = $output['consolidated']['evaluable']->name ?? 'candidato';
-                    $puesto = $output['consolidated']['puesto'] ?? 'general';
+                    $puesto = $output['puesto_evaluado'] ?? ($output['consolidated']['puesto'] ?? 'general');
 
                     $analisisIa = $output['ai_report'] ? $output['ai_report'] : null;
 
@@ -782,6 +808,12 @@ class PsychometricDashboard extends Page implements HasTable
                     'status'              => 'assigned',
                     'assigned_at'         => now(),
                 ]);
+            }
+
+            // Sincroniza el puesto declarado del candidato con el de la batería
+            // recién asignada, para que "Gestión de Candidatos" no lo muestre vacío.
+            if ($evaluableType === Candidate::class && filled($puesto)) {
+                Candidate::where('id', $evaluableId)->update(['position_applied' => $puesto]);
             }
         });
         // 2. Recuperar al usuario/candidato para obtener su email y nombre

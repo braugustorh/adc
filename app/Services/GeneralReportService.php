@@ -98,7 +98,7 @@ class GeneralReportService
      *   ai_report    => respuesta de DeepSeek (array decodificado)
      *   ai_raw       => string JSON crudo para debug
      */
-    public function generateAiReport(string $batchId, DeepSeekService $deepSeek): array
+    public function generateAiReport(string $batchId, DeepSeekService $deepSeek, ?string $puestoOverride = null): array
     {
         // 1. Calcular resultados psicométricos
         $consolidated = $this->calculateBatch($batchId);
@@ -108,11 +108,16 @@ class GeneralReportService
         }
 
         $evaluable = $consolidated['evaluable'];
+        $puestoOriginal = $consolidated['puesto'] ?? 'General';
+
+        // Si se pasa un puestoOverride, se usa SOLO para el cálculo/interpretación;
+        // el registro original de la evaluación (puesto asignado) no se modifica.
+        $puestoNombre = $puestoOverride ?: $puestoOriginal;
 
         // 2. Preparar $candidateData para DeepSeek
         $candidateData = [
             'name'   => $evaluable->name ?? 'Sin nombre',
-            'puesto' => $consolidated['puesto'] ?? 'General',
+            'puesto' => $puestoNombre,
         ];
 
         // 3. Transformar tests al formato que espera DeepSeekService::generateReport()
@@ -123,7 +128,6 @@ class GeneralReportService
 
         // 4. Calcular competencias
         $competencyService = app(CompetencyScoringService::class);
-        $puestoNombre = $consolidated['puesto'] ?? 'General';
 
         $competencias = $competencyService->calculate($puestoNombre, $testResults);
 
@@ -138,9 +142,7 @@ class GeneralReportService
         $competenciasIdeal = $competencyService->getIdealCompetenciesProfile($puestoNombre);
 
         // 4b. Obtener perfil ideal Cleaver para el radar chart
-        $cleaverIdeal = $deepSeek->getIdealCleaverForChart(
-            $consolidated['puesto'] ?? 'General'
-        );
+        $cleaverIdeal = $deepSeek->getIdealCleaverForChart($puestoNombre);
 
         // 5. Llamar a DeepSeek (Actualizamos la firma para pasar el ajuste global)
         $aiResponse = $deepSeek->generateReport($candidateData, $testResults, $competencias, $ajusteGlobal,$dictamenPHP);
@@ -165,7 +167,7 @@ class GeneralReportService
             $aiResponse = null;
         }
 
-        return [
+        $result = [
             'consolidated' => $consolidated,
             'competencias' => $competencias,
             'cleaver_ideal' => $cleaverIdeal,
@@ -175,9 +177,81 @@ class GeneralReportService
             'ajuste_relativo' => $ajusteRelativo,
             'dictamen_calculado' => $dictamenPHP, // <-- AQUI PASAMOS EL "NO APTO"
             'competencias_ideal' => $competenciasIdeal,
+            'puesto_original' => $puestoOriginal,
+            'puesto_evaluado' => $puestoNombre,
             'ai_raw'       => is_string($aiResponse) ? $aiResponse : json_encode($aiResponse, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
         ];
+
+        // Persistir el reporte como snapshot histórico si el evaluado es un Candidato.
+        if ($evaluable instanceof \App\Models\Candidate) {
+            $this->persistSnapshot($evaluable, $batchId, $result);
+        }
+
+        return $result;
     }
+
+    /**
+     * Guarda un reporte generado como registro histórico ligado al candidato,
+     * habilitando comparar reportes del mismo candidato contra distintos puestos
+     * sin depender del Cache temporal usado para la previsualización.
+     */
+    protected function persistSnapshot(\App\Models\Candidate $candidate, string $batchId, array $result): \App\Models\CandidateReportSnapshot
+    {
+        return \App\Models\CandidateReportSnapshot::create([
+            'candidate_id'            => $candidate->id,
+            'batch_id'                => $batchId,
+            'puesto_original'         => $result['puesto_original'] ?? null,
+            'puesto_evaluado'         => $result['puesto_evaluado'] ?? 'General',
+            'ajuste_global'           => $result['ajuste_global'] ?? null,
+            'ajuste_relativo'         => $result['ajuste_relativo'] ?? null,
+            'dictamen'                => $result['dictamen_calculado'] ?? null,
+            'competencias_json'       => $result['competencias'] ?? [],
+            'competencias_ideal_json' => $result['competencias_ideal'] ?? [],
+            'ai_report_json'          => $result['ai_report'] ?? null,
+            'cleaver_ideal_json'      => $result['cleaver_ideal'] ?? [],
+            'generated_by'            => auth()->id(),
+        ]);
+    }
+
+    /**
+     * Compara 2 o más snapshots de reporte del mismo candidato (por ejemplo,
+     * el mismo batch evaluado contra distintos puestos) para ayudar a decidir
+     * cuál perfil de puesto conviene más al candidato.
+     *
+     * @param int[] $snapshotIds
+     */
+    public function compareSnapshots(array $snapshotIds): array
+    {
+        $snapshots = \App\Models\CandidateReportSnapshot::whereIn('id', $snapshotIds)
+            ->orderBy('created_at')
+            ->get();
+
+        if ($snapshots->count() < 2) {
+            return ['error' => 'Se necesitan al menos 2 reportes para comparar.'];
+        }
+
+        // Índice de competencias por nombre para cada snapshot
+        $porCompetencia = [];
+        foreach ($snapshots as $snapshot) {
+            foreach (($snapshot->competencias_json ?? []) as $comp) {
+                $nombre = $comp['nombre'] ?? 'Desconocida';
+                $porCompetencia[$nombre][$snapshot->id] = $comp['puntaje'] ?? null;
+            }
+        }
+
+        return [
+            'snapshots' => $snapshots->map(fn ($s) => [
+                'id'              => $s->id,
+                'puesto_evaluado' => $s->puesto_evaluado,
+                'ajuste_global'   => $s->ajuste_global,
+                'ajuste_relativo' => $s->ajuste_relativo,
+                'dictamen'        => $s->dictamen,
+                'generated_at'    => $s->created_at,
+            ])->values()->toArray(),
+            'competencias' => $porCompetencia,
+        ];
+    }
+
 
     /**
      * Formatea segundos a string legible: "1h 23m 04s" o "12m 05s"

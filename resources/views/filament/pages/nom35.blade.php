@@ -569,7 +569,7 @@
                 </x-filament::section>
 
                 @php $currentSedeId = $this->getCurrentSedeId(); @endphp
-                @if($level===2 || $currentSedeId===21 || $currentSedeId===23 || $currentSedeId===17)
+                @if(($level===2 || $currentSedeId===21 || $currentSedeId===23 || $currentSedeId===17) && $currentSedeId!==10)
                     <x-filament::section class="mb-4"
                                          collapsible
                                          collapsed >
@@ -620,7 +620,7 @@
                         </div>
 
                     </x-filament::section>
-                @elseif($level===3)
+                @elseif($level===3 || $currentSedeId===10)
                     <x-filament::section class="mb-4"
                                          collapsible
                                          collapsed

@@ -35,7 +35,7 @@ class Panel360 extends Page
 
     public static function canView(): bool
     {
-        return \auth()->user()->hasAnyRole(['Administrador','RH Corp','RH','Supervisor','Colaborador']);
+        return \auth()->user()->hasAnyRole(['Administrador','RH Corp','RH','Supervisor','Colaborador','Gerente']);
 
     }
     public static function shouldRegisterNavigation(): bool

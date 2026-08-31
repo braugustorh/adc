@@ -61,8 +61,8 @@
                                ->unique('evaluated_user_id')->count();
                                $assignedUsers=\App\Models\EvaluationAssign::where('evaluation_id', 2)
                                ->where('campaign_id', $campaign->id)
-                               ->where('user_to_evaluate_id', auth()->user()->id)
-                                ->distinct('user_id')
+                               ->where('user_id', auth()->user()->id)
+                                ->distinct('user_to_evaluate_id')
                                ->count();
                                $this->qtty=$assignedUsers-$response;
                                @endphp

@@ -491,9 +491,9 @@
 
         {{-- ── 1. BARRA SUPERIOR DE FILTROS & CONTROL ───────────────────────────── --}}
         <div class="m360-toolbar">
-            
+
             <div class="m360-filter-group">
-                
+
                 {{-- Selector de Campaña 360° --}}
                 <div class="m360-input-box">
                     <label class="m360-label">Campaña 360°</label>
@@ -560,8 +560,8 @@
 
                     {{-- Botón Quitar Filtro Sede si está activo --}}
                     @if($isCorpOrAdmin && $sede_id)
-                        <button 
-                            wire:click="clearSedeFilter" 
+                        <button
+                            wire:click="clearSedeFilter"
                             type="button"
                             class="m360-pill m360-pill-warning"
                             style="cursor: pointer; border: none;"
@@ -584,7 +584,7 @@
 
             {{-- ── 2. TARJETAS DE MÉTRICAS GLOBALES (KPIs EN 4 COLUMNAS) ────────────── --}}
             <div class="m360-kpi-grid">
-                
+
                 {{-- Card 1: Avance Global --}}
                 <div class="m360-kpi-card">
                     <div>
@@ -686,7 +686,7 @@
                             <div class="m360-progress-bar bg-progress-indigo" style="width: {{ $pctDoneEd }}%;"></div>
                         </div>
                         <div class="m360-kpi-footer">
-                            <strong>{{ $metrics['evaluados_completos'] ?? 0 }}</strong> de {{ $totalEd }} listos para One-to-One
+                            <strong>{{ $metrics['evaluados_completos'] ?? 0 }}</strong> de {{ $totalEd }} listos!
                         </div>
                     </div>
                 </div>
@@ -695,10 +695,10 @@
 
             {{-- ── 3. CONTENEDOR PRINCIPAL CON PESTAÑAS ──────────────────────────── --}}
             <div class="m360-tabs-container">
-                
+
                 {{-- Navegación de Pestañas --}}
                 <div class="m360-tab-nav">
-                    
+
                     {{-- Pestaña 1: Sedes --}}
                     <button wire:click="setTab('sedes')" class="m360-tab-btn {{ $activeTab === 'sedes' ? 'active' : '' }}">
                         🏢 Avance por Central / Sede
@@ -769,7 +769,7 @@
                                 {{-- Botón para ver evaluadores de esta sede --}}
                                 @if($isCorpOrAdmin)
                                     <div>
-                                        <button 
+                                        <button
                                             wire:click="filterBySedeAndGoToEvaluators({{ $item['sede_id'] }})"
                                             type="button"
                                             class="m360-btn-outline"
@@ -790,17 +790,17 @@
                 {{-- ── PESTAÑA 2: DETALLE POR EVALUADOR ────────────────────────────── --}}
                 @if($activeTab === 'evaluadores')
                     <div>
-                        
+
                         {{-- Controles y Filtros de la Tabla --}}
                         <div class="m360-table-controls">
-                            
+
                             <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
                                 {{-- Input de Búsqueda --}}
                                 <div style="min-width: 240px;">
-                                    <input 
-                                        wire:model.live.debounce.300ms="search" 
-                                        type="text" 
-                                        placeholder="🔍 Buscar por nombre o departamento..." 
+                                    <input
+                                        wire:model.live.debounce.300ms="search"
+                                        type="text"
+                                        placeholder="🔍 Buscar por nombre o departamento..."
                                         class="m360-search-input"
                                     />
                                 </div>
@@ -863,7 +863,7 @@
                                             $barColor = $pct >= 100 ? 'bg-progress-emerald' : ($pct > 0 ? 'bg-progress-amber' : 'bg-progress-rose');
                                         @endphp
                                         <tr>
-                                            
+
                                             {{-- Evaluador --}}
                                             <td>
                                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -918,9 +918,9 @@
                                             {{-- Acciones --}}
                                             <td style="text-align: right;">
                                                 <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
-                                                    
+
                                                     {{-- Ver Desglose Anónimo --}}
-                                                    <button 
+                                                    <button
                                                         wire:click="openBreakdownModal({{ $ev['user_id'] }})"
                                                         type="button"
                                                         title="Ver desglose confidencial por roles"
@@ -931,7 +931,7 @@
 
                                                     {{-- Notificar Individual --}}
                                                     @if($ev['total_pendientes'] > 0)
-                                                        <button 
+                                                        <button
                                                             wire:click="sendNotification({{ $ev['user_id'] }})"
                                                             type="button"
                                                             title="Enviar recordatorio en plataforma"
@@ -963,12 +963,12 @@
                 {{-- ── PESTAÑA 3: ESTATUS POR EVALUADO ────────────────────────────── --}}
                 @if($activeTab === 'evaluados')
                     <div>
-                        
+
                         <div style="padding: 1.25rem 1.5rem 0 1.5rem; max-width: 320px;">
-                            <input 
-                                wire:model.live.debounce.300ms="search" 
-                                type="text" 
-                                placeholder="🔍 Buscar colaborador evaluado..." 
+                            <input
+                                wire:model.live.debounce.300ms="search"
+                                type="text"
+                                placeholder="🔍 Buscar colaborador evaluado..."
                                 class="m360-search-input"
                             />
                         </div>
@@ -993,7 +993,7 @@
                                             $barColor = $ed['is_ready'] ? 'bg-progress-emerald' : ($pct > 0 ? 'bg-progress-indigo' : 'bg-progress-amber');
                                         @endphp
                                         <tr>
-                                            
+
                                             {{-- Evaluado --}}
                                             <td>
                                                 <div style="font-weight: 700; color: #111827;">{{ $ed['name'] }}</div>
@@ -1070,7 +1070,7 @@
     @if($showBreakdownModal && $selectedEvaluator)
         <div class="m360-modal-overlay">
             <div class="m360-modal-box">
-                
+
                 {{-- Encabezado Modal --}}
                 <div style="display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.75rem;">
                     <div>
@@ -1084,9 +1084,9 @@
                             {{ $selectedEvaluator['position'] }} · {{ $selectedEvaluator['sede'] }}
                         </p>
                     </div>
-                    <button 
+                    <button
                         wire:click="closeBreakdownModal"
-                        type="button" 
+                        type="button"
                         style="background: none; border: none; font-size: 1.25rem; color: #9ca3af; cursor: pointer;"
                     >
                         ✕
@@ -1128,7 +1128,7 @@
                 <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e5e7eb; padding-top: 0.75rem;">
                     <div>
                         @if($selectedEvaluator['total_pendientes'] > 0)
-                            <button 
+                            <button
                                 wire:click="sendNotification({{ $selectedEvaluator['user_id'] }})"
                                 type="button"
                                 class="m360-btn-primary"
@@ -1138,9 +1138,9 @@
                             </button>
                         @endif
                     </div>
-                    <button 
+                    <button
                         wire:click="closeBreakdownModal"
-                        type="button" 
+                        type="button"
                         style="padding: 0.45rem 1rem; font-size: 0.75rem; font-weight: 700; background-color: #f3f4f6; color: #374151; border: none; border-radius: 0.5rem; cursor: pointer;"
                     >
                         Cerrar

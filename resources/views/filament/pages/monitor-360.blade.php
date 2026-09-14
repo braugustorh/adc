@@ -511,14 +511,20 @@
                 {{-- Selector de Central / Sede --}}
                 <div class="m360-input-box">
                     <label class="m360-label">Central / Sede</label>
-                    <select wire:model.live="sede_id" @if(!$isCorpOrAdmin) disabled @endif class="m360-select">
-                        @if($isCorpOrAdmin)
+                    @if($isCorpOrAdmin)
+                        <select wire:model.live="sede_id" class="m360-select">
                             <option value="">🌐 Todas las Centrales (Global)</option>
-                        @endif
-                        @foreach($sedes as $s)
-                            <option value="{{ $s->id }}">{{ $s->name }}</option>
-                        @endforeach
-                    </select>
+                            @foreach($sedes as $s)
+                                <option value="{{ $s->id }}">{{ $s->name }}</option>
+                            @endforeach
+                        </select>
+                    @else
+                        <select disabled class="m360-select" style="background-color: #f3f4f6; color: #374151; font-weight: 600; cursor: not-allowed;">
+                            <option value="{{ $currentUser->sede_id }}">
+                                🏢 {{ $sedes->firstWhere('id', $currentUser->sede_id)?->name ?? $currentUser->sede?->name ?? 'Mi Central' }}
+                            </option>
+                        </select>
+                    @endif
                 </div>
 
             </div>
@@ -699,11 +705,13 @@
                 {{-- Navegación de Pestañas --}}
                 <div class="m360-tab-nav">
 
-                    {{-- Pestaña 1: Sedes --}}
-                    <button wire:click="setTab('sedes')" class="m360-tab-btn {{ $activeTab === 'sedes' ? 'active' : '' }}">
-                        🏢 Avance por Central / Sede
-                        <span class="m360-tab-count">{{ $sedesProgress->count() ?: $sedes->count() }}</span>
-                    </button>
+                    {{-- Pestaña 1: Sedes (EXCLUSIVA para RH Corp y Admin) --}}
+                    @if($isCorpOrAdmin)
+                        <button wire:click="setTab('sedes')" class="m360-tab-btn {{ $activeTab === 'sedes' ? 'active' : '' }}">
+                            🏢 Avance por Central / Sede
+                            <span class="m360-tab-count">{{ $sedesProgress->count() ?: $sedes->count() }}</span>
+                        </button>
+                    @endif
 
                     {{-- Pestaña 2: Evaluadores --}}
                     <button wire:click="setTab('evaluadores')" class="m360-tab-btn {{ $activeTab === 'evaluadores' ? 'active' : '' }}">
@@ -719,8 +727,8 @@
 
                 </div>
 
-                {{-- ── PESTAÑA 1: AVANCE POR CENTRAL / SEDE ────────────────────────── --}}
-                @if($activeTab === 'sedes')
+                {{-- ── PESTAÑA 1: AVANCE POR CENTRAL / SEDE (SOLO RH CORP Y ADMIN) ────────────────── --}}
+                @if($activeTab === 'sedes' && $isCorpOrAdmin)
                     <div class="m360-sedes-grid">
                         @forelse($sedesProgress as $item)
                             @php

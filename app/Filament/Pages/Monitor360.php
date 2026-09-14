@@ -42,14 +42,17 @@ class Monitor360 extends Page
         $this->progressService = $progressService;
     }
 
+    public function isCorpOrAdmin(): bool
+    {
+        return auth()->check() && auth()->user()->hasAnyRole(['Administrador', 'RH Corp']);
+    }
+
     public static function canView(): bool
     {
         return auth()->check() && auth()->user()->hasAnyRole([
             'Administrador',
             'RH Corp',
             'RH',
-            'Gerente',
-            'Visor',
         ]);
     }
 
@@ -66,18 +69,20 @@ class Monitor360 extends Page
     public function mount(): void
     {
         $user = auth()->user();
+        $isCorpOrAdmin = $this->isCorpOrAdmin();
         $campaigns = $this->progressService->getAvailableCampaigns($user);
 
         // Seleccionar por defecto la campaña activa más reciente o la primera disponible
         $activeCampaign = $campaigns->firstWhere('status', 'Activa') ?? $campaigns->first();
         $this->campaign_id = $activeCampaign?->id;
 
-        // Si es RH Local o Gerente, restringir estrictamente a su sede
-        if (!$user->hasAnyRole(['Administrador', 'RH Corp', 'Visor'])) {
+        // Si es RH Local, restringir estrictamente a su sede y a pestaña evaluadores
+        if (!$isCorpOrAdmin) {
             $this->sede_id = $user->sede_id;
             $this->activeTab = 'evaluadores'; // Para RH Local, iniciar directo en su detalle
         } else {
-            $this->sede_id = null; // 'Todas las Sedes' para RH Corp
+            $this->sede_id = null; // 'Todas las Centrales' para RH Corp y Admin
+            $this->activeTab = 'sedes';
         }
     }
 
@@ -88,6 +93,9 @@ class Monitor360 extends Page
 
     public function updatedSedeId(): void
     {
+        if (!$this->isCorpOrAdmin()) {
+            $this->sede_id = auth()->user()->sede_id;
+        }
         $this->resetPageFilters();
     }
 
@@ -103,18 +111,27 @@ class Monitor360 extends Page
 
     public function setTab(string $tab): void
     {
+        // La pestaña de todas las sedes es exclusiva para RH Corp y Admin
+        if ($tab === 'sedes' && !$this->isCorpOrAdmin()) {
+            $this->activeTab = 'evaluadores';
+            return;
+        }
         $this->activeTab = $tab;
     }
 
     public function filterBySedeAndGoToEvaluators(int $sedeId): void
     {
-        $this->sede_id = $sedeId;
+        if (!$this->isCorpOrAdmin()) {
+            $this->sede_id = auth()->user()->sede_id;
+        } else {
+            $this->sede_id = $sedeId;
+        }
         $this->activeTab = 'evaluadores';
     }
 
     public function clearSedeFilter(): void
     {
-        if (auth()->user()->hasAnyRole(['Administrador', 'RH Corp', 'Visor'])) {
+        if ($this->isCorpOrAdmin()) {
             $this->sede_id = null;
         }
     }
@@ -224,6 +241,16 @@ class Monitor360 extends Page
     protected function getViewData(): array
     {
         $user = auth()->user();
+        $isCorpOrAdmin = $this->isCorpOrAdmin();
+
+        // Reforzar seguridad: si no es Corp ni Admin, sede_id siempre es su sede asignada
+        if (!$isCorpOrAdmin) {
+            $this->sede_id = $user->sede_id;
+            if ($this->activeTab === 'sedes') {
+                $this->activeTab = 'evaluadores';
+            }
+        }
+
         $campaigns = $this->progressService->getAvailableCampaigns($user);
         $sedes = $this->progressService->getAvailableSedes($user, $this->campaign_id);
 
@@ -239,7 +266,7 @@ class Monitor360 extends Page
             $daysRemaining = (int) $now->diffInDays($endDate, false);
         }
 
-        // Métricas Globales
+        // Métricas Globales (para RH local se calculan solo con su sede_id)
         $metrics = $this->campaign_id
             ? $this->progressService->getGlobalMetrics($this->campaign_id, $this->sede_id)
             : [];
@@ -250,7 +277,7 @@ class Monitor360 extends Page
         $evaluatedProgress = collect();
 
         if ($this->campaign_id) {
-            if ($this->activeTab === 'sedes') {
+            if ($this->activeTab === 'sedes' && $isCorpOrAdmin) {
                 $sedesProgress = $this->progressService->getProgressBySede($this->campaign_id);
             } elseif ($this->activeTab === 'evaluadores') {
                 $evaluatorsProgress = $this->progressService->getEvaluatorsProgress(
@@ -268,8 +295,6 @@ class Monitor360 extends Page
             }
         }
 
-        $isCorpOrAdmin = $user->hasAnyRole(['Administrador', 'RH Corp', 'Visor']);
-
         return [
             'campaigns'          => $campaigns,
             'selectedCampaign'   => $selectedCampaign,
@@ -281,6 +306,7 @@ class Monitor360 extends Page
             'daysRemaining'      => $daysRemaining,
             'isCampaignEnded'    => $isCampaignEnded,
             'isCorpOrAdmin'      => $isCorpOrAdmin,
+            'currentUser'        => $user,
         ];
     }
 }

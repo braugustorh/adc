@@ -30,8 +30,8 @@ class Evaluation360ProgressService
                     ->orWhere('evaluations_types.id', 2);
             });
 
-        // Si no es Admin ni RH Corp ni Visor, solo ve campañas que incluyan su sede
-        if (!$user->hasAnyRole(['Administrador', 'RH Corp', 'Visor'])) {
+        // Si no es Admin ni RH Corp, solo ve campañas que incluyan su sede
+        if (!$user->hasAnyRole(['Administrador', 'RH Corp'])) {
             $query->whereHas('sedes', function (Builder $q) use ($user) {
                 $q->where('sedes.id', $user->sede_id);
             });
@@ -54,7 +54,7 @@ class Evaluation360ProgressService
      */
     public function getAvailableSedes(User $user, ?int $campaignId = null): Collection
     {
-        if ($user->hasAnyRole(['Administrador', 'RH Corp', 'Visor'])) {
+        if ($user->hasAnyRole(['Administrador', 'RH Corp'])) {
             if ($campaignId) {
                 $campaign = Campaign::find($campaignId);
                 if ($campaign) {
@@ -64,7 +64,7 @@ class Evaluation360ProgressService
             return Sede::orderBy('name')->get();
         }
 
-        // RH Local o Gerente solo tienen acceso a su propia sede
+        // RH Local solo tiene acceso a su propia sede
         return Sede::where('id', $user->sede_id)->get();
     }
 
@@ -152,9 +152,17 @@ class Evaluation360ProgressService
         }
 
         $evaluadosCompletos = 0;
-        foreach ($evaluatedStats as $stat) {
-            if ($stat['done'] === $stat['total']) {
-                $evaluadosCompletos++;
+        $totalEvaluados = count($evaluatedStats);
+
+        if ($sedeId) {
+            $evaluatedSedeStats = $this->getEvaluatedProgress($campaignId, $sedeId);
+            $totalEvaluados = $evaluatedSedeStats->count();
+            $evaluadosCompletos = $evaluatedSedeStats->where('is_ready', true)->count();
+        } else {
+            foreach ($evaluatedStats as $stat) {
+                if ($stat['done'] === $stat['total']) {
+                    $evaluadosCompletos++;
+                }
             }
         }
 
@@ -167,7 +175,7 @@ class Evaluation360ProgressService
             'evaluadores_completos'  => $evaluadoresCompletos,
             'evaluadores_en_cero'    => $evaluadoresEnCero,
             'evaluadores_en_proceso' => $evaluadoresEnProceso,
-            'total_evaluados'        => count($evaluatedStats),
+            'total_evaluados'        => $totalEvaluados,
             'evaluados_completos'    => $evaluadosCompletos,
         ];
     }

@@ -59,15 +59,15 @@
                                 <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                     <div class="flex px-2 py-1">
                                         <div>
-                                            @if($member->userToEvaluate->profile_photo)
+                                            @if($member->userToEvaluate && $member->userToEvaluate->profile_photo)
                                                 <x-filament::avatar
-                                                    src="{{url('storage/'.$member->userToEvaluate->profile_photo)}}"
+                                                    src="{{$member->userToEvaluate->profile_photo_url}}"
                                                     alt="{{$member->userToEvaluate->name}}"
                                                     class="mr-4"
                                                     size="lg"
                                                 />
                                             @else
-                                                <x-filament-panels::avatar.user size="lg" :user="$member->modelUser($member->userToEvaluate->id)" />
+                                                <x-filament-panels::avatar.user size="lg" :user="$member->userToEvaluate ?? $member->modelUser($member->userToEvaluate?->id)" />
                                             @endif
                                         </div>
                                         <div class="flex flex-col justify-center px-3">
@@ -155,9 +155,9 @@
                                     <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <div class="flex px-2 py-1">
                                             <div>
-                                                @if($supervisorUser->profile_photo)
+                                                @if($supervisorUser && $supervisorUser->profile_photo)
                                                     <x-filament::avatar
-                                                        src="{{url('storage/'.$supervisorUser->profile_photo)}}"
+                                                        src="{{$supervisorUser->profile_photo_url}}"
                                                         alt="{{$supervisorUser->name}}"
                                                         class="mr-4"
                                                         size="lg"
@@ -247,9 +247,9 @@
                                     <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <div class="flex px-2 py-1">
                                             <div>
-                                                @if($subordinateUser->profile_photo)
+                                                @if($subordinateUser && $subordinateUser->profile_photo)
                                                     <x-filament::avatar
-                                                        src="{{url('storage/'.$subordinateUser->profile_photo)}}"
+                                                        src="{{$subordinateUser->profile_photo_url}}"
                                                         alt="{{$subordinateUser->name}}"
                                                         class="mr-4"
                                                         size="lg"
@@ -339,9 +339,9 @@
                                     <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <div class="flex px-2 py-1">
                                             <div>
-                                                @if($peerUser->profile_photo)
+                                                @if($peerUser && $peerUser->profile_photo)
                                                     <x-filament::avatar
-                                                        src="{{url('storage/'.$peerUser->profile_photo)}}"
+                                                        src="{{$peerUser->profile_photo_url}}"
                                                         alt="{{$peerUser->name}}"
                                                         class="mr-4"
                                                         size="lg"
@@ -432,9 +432,9 @@
                                     <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <div class="flex px-2 py-1">
                                             <div>
-                                                @if($clientEvaluatedUser->profile_photo)
+                                                @if($clientEvaluatedUser && $clientEvaluatedUser->profile_photo)
                                                     <x-filament::avatar
-                                                        src="{{url('storage/'.$clientEvaluatedUser->profile_photo)}}"
+                                                        src="{{$clientEvaluatedUser->profile_photo_url}}"
                                                         alt="{{$clientEvaluatedUser->name}}"
                                                         class="mr-4"
                                                         size="lg"

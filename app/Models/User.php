@@ -12,13 +12,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Filament\Models\Contracts\HasAvatar;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Storage;
 
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
     public function canAccessPanel(Panel $panel): bool
@@ -175,6 +176,11 @@ class User extends Authenticatable implements FilamentUser
 
 
 
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->profile_photo ? $this->profile_photo_url : null;
+    }
+
     public function getProfilePhotoUrlAttribute(): string
     {
         if (! $this->profile_photo) {
@@ -183,18 +189,18 @@ class User extends Authenticatable implements FilamentUser
 
         $path = $this->profile_photo;
 
-        if (str_starts_with($path, 'http')) {
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
             return $path; // Ya es URL completa almacenada
         }
 
-        // Público:
-        return Storage::disk('sedyco_disk')->url($path);
+        $cleanPath = ltrim($path, '/');
+        if (str_starts_with($cleanPath, 'storage/')) {
+            $cleanPath = substr($cleanPath, 8);
+        }
+        if (str_starts_with($cleanPath, 'public/')) {
+            $cleanPath = substr($cleanPath, 7);
+        }
 
-        // Privado (alternativa):
-        // return Storage::disk('sedyco_disk')->temporaryUrl($path, now()->addMinutes(10));
+        return Storage::disk('sedyco_disk')->url($cleanPath);
     }
-
-
-
-
 }

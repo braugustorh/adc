@@ -31,7 +31,7 @@
                                     @if($userToEvaluated->profile_photo!==null)
 
                                         <x-filament::avatar
-                                            src="{{ $userToEvaluated->profile_photo ? url('storage/'.$userToEvaluated->profile_photo) : asset('path/to/default-avatar.png') }}"
+                                            src="{{ $userToEvaluated->profile_photo_url }}"
                                             alt="{{ $userToEvaluated->name }}"
                                             class="mr-4 w-8 h-8 rounded-full inline-block"
                                             size="sm"

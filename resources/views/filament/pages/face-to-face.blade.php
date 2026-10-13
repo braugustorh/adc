@@ -28,7 +28,7 @@
                                 <div class="shrink-0">
                                     @if($userToEvaluated->profile_photo)
                                     <x-filament::avatar
-                                        src="{{ $userToEvaluated->profile_photo ? url('storage/'.$userToEvaluated->profile_photo) : asset('path/to/default-avatar.png') }}"
+                                        src="{{ $userToEvaluated->profile_photo_url }}"
                                         alt="{{ $userToEvaluated->name }}"
                                         size="h-16"/>
                                     @else

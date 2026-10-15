@@ -125,7 +125,7 @@
                                     <div class="shrink-0">
                                         @if($userToEvaluated->profile_photo)
                                             <x-filament::avatar
-                                                src="{{ Storage::disk('sedyco_disk')->url($user->profile_photo) }}"
+                                                src="{{ Storage::disk('sedyco_disk')->url($userToEvaluated->profile_photo) }}"
                                                 alt="{{ $userToEvaluated->name }}"
                                                 data-bs-toggle="tooltip" data-bs-placement="top"
                                                 data-bs-custom-class="custom-tooltip"

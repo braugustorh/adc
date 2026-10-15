@@ -31,7 +31,6 @@ class CompetencesChartTeam extends ChartWidget
             $this->bandera=false;
             return;
         }
-        $this->campaignId = $this->campaignId->id;
         $supervisorId = auth()->user()->position_id;
         $this->users = User::where('status', true)
             ->whereNotNull('department_id')

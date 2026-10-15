@@ -91,7 +91,10 @@ class Panel9Box extends Page implements HasTable
     }
     //protected static ?string $model = Evaluation360Response::class;
     public function mount(){
-        $this->campaignId = Campaign::whereStatus('Activa')->first()->id??null;
+        $this->campaignId = Campaign::whereStatus('Activa')
+            ->whereHas('evaluations', fn ($q) => $q->whereIn('evaluations_types.id', [1, 2]))
+            ->latest('id')
+            ->value('id');
         $supervisorId = auth()->user()->position_id;
         $this->users = User::where('status', true)
             ->whereNotNull('department_id')

@@ -50,7 +50,7 @@
                                             @if($collaborator->evaluatedUsers->profile_photo!==null)
 
                                                 <x-filament::avatar
-                                                    src="{{ $collaborator->evaluatedUsers->profile_photo ? url('storage/'.$collaborator->evaluatedUsers->profile_photo) : asset('path/to/default-avatar.png') }}"
+                                                    src="{{ $collaborator->evaluatedUsers->profile_photo_url }}"
                                                     alt="{{ $collaborator->evaluatedUsers->name }}"
                                                     class="mr-4 w-8 h-8 rounded-full inline-block"
                                                     size="sm"

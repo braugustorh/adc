@@ -23,7 +23,10 @@ class CompetencesChartTeam extends ChartWidget
 
     public function mount(): void
     {
-        $this->campaignId = Campaign::whereStatus('Activa')->first();
+        $this->campaignId = Campaign::whereStatus('Activa')
+            ->whereHas('evaluations', fn ($q) => $q->whereIn('evaluations_types.id', [1, 2]))
+            ->latest('id')
+            ->value('id');
         if (!$this->campaignId) {
             $this->bandera=false;
             return;

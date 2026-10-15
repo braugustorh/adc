@@ -45,23 +45,24 @@
                                 @if (empty($quadrants[$i]['collaborators']))
                                     <span class="text-sm text-gray-500 dark:text-gray-400"> No hay colaboradores en este cuadrante</span>
                                 @else
-                                    @foreach ($quadrants[$i]['collaborators'] as $collaborator)
-                                        @if ($collaborator->evaluatedUsers)
-                                            @if($collaborator->evaluatedUsers->profile_photo!==null)
+                                    @foreach ($quadrants[$i]['collaborators'] as $collaboratorId)
+                                        @php($evaluatedUser = $users->firstWhere('id', $collaboratorId))
+                                        @if ($evaluatedUser)
+                                            @if($evaluatedUser->profile_photo!==null)
 
                                                 <x-filament::avatar
-                                                    src="{{ $collaborator->evaluatedUsers->profile_photo_url }}"
-                                                    alt="{{ $collaborator->evaluatedUsers->name }}"
+                                                    src="{{ $evaluatedUser->profile_photo_url }}"
+                                                    alt="{{ $evaluatedUser->name }}"
                                                     class="mr-4 w-8 h-8 rounded-full inline-block"
                                                     size="sm"
-                                                    title="{{ $collaborator->evaluatedUsers->name }}"
+                                                    title="{{ $evaluatedUser->name }}"
                                                 />
 
                                             @else
 
-                                                <x-filament-panels::avatar.user size="sm" :user="$collaborator->evaluatedUsers"
-                                                                                alt="{{ $collaborator->evaluatedUsers->name }}"
-                                                                                title="{{ $collaborator->evaluatedUsers->name }}"/>
+                                                <x-filament-panels::avatar.user size="sm" :user="$evaluatedUser"
+                                                                                alt="{{ $evaluatedUser->name }}"
+                                                                                title="{{ $evaluatedUser->name }}"/>
                                             @endif
                                         @endif
                                     @endforeach

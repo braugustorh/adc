@@ -223,7 +223,8 @@ class Panel9Box extends Page implements HasTable
             $quadrant = $this->getQuadrantForCollaborator($collaborator,$potentialScore);
 
             // Agregar el colaborador al cuadrante correspondiente
-            $this->quadrants[$quadrant]['collaborators'][] = $collaborator;
+            // Solo ids: un modelo sin PK en una propiedad pública rompe la rehidratación de Livewire (404)
+            $this->quadrants[$quadrant]['collaborators'][] = $collaborator->evaluated_user_id;
         }
         // Calcular el porcentaje de colaboradores en cada cuadrante
         for ($i = 1; $i <= 9; $i++) {

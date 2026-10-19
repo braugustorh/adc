@@ -42,6 +42,10 @@ class SedeResource extends Resource
                     ->label('Nombre de la Sede')
                     ->required()
                     ->maxLength(150),
+                Forms\Components\TextInput::make('company_name')
+                    ->label('Razón Social')
+                    ->maxLength(255)
+                    ->default(null),
                 Forms\Components\TextInput::make('cp')
                     ->label('Código Postal')
                     ->minLength(5)
@@ -122,6 +126,9 @@ class SedeResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('company_name')
+                    ->label('Razón Social')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('positions_count')
                     ->label('Count')

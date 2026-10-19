@@ -12,6 +12,7 @@ class Sede extends Model
 
     protected $fillable = [
         'name',
+        'company_name',
         'address',
         'phone',
         'city',

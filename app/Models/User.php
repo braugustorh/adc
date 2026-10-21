@@ -174,6 +174,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return $this->hasMany(PsychometricEvaluation::class, 'assigned_by');
     }
 
+    public function privacyNoticeAcceptances(): HasMany
+    {
+        return $this->hasMany(PrivacyNoticeAcceptance::class, 'user_id');
+    }
+
 
 
     public function getFilamentAvatarUrl(): ?string

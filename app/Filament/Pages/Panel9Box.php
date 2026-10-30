@@ -53,7 +53,7 @@ class Panel9Box extends Page implements HasTable
         6 => 'Experto Destacado',
         5 => 'Jugador Clave',
         4 => 'Diamante en Bruto',
-        3 => 'Desempeño Solido',
+        3 => 'Desempeño Sólido',
         2 => 'Jugador Inconsistente',
         1 => 'Riesgo de Talento',
         ];
@@ -117,7 +117,8 @@ class Panel9Box extends Page implements HasTable
             ->groupBy('evaluated_user_id', 'competence_id');
         */
 
-        return Evaluation360Response::select('competence_id', DB::raw('AVG(response) as score'))
+        return Evaluation360Response::with('competences')
+            ->select('competence_id', DB::raw('AVG(response) as score'))
             ->where('campaign_id', $this->campaignId)
             ->whereIn('evaluated_user_id', $this->users->pluck('id')->toArray())
             ->groupBy('competence_id') // Agregar id al GROUP BY
@@ -130,7 +131,7 @@ class Panel9Box extends Page implements HasTable
             //Tables\Columns\TextColumn::make('evaluatedUsers.name')->label('User'),
             Tables\Columns\TextColumn::make('competences.name')->label('Competencia')
                 ->description(
-                    fn (Evaluation360Response $record): string => $record->competences->description
+                    fn (Evaluation360Response $record): string => (string) ($record->competences?->description ?? '')
                 )->wrap(),
         //Tables\Columns\TextColumn::make('competences.description')->label('Descripción')->wrap(),
             // Tables\Columns\TextColumn::make('questions.question')->label('Pregunta'),
@@ -142,8 +143,8 @@ class Panel9Box extends Page implements HasTable
                     $score = (float) $state;
                     return match (true) {
                         $score >= 4.0 && $score <= 5.0 => 'success',
-                        $score >= 2.0 && $score <= 3.9999 => 'warning',
-                        $score >= 0.0 && $score <= 1.99 => 'danger',
+                        $score >= 2.0 && $score < 4.0 => 'warning',
+                        $score >= 0.0 && $score < 2.0 => 'danger',
                         default => 'gray',
                     };
                 }),
@@ -151,13 +152,18 @@ class Panel9Box extends Page implements HasTable
     }
     public function getTableRecordKey($record): string
     {
-        return $record->evaluated_user_id . '-' . $record->competence_id;
+        return (string) ($record->competence_id ?? $record->getKey());
     }
 
     public function updatedUser($value):void
     {
-        $this->show=true;
-        $this->userToEvaluated = User::find($value);
+        if (empty($value)) {
+            $this->show = false;
+            $this->userToEvaluated = null;
+            return;
+        }
+        $this->userToEvaluated = User::with('position')->find($value);
+        $this->show = (bool) $this->userToEvaluated;
         $this->dispatch('update-chart', $value, $this->campaignId);
         $this->dispatch('data-updated', $value, $this->campaignId,$this->titles,$this->colorBadgets);
       //  $this->getChartUser($this->user);
@@ -237,21 +243,16 @@ class Panel9Box extends Page implements HasTable
 
     private function getQuadrantForCollaborator($collaborator,$potential)
     {
-        // Supongamos que tienes los puntajes de desempeño y potencial
-        /*
-         * Aqui buscamos los puntajes de desempeño y potencial del colaborador
-         * en la Psicometria y en la evaluación
-         * el eje X será el desempeño y el eje Y será el potencial
-         */
-        // Obtener los puntajes de desempeño y potencial (valores de 0 a 5)
+        $performanceScore = is_object($collaborator) ? ($collaborator->total_360 ?? null) : $collaborator;
 
-        $performanceScore = $collaborator->total_360;
-        $potentialScore = $potential;
+        return self::calculateQuadrant($performanceScore, $potential);
+    }
 
+    public static function calculateQuadrant($performanceScore, $potentialScore): int
+    {
         // Mapear los puntajes a niveles (1: Bajo, 2: Medio, 3: Alto)
-        $performanceLevel = $this->mapScoreToLevel($performanceScore); //2
-        $potentialLevel = $this->mapScoreToLevel($potentialScore); //1
-
+        $performanceLevel = self::mapScoreToLevel($performanceScore);
+        $potentialLevel = self::mapScoreToLevel($potentialScore);
 
         $quadrant = ($performanceLevel - 1) * 3 + $potentialLevel;
         static $remap = [
@@ -268,11 +269,18 @@ class Panel9Box extends Page implements HasTable
 
         return $remap[$quadrant];
     }
-    private function mapScoreToLevel($score)
+
+    public static function mapScoreToLevel($score): int
     {
-        if ($score >= 4.0 && $score <= 5.0) {
+        if ($score === null || !is_numeric($score)) {
+            return 1; // Bajo
+        }
+
+        $normalized = round((float) $score, 2);
+
+        if ($normalized >= 4.0) {
             return 3; // Alto
-        } elseif ($score >= 3.0 && $score < 4){
+        } elseif ($normalized >= 3.0 && $normalized < 4.0) {
             return 2; // Medio
         } else {
             return 1; // Bajo

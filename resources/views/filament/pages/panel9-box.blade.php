@@ -38,7 +38,7 @@
                                 <x-filament::badge size="md" color="{{$colorBadgets[$i]}}">
                                     <span>Box{{ $i }}</span>
                                 </x-filament::badge>
-                                <span class="mr-2"> {{$titles[$i]}} </span>
+                                <span class="ml-2 font-medium"> {{$titles[$i]}} </span>
                             </div>
 
                             <div class="mt-3">
@@ -48,30 +48,31 @@
                                     @foreach ($quadrants[$i]['collaborators'] as $collaboratorId)
                                         @php($evaluatedUser = $users->firstWhere('id', $collaboratorId))
                                         @if ($evaluatedUser)
+                                            @php($evaluatedFullName = trim($evaluatedUser->name . ' ' . $evaluatedUser->first_name . ' ' . $evaluatedUser->last_name))
                                             @if($evaluatedUser->profile_photo!==null)
 
                                                 <x-filament::avatar
                                                     src="{{ $evaluatedUser->profile_photo_url }}"
-                                                    alt="{{ $evaluatedUser->name }}"
+                                                    alt="{{ $evaluatedFullName }}"
                                                     class="mr-4 w-8 h-8 rounded-full inline-block"
                                                     size="sm"
-                                                    title="{{ $evaluatedUser->name }}"
+                                                    title="{{ $evaluatedFullName }}"
                                                 />
 
                                             @else
 
                                                 <x-filament-panels::avatar.user size="sm" :user="$evaluatedUser"
-                                                                                alt="{{ $evaluatedUser->name }}"
-                                                                                title="{{ $evaluatedUser->name }}"/>
+                                                                                alt="{{ $evaluatedFullName }}"
+                                                                                title="{{ $evaluatedFullName }}"/>
                                             @endif
                                         @endif
                                     @endforeach
 
                                 @endif
                             </div>
-                            <div class="mt-2 flex items-center">
+                            <div class="mt-2 flex items-center gap-1">
                                 <x-filament::badge size="xs">
-                                    {{ $quadrants[$i]['percentage'].'% ' }}
+                                    {{ ($quadrants[$i]['percentage'] ?? 0).'% ' }}
                                 </x-filament::badge>
                                 <span class="text-sm text-gray-500 dark:text-gray-400">de colaboradores</span>
                             </div>
@@ -121,17 +122,16 @@
                             </div>
                         </div>
                         <div>
-                            @if($show)
+                            @if($show && $userToEvaluated)
+                                @php($selectedFullName = trim($userToEvaluated->name . ' ' . $userToEvaluated->first_name . ' ' . $userToEvaluated->last_name))
                                 <div class="flex items-center gap-x-3">
                                     <div class="shrink-0">
                                         @if($userToEvaluated->profile_photo)
                                             <x-filament::avatar
-                                                src="{{ Storage::disk('sedyco_disk')->url($userToEvaluated->profile_photo) }}"
-                                                alt="{{ $userToEvaluated->name }}"
-                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                data-bs-custom-class="custom-tooltip"
-                                                data-bs-title="{{ $userToEvaluated->name }}"
-                                                size="h-16"
+                                                src="{{ $userToEvaluated->profile_photo_url }}"
+                                                alt="{{ $selectedFullName }}"
+                                                title="{{ $selectedFullName }}"
+                                                size="lg"
                                             />
                                         @else
                                             <x-filament-panels::avatar.user size="lg" :user="$userToEvaluated" />
@@ -142,10 +142,10 @@
 
                                     <div class="grow">
                                         <h1 class="text-lg font-medium text-gray-800 dark:text-neutral-200">
-                                            {{$userToEvaluated->name.' '.$userToEvaluated->first_name.' '.$userToEvaluated->last_name}}
+                                            {{ $selectedFullName }}
                                         </h1>
                                         <p class="text-sm text-gray-600 dark:text-neutral-400">
-                                            {{$userToEvaluated->position->name}}
+                                            {{ $userToEvaluated->position?->name ?? 'Sin puesto asignado' }}
                                         </p>
                                     </div>
                                 </div>

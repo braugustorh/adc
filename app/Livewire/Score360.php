@@ -2,8 +2,10 @@
 
 namespace App\Livewire;
 
+use App\Filament\Pages\Panel9Box;
 use App\Models\Evaluation360Response;
 use App\Models\Psychometry;
+use Carbon\Carbon;
 use Filament\Support\Enums\IconPosition;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -36,6 +38,10 @@ class Score360 extends BaseWidget
     #[On('data-updated')]
     public function dataUpdated($user, $campaignId,$titles,$colors): void
     {
+        if (empty($user)) {
+            $this->bandera = false;
+            return;
+        }
         $this->user = $user;
         $this->titles=$titles;
         $this->campaignId = $campaignId;
@@ -48,20 +54,65 @@ class Score360 extends BaseWidget
     {
         if (!$this->bandera) {
             return [];
-        }else {
-            $sendStats = [
-                Stat::make('Puntaje de Desempeño', $this->total360)
-                    ->description('incrementó 5%')
-                    ->descriptionIcon('heroicon-m-arrow-trending-up'),
-                Stat::make('Puntaje de Potencial', $this->totalPotential)
-                    ->description('Última Aplicación: '.$this->application_date),
-                Stat::make('Resultado 9 box', $this->quadrant360 ? $this->titles[$this->quadrant360] : '')
-                    ->description($this->quadrant360 ? 'Box ' . $this->quadrant360 : '')
-                    ->descriptionIcon($this->quadrant360 ? $this->icons[$this->quadrant360] : '',IconPosition::Before)
-                    ->color($this->quadrant360 ? $this->colors[$this->quadrant360] : ''),
-            ];
         }
-        return $sendStats;
+
+        if ($this->total360 !== null) {
+            $perfLevel = Panel9Box::mapScoreToLevel($this->total360);
+            $perfValue = number_format((float) $this->total360, 2);
+            $perfDesc = match ($perfLevel) {
+                3 => 'Nivel Alto (4.00 - 5.00)',
+                2 => 'Nivel Medio (3.00 - 3.99)',
+                default => 'Nivel Bajo (< 3.00)',
+            };
+            $perfIcon = match ($perfLevel) {
+                3 => 'heroicon-m-arrow-trending-up',
+                2 => 'heroicon-m-minus-circle',
+                default => 'heroicon-m-arrow-trending-down',
+            };
+            $perfColor = match ($perfLevel) {
+                3 => 'success',
+                2 => 'warning',
+                default => 'danger',
+            };
+        } else {
+            $perfValue = 'Sin evaluar';
+            $perfDesc = 'Sin evaluación 360° registrada';
+            $perfIcon = 'heroicon-m-information-circle';
+            $perfColor = 'gray';
+        }
+
+        if ($this->totalPotential !== null) {
+            $potLevel = Panel9Box::mapScoreToLevel($this->totalPotential);
+            $potValue = number_format((float) $this->totalPotential, 2);
+            $potDesc = $this->application_date
+                ? 'Última aplicación: ' . Carbon::parse($this->application_date)->format('d/m/Y')
+                : 'Evaluación registrada';
+            $potColor = match ($potLevel) {
+                3 => 'success',
+                2 => 'warning',
+                default => 'danger',
+            };
+        } else {
+            $potValue = 'Sin evaluar';
+            $potDesc = 'Sin evaluación de potencial registrada';
+            $potColor = 'gray';
+        }
+
+        $hasQuadrant = $this->quadrant360 && isset($this->titles[$this->quadrant360]);
+
+        return [
+            Stat::make('Puntaje de Desempeño', $perfValue)
+                ->description($perfDesc)
+                ->descriptionIcon($perfIcon)
+                ->color($perfColor),
+            Stat::make('Puntaje de Potencial', $potValue)
+                ->description($potDesc)
+                ->color($potColor),
+            Stat::make('Resultado 9 box', $hasQuadrant ? $this->titles[$this->quadrant360] : 'Sin clasificar')
+                ->description($hasQuadrant ? 'Box ' . $this->quadrant360 : 'Sin evaluaciones registradas')
+                ->descriptionIcon($hasQuadrant ? ($this->icons[$this->quadrant360] ?? '') : 'heroicon-m-question-mark-circle', IconPosition::Before)
+                ->color($hasQuadrant ? ($this->colors[$this->quadrant360] ?? 'gray') : 'gray'),
+        ];
     }
     public function prepareScore()
     {
@@ -72,7 +123,7 @@ class Score360 extends BaseWidget
             ->groupBy('evaluated_user_id')
             ->first();
 
-        $potentials=Psychometry::select('user_id','application_date',DB::raw('
+        $potential = Psychometry::select('user_id', DB::raw('MAX(application_date) as application_date'), DB::raw('
             (SUM(leadership) +
             SUM(communication) +
             SUM(conflict_management) +
@@ -100,44 +151,25 @@ class Score360 extends BaseWidget
             as total_average
         '))
             ->where('user_id', $this->user)
-            ->groupBy('user_id','application_date')
-            ->get();
-        $this->application_date=$potentials->pluck('application_date')->first();
-        $this->total360 = $collaborator ? round($collaborator->total_360,2) : null;
-        $this->totalPotential = $potentials->count() > 0 ? round($potentials[0]->total_average,2) : null;
-        $this->quadrant360=$this->getQuadrantForCollaborator($this->total360,$this->totalPotential);
+            ->groupBy('user_id')
+            ->first();
 
+        $this->application_date = $potential?->application_date;
+        $this->total360 = $collaborator ? round((float) $collaborator->total_360, 2) : null;
+        $this->totalPotential = ($potential && $potential->total_average !== null) ? round((float) $potential->total_average, 2) : null;
+
+        if ($this->total360 !== null || $this->totalPotential !== null) {
+            $this->quadrant360 = $this->getQuadrantForCollaborator($this->total360, $this->totalPotential);
+        } else {
+            $this->quadrant360 = null;
+        }
     }
     private function getQuadrantForCollaborator($total360,$potential)
     {
-        // Supongamos que tienes los puntajes de desempeño y potencial
-        /*
-         * Aqui buscamos los puntajes de desempeño y potencial del colaborador
-         * en la Psicometria y en la evaluación
-         * el eje X será el desempeño y el eje Y será el potencial
-         */
-        // Obtener los puntajes de desempeño y potencial (valores de 0 a 5)
-
-        $performanceScore = $total360;
-        $potentialScore = $potential;
-
-        // Mapear los puntajes a niveles (1: Bajo, 2: Medio, 3: Alto)
-        $performanceLevel = $this->mapScoreToLevel($performanceScore);
-        $potentialLevel = $this->mapScoreToLevel($potentialScore);
-
-        // Calcular el cuadrante (1 a 9)
-        $quadrant = ($performanceLevel - 1) * 3 + $potentialLevel;
-
-        return $quadrant;
+        return Panel9Box::calculateQuadrant($total360, $potential);
     }
     private function mapScoreToLevel($score)
     {
-        if ($score >= 4.0 && $score <= 5.0) {
-            return 3; // Alto
-        } elseif ($score >= 3.0 && $score <= 3.9) {
-            return 2; // Medio
-        } else {
-            return 1; // Bajo
-        }
+        return Panel9Box::mapScoreToLevel($score);
     }
 }

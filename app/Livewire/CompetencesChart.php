@@ -13,13 +13,25 @@ class CompetencesChart extends ChartWidget
     public $user;
     public $bandera=true;
     public $campaignId;
-    protected static bool $isLazy = true;
+    protected static bool $isLazy = false;
     protected static ?string $maxHeight = '300px';
+
+    public function mount($user = null, $campaignId = null): void
+    {
+        if (!empty($user) && (int) $user !== (int) auth()->id()) {
+            $this->user = $user;
+            $this->campaignId = $campaignId;
+            $this->bandera = true;
+        }
+    }
 
     #[On('update-chart')]
     public function updateChart($user, $campaignId): void
     {
-
+        if (empty($user) || (int) $user === (int) auth()->id()) {
+            $this->bandera = false;
+            return;
+        }
         $this->user = $user;
         $this->campaignId = $campaignId;
         $this->bandera=true;

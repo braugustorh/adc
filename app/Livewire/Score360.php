@@ -34,11 +34,19 @@ class Score360 extends BaseWidget
     public $quadrant360;
     public $bandera=false;
     public $application_date;
+    protected static bool $isLazy = false;
+
+    public function mount($user = null, $campaignId = null, $titles = [], $colors = []): void
+    {
+        if (!empty($user) && (int) $user !== (int) auth()->id()) {
+            $this->dataUpdated($user, $campaignId, $titles, $colors);
+        }
+    }
 
     #[On('data-updated')]
     public function dataUpdated($user, $campaignId,$titles,$colors): void
     {
-        if (empty($user)) {
+        if (empty($user) || (int) $user === (int) auth()->id()) {
             $this->bandera = false;
             return;
         }

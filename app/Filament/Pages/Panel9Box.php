@@ -5,7 +5,9 @@ namespace App\Filament\Pages;
 use App\Models\Campaign;
 use App\Livewire\CompetencesChart;
 use App\Models\Competence;
+use App\Models\Department;
 use App\Models\Psychometry;
+use App\Models\Sede;
 use Filament\Actions\Contracts\HasLivewire;
 use Filament\Resources\Concerns\HasTabs;
 use Filament\Tables\Grouping\Group;
@@ -16,6 +18,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables;
@@ -38,6 +42,9 @@ class Panel9Box extends Page implements HasTable
     public $members;
     public $campaigns;
     public $campaignId;
+    public ?int $sedeId = null;
+    public ?int $departmentId = null;
+    public ?int $leaderPositionId = null;
     public $totales;
     public $users,$userToEvaluated;
     public $user;
@@ -45,8 +52,9 @@ class Panel9Box extends Page implements HasTable
     public $showChartOnView=false;
     public $activeTab='tab1';
     public $quadrants = [];
+    public array $collaboratorScores = [];
     public $orderedIndexes = [4, 7, 9, 2, 5, 8, 1, 3, 6];
- public $titles = [
+    public $titles = [
         9 => 'Futuro Líder',
         8 => 'Estrella Emergente',
         7 => 'Líder Emergente',
@@ -56,8 +64,8 @@ class Panel9Box extends Page implements HasTable
         3 => 'Desempeño Sólido',
         2 => 'Jugador Inconsistente',
         1 => 'Riesgo de Talento',
-        ];
- public $colorBadgets=[
+    ];
+    public $colorBadgets=[
         9 => 'success',
         8 => 'success',
         7 => 'success',
@@ -67,45 +75,202 @@ class Panel9Box extends Page implements HasTable
         3 => 'info',
         2 => 'info',
         1 => 'danger',
-        ];
+    ];
 
     public static function canView(): bool
     {
-        //Este Panel solo lo debe de ver los Jefes de Área y el Administrador
-        //Se debe de agregar la comprobación de que estpo se cumpla para que solo sea visible para los Jefes de Área
-        if (\auth()->user()->hasRole('RH Corp')||
-            \auth()->user()->hasRole('RH') ||
-            \auth()->user()->hasRole('Supervisor') ||
-            \auth()->user()->hasRole('Visor') ||
-            \auth()->user()->hasRole('Administrador')) {
-            return true;
-        }else{
-            return false;
-        }
-
+        return auth()->check() && auth()->user()->hasAnyRole([
+            'Administrador',
+            'Super Administrador',
+            'RH Corp',
+            'RH',
+            'Gerente',
+            'Supervisor',
+            'Visor',
+        ]);
     }
+
     public static function shouldRegisterNavigation(): bool
     {
-        // Esto controla la visibilidad en la navegación.
         return static::canView();
     }
-    //protected static ?string $model = Evaluation360Response::class;
-    public function mount(){
+
+    /**
+     * Determina si el usuario autenticado tiene visión multi-sede global.
+     */
+    public function isGlobalViewer(): bool
+    {
+        return auth()->check() && auth()->user()->hasAnyRole([
+            'Administrador',
+            'Super Administrador',
+            'RH Corp',
+            'Visor',
+        ]);
+    }
+
+    /**
+     * Determina si el usuario puede explorar todos los departamentos/equipos de su sede.
+     */
+    public function canFilterTeamsAndDepartments(): bool
+    {
+        return auth()->check() && auth()->user()->hasAnyRole([
+            'Administrador',
+            'Super Administrador',
+            'RH Corp',
+            'RH',
+            'Gerente',
+            'Visor',
+        ]);
+    }
+
+    public function mount(): void
+    {
+        $authUser = auth()->user();
+
         $this->campaignId = Campaign::whereStatus('Activa')
             ->whereHas('evaluations', fn ($q) => $q->whereIn('evaluations_types.id', [1, 2]))
             ->latest('id')
-            ->value('id');
-        $supervisorId = auth()->user()->position_id;
-        $this->users = User::where('status', true)
+            ->value('id')
+            ?? Campaign::whereStatus('Concluida')
+                ->whereHas('evaluations', fn ($q) => $q->whereIn('evaluations_types.id', [1, 2]))
+                ->latest('id')
+                ->value('id');
+
+        if ($this->isGlobalViewer()) {
+            $this->sedeId = null; // Todas las sedes por defecto
+            $this->departmentId = null;
+            $this->leaderPositionId = null;
+        } elseif ($this->canFilterTeamsAndDepartments()) {
+            // RH Local y Gerente/Director: fijo en su sede, libre de ver toda la sede, por depto o por equipo
+            $this->sedeId = $authUser?->sede_id;
+            $this->departmentId = null;
+            $this->leaderPositionId = null;
+        } else {
+            // Supervisor únicamente: fijo en su sede y en su equipo directo
+            $this->sedeId = $authUser?->sede_id;
+            $this->departmentId = null;
+            $this->leaderPositionId = $authUser?->position_id;
+        }
+
+        $this->resolveScopedUsers();
+    }
+
+    /**
+     * Construye y ejecuta la consulta de colaboradores permitidos según el rol,
+     * los filtros seleccionados y el candado estricto de auto-exclusión.
+     */
+    public function resolveScopedUsers(): void
+    {
+        $authUser = auth()->user();
+        if (!$authUser) {
+            $this->users = collect();
+            return;
+        }
+
+        // Reforzar candados de rol sobre las propiedades de filtro
+        if (!$this->isGlobalViewer()) {
+            $this->sedeId = $authUser->sede_id;
+        }
+        if (!$this->canFilterTeamsAndDepartments()) {
+            $this->leaderPositionId = $authUser->position_id;
+        }
+
+        $query = User::with(['position', 'department', 'sede'])
+            ->where('status', true)
+            ->where('id', '!=', 1)
+            // CANDADO ESTRICTO: Ningún usuario (ni RH, ni RH Corp, ni Director) puede ver su propio resultado
+            ->where('id', '!=', $authUser->id)
             ->whereNotNull('department_id')
             ->whereNotNull('position_id')
-            ->whereNotNull('sede_id')
-            ->whereHas('position', function ($query) use ($supervisorId) {
-                $query->where('supervisor_id', $supervisorId);
-            })
+            ->whereNotNull('sede_id');
+
+        if ($this->sedeId) {
+            $query->where('sede_id', $this->sedeId);
+        }
+
+        if ($this->departmentId) {
+            $query->where('department_id', $this->departmentId);
+        }
+
+        if ($this->leaderPositionId) {
+            $leaderPosId = (int) $this->leaderPositionId;
+            $query->whereHas('position', function (Builder $q) use ($leaderPosId) {
+                $q->where('supervisor_id', $leaderPosId);
+            });
+        }
+
+        $this->users = $query
+            ->orderBy('name')
+            ->orderBy('first_name')
+            ->orderBy('last_name')
             ->get();
-        //$this->quadrants=collect();
-       //$this->loadQuadrantData();
+    }
+
+    public function updatedCampaignId($value): void
+    {
+        $this->campaignId = $value ? (int) $value : null;
+        $this->syncAfterFilterChange(keepSelectedUser: true);
+    }
+
+    public function updatedSedeId($value): void
+    {
+        $this->sedeId = ($this->isGlobalViewer() && !empty($value)) ? (int) $value : ($this->isGlobalViewer() ? null : auth()->user()?->sede_id);
+        $this->departmentId = null;
+        if ($this->canFilterTeamsAndDepartments()) {
+            $this->leaderPositionId = null;
+        }
+        $this->syncAfterFilterChange(keepSelectedUser: false);
+    }
+
+    public function updatedDepartmentId($value): void
+    {
+        $this->departmentId = !empty($value) ? (int) $value : null;
+        if ($this->canFilterTeamsAndDepartments()) {
+            $this->leaderPositionId = null;
+        }
+        $this->syncAfterFilterChange(keepSelectedUser: false);
+    }
+
+    public function updatedLeaderPositionId($value): void
+    {
+        if ($this->canFilterTeamsAndDepartments()) {
+            $this->leaderPositionId = !empty($value) ? (int) $value : null;
+        } else {
+            $this->leaderPositionId = auth()->user()?->position_id;
+        }
+        $this->syncAfterFilterChange(keepSelectedUser: false);
+    }
+
+    public function clearScopeFilters(): void
+    {
+        $authUser = auth()->user();
+        $this->sedeId = $this->isGlobalViewer() ? null : $authUser?->sede_id;
+        $this->departmentId = null;
+        $this->leaderPositionId = $this->canFilterTeamsAndDepartments() ? null : $authUser?->position_id;
+        $this->syncAfterFilterChange(keepSelectedUser: false);
+    }
+
+    private function syncAfterFilterChange(bool $keepSelectedUser = false): void
+    {
+        $this->resolveScopedUsers();
+
+        if (!$keepSelectedUser || ($this->user && !$this->users->contains('id', (int) $this->user))) {
+            $this->user = '';
+            $this->show = false;
+            $this->userToEvaluated = null;
+            $this->dispatch('update-chart', null, $this->campaignId);
+            $this->dispatch('data-updated', null, $this->campaignId, $this->titles, $this->colorBadgets);
+        } elseif ($this->user) {
+            $this->dispatch('update-chart', $this->user, $this->campaignId);
+            $this->dispatch('data-updated', $this->user, $this->campaignId, $this->titles, $this->colorBadgets);
+        }
+
+        if ($this->activeTab === 'tab3') {
+            $this->prepareQuadrantData();
+        }
+
+        $this->resetTable();
+        $this->dispatch('team-scope-updated', $this->campaignId, $this->users->pluck('id')->toArray());
     }
     protected function getTableQuery()
     {
@@ -155,44 +320,82 @@ class Panel9Box extends Page implements HasTable
         return (string) ($record->competence_id ?? $record->getKey());
     }
 
-    public function updatedUser($value):void
+    public function updatedUser($value): void
     {
-        if (empty($value)) {
+        if (empty($value) || (int) $value === (int) auth()->id()) {
+            $this->user = '';
             $this->show = false;
+            $this->showChartOnView = false;
             $this->userToEvaluated = null;
             return;
         }
-        $this->userToEvaluated = User::with('position')->find($value);
+
+        // Candado de alcance: el colaborador debe pertenecer al conjunto permitido
+        if (!$this->users || !$this->users->contains('id', (int) $value)) {
+            $this->user = '';
+            $this->show = false;
+            $this->showChartOnView = false;
+            $this->userToEvaluated = null;
+            return;
+        }
+
+        $this->userToEvaluated = User::with(['position.supervisor.user', 'department', 'sede'])
+            ->where('id', '!=', auth()->id())
+            ->find((int) $value);
         $this->show = (bool) $this->userToEvaluated;
-        $this->dispatch('update-chart', $value, $this->campaignId);
-        $this->dispatch('data-updated', $value, $this->campaignId,$this->titles,$this->colorBadgets);
-      //  $this->getChartUser($this->user);
-    }
-    #[On('show-chart')]
-    public function showChart():void
-    {
-        $this->showChartOnView=true;
+        $this->showChartOnView = (bool) $this->userToEvaluated;
+        $this->dispatch('update-chart', (int) $value, $this->campaignId);
+        $this->dispatch('data-updated', (int) $value, $this->campaignId, $this->titles, $this->colorBadgets);
     }
 
-    public function prepareQuadrantData():void
+    /**
+     * Navegación interactiva (Drill-down) desde un cuadrante de la matriz 9-Box hacia el detalle individual.
+     */
+    public function inspectCollaborator(int $userId): void
     {
-        // Inicializar los cuadrantes
+        if ($userId === (int) auth()->id() || !$this->users || !$this->users->contains('id', $userId)) {
+            return;
+        }
+
+        $this->quadrants = [];
+        $this->collaboratorScores = [];
+        $this->activeTab = 'tab1';
+        $this->user = $userId;
+        $this->updatedUser($userId);
+    }
+
+    #[On('show-chart')]
+    public function showChart(): void
+    {
+        $this->showChartOnView = true;
+    }
+
+    public function prepareQuadrantData(): void
+    {
+        // Inicializar los cuadrantes y mapa escalar de puntajes
+        $this->collaboratorScores = [];
         for ($i = 1; $i <= 9; $i++) {
             $this->quadrants[$i] = [
                 'collaborators' => [],
                 'percentage' => 0,
             ];
         }
-        // Obtener todos los colaboradores
+
+        $scopedIds = $this->users ? $this->users->pluck('id')->toArray() : [];
+        if (empty($scopedIds) || !$this->campaignId) {
+            return;
+        }
+
+        // Obtener todos los colaboradores evaluados dentro del alcance actual
         $collaborators = Evaluation360Response::select('evaluated_user_id')
             ->selectRaw('AVG(response) as total_360')
             ->where('campaign_id', $this->campaignId)
-            ->whereIN('evaluated_user_id', $this->users->pluck('id')->toArray())
+            ->whereIn('evaluated_user_id', $scopedIds)
             ->groupBy('evaluated_user_id')
             ->get();
 
         $totalCollaborators = $collaborators->count();
-        $potentials=Psychometry::select('user_id',DB::raw('
+        $potentials = Psychometry::select('user_id', DB::raw('
             (SUM(leadership) +
             SUM(communication) +
             SUM(conflict_management) +
@@ -219,29 +422,34 @@ class Panel9Box extends Page implements HasTable
             COUNT(willingness_service))
             as total_average
         '))
+            ->whereIn('user_id', $scopedIds)
             ->groupBy('user_id')
-            ->pluck('total_average','user_id');
+            ->pluck('total_average', 'user_id');
 
         foreach ($collaborators as $collaborator) {
-
-            $potentialScore = $potentials[$collaborator->evaluated_user_id] ?? null;
+            $userId = (int) $collaborator->evaluated_user_id;
+            $potentialScore = $potentials[$userId] ?? null;
             // Determinar el cuadrante del colaborador
-            $quadrant = $this->getQuadrantForCollaborator($collaborator,$potentialScore);
+            $quadrant = $this->getQuadrantForCollaborator($collaborator, $potentialScore);
 
             // Agregar el colaborador al cuadrante correspondiente
-            // Solo ids: un modelo sin PK en una propiedad pública rompe la rehidratación de Livewire (404)
-            $this->quadrants[$quadrant]['collaborators'][] = $collaborator->evaluated_user_id;
+            // Solo ids y escalares: un modelo sin PK en una propiedad pública rompe la rehidratación de Livewire (404)
+            $this->quadrants[$quadrant]['collaborators'][] = $userId;
+            $this->collaboratorScores[$userId] = [
+                'score_360' => round((float) $collaborator->total_360, 2),
+                'score_potential' => $potentialScore !== null ? round((float) $potentialScore, 2) : null,
+            ];
         }
+
         // Calcular el porcentaje de colaboradores en cada cuadrante
         for ($i = 1; $i <= 9; $i++) {
             $count = count($this->quadrants[$i]['collaborators']);
             $percentage = $totalCollaborators > 0 ? ($count / $totalCollaborators) * 100 : 0;
             $this->quadrants[$i]['percentage'] = number_format($percentage, 2);
         }
-
     }
 
-    private function getQuadrantForCollaborator($collaborator,$potential)
+    private function getQuadrantForCollaborator($collaborator, $potential)
     {
         $performanceScore = is_object($collaborator) ? ($collaborator->total_360 ?? null) : $collaborator;
 
@@ -286,26 +494,158 @@ class Panel9Box extends Page implements HasTable
             return 1; // Bajo
         }
     }
+
     public function changeTab($tab)
     {
-
         if ($tab === 'tab3') {
-           $this->loadQuadrantData();
+            $this->loadQuadrantData();
             $this->activeTab = $tab;
-
         } else {
             $this->quadrants = [];
-
+            $this->collaboratorScores = [];
             $this->activeTab = $tab;
         }
     }
+
     public function loadQuadrantData()
     {
         $this->prepareQuadrantData();
     }
 
+    protected function getViewData(): array
+    {
+        $authUser = auth()->user();
 
+        $availableCampaigns = Campaign::whereIn('status', ['Activa', 'Concluida'])
+            ->whereHas('evaluations', fn ($q) => $q->whereIn('evaluations_types.id', [1, 2]))
+            ->orderByRaw("CASE WHEN status = 'Activa' THEN 0 ELSE 1 END")
+            ->orderByDesc('id')
+            ->get(['id', 'name', 'status']);
 
+        $availableSedes = $this->isGlobalViewer()
+            ? Sede::where('status', true)->orderBy('name')->get(['id', 'name'])
+            : Sede::where('id', $authUser?->sede_id)->get(['id', 'name']);
 
+        $departmentsQuery = Department::query()->orderBy('name');
+        if ($this->sedeId) {
+            $departmentsQuery->where('sede_id', $this->sedeId);
+        }
+        $availableDepartments = $departmentsQuery->get(['id', 'name', 'sede_id']);
 
+        // Identificar posiciones líderes que tienen colaboradores subordinados en el alcance actual (Sede / Depto)
+        $subordinatesScope = User::query()
+            ->where('status', true)
+            ->where('id', '!=', 1)
+            ->where('id', '!=', $authUser?->id)
+            ->whereNotNull('position_id')
+            ->whereNotNull('department_id')
+            ->whereNotNull('sede_id');
+
+        if ($this->sedeId) {
+            $subordinatesScope->where('sede_id', $this->sedeId);
+        }
+        if ($this->departmentId) {
+            $subordinatesScope->where('department_id', $this->departmentId);
+        }
+
+        $supervisorPositionIds = Position::whereIn('id', $subordinatesScope->pluck('position_id')->unique())
+            ->whereNotNull('supervisor_id')
+            ->pluck('supervisor_id')
+            ->unique()
+            ->values();
+
+        if (!$this->canFilterTeamsAndDepartments() && $authUser?->position_id) {
+            $supervisorPositionIds = collect([$authUser->position_id]);
+        }
+
+        $leaderPositions = Position::with(['user' => function ($q) {
+                $q->where('status', true)->orderBy('name');
+            }])
+            ->whereIn('id', $supervisorPositionIds)
+            ->orderBy('name')
+            ->get();
+
+        $availableLeaders = $leaderPositions->map(function (Position $pos) {
+            $holder = $pos->user->first();
+            $holderName = $holder
+                ? trim($holder->name . ' ' . $holder->first_name . ' ' . $holder->last_name)
+                : null;
+            return [
+                'position_id' => $pos->id,
+                'position_name' => $pos->name,
+                'holder_name' => $holderName,
+                'label' => $holderName ? "{$holderName} · {$pos->name}" : $pos->name,
+            ];
+        })->values();
+
+        // Métricas ejecutivas del alcance filtrado
+        $scopedIds = $this->users ? $this->users->pluck('id')->toArray() : [];
+        $totalScopedUsers = count($scopedIds);
+        $evaluated360Count = 0;
+        $avg360 = null;
+        $avgPotential = null;
+
+        if ($totalScopedUsers > 0 && $this->campaignId) {
+            $evalStats = Evaluation360Response::query()
+                ->where('campaign_id', $this->campaignId)
+                ->whereIn('evaluated_user_id', $scopedIds)
+                ->selectRaw('COUNT(DISTINCT evaluated_user_id) as evaluated_count, AVG(response) as avg_score')
+                ->first();
+
+            $evaluated360Count = (int) ($evalStats?->evaluated_count ?? 0);
+            $avg360 = $evalStats?->avg_score !== null ? round((float) $evalStats->avg_score, 2) : null;
+        }
+
+        if ($totalScopedUsers > 0) {
+            $potAvg = Psychometry::query()
+                ->whereIn('user_id', $scopedIds)
+                ->selectRaw('
+                    (SUM(leadership) +
+                    SUM(communication) +
+                    SUM(conflict_management) +
+                    SUM(negotiation) +
+                    SUM(organization) +
+                    SUM(problem_analysis) +
+                    SUM(decision_making) +
+                    SUM(strategic_thinking) +
+                    SUM(resilience) +
+                    SUM(focus_on_results) +
+                    SUM(teamwork) +
+                    SUM(willingness_service)) /
+                    NULLIF((COUNT(leadership) +
+                    COUNT(communication) +
+                    COUNT(conflict_management) +
+                    COUNT(negotiation) +
+                    COUNT(organization) +
+                    COUNT(problem_analysis) +
+                    COUNT(decision_making) +
+                    COUNT(strategic_thinking) +
+                    COUNT(resilience) +
+                    COUNT(focus_on_results) +
+                    COUNT(teamwork) +
+                    COUNT(willingness_service)), 0) as avg_pot
+                ')
+                ->value('avg_pot');
+
+            $avgPotential = $potAvg !== null ? round((float) $potAvg, 2) : null;
+        }
+
+        $coveragePct = $totalScopedUsers > 0 ? (int) round(($evaluated360Count / $totalScopedUsers) * 100) : 0;
+
+        return [
+            'availableCampaigns' => $availableCampaigns,
+            'availableSedes' => $availableSedes,
+            'availableDepartments' => $availableDepartments,
+            'availableLeaders' => $availableLeaders,
+            'isGlobalViewer' => $this->isGlobalViewer(),
+            'canFilterTeams' => $this->canFilterTeamsAndDepartments(),
+            'scopeMetrics' => [
+                'total_users' => $totalScopedUsers,
+                'evaluated_360_count' => $evaluated360Count,
+                'coverage_pct' => $coveragePct,
+                'avg_360' => $avg360,
+                'avg_potential' => $avgPotential,
+            ],
+        ];
+    }
 }

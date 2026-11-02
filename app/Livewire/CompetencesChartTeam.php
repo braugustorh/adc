@@ -11,57 +11,67 @@ use Livewire\Attributes\On;
 class CompetencesChartTeam extends ChartWidget
 {
     protected static ?string $heading = 'Gráfica de Competencias por Equipo';
-    public $user,$users;
-    public $bandera=true;
-    public $data;
+    public array $userIds = [];
+    public $bandera = true;
     public $campaignId;
-    protected static bool $isLazy = true;
+    protected static bool $isLazy = false;
     protected static ?string $maxHeight = '300px';
     protected static ?string $pollingInterval = null;
 
-
-
-    public function mount(): void
+    public function mount($campaignId = null, ?array $userIds = null): void
     {
-        $this->campaignId = Campaign::whereStatus('Activa')
-            ->whereHas('evaluations', fn ($q) => $q->whereIn('evaluations_types.id', [1, 2]))
-            ->latest('id')
-            ->value('id');
-        if (!$this->campaignId) {
-            $this->bandera=false;
-            return;
+        $this->campaignId = $campaignId
+            ?? Campaign::whereStatus('Activa')
+                ->whereHas('evaluations', fn ($q) => $q->whereIn('evaluations_types.id', [1, 2]))
+                ->latest('id')
+                ->value('id')
+            ?? Campaign::whereStatus('Concluida')
+                ->whereHas('evaluations', fn ($q) => $q->whereIn('evaluations_types.id', [1, 2]))
+                ->latest('id')
+                ->value('id');
+
+        if ($userIds !== null) {
+            $this->userIds = array_values(array_diff(array_map('intval', $userIds), [(int) auth()->id()]));
+        } else {
+            $supervisorId = auth()->user()?->position_id;
+            $this->userIds = User::where('status', true)
+                ->where('id', '!=', 1)
+                ->where('id', '!=', auth()->id())
+                ->whereNotNull('department_id')
+                ->whereNotNull('position_id')
+                ->whereNotNull('sede_id')
+                ->whereHas('position', function ($query) use ($supervisorId) {
+                    $query->where('supervisor_id', $supervisorId);
+                })
+                ->pluck('id')
+                ->map(fn ($id) => (int) $id)
+                ->toArray();
         }
-        $supervisorId = auth()->user()->position_id;
-        $this->users = User::where('status', true)
-            ->whereNotNull('department_id')
-            ->whereNotNull('position_id')
-            ->whereNotNull('sede_id')
-            ->whereHas('position', function ($query) use ($supervisorId) {
-                $query->where('supervisor_id', $supervisorId);
-            })
-            ->get();
 
-        $this->data = Evaluation360Response::select('competences.name as competence_name')
-            ->selectRaw('AVG(response) as total_360')
-            ->join('competences', 'evaluation360_responses.competence_id', '=', 'competences.id') // Unión con la tabla de competencias
-            ->where('campaign_id', $this->campaignId)
-            ->whereIn('evaluated_user_id', $this->users->pluck('id')->toArray())
-            ->groupBy('competences.name') // Agrupar por nombre de competencia
-            ->get();
-        $this->bandera=true;
+        $this->bandera = !empty($this->campaignId) && !empty($this->userIds);
+    }
 
+    #[On('team-scope-updated')]
+    public function updateTeamScope($campaignId, array $userIds): void
+    {
+        $this->campaignId = $campaignId ? (int) $campaignId : null;
+        $this->userIds = array_values(array_diff(array_map('intval', $userIds), [(int) auth()->id()]));
+        $this->bandera = !empty($this->campaignId) && !empty($this->userIds);
     }
 
     public function getData(): array
     {
-        if ($this->bandera) {
+        if ($this->bandera && $this->campaignId && !empty($this->userIds)) {
+            $data = Evaluation360Response::select('competences.name as competence_name')
+                ->selectRaw('AVG(response) as total_360')
+                ->join('competences', 'evaluation360_responses.competence_id', '=', 'competences.id')
+                ->where('campaign_id', $this->campaignId)
+                ->whereIn('evaluated_user_id', $this->userIds)
+                ->groupBy('competences.name')
+                ->get();
 
-            // Get the data from the database
-
-
-// Extraer los valores 'total_360' y los nombres de las competencias
-            $values = $this->data->pluck('total_360')->toArray();
-            $labels = $this->data->pluck('competence_name')->toArray(); // Usar los nombres como etiquetas
+            $values = $data->pluck('total_360')->map(fn ($v) => round((float) $v, 2))->toArray();
+            $labels = $data->pluck('competence_name')->toArray();
 
             $configChart = [
                 'datasets' => [
@@ -72,9 +82,18 @@ class CompetencesChartTeam extends ChartWidget
                 ],
                 'labels' => $labels,
             ];
-        }else{
-            $configChart=[];
+        } else {
+            $configChart = [
+                'datasets' => [
+                    [
+                        'label' => 'Competencias',
+                        'data' => [],
+                    ],
+                ],
+                'labels' => [],
+            ];
         }
+
         return $configChart;
     }
 

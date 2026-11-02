@@ -326,7 +326,9 @@
                         {{ $scopeMetrics['avg_360'] !== null ? number_format($scopeMetrics['avg_360'], 2) : '—' }}
                     </span>
                     @if($scopeMetrics['avg_360'] !== null)
-                        @php($avgPerfLevel = \App\Filament\Pages\Panel9Box::mapScoreToLevel($scopeMetrics['avg_360']))
+                        @php
+                            $avgPerfLevel = \App\Filament\Pages\Panel9Box::mapScoreToLevel($scopeMetrics['avg_360']);
+                        @endphp
                         <x-filament::badge size="xs" :color="$avgPerfLevel === 3 ? 'success' : ($avgPerfLevel === 2 ? 'warning' : 'danger')">
                             {{ $avgPerfLevel === 3 ? 'Nivel Alto' : ($avgPerfLevel === 2 ? 'Nivel Medio' : 'Nivel Bajo') }}
                         </x-filament::badge>
@@ -344,7 +346,9 @@
                         {{ $scopeMetrics['avg_potential'] !== null ? number_format($scopeMetrics['avg_potential'], 2) : '—' }}
                     </span>
                     @if($scopeMetrics['avg_potential'] !== null)
-                        @php($avgPotLevel = \App\Filament\Pages\Panel9Box::mapScoreToLevel($scopeMetrics['avg_potential']))
+                        @php
+                            $avgPotLevel = \App\Filament\Pages\Panel9Box::mapScoreToLevel($scopeMetrics['avg_potential']);
+                        @endphp
                         <x-filament::badge size="xs" :color="$avgPotLevel === 3 ? 'success' : ($avgPotLevel === 2 ? 'warning' : 'danger')">
                             {{ $avgPotLevel === 3 ? 'Nivel Alto' : ($avgPotLevel === 2 ? 'Nivel Medio' : 'Nivel Bajo') }}
                         </x-filament::badge>
@@ -457,7 +461,9 @@
                                     </div>
                                 @else
                                     @foreach ($quadrantCollaboratorIds as $collaboratorId)
-                                        @php($evaluatedUser = $users->firstWhere('id', $collaboratorId))
+                                        @php
+                                            $evaluatedUser = $users->firstWhere('id', $collaboratorId);
+                                        @endphp
                                         @if ($evaluatedUser)
                                             @php
                                                 $evaluatedFullName = trim($evaluatedUser->name . ' ' . $evaluatedUser->first_name . ' ' . $evaluatedUser->last_name);
@@ -591,7 +597,9 @@
                             wire:model.live="user">
                             <option value="">— Selecciona un colaborador —</option>
                             @foreach($users as $us)
-                                @php($fullNameOption = trim($us->name . ' ' . $us->first_name . ' ' . $us->last_name))
+                                @php
+                                    $fullNameOption = trim($us->name . ' ' . $us->first_name . ' ' . $us->last_name);
+                                @endphp
                                 <option value="{{ $us->id }}">
                                     {{ $fullNameOption }} — {{ $us->position?->name ?? 'Sin puesto' }} ({{ $us->sede?->name ?? 'Sin sede' }})
                                 </option>

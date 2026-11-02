@@ -67,12 +67,12 @@ class OneToOne extends Page implements HasForms
         9 => 'Futuro Líder',
         8 => 'Estrella Emergente',
         7 => 'Líder Emergente',
-        6 => 'Profesional Experimentado',
-        5 => 'Futuro Prometedor',
-        4 => 'Enigma',
-        3 => 'Desempeño Solido',
-        2 => 'Dilema',
-        1 => 'Bajo Perfil',
+        6 => 'Experto Destacado',
+        5 => 'Jugador Clave',
+        4 => 'Diamante en Bruto',
+        3 => 'Desempeño Sólido',
+        2 => 'Jugador Inconsistente',
+        1 => 'Riesgo de Talento',
     ];
 
 
@@ -112,10 +112,16 @@ class OneToOne extends Page implements HasForms
     {
         //$this->campaignId = Campaign::whereStatus('Activa')->first();
         //if ($this->campaignId) {
-        $this->campaignId = Campaign::whereStatus('Activa')->first()
-            ?? Campaign::latest('created_at')->whereStatus('Concluida')->first();
-        $this->campaignName=$this->campaignId ? $this->campaignId->name : "No Existe Registro";
-        $this->campaignId = $this->campaignId ? $this->campaignId->id : 0;
+        $campaign = Campaign::whereStatus('Activa')
+            ->whereHas('evaluations', fn ($q) => $q->whereIn('evaluations_types.id', [1, 2]))
+            ->latest('id')
+            ->first()
+            ?? Campaign::whereStatus('Concluida')
+                ->whereHas('evaluations', fn ($q) => $q->whereIn('evaluations_types.id', [1, 2]))
+                ->latest('id')
+                ->first();
+        $this->campaignName = $campaign ? $campaign->name : "No Existe Registro";
+        $this->campaignId = $campaign ? $campaign->id : 0;
 
           //  $this->campaignId = $this->campaignId->id;
             $supervisorId = auth()->user()->position_id;
@@ -342,13 +348,18 @@ class OneToOne extends Page implements HasForms
             $this->evaluation = new OneToOneEvaluation();
         }
         // Calcular promedios
-        $this->evaluation360 = round($this->getAverage360($userId, $this->campaignId), 2);
-        $this->evaluationPotential = round($this->getAveragePotential($userId), 2);
+        $avg360 = $this->getAverage360($userId, $this->campaignId);
+        $avgPotential = $this->getAveragePotential($userId);
 
-        // Calcular niveles y cuadrante
-        $performanceLevel = $this->mapScoreToLevel($this->evaluation360);
-        $potentialLevel = $this->mapScoreToLevel($this->evaluationPotential);
-        $this->quadrant = ($performanceLevel - 1) * 3 + $potentialLevel;
+        $this->evaluation360 = $avg360 !== null ? round((float) $avg360, 2) : null;
+        $this->evaluationPotential = $avgPotential !== null ? round((float) $avgPotential, 2) : null;
+
+        // Calcular niveles y cuadrante homologado con Panel9Box
+        if ($this->evaluation360 !== null || $this->evaluationPotential !== null) {
+            $this->quadrant = Panel9Box::calculateQuadrant($this->evaluation360, $this->evaluationPotential);
+        } else {
+            $this->quadrant = null;
+        }
 
         $this->getIndicatorProgressesForUser($userId);
         // Activar las banderas de visualización
@@ -521,13 +532,7 @@ class OneToOne extends Page implements HasForms
     }
     private function mapScoreToLevel($score)
     {
-        if ($score >= 4.0 && $score <= 5.0) {
-            return 3; // Alto
-        } elseif ($score >= 3.0 && $score <= 3.9) {
-            return 2; // Medio
-        } else {
-            return 1; // Bajo
-        }
+        return Panel9Box::mapScoreToLevel($score);
     }
 
     public function saveEvaluation(): void
@@ -669,7 +674,7 @@ class OneToOne extends Page implements HasForms
             'eva360' => $this->evaluation360,
             'evaPotential' => $this->evaluationPotential,
             'quadrant' => $this->quadrant,
-            'interpretation'=>$this->titles[$this->quadrant],
+            'interpretation' => $this->quadrant && isset($this->titles[$this->quadrant]) ? $this->titles[$this->quadrant] : 'Sin clasificar',
             'indicadores' => $this->indicatorProgresses,
         ]);
 

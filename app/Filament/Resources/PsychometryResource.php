@@ -48,12 +48,13 @@ class PsychometryResource extends Resource
         return auth()->check() && auth()->user()?->hasAnyRole([
             'Administrador',
             'RH',
+            'Supervisor',
             'RH Corp',
         ]);
     }
     public static function canEdit(Model $record): bool
     {
-        return (\auth()->user()->hasAnyRole('RH','RH Corp','Administrador'));
+        return (\auth()->user()->hasAnyRole('RH','RH Corp','Administrador','Supervisor'));
     }
 
 

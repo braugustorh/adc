@@ -170,24 +170,57 @@ class PositionResource extends Resource
                 Tables\Filters\Filter::make('sede')
                     ->form([
                         Forms\Components\Select::make('sede_id')
-                            ->relationship('department.sede', 'name')
                             ->label('Sede')
+                            ->options(fn () => Sede::pluck('name', 'id'))
+                            ->searchable()
                             ->preload()
-                            ->searchable(),
+                            ->live()
+                            ->afterStateUpdated(fn (callable $set) => $set('department_id', null)),
 
                         Forms\Components\Select::make('department_id')
-                                    ->label('Departamento')
-                                    ->relationship('department', 'name', function (Builder $query, Get $get) {
-                                        $sedeId = $get('sede_id');
-                                        if ($sedeId) {
-                                            $query->where('sede_id', $sedeId)->pluck('name', 'id');
-                                        }
-                                    })
-                                    ->preload()
-                                    ->reactive()
-                                    ->searchable()
+                            ->label('Departamento')
+                            ->options(fn (Get $get): Collection => Department::query()
+                                ->when(
+                                    $get('sede_id'),
+                                    fn (Builder $query, $sedeId): Builder => $query->where('sede_id', $sedeId)
+                                )
+                                ->pluck('name', 'id'))
+                            ->searchable()
+                            ->preload(),
                     ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['sede_id'] ?? null,
+                                fn (Builder $query, $sedeId): Builder => $query->whereHas(
+                                    'department',
+                                    fn (Builder $departmentQuery): Builder => $departmentQuery->where('sede_id', $sedeId)
+                                )
+                            )
+                            ->when(
+                                $data['department_id'] ?? null,
+                                fn (Builder $query, $departmentId): Builder => $query->where('department_id', $departmentId)
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
 
+                        if ($sedeId = ($data['sede_id'] ?? null)) {
+                            $sedeName = Sede::find($sedeId)?->name;
+                            if ($sedeName) {
+                                $indicators['sede_id'] = 'Sede: ' . $sedeName;
+                            }
+                        }
+
+                        if ($departmentId = ($data['department_id'] ?? null)) {
+                            $departmentName = Department::find($departmentId)?->name;
+                            if ($departmentName) {
+                                $indicators['department_id'] = 'Departamento: ' . $departmentName;
+                            }
+                        }
+
+                        return $indicators;
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
